@@ -65,7 +65,7 @@
 | Java server (Dropwizard) | FastAPI، لأن Splink والـ connectors كلها Python |
 | MySQL/Postgres | PostgreSQL فقط |
 | Elasticsearch/OpenSearch | Postgres full-text في النسخة 1، وOpenSearch اختياري لاحقاً |
-| Airflow لتشغيل الـ ingestion | Arq + Redis (أخف)، مع واجهة workflow YAML مشابهة |
+| Airflow لتشغيل الـ ingestion | **Kafka** كعمود فقري للـ ingestion (قسم 3.5)، مع جدولة الـ pollers بـ Arq + Redis وواجهة workflow YAML مشابهة |
 | Ingestion framework: Source → Processor → Sink | نفس النمط حرفياً |
 | Entities كـ JSON Schema | Pydantic models مولّدة من JSON Schema |
 
@@ -183,6 +183,62 @@ entities:
 **ما يبقى مستقلاً:** المستخدمون يدخلون بنفس الـ SSO/IdP، أما الـ Roles & Policies وPreferences وAccess Tokens في هذه الأداة (قسم 5.4) فخاصة بها وتغطي موارد الـ MDM (golden, tickets, write-back…) ولا تتعارض مع سياسات OpenMetadata.
 
 **ما يتغير عن النسخة السابقة من الوثيقة:** لا حاجة لـ importer من OpenMetadata، ولا لمطابقة تغطية كل الـ connectors بنفسها. نحتاج فقط connectors لمصادر الـ master (C4C، S/4HANA، قواعد البيانات، REST)، بينما يبقى باقي الـ ingestion في OpenMetadata.
+
+### 3.5 الـ Ingestion مبني على Kafka
+
+**القرار:** كل بيانات المصادر تمر عبر Kafka قبل أن تصل لقاعدة البيانات. الـ connectors تتحول من "تسحب وتكتب في الـ DB مباشرة" إلى "تنتج events إلى Kafka"، وباقي المنصة (الـ mirror، الـ matching، النشر، الـ write-back) تستهلك منه.
+
+**الفائدة الفعلية:**
+- **فصل الإنتاج عن الاستهلاك:** بطء الـ DB أو الـ matching لا يوقف السحب من المصدر، والعكس.
+- **Replay:** تغيير قواعد التطبيع أو الـ blocking أو الـ survivorship يعني إعادة معالجة الـ events من الـ offset المطلوب بدل إعادة السحب من SAP.
+- **CDC لحظي** لقواعد البيانات (عبر Debezium) بدل الـ polling الدوري.
+- **عدة مستهلكين لنفس الـ stream:** الـ mirror، والـ matching، وOpenMetadata sync، والـ Data Insights، دون تحميل إضافي على المصدر.
+- يفتح الباب لـ **near-real-time matching** (كان خارج النطاق) خصوصاً لفحص التكرار في الـ Tickets.
+
+**الـ Topics:**
+
+| Topic | المحتوى | الإعدادات |
+|---|---|---|
+| `mdm.raw.<system>.<entity>` | السجل الخام كما جاء من المصدر (insert/update/delete) | key = `source_id`، `cleanup.policy=compact,delete` (آخر حالة لكل سجل + retention) |
+| `mdm.source.normalized` | السجل بعد التطبيع (اسم/تليفون/عنوان) | key = `source_system:source_id` |
+| `mdm.match.requests` | طلبات المطابقة (دفعة، أو سجل واحد من Ticket) | |
+| `mdm.golden.changes` | تغييرات الـ golden (created/updated/merged/unmerged) | يغذي نشر الـ dims والـ write-back |
+| `mdm.writeback.commands` | أوامر الكتابة للأنظمة المصدرية بعد الموافقة | |
+| `mdm.dlq` | الأحداث الفاشلة مع سبب الفشل | يظهر كـ Tasks للمراجعة |
+
+**المستهلكون (consumer groups):**
+1. `ingest-writer`: يكتب في `source_record` بـ upsert، ويتجاهل الحدث لو `record_hash` لم يتغير.
+2. `normalizer`: raw ← normalized.
+3. `matcher`: يجمع طلبات المطابقة في دفعات صغيرة ويشغّل Splink (DuckDB، أو Spark للدفعات الكبيرة).
+4. `dim-publisher` و`writeback-worker` و`om-sync`: من `mdm.golden.changes` و`mdm.writeback.commands`.
+
+**ضمانات التسليم (بصدق):** Kafka يعطي **at-least-once** في هذا التصميم، ولا ندّعي exactly-once. التحمّل للتكرار يأتي من أن كل المستهلكين **idempotent**: upsert بالمفتاح و`record_hash`، و`idempotency_key` في الـ write-back. ترتيب الأحداث مضمون لكل سجل فقط (نفس الـ key ينتهي في نفس الـ partition)، وليس عبر السجلات.
+
+**الـ Connectors مع Kafka:**
+
+| المصدر | الطريقة |
+|---|---|
+| PostgreSQL / MySQL / SQL Server / Oracle | **Debezium** على Kafka Connect (CDC) عند توفر صلاحية الـ log، وإلا JDBC polling |
+| SAP C4C / S/4HANA (OData) | الـ connector الخاص بنا (3.1) يعمل **poller** بجدولة، ويقرأ delta بـ `LastChangeDate` وينتج الـ events إلى Kafka |
+| Generic REST (3.2) | poller، أو **webhook gateway** صغير يستقبل الـ POST وينتج إلى Kafka |
+| CSV / Excel | الرفع من الـ UI ينتج صفوف الملف كـ events (مع `batch_id`) |
+| Databricks / Delta | قراءة batch بـ Spark ثم الإنتاج إلى Kafka، أو القراءة المباشرة للـ matching الثقيل |
+
+الـ **Connector SPI** يتغير فقط في طرف الـ sink: `ingest()` ينتج `RawEvent` بدل الكتابة المباشرة، ويظل `test_connection()` وباقي الـ SPI كما هو.
+
+**شكل الـ event (Envelope):** `{event_id, source_system, entity, source_id, op: c|u|d, ts_source, ts_ingested, batch_id, payload, schema_version}`. نوصي بـ **Schema Registry** (JSON Schema أو Avro) ليتحقق الـ producers والـ consumers من توافق الـ schema. أي تغيير في الـ schema يمر بقواعد التوافق (backward compatible) وإلا يُرفض.
+
+**الأعطال والـ DLQ:** حدث فشل بعد عدد محاولات محدد ينتقل إلى `mdm.dlq` مع الخطأ، ولا يوقف باقي الـ partition، ويُفتح Task للـ steward. ومراقبة الـ **consumer lag** تظهر في Health Check وData Insights.
+
+**الـ Docker:** خدمة `kafka` بنمط **KRaft** (بدون ZooKeeper) مع `schema-registry` و`kafka-ui` اختياريين، وخدمة `kafka-connect` (Debezium) ضمن profile اسمه `cdc`. بدائل خفيفة متوافقة مع Kafka API مثل **Redpanda** ممكنة للتطوير. وللإنتاج: إما Kafka مُدار عندكم، أو خدمة مُدارة حسب الـ cloud المستخدم، وهذا قرار يحتاج مدخل فريق الـ infrastructure.
+
+**الأثر على باقي التصميم:**
+- **Spark:** يقرأ من Kafka (batch أو Structured Streaming) بدل قراءة الـ DB، لكن يظل للمعالجة الثقيلة فقط (6.1).
+- **Arq/Redis:** تبقى لجدولة الـ pollers والمهام الخلفية الصغيرة، ولا تحمل بيانات الـ ingestion.
+- **جدول `source_record`:** يظل مرآة الحالة الأخيرة، ويُملأ بواسطة `ingest-writer`، ويحمل `last_offset` و`last_event_id` للتتبع.
+- **جدول جديد `ingest_batch`:** (batch_id، source، mode، started/finished، events_produced، events_failed، status).
+
+**متى يكون Kafka زائداً عن الحاجة؟** لحجم ~950K سجل وسحب ليلي دوري، يكفي الـ batch المباشر، وKafka يضيف تعقيد تشغيل (broker، تخزين، مراقبة، فريق يتقنه). يستحق التكلفة لو: (أ) تريد CDC لحظي، أو (ب) عدة أنظمة تستهلك نفس البيانات، أو (ج) تحتاج replay بعد تعديل قواعد المطابقة، أو (د) الوصول لـ near-real-time matching. إذا كان الهدف غير ذلك، فالبديل الأبسط هو الـ batch ingestion بـ Arq مع نفس الـ envelope، ويمكن إضافة Kafka لاحقاً دون تغيير الـ consumers لأن الـ envelope واحد.
 
 ---
 
@@ -631,6 +687,9 @@ Tools (قراءة افتراضياً، والكتابة محصورة ومسجل�
 |---|---|
 | `postgres` | postgres:16 |
 | `redis` | redis:7 |
+| `kafka` | Apache Kafka (KRaft، بدون ZooKeeper) — عمود الـ ingestion الفقري (3.5) |
+| `schema-registry`, `kafka-ui` (اختياري) | التحقق من الـ schemas ومراقبة الـ topics |
+| `kafka-connect` (profile `cdc`) | Debezium لـ CDC من قواعد البيانات |
 | `api` | build ./backend (FastAPI + Uvicorn) |
 | `worker` | نفس صورة الـ backend بأمر مختلف (ingestion/matching/dq) |
 | `scheduler` | نفس الصورة، يطلق الـ workflows المجدولة |
@@ -667,7 +726,8 @@ mdm-platform/
 | المرحلة | المحتوى |
 |---|---|
 | **M0** | Compose يعمل: API + DB + UI shell + MCP skeleton + auth |
-| **M1** | Connector SPI + Postgres/CSV/C4C + صفحة Catalog |
+| **M1** | Connector SPI (ينتج events إلى Kafka) + Postgres/CSV/C4C + `ingest-writer` + صفحة Catalog |
+| **M1.2** | Schema Registry + الـ DLQ + مراقبة consumer lag + Debezium (profile `cdc`) |
 | **M2** | Standardization + Splink pipeline + match_pair + clusters (محرك DuckDB، مع تجريد المحرك ليقبل Spark) |
 | **M2.5** | تشغيل نفس الـ pipeline على Spark (profile `spark` أو Databricks) ومقارنة الأداء والنتائج مع DuckDB |
 | **M1.5** | تكامل OpenMetadata (3.4): قراءة domains/glossary/owners/tags + نشر الـ assets المصدرية |
