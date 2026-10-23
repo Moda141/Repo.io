@@ -1,0 +1,67 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: mdm
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mdm}
+      POSTGRES_DB: mdm
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mdm -d mdm"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: ./backend
+    environment: &backend-env
+      MDM_DATABASE_URL: postgresql+psycopg://mdm:${POSTGRES_PASSWORD:-mdm}@postgres:5432/mdm
+      MDM_REDIS_URL: redis://redis:6379/0
+      MDM_JWT_SECRET: ${MDM_JWT_SECRET:-dev-only-secret-change-me-in-production-0123456789}
+      MDM_ADMIN_EMAIL: ${MDM_ADMIN_EMAIL:-admin@example.com}
+      MDM_ADMIN_PASSWORD: ${MDM_ADMIN_PASSWORD:-admin123}
+      MDM_DEMO_SEED: ${MDM_DEMO_SEED:-true}
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    ports:
+      - "8000:8000"
+
+  worker:
+    build: ./backend
+    command: ["arq", "app.worker.WorkerSettings"]
+    environment: *backend-env
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  ui:
+    build: ./frontend
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+
+  mcp:
+    build: ./mcp
+    environment:
+      MDM_API_URL: http://api:8000
+      # Create a bot in the UI/API (POST /api/v1/bots), put its token in .env, then `docker compose up -d mcp`
+      MDM_API_TOKEN: ${MDM_MCP_TOKEN:-}
+      MCP_PORT: "8001"
+    depends_on:
+      - api
+    ports:
+      - "8001:8001"
+
+volumes:
+  pgdata:
