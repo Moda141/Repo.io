@@ -1,0 +1,65 @@
+/* Layout values below (84px sidebar, 80px header with 20px 24px padding, 35vw search, 40px controls, gray-blue page
+   background, Inter, 14px base) are taken from OpenMetadata's UI source (Apache-2.0); see NOTICE. */
+:root {
+  --om-page-bg: #f8f9fc;          /* utility-gray-blue-50 */
+  --om-text: #181d27;
+  --om-text-tertiary: #414651;
+  --om-border: #e9eaeb;
+  --om-sidebar-width: 84px;
+  --om-header-height: 80px;
+  --om-selected-bg: #d1e9ff;      /* primary-1 */
+  --om-selected-fg: #175cd3;      /* primary-7 */
+}
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body { font-family: "Inter Variable", "Inter", "Poppins", -apple-system, "Segoe UI", Roboto, Arial, sans-serif; font-size: 14px; color: var(--om-text); background: var(--om-page-bg); }
+a { color: var(--ant-primary-color); }
+
+.app-container { display: flex; height: 100vh; overflow: hidden; }
+
+/* Left sidebar */
+.app-sidebar { width: var(--om-sidebar-width); flex: 0 0 var(--om-sidebar-width); background: #fff; border-right: 1px solid var(--om-border); display: flex; flex-direction: column; height: 100vh; overflow-y: auto; scrollbar-width: none; }
+.app-sidebar::-webkit-scrollbar { display: none; }
+.logo-container { height: 40px; margin: 20px 0; display: flex; justify-content: center; align-items: center; }
+.logo-container img { width: 36px; height: 36px; }
+.menu-container { flex: 1; display: flex; flex-direction: column; padding: 0 8px 12px; }
+.menu-container .top-menu { flex-grow: 1; }
+.menu-container .bottom-menu { flex-shrink: 0; border-top: 1px solid var(--om-border); padding-top: 8px; }
+.nav-item { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; margin: 2px 0; border: 0; border-radius: 8px; background: none; color: var(--om-text-tertiary); cursor: pointer; font: inherit; font-size: 11px; line-height: 14px; text-align: center; }
+.nav-item .anticon { font-size: 20px; }
+.nav-item:hover { background: #f5faff; }
+.nav-item.active { background: var(--om-selected-bg); color: var(--om-selected-fg); font-weight: 600; }
+.nav-item .soon { font-size: 9px; color: var(--ant-primary-color); }
+
+/* Header + content */
+.app-main { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100vh; }
+.app-navbar-header { flex: 0 0 auto; height: var(--om-header-height); padding: 20px 24px; background: var(--om-page-bg); }
+.navbar-container { display: flex; align-items: center; justify-content: space-between; height: 100%; }
+.navbar-container > div { height: 40px; }
+.navbar-container .search-container { width: 35vw; min-width: 220px; }
+.navbar-container .search-container .ant-select, .navbar-container .search-container .ant-input-affix-wrapper { width: 100%; height: 40px; }
+.navbar-container .ant-select-selector { height: 40px !important; align-items: center; border-radius: 8px !important; }
+.navbar-container .ant-select-selection-search-input { height: 38px !important; }
+.nav-bar-side-items { display: flex; align-items: center; gap: 20px; }
+.app-user-icon { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.app-user-icon .username { font-weight: 500; line-height: 21px; }
+.app-content { flex: 1; min-height: 0; overflow: auto; padding: 0 24px 24px; }
+
+/* Page layout: white cards on the gray-blue background */
+.page-card { background: #fff; border: 1px solid var(--om-border); border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; }
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.page-header h1 { margin: 0; font-size: 20px; font-weight: 600; line-height: 30px; }
+.page-sub { color: var(--om-text-tertiary); margin: 0 0 16px; }
+.text-muted { color: var(--om-text-tertiary); }
+.full-width { width: 100%; }
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--om-page-bg); }
+.login-card { width: 400px; max-width: calc(100vw - 32px); }
+.login-card img { display: block; width: 100%; max-height: 140px; object-fit: contain; margin-bottom: 16px; }
+.token-box { background: #101828; color: #d1e9ff; padding: 12px; border-radius: 8px; word-break: break-all; white-space: pre-wrap; }
+.ant-table-thead > tr > th { background: #f5f5f5; font-weight: 600; }
+.ant-tabs-nav { margin-bottom: 16px; }
+
+@media (max-width: 720px) {
+  .app-sidebar { display: none; }
+  .navbar-container .search-container { width: 50vw; }
+}

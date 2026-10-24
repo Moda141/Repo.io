@@ -1,0 +1,5 @@
+Repo.io
+Portions of the user-interface layout and design tokens (sidebar width, header height and padding, search width,
+control heights, page background, font stack, palette) are derived from OpenMetadata
+(https://github.com/open-metadata/OpenMetadata), Copyright Collate, licensed under the Apache License, Version 2.0.
+The Repo.io name and logo are not derived from OpenMetadata.
