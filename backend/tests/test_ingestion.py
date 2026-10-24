@@ -182,3 +182,50 @@ def test_upload_rejects_bad_names(client, auth):
     assert ok.status_code == 201 and (IMPORTS / "t_up" / "a.csv").exists()
     for name in ("../evil.csv", "a.txt", ".hidden.csv"):
         assert client.post(f"/api/v1/services/{sid}/files", headers=auth, files={"file": (name, b"x")}).status_code == 422
+
+
+def test_wizard_endpoints_and_detail_pages(client, auth):
+    write_csv("t_wiz", "customers.csv", [[1, "أحمد", "010", "a@x.com", "القاهرة", "2026-01-01"], [2, "منى", "011", "m@x.com", "الجيزة", "2026-01-02"]])
+    ok = client.post("/api/v1/connector-types/csv/test", headers=auth, json={"config": {"folder": "t_wiz"}}).json()
+    assert ok["ok"] is True and "1 CSV" in ok["message"]
+    bad = client.post("/api/v1/connector-types/csv/test", headers=auth, json={"config": {"folder": "../x"}}).json()
+    assert bad["ok"] is False
+    assert client.post("/api/v1/connector-types/csv/test", json={"config": {"folder": "t_wiz"}}).status_code == 401
+
+    r = client.post("/api/v1/services", headers=auth, json={"name": "t_wiz", "service_type": "csv", "description": "Demo", "config": {"folder": "t_wiz"}})
+    sid = r.json()["id"]
+    assert client.get(f"/api/v1/services/{sid}", headers=auth).json()["description"] == "Demo"
+    client.post(f"/api/v1/services/{sid}/discover", headers=auth)
+    tid = client.get("/api/v1/tables", headers=auth, params={"service_id": sid}).json()[0]["id"]
+    client.put(f"/api/v1/tables/{tid}/master", headers=auth, json={"column_map": {"source_id": "id", "name": "name", "phone": "phone", "email": "email"}})
+    sync(client, auth, tid)
+
+    listed = client.get("/api/v1/tables", headers=auth, params={"service_id": sid}).json()[0]
+    assert listed["service_name"] == "t_wiz" and listed["records"] == 2
+    assert client.get("/api/v1/services", headers=auth).json()[-1]["records"] >= 0
+    page = client.get(f"/api/v1/tables/{tid}/records", headers=auth, params={"limit": 1}).json()
+    assert page["total"] == 2 and len(page["items"]) == 1
+    found = client.get(f"/api/v1/tables/{tid}/records", headers=auth, params={"q": "منى"}).json()
+    assert [i["source_id"] for i in found["items"]] == ["2"]
+    hit = client.get("/api/v1/customers/search", headers=auth, params={"q": "منى"}).json()
+    assert any(h["table_id"] == tid for h in hit)
+    assert client.get("/api/v1/tables/nope/records", headers=auth).status_code == 404
+
+
+def test_migration_0002_upgrades_a_0001_database(tmp_path):
+    import sqlalchemy as sa
+    from alembic import command
+    from alembic.config import Config
+
+    engine = sa.create_engine(f"sqlite:///{tmp_path / 'm.db'}")
+    root = Path(__file__).resolve().parent.parent
+    cfg = Config(str(root / "alembic.ini"))
+    cfg.set_main_option("script_location", str(root / "alembic"))
+    with engine.begin() as conn:  # simulate a database that is at 0001 and lacks the column
+        cfg.attributes["connection"] = conn
+        command.upgrade(cfg, "0001")
+        conn.execute(sa.text("ALTER TABLE service DROP COLUMN description"))
+    with engine.begin() as conn:
+        cfg.attributes["connection"] = conn
+        command.upgrade(cfg, "head")
+    assert "description" in {c["name"] for c in sa.inspect(engine).get_columns("service")}

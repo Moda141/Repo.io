@@ -19,6 +19,7 @@ class SourceRecordOut(BaseModel):
     email: str
     city: str
     tax_id: str
+    table_id: str | None = None
 
     model_config = {"from_attributes": True}
 

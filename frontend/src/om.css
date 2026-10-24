@@ -63,3 +63,23 @@ a { color: var(--ant-primary-color); }
   .app-sidebar { display: none; }
   .navbar-container .search-container { width: 50vw; }
 }
+
+/* Catalog: lists, wizard, entity pages (layout follows OpenMetadata's service/entity pages) */
+.list-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.crumbs { color: var(--om-text-tertiary); font-size: 12px; margin-bottom: 8px; }
+.crumbs a { color: var(--om-text-tertiary); }
+.crumbs a:hover { color: var(--ant-primary-color); }
+.crumbs span { color: var(--om-text); }
+.entity-title { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.entity-title h1 { margin: 0; font-size: 20px; line-height: 30px; font-weight: 600; }
+.entity-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--om-selected-bg); color: var(--om-selected-fg); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.entity-layout { display: flex; gap: 16px; align-items: flex-start; }
+.entity-main { flex: 1; min-width: 0; margin-bottom: 0; }
+.entity-panel { width: 280px; flex: 0 0 280px; margin-bottom: 0; }
+.entity-panel h3 { margin-top: 0; font-size: 14px; font-weight: 600; }
+.type-card { text-align: center; border-radius: 12px; cursor: pointer; }
+.type-card.selected { border-color: var(--ant-primary-color); box-shadow: 0 0 0 2px var(--om-selected-bg); background: #f5faff; }
+.type-icon { font-size: 32px; color: var(--ant-primary-color); }
+.type-name { margin-top: 8px; font-weight: 500; }
+.wizard-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--om-border); }
+@media (max-width: 900px) { .entity-layout { flex-direction: column; } .entity-panel { width: 100%; flex-basis: auto; } }

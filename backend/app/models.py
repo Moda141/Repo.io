@@ -81,6 +81,7 @@ class Service(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
     name: Mapped[str] = mapped_column(String(64), unique=True, index=True)  # also the source_system label
     service_type: Mapped[str] = mapped_column(String(32))
+    description: Mapped[str] = mapped_column(String(1024), default="")
     config: Mapped[dict] = mapped_column(JSON, default=dict)  # non-secret settings
     secrets_enc: Mapped[str] = mapped_column(String(4096), default="")  # Fernet-encrypted JSON of secret fields
     created_by: Mapped[str] = mapped_column(ForeignKey("user.id"))

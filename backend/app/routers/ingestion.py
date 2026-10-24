@@ -5,7 +5,7 @@ import re
 
 from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, Query, UploadFile, status
 from pydantic import BaseModel, Field
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from ..bus import get_bus
@@ -31,20 +31,30 @@ steward = require_role("admin", "steward")
 
 
 # -- helpers -------------------------------------------------------------------------------------
-def _service_out(service: Service, tables: int = 0) -> dict:
+def _service_out(service: Service, tables: int = 0, records: int = 0) -> dict:
     cls = get_connector_class(service.service_type)
     secret_names = {f.name for f in cls.fields if f.secret}
     stored = decrypt_json(service.secrets_enc) if service.secrets_enc else {}
     return {
-        "id": service.id, "name": service.name, "service_type": service.service_type, "config": service.config,
+        "id": service.id, "name": service.name, "service_type": service.service_type, "description": service.description,
+        "config": service.config, "records": records,
         "secrets_set": sorted(n for n in secret_names if stored.get(n)),  # which secrets exist, never their values
         "tables": tables, "created_at": service.created_at, "updated_at": service.updated_at,
     }
 
 
-def _table_out(t: CatalogTable) -> dict:
+def _record_counts(db: Session, *, by: str) -> dict:
+    """Active (not deleted) mirrored records per table id or per service id."""
+    column = SourceRecord.table_id if by == "table" else CatalogTable.service_id
+    stmt = select(column, func.count()).select_from(SourceRecord).where(SourceRecord.is_deleted.is_(False))
+    if by == "service":
+        stmt = stmt.join(CatalogTable, CatalogTable.id == SourceRecord.table_id)
+    return dict(db.execute(stmt.group_by(column)).all())
+
+
+def _table_out(t: CatalogTable, service_name: str = "", records: int | None = None) -> dict:
     return {
-        "id": t.id, "service_id": t.service_id, "schema_name": t.schema_name, "table_name": t.table_name,
+        "id": t.id, "service_id": t.service_id, "service_name": service_name, "records": records, "schema_name": t.schema_name, "table_name": t.table_name,
         "columns": t.columns, "removed": t.removed, "last_seen_at": t.last_seen_at, "master_enabled": t.master_enabled,
         "entity_type": t.entity_type, "column_map": t.column_map, "cursor_column": t.cursor_column,
         "watermark": t.watermark, "last_ingested_at": t.last_ingested_at,
@@ -81,11 +91,13 @@ def connector_types(_: User = Depends(get_current_user)):
 class ServiceIn(BaseModel):
     name: str
     service_type: str
+    description: str = Field(default="", max_length=1024)
     config: dict = Field(default_factory=dict)
     secrets: dict = Field(default_factory=dict)
 
 
 class ServiceUpdate(BaseModel):
+    description: str | None = Field(default=None, max_length=1024)
     config: dict = Field(default_factory=dict)
     secrets: dict = Field(default_factory=dict)  # an empty/omitted secret keeps the stored one
 
@@ -93,7 +105,15 @@ class ServiceUpdate(BaseModel):
 @router.get("/services")
 def list_services(_: User = Depends(get_current_user), db: Session = Depends(get_db)):
     counts = dict(db.execute(select(CatalogTable.service_id, func.count()).where(CatalogTable.removed.is_(False)).group_by(CatalogTable.service_id)).all())
-    return [_service_out(s, counts.get(s.id, 0)) for s in db.scalars(select(Service).order_by(Service.name))]
+    recs = _record_counts(db, by="service")
+    return [_service_out(s, counts.get(s.id, 0), recs.get(s.id, 0)) for s in db.scalars(select(Service).order_by(Service.name))]
+
+
+@router.get("/services/{service_id}")
+def get_service(service_id: str, _: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    service = _get_service(db, service_id)
+    tables = db.scalar(select(func.count()).select_from(CatalogTable).where(CatalogTable.service_id == service.id, CatalogTable.removed.is_(False))) or 0
+    return _service_out(service, tables, _record_counts(db, by="service").get(service.id, 0))
 
 
 @router.post("/services", status_code=201)
@@ -107,7 +127,7 @@ def create_service(body: ServiceIn, user: User = Depends(admin_only), db: Sessio
         config, secrets = cls.validate(body.config, body.secrets)
     except ConnectorError as exc:
         raise HTTPException(422, str(exc)) from None
-    service = Service(name=body.name, service_type=body.service_type, config=config, secrets_enc=encrypt_json(secrets) if secrets else "", created_by=user.id)
+    service = Service(name=body.name, service_type=body.service_type, description=body.description.strip(), config=config, secrets_enc=encrypt_json(secrets) if secrets else "", created_by=user.id)
     db.add(service)
     db.commit()
     return _service_out(service)
@@ -124,6 +144,8 @@ def update_service(service_id: str, body: ServiceUpdate, _: User = Depends(admin
         raise HTTPException(422, str(exc)) from None
     service.config = config
     service.secrets_enc = encrypt_json(secrets) if secrets else ""
+    if body.description is not None:
+        service.description = body.description.strip()
     db.commit()
     return _service_out(service)
 
@@ -145,6 +167,30 @@ def delete_service(service_id: str, _: User = Depends(admin_only), db: Session =
     db.query(CatalogTable).filter(CatalogTable.service_id == service.id).delete(synchronize_session=False)
     db.delete(service)
     db.commit()
+
+
+class TryIn(BaseModel):
+    config: dict = Field(default_factory=dict)
+    secrets: dict = Field(default_factory=dict)
+
+
+@router.post("/connector-types/{service_type}/test")
+def test_unsaved(service_type: str, body: TryIn, _: User = Depends(admin_only)):
+    """Test a connection before the service is saved (the wizard's 'Test Connection'). Nothing is stored."""
+    try:
+        cls = get_connector_class(service_type)
+        config, secrets = cls.validate(body.config, body.secrets)
+    except ConnectorError as exc:
+        return {"ok": False, "message": str(exc)}
+    connector = cls(config, secrets)
+    try:
+        return {"ok": True, "message": connector.test_connection()}
+    except ConnectorError as exc:
+        return {"ok": False, "message": str(exc)}
+    except Exception:  # noqa: BLE001
+        return {"ok": False, "message": "connection failed (see server logs)"}
+    finally:
+        connector.close()
 
 
 @router.post("/services/{service_id}/test")
@@ -216,14 +262,38 @@ def list_tables(
         stmt = stmt.where(CatalogTable.master_enabled.is_(True))
     if not include_removed:
         stmt = stmt.where(CatalogTable.removed.is_(False))
-    return [_table_out(t) for t in db.scalars(stmt)]
+    names = dict(db.execute(select(Service.id, Service.name)).all())
+    counts = _record_counts(db, by="table")
+    return [_table_out(t, names.get(t.service_id, ""), counts.get(t.id, 0)) for t in db.scalars(stmt)]
 
 
 @router.get("/tables/{table_id}")
 def get_table(table_id: str, _: User = Depends(get_current_user), db: Session = Depends(get_db)):
     table = _get_table(db, table_id)
     records = db.scalar(select(func.count()).select_from(SourceRecord).where(SourceRecord.table_id == table.id, SourceRecord.is_deleted.is_(False))) or 0
-    return {**_table_out(table), "records": records}
+    service = db.get(Service, table.service_id)
+    return _table_out(table, service.name if service else "", records)
+
+
+@router.get("/tables/{table_id}/records")
+def table_records(
+    table_id: str,
+    q: str = "",
+    limit: int = Query(default=25, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+    _: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Mirrored records of one table (the catalog's 'sample data'), newest ingest first."""
+    table = _get_table(db, table_id)
+    where = [SourceRecord.table_id == table.id, SourceRecord.is_deleted.is_(False)]
+    if q.strip():
+        like = f"%{q.strip()}%"
+        where.append(or_(SourceRecord.name.ilike(like), SourceRecord.phone.ilike(like), SourceRecord.email.ilike(like), SourceRecord.source_id.ilike(like)))
+    total = db.scalar(select(func.count()).select_from(SourceRecord).where(*where)) or 0
+    rows = db.scalars(select(SourceRecord).where(*where).order_by(SourceRecord.ingested_at.desc(), SourceRecord.id).limit(limit).offset(offset))
+    keys = ("id", "source_id", "name", "phone", "email", "city", "tax_id", "ingested_at")
+    return {"total": total, "items": [{k: getattr(r, k) for k in keys} for r in rows]}
 
 
 class MasterIn(BaseModel):
