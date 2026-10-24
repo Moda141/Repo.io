@@ -39,7 +39,18 @@ PostgreSQL `default_transaction_read_only` for the SQL connector.
 Not yet built: matching/golden records (M2/M3), Tasks/DQ/SQL Editor (M4), Roles & Policies, Preferences (M5),
 Data Insights (M5.5), S/4HANA and REST connectors (M6).
 
-## Run
+## Install (like OpenMetadata: one file, prebuilt images)
+
+```bash
+curl -sL -o docker-compose.yml https://raw.githubusercontent.com/Moda141/Repo.io/main/docker-compose.release.yml
+docker compose up -d
+```
+Windows PowerShell: `Invoke-WebRequest -Uri https://raw.githubusercontent.com/Moda141/Repo.io/main/docker-compose.release.yml -OutFile docker-compose.yml`.
+Then open http://localhost:8080. Images are published to `ghcr.io/moda141/repo-io-{api,ui,mcp}` by
+`.github/workflows/publish-images.yml`; the packages must be set to **public** once (GitHub > Packages > Package settings).
+This path has not been run yet (the workflow has to run once on GitHub first).
+
+## Run from source
 
 ```bash
 cp .env.example .env        # then edit secrets
