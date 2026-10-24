@@ -34,7 +34,7 @@ def search_customers(
     like = f"%{q}%"
     stmt = (
         select(SourceRecord)
-        .where(or_(SourceRecord.name.ilike(like), SourceRecord.phone.ilike(like), SourceRecord.email.ilike(like)))
+        .where(SourceRecord.is_deleted.is_(False), or_(SourceRecord.name.ilike(like), SourceRecord.phone.ilike(like), SourceRecord.email.ilike(like)))
         .order_by(SourceRecord.name)
         .limit(limit)
     )
@@ -44,5 +44,5 @@ def search_customers(
 @router.get("/catalog/sources")
 def source_summary(_: User = Depends(get_current_user), db: Session = Depends(get_db)):
     """M0 Catalog stub: mirrored record counts per source system."""
-    rows = db.execute(select(SourceRecord.source_system, func.count()).group_by(SourceRecord.source_system)).all()
+    rows = db.execute(select(SourceRecord.source_system, func.count()).where(SourceRecord.is_deleted.is_(False)).group_by(SourceRecord.source_system)).all()
     return [{"source_system": s, "records": n} for s, n in rows]

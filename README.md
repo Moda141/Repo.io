@@ -1,6 +1,29 @@
-# Repo.io — Master Data Platform (M0 skeleton)
+# Repo.io — Master Data Platform (M1: ingestion)
 
 Master Data Management tool that complements OpenMetadata (governance). Full design: [`docs/design.md`](docs/design.md) (Arabic).
+
+## What works in M1 (ingestion)
+
+- **Connectors** (`backend/app/connectors`): CSV folder, SQL databases (PostgreSQL, MySQL, SQL Server, Oracle; SQLite dev-only),
+  SAP C4C (OData v2). Each implements the same SPI: `test_connection`, `discover`, `iterate` (full or incremental by cursor).
+  Connection passwords are Fernet-encrypted at rest and never returned by the API.
+- **Pipeline:** connector -> `mdm.raw.<system>.<entity>` -> normalizer (Arabic names, phones, emails) -> `mdm.source.normalized`
+  -> ingest-writer -> PostgreSQL, plus `mdm.match.requests` (consumed from M2) and `mdm.dlq`. At-least-once and idempotent:
+  replays are no-ops, unchanged rows are not rewritten, bad rows go to `ingest_error` + DLQ without stopping the run.
+- **Deletes** are detected only on complete full snapshots, and skipped (with a warning) if more than 50% of active records
+  would be removed. **Incremental** sync uses a watermark that advances only when the whole run succeeded.
+- **Schema drift** is recorded on every Discover; changes touching a registered mapping are flagged.
+- **Catalog tab:** services (test, discover, CSV upload), tables (register as master source + column mapping), sync runs, records.
+- `MDM_INGEST_BUS=inline` runs the same pipeline in-process (tests, tiny deployments); `kafka` uses the `kafka` + `consumers` services.
+- Alembic migrations run at API startup (baseline `0001`). Databases created by M0 (`create_all`) have no migration history:
+  recreate the dev database (`docker compose down -v`).
+
+### Tested vs. not tested
+
+Tested (33 tests, SQLite): the whole pipeline through `InlineBus`, connectors (C4C against a mocked OData server, SQL via SQLite),
+API validation, secret handling, path/SSRF guards. **Not tested:** the Kafka path end to end (no broker in the build environment),
+`docker compose up`, a real C4C tenant (entity set and field names must come from your tenant's `$metadata`),
+PostgreSQL `default_transaction_read_only` for the SQL connector.
 
 ## What works in M0
 
@@ -14,7 +37,7 @@ Master Data Management tool that complements OpenMetadata (governance). Full des
 - UI follows OpenMetadata's layout and default theme palette as a design reference; the logo and the Repo.io name are ours.
 
 Not yet built: matching/golden records (M2/M3), Tasks/DQ/SQL Editor (M4), Roles & Policies, Preferences (M5),
-Data Insights (M5.5), connectors (M1), Alembic migrations (M1; M0 uses `create_all`).
+Data Insights (M5.5), S/4HANA and REST connectors (M6).
 
 ## Run
 

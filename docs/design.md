@@ -726,7 +726,7 @@ mdm-platform/
 | المرحلة | المحتوى |
 |---|---|
 | **M0** | Compose يعمل: API + DB + UI shell + MCP skeleton + auth |
-| **M1** | Connector SPI (ينتج events إلى Kafka) + Postgres/CSV/C4C + `ingest-writer` + صفحة Catalog |
+| **M1** ✅ (منفّذ؛ مختبر عبر InlineBus، مسار Kafka لم يُختبر end-to-end) | Connector SPI (ينتج events إلى Kafka) + Postgres/CSV/C4C + `ingest-writer` + صفحة Catalog + Alembic |
 | **M1.2** | Schema Registry + الـ DLQ + مراقبة consumer lag + Debezium (profile `cdc`) |
 | **M2** | Standardization + Splink pipeline + match_pair + clusters (محرك DuckDB، مع تجريد المحرك ليقبل Spark) |
 | **M2.5** | تشغيل نفس الـ pipeline على Spark (profile `spark` أو Databricks) ومقارنة الأداء والنتائج مع DuckDB |

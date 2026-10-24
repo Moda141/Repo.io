@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, ApiError, getToken, setToken } from "./api";
+import Catalog from "./Catalog";
 import Tickets from "./Tickets";
 
 type Me = { id: string; email: string; display_name: string; role: string };
-type SourceRow = { source_system: string; records: number };
-type Customer = { id: number; source_system: string; source_id: string; name: string; phone: string; email: string; city: string };
 type TokenRow = { id: string; name: string; token_type: string; expires_at: string | null; revoked: boolean; created_at: string };
 type Health = { status: string; checks: Record<string, { ok: boolean; error?: string }> };
 
@@ -44,39 +43,6 @@ function Login({ onDone }: { onDone: () => void }) {
       {error && <p className="error">{error}</p>}
       <button type="submit">Sign in</button>
     </form>
-  );
-}
-
-function Catalog() {
-  const [sources, setSources] = useState<SourceRow[]>([]);
-  const [q, setQ] = useState("");
-  const [rows, setRows] = useState<Customer[]>([]);
-  useEffect(() => { api<SourceRow[]>("/api/v1/catalog/sources").then(setSources).catch(() => setSources([])); }, []);
-  const search = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (q.trim()) setRows(await api<Customer[]>(`/api/v1/customers/search?q=${encodeURIComponent(q)}`));
-  };
-  return (
-    <section>
-      <h2>Catalog — mirrored sources</h2>
-      <div className="chips">
-        {sources.map((s) => <span key={s.source_system} className="chip">{s.source_system}: {s.records}</span>)}
-      </div>
-      <form onSubmit={search} className="row">
-        <input placeholder="Search name, phone or email" value={q} onChange={(e) => setQ(e.target.value)} />
-        <button type="submit">Search</button>
-      </form>
-      {rows.length > 0 && (
-        <table>
-          <thead><tr><th>Source</th><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>City</th></tr></thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.id}><td>{r.source_system}</td><td>{r.source_id}</td><td dir="auto">{r.name}</td><td>{r.phone}</td><td>{r.email}</td><td dir="auto">{r.city}</td></tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </section>
   );
 }
 
@@ -148,7 +114,7 @@ export default function App() {
         <button className="signout" onClick={() => { setToken(null); setMe(null); }}>Sign out</button>
       </nav>
       <main>
-        {tab === "catalog" ? <Catalog /> : tab === "settings" ? <Settings me={me} /> : tab === "tickets" ? <Tickets role={me.role} /> : (
+        {tab === "catalog" ? <Catalog role={me.role} /> : tab === "settings" ? <Settings me={me} /> : tab === "tickets" ? <Tickets role={me.role} /> : (
           <section><h2>{current.label}</h2><p className="muted">Planned for milestone {current.milestone}.</p></section>
         )}
       </main>

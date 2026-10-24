@@ -30,9 +30,16 @@ services:
       MDM_ADMIN_EMAIL: ${MDM_ADMIN_EMAIL:-admin@example.com}
       MDM_ADMIN_PASSWORD: ${MDM_ADMIN_PASSWORD:-admin123}
       MDM_DEMO_SEED: ${MDM_DEMO_SEED:-true}
+      MDM_SECRET_KEY: ${MDM_SECRET_KEY:-dev-only-secret-key-change-me}  # encrypts stored connection passwords
+      MDM_INGEST_BUS: kafka
+      MDM_KAFKA_BOOTSTRAP: kafka:9092
+      MDM_IMPORT_DIR: /data/imports
+    volumes:
+      - imports:/data/imports
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_healthy }
+      kafka: { condition: service_healthy }
     ports:
       - "8000:8000"
 
@@ -40,9 +47,48 @@ services:
     build: ./backend
     command: ["arq", "app.worker.WorkerSettings"]
     environment: *backend-env
+    volumes:
+      - imports:/data/imports
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_healthy }
+      kafka: { condition: service_healthy }
+
+  # Kafka backbone (single-node KRaft, development sizing). Topics are auto-created on first publish.
+  kafka:
+    image: apache/kafka:3.8.0
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_NUM_PARTITIONS: 3
+    volumes:
+      - kafkadata:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+
+  # normalizer + ingest-writer: consumes mdm.raw.* and mdm.source.normalized, writes to PostgreSQL.
+  # Exits on infrastructure errors; `restart` resumes from the last committed offset.
+  consumers:
+    build: ./backend
+    command: ["python", "-m", "app.consumers"]
+    environment: *backend-env
+    restart: unless-stopped
+    depends_on:
+      postgres: { condition: service_healthy }
+      kafka: { condition: service_healthy }
+      api: { condition: service_started }
 
   ui:
     build: ./frontend
@@ -65,3 +111,5 @@ services:
 
 volumes:
   pgdata:
+  kafkadata:
+  imports:
