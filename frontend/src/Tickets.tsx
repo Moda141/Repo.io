@@ -1,5 +1,5 @@
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import { Alert, Button, Checkbox, Form, Input, InputNumber, Select, Space, Table, Tabs, Tag, message } from "antd";
+import { Alert, Button, Checkbox, Form, Input, InputNumber, Modal, Select, Space, Table, Tag, message } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { api, ApiError } from "./api";
 import { canWrite, fail, PageTitle } from "./ui";
@@ -17,7 +17,7 @@ const blankField = (): FieldDef => ({ key: "", label: "", type: "text", required
 /** Keys must be latin identifiers; derive one from a latin label, otherwise the user types it. */
 const slug = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").replace(/^(\d)/, "f_$1");
 
-function TemplateBuilder({ domains, onCreated }: { domains: Domain[]; onCreated: () => void }) {
+function TemplateBuilder({ domains, onCreated, onCancel }: { domains: Domain[]; onCreated: () => void; onCancel: () => void }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [domainId, setDomainId] = useState("");
@@ -41,7 +41,7 @@ function TemplateBuilder({ domains, onCreated }: { domains: Domain[]; onCreated:
   };
 
   return (
-    <div className="page-card">
+    <div>
       <Form layout="vertical" onFinish={submit}>
         <Space align="start" wrap style={{ width: "100%" }}>
           <Form.Item label="Template name" required><Input style={{ width: 320 }} value={name} onChange={(e) => setName(e.target.value)} dir="auto" /></Form.Item>
@@ -61,12 +61,15 @@ function TemplateBuilder({ domains, onCreated }: { domains: Domain[]; onCreated:
             { title: "", width: 50, render: (_, __, i) => <Button type="text" danger icon={<DeleteOutlined />} disabled={fields.length === 1} onClick={() => setFields((fs) => fs.filter((_x, idx) => idx !== i))} /> },
           ]}
         />
-        <Space style={{ marginTop: 12 }}>
-          <Button icon={<PlusOutlined />} onClick={() => setFields((fs) => [...fs, blankField()])}>Add field</Button>
-          <Button type="primary" htmlType="submit" loading={busy}>Save template</Button>
-        </Space>
+        <Button icon={<PlusOutlined />} style={{ marginTop: 12 }} onClick={() => setFields((fs) => [...fs, blankField()])}>Add field</Button>
         <p className="text-muted">Mandatory fields must be filled to submit a ticket; optional fields can be left empty. At least one field must be mandatory.</p>
         {error && <Alert type="error" showIcon message={error} />}
+        <div style={{ textAlign: "right", marginTop: 16 }}>
+          <Space>
+            <Button onClick={onCancel}>Cancel</Button>
+            <Button type="primary" htmlType="submit" loading={busy}>Save template</Button>
+          </Space>
+        </div>
       </Form>
     </div>
   );
@@ -129,7 +132,7 @@ export default function Tickets({ role }: { role: string }) {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [tickets, setTickets] = useState<TicketRow[]>([]);
   const [selected, setSelected] = useState<string>();
-  const [tab, setTab] = useState("new");
+  const [creating, setCreating] = useState(false);
 
   const load = useCallback(() => {
     api<Domain[]>("/api/v1/domains").then(setDomains).catch(() => setDomains([]));
@@ -139,9 +142,14 @@ export default function Tickets({ role }: { role: string }) {
   useEffect(load, [load]);
   const current = templates.find((t) => t.id === selected);
 
-  const newRequest = (
+  return (
     <>
       <div className="page-card">
+        <PageTitle
+          title="Tickets"
+          sub="Requests for new records, built from templates that define each domain's mandatory and optional fields."
+          extra={manage ? <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreating(true)}>Create template</Button> : undefined}
+        />
         <Form layout="vertical">
           <Form.Item label="Request template" style={{ marginBottom: 0 }}>
             <Select
@@ -150,24 +158,12 @@ export default function Tickets({ role }: { role: string }) {
             />
           </Form.Item>
         </Form>
-        {templates.length === 0 && <p className="text-muted" style={{ marginTop: 12 }}>No templates yet.{manage ? " Create one from the “Create template” tab." : " Ask a steward to create one."}</p>}
+        {templates.length === 0 && <p className="text-muted" style={{ marginTop: 12 }}>No templates yet.{manage ? " Use “Create template” to add one." : " Ask a steward to create one."}</p>}
       </div>
       {current && <TicketForm key={current.id} template={current} onDone={load} />}
-    </>
-  );
-
-  return (
-    <>
-      <div className="page-card">
-        <PageTitle title="Tickets" sub="Requests for new records, built from templates that define each domain's mandatory and optional fields." />
-        <Tabs
-          activeKey={tab} onChange={setTab}
-          items={[
-            { key: "new", label: "New request", children: newRequest },
-            ...(manage ? [{ key: "template", label: "Create template", children: <TemplateBuilder domains={domains} onCreated={() => { load(); setTab("new"); }} /> }] : []),
-          ]}
-        />
-      </div>
+      <Modal title="Create template" open={creating} onCancel={() => setCreating(false)} footer={null} width={920} destroyOnClose maskClosable={false}>
+        <TemplateBuilder domains={domains} onCancel={() => setCreating(false)} onCreated={() => { load(); setCreating(false); }} />
+      </Modal>
       <div className="page-card">
         <h3 style={{ marginTop: 0 }}>{manage ? "All tickets" : "My tickets"}</h3>
         <Table<TicketRow>
