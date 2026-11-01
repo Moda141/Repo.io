@@ -1,0 +1,8 @@
+{
+  "name":"@repoio/ui-core-components",
+  "version":"1.0.0-SNAPSHOT",
+  "main":"./dist/index.js",
+  "types":"./dist/index.d.ts",
+  "scripts":{"build":"tsup src/index.ts --format esm,cjs --dts"},
+  "dependencies":{"classnames":"2.5.1","react":"18.3.1"}
+}

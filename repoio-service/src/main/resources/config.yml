@@ -1,0 +1,21 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 8585
+  adminConnectors:
+    - type: http
+      port: 8586
+
+database:
+  driverClass: org.postgresql.Driver
+  user: ${DB_USER:-repoio}
+  password: ${DB_PASSWORD:-repoio}
+  url: jdbc:postgresql://${DB_HOST:-localhost}:5432/${DB_NAME:-repoio}
+
+authentication:
+  provider: entra
+  tenantId: ${ENTRA_TENANT_ID:-nahdetmisr}
+  clientId: ${ENTRA_CLIENT_ID}
+
+logging:
+  level: INFO

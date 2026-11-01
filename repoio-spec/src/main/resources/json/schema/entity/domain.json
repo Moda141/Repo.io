@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repoio.io/schemas/entity/domain.json",
+  "title": "Domain",
+  "description": "A business area that owns one or more repositories (Customer, Vendor, Product).",
+  "type": "object",
+  "required": ["id","name","owners"],
+  "properties": {
+    "id": {"type":"string","format":"uuid"},
+    "name": {"type":"string"},
+    "description": {"type":"string"},
+    "color": {"type":"string"},
+    "owners": {"type":"array","items":{"$ref":"../type/reference.json"}},
+    "repositories": {"type":"array","items":{"$ref":"../type/reference.json"}}
+  }
+}

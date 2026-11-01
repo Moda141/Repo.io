@@ -1,0 +1,12 @@
+{
+  "goldenId":"GR-0048213",
+  "repository":{"name":"Customers","type":"Repository"},
+  "parent":{"name":"El Ezaby Group","type":"GoldenRecord"},
+  "status":"Active",
+  "qualityScore":92,
+  "attributes":[
+    {"name":"name","value":"El Ezaby Pharmacy","winningSource":"Nahdet C4C","trust":96},
+    {"name":"phone","value":"+20 100 123 4567","winningSource":"Nahdet C4C","trust":92},
+    {"name":"governorate","value":"Cairo","winningSource":"Retail POS","trust":88}
+  ]
+}

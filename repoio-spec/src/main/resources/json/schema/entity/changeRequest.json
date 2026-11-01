@@ -1,0 +1,20 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://repoio.io/schemas/entity/changeRequest.json",
+  "title":"ChangeRequest",
+  "type":"object",
+  "required":["id","crId","type","repository","requester","state"],
+  "properties":{
+    "id":{"type":"string","format":"uuid"},
+    "crId":{"type":"string"},
+    "type":{"type":"string","enum":["Create","Change","Merge","Deactivate"]},
+    "repository":{"$ref":"../type/reference.json"},
+    "requester":{"$ref":"../type/reference.json"},
+    "template":{"$ref":"../type/reference.json"},
+    "workflow":{"$ref":"../type/reference.json"},
+    "priority":{"type":"string","enum":["Low","Medium","High","Critical"]},
+    "state":{"type":"string","enum":["Draft","Submitted","In approval","Approved","Rejected","Deployed"]},
+    "fields":{"type":"object"},
+    "reason":{"type":"string"}
+  }
+}

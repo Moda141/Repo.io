@@ -1,0 +1,17 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://repoio.io/schemas/entity/repository.json",
+  "title":"Repository",
+  "type":"object",
+  "required":["id","name","domain","status"],
+  "properties":{
+    "id":{"type":"string","format":"uuid"},
+    "name":{"type":"string"},
+    "domain":{"$ref":"../type/reference.json"},
+    "model":{"$ref":"../type/reference.json"},
+    "sources":{"type":"array","items":{"$ref":"../type/reference.json"}},
+    "status":{"type":"string","enum":["Draft","Deployed","Archived"]},
+    "goldenCount":{"type":"integer"},
+    "qualityScore":{"type":"number"}
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://repoio.io/schemas/type/reference.json",
+  "title":"EntityReference",
+  "type":"object",
+  "required":["id","type","name"],
+  "properties":{
+    "id":{"type":"string","format":"uuid"},
+    "type":{"type":"string"},
+    "name":{"type":"string"},
+    "fullyQualifiedName":{"type":"string"},
+    "href":{"type":"string","format":"uri"}
+  }
+}

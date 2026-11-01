@@ -1,0 +1,15 @@
+source:
+  type: sap-c4c
+  config:
+    tenantUrl: ${C4C_TENANT_URL}
+    username: ${C4C_USER}
+    password: ${C4C_PASSWORD}
+    entities: [Customer,Account]
+    role: Master
+sink:
+  type: repoio-api
+  config:
+    apiUrl: http://repoio-service:8585/api/v1
+    repository: Customers
+workflow:
+  schedule: "*/30 * * * *"

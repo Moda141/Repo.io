@@ -1,0 +1,18 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://repoio.io/schemas/entity/goldenRecord.json",
+  "title":"GoldenRecord",
+  "type":"object",
+  "required":["id","goldenId","repository","status","attributes"],
+  "properties":{
+    "id":{"type":"string","format":"uuid"},
+    "goldenId":{"type":"string"},
+    "repository":{"$ref":"../type/reference.json"},
+    "parent":{"$ref":"../type/reference.json"},
+    "children":{"type":"array","items":{"$ref":"../type/reference.json"}},
+    "status":{"type":"string","enum":["Draft","Active","Pending approval","Deactivated"]},
+    "qualityScore":{"type":"number"},
+    "attributes":{"type":"array","items":{"type":"object"}},
+    "classifications":{"type":"array","items":{"$ref":"../type/reference.json"}}
+  }
+}

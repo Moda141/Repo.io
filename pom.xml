@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ ~  Copyright 2026 Nahdet Misr
+ ~  Licensed under the Apache License, Version 2.0 (the "License");
+ ~  you may not use this file except in compliance with the License.
+ ~  You may obtain a copy of the License at
+ ~  http://www.apache.org/licenses/LICENSE-2.0
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.nahdetmisr.repoio</groupId>
+  <artifactId>platform</artifactId>
+  <name>Repoio-Platform</name>
+  <description>
+    Repo.io is a Master Data Management platform for customer, vendor and product
+    golden records. Built on the OpenMetadata foundation.
+  </description>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <url>https://github.com/Moda141/Repo.io</url>
+
+  <modules>
+    <module>repoio-spec</module>
+    <module>repoio-sdk</module>
+    <module>common</module>
+    <module>docker/rdf-store</module>
+    <module>repoio-shaded-deps</module>
+    <module>repoio-service</module>
+    <module>repoio-k8s-operator</module>
+    <module>repoio-integration-tests</module>
+    <module>repoio-mcp</module>
+    <module>repoio-ui-core-components</module>
+    <module>repoio-ui</module>
+    <module>repoio-dist</module>
+    <module>repoio-clients</module>
+  </modules>
+
+  <properties>
+    <java.version>17</java.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+</project>

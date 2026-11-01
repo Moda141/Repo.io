@@ -1,0 +1,11 @@
+[project]
+name = "repoio-ingestion"
+version = "1.0.0"
+description = "Repo.io ingestion framework and connectors"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.6","requests","pandas","splink>=4.0.0",
+  "great-expectations","pyodbc","openpyxl"
+]
+[project.scripts]
+"metadata" = "metadata.cli:main"
