@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.nahdetmisr.repoio</groupId>
+        <artifactId>platform</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>repoio-catalog</artifactId>
+    <packaging>jar</packaging>
+    <name>repoio-catalog</name>
+    <description>Apache Iceberg REST catalog, table DDL, and index config for Repo.io MDM.</description>
+</project>

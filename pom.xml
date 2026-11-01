@@ -34,6 +34,8 @@
     <module>repoio-ui</module>
     <module>repoio-dist</module>
     <module>repoio-clients</module>
+    <module>repoio-catalog</module>
+    <module>repoio-stream</module>
   </modules>
 
   <properties>
