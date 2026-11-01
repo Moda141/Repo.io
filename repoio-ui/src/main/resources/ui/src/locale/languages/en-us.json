@@ -1,0 +1,78 @@
+{
+  "app": {
+    "name": "Repo.io",
+    "tagline": "Enterprise Master Data Management"
+  },
+  "nav": {
+    "home": "Home",
+    "explore": "Explore",
+    "entities": "Entities",
+    "change_requests": "Change requests",
+    "pipelines": "Pipelines",
+    "settings": "Settings"
+  },
+  "search": {
+    "placeholder": "Search customers, vendors, products, authors…"
+  },
+  "actions": {
+    "toggle_language": "Toggle language",
+    "help": "Help",
+    "notifications": "Notifications",
+    "new": "New",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "export": "Export",
+    "import": "Import",
+    "refresh": "Refresh"
+  },
+  "user": {
+    "profile": "Profile",
+    "sign_out": "Sign out"
+  },
+  "entity": {
+    "customer": "Customer",
+    "customer_plural": "Customers",
+    "vendor": "Vendor",
+    "vendor_plural": "Vendors",
+    "product": "Product",
+    "product_plural": "Products",
+    "author": "Author",
+    "author_plural": "Authors",
+    "employee": "Employee",
+    "employee_plural": "Employees",
+    "store": "Store",
+    "store_plural": "Stores",
+    "golden_record": "Golden record",
+    "source_record": "Source record",
+    "master_id": "Master ID",
+    "records": "records"
+  },
+  "page": {
+    "home": {
+      "title": "Welcome to Repo.io",
+      "subtitle": "Your enterprise master data at a glance"
+    },
+    "explore": {
+      "title": "Explore",
+      "subtitle": "Browse every entity in Repo.io"
+    },
+    "change_requests": {
+      "title": "Change requests",
+      "subtitle": "Steward-driven edits awaiting approval"
+    },
+    "pipelines": {
+      "title": "Pipelines",
+      "subtitle": "Ingest from SAP C4C, SAP ERP, SQL Server, Excel"
+    },
+    "settings": {
+      "title": "Settings"
+    },
+    "not_found": {
+      "title": "Page not found",
+      "subtitle": "The page you are looking for does not exist.",
+      "action": "Back to home"
+    }
+  }
+}

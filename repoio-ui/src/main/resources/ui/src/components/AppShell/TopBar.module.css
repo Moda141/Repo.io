@@ -1,0 +1,31 @@
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 24px;
+}
+
+.searchWrap {
+  flex: 1;
+  max-width: 640px;
+}
+
+.search {
+  background: #f9fafb;
+  border-color: transparent;
+}
+
+.search:hover,
+.search:focus-within {
+  background: #ffffff;
+  border-color: #d0d5dd;
+}
+
+.searchIcon {
+  color: #98a2b3;
+}
+
+.right {
+  flex-shrink: 0;
+}

@@ -1,0 +1,29 @@
+/**
+ * Named routes.
+ * Build URLs with `generatePath(ROUTES.X, params)` from react-router-dom
+ * instead of hand-concatenating strings.
+ */
+export const ROUTES = {
+  HOME: '/home',
+  EXPLORE: '/explore',
+  ENTITY_LIST: '/entity/:entityType',
+  ENTITY_DETAIL: '/entity/:entityType/:id',
+  CHANGE_REQUESTS: '/change-requests',
+  PIPELINES: '/pipelines',
+  SETTINGS: '/settings',
+  SETTINGS_USERS: '/settings/users',
+  SETTINGS_ROLES: '/settings/roles',
+  SETTINGS_SOURCES: '/settings/sources',
+  SETTINGS_RULES: '/settings/rules',
+} as const;
+
+export const ENTITY_TYPES = [
+  { key: 'customer', labelKey: 'entity.customer_plural', icon: 'user' },
+  { key: 'vendor', labelKey: 'entity.vendor_plural', icon: 'shop' },
+  { key: 'product', labelKey: 'entity.product_plural', icon: 'book' },
+  { key: 'author', labelKey: 'entity.author_plural', icon: 'edit' },
+  { key: 'employee', labelKey: 'entity.employee_plural', icon: 'team' },
+  { key: 'store', labelKey: 'entity.store_plural', icon: 'home' },
+] as const;
+
+export type EntityType = (typeof ENTITY_TYPES)[number]['key'];

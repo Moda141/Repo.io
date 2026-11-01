@@ -1,0 +1,78 @@
+{
+  "app": {
+    "name": "Repo.io",
+    "tagline": "منصة إدارة البيانات الرئيسية"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "explore": "استكشاف",
+    "entities": "الكيانات",
+    "change_requests": "طلبات التعديل",
+    "pipelines": "خطوط الاستيراد",
+    "settings": "الإعدادات"
+  },
+  "search": {
+    "placeholder": "ابحث في العملاء، الموردين، المنتجات، المؤلفين…"
+  },
+  "actions": {
+    "toggle_language": "تغيير اللغة",
+    "help": "مساعدة",
+    "notifications": "الإشعارات",
+    "new": "جديد",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "export": "تصدير",
+    "import": "استيراد",
+    "refresh": "تحديث"
+  },
+  "user": {
+    "profile": "الملف الشخصي",
+    "sign_out": "تسجيل الخروج"
+  },
+  "entity": {
+    "customer": "عميل",
+    "customer_plural": "العملاء",
+    "vendor": "مورد",
+    "vendor_plural": "الموردون",
+    "product": "منتج",
+    "product_plural": "المنتجات",
+    "author": "مؤلف",
+    "author_plural": "المؤلفون",
+    "employee": "موظف",
+    "employee_plural": "الموظفون",
+    "store": "متجر",
+    "store_plural": "المتاجر",
+    "golden_record": "السجل الذهبي",
+    "source_record": "سجل المصدر",
+    "master_id": "المعرف الرئيسي",
+    "records": "سجل"
+  },
+  "page": {
+    "home": {
+      "title": "أهلاً بك في Repo.io",
+      "subtitle": "بياناتك الرئيسية في نظرة واحدة"
+    },
+    "explore": {
+      "title": "استكشاف",
+      "subtitle": "تصفح كل الكيانات في Repo.io"
+    },
+    "change_requests": {
+      "title": "طلبات التعديل",
+      "subtitle": "تعديلات من الـ stewards بانتظار الموافقة"
+    },
+    "pipelines": {
+      "title": "خطوط الاستيراد",
+      "subtitle": "استيراد من SAP C4C و SAP ERP و SQL Server و Excel"
+    },
+    "settings": {
+      "title": "الإعدادات"
+    },
+    "not_found": {
+      "title": "الصفحة غير موجودة",
+      "subtitle": "الصفحة التي تبحث عنها غير متاحة.",
+      "action": "العودة للرئيسية"
+    }
+  }
+}

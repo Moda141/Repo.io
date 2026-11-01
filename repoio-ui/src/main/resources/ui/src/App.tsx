@@ -1,35 +1,34 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ConfigProvider } from 'antd';
-import { repoioTheme } from './styles/theme';
-import AppContainer from './components/AppContainer';
-import HomePage from './pages/HomePage';
-import DiscoverPage from './pages/DiscoverPage';
-import StewardshipPage from './pages/StewardshipPage';
-import RecordDetailPage from './pages/RecordDetailPage';
-import DuplicateReviewPage from './pages/DuplicateReviewPage';
-import ChangeRequestsPage from './pages/ChangeRequestsPage';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import AppShell from './components/AppShell/AppShell';
+import HomePage from './pages/Home/HomePage';
+import ExplorePage from './pages/Explore/ExplorePage';
+import EntityListPage from './pages/Entity/EntityListPage';
+import EntityDetailPage from './pages/Entity/EntityDetailPage';
+import ChangeRequestsPage from './pages/ChangeRequests/ChangeRequestsPage';
+import PipelinesPage from './pages/Pipelines/PipelinesPage';
+import SettingsPage from './pages/Settings/SettingsPage';
+import NotFoundPage from './pages/NotFoundPage';
+import { ROUTES } from './constants/routes';
 
-const qc = new QueryClient();
-
+/**
+ * App — route table.
+ * Shell routes nest under AppShell (sidebar + header), full-bleed routes
+ * (future login, callback, print views) can be siblings outside it.
+ */
 export default function App() {
   return (
-    <QueryClientProvider client={qc}>
-      <ConfigProvider theme={repoioTheme}>
-        <BrowserRouter>
-          <Routes>
-            <Route element={<AppContainer />}>
-              <Route path="/" element={<Navigate to="/home" />} />
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/discover" element={<DiscoverPage />} />
-              <Route path="/stewardship" element={<StewardshipPage />} />
-              <Route path="/stewardship/record/:id" element={<RecordDetailPage />} />
-              <Route path="/stewardship/duplicates" element={<DuplicateReviewPage />} />
-              <Route path="/requests" element={<ChangeRequestsPage />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </ConfigProvider>
-    </QueryClientProvider>
+    <Routes>
+      <Route element={<AppShell />}>
+        <Route index element={<Navigate to={ROUTES.HOME} replace />} />
+        <Route path={ROUTES.HOME} element={<HomePage />} />
+        <Route path={ROUTES.EXPLORE} element={<ExplorePage />} />
+        <Route path={ROUTES.ENTITY_LIST} element={<EntityListPage />} />
+        <Route path={ROUTES.ENTITY_DETAIL} element={<EntityDetailPage />} />
+        <Route path={ROUTES.CHANGE_REQUESTS} element={<ChangeRequestsPage />} />
+        <Route path={ROUTES.PIPELINES} element={<PipelinesPage />} />
+        <Route path={`${ROUTES.SETTINGS}/*`} element={<SettingsPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   );
 }
