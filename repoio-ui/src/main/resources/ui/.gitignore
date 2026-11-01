@@ -6,3 +6,5 @@ coverage
 .env.local
 .env.*.local
 *.log
+# Mirror OpenMetadata: yarn is the package manager; ignore npm's lockfile
+package-lock.json
