@@ -1,12 +1,20 @@
 import { Tabs, Descriptions, Card, Tag, Space, Button, Timeline } from 'antd';
-import { useParams } from 'react-router-dom';
+import { useParams, Link, generatePath, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import PageHeader from '@/components/common/PageHeader';
-import { EditOutlined, HistoryOutlined } from '@ant-design/icons';
+import { ROUTES } from '@/constants/routes';
+import {
+  EditOutlined,
+  BranchesOutlined,
+  NodeIndexOutlined,
+  MergeCellsOutlined,
+} from '@ant-design/icons';
 
 export default function EntityDetailPage() {
   const { entityType = 'customer', id = '' } = useParams();
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const path = (route: string) => generatePath(route, { entityType, id });
 
   return (
     <>
@@ -15,10 +23,26 @@ export default function EntityDetailPage() {
         subtitle={t('entity.golden_record')}
         actions={
           <>
-            <Button icon={<HistoryOutlined />}>History</Button>
-            <Button type="primary" icon={<EditOutlined />}>
-              {t('actions.edit')}
+            <Link to={path(ROUTES.ENTITY_HIERARCHY)}>
+              <Button icon={<BranchesOutlined />}>Hierarchy</Button>
+            </Link>
+            <Link to={path(ROUTES.ENTITY_LINEAGE)}>
+              <Button icon={<NodeIndexOutlined />}>Lineage</Button>
+            </Link>
+            <Button
+              icon={<MergeCellsOutlined />}
+              onClick={() =>
+                navigate(
+                  `/entity/${entityType}/merge?ids=${id},CUST-000198`
+                )
+              }>
+              Merge
             </Button>
+            <Link to={path(ROUTES.ENTITY_EDIT)}>
+              <Button type="primary" icon={<EditOutlined />}>
+                {t('actions.edit')}
+              </Button>
+            </Link>
           </>
         }
       />

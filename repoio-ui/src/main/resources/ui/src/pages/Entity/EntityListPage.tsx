@@ -1,9 +1,18 @@
 import { Table, Button, Space, Tag, Input } from 'antd';
-import { PlusOutlined, SearchOutlined, FilterOutlined } from '@ant-design/icons';
-import { Link, useParams } from 'react-router-dom';
+import {
+  PlusOutlined,
+  SearchOutlined,
+  FilterOutlined,
+  ScanOutlined,
+  MergeCellsOutlined,
+} from '@ant-design/icons';
+import { Link, useParams, generatePath, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 import PageHeader from '@/components/common/PageHeader';
+import { ROUTES } from '@/constants/routes';
 import type { ColumnsType } from 'antd/es/table';
+import type { Key } from 'react';
 
 interface MockRow {
   master_id: string;
@@ -40,7 +49,14 @@ const mockRows: MockRow[] = [
 export default function EntityListPage() {
   const { t } = useTranslation();
   const { entityType = 'customer' } = useParams<{ entityType: string }>();
+  const navigate = useNavigate();
   const typePluralKey = `entity.${entityType}_plural`;
+  const [selected, setSelected] = useState<Key[]>([]);
+
+  const openMerge = () => {
+    if (selected.length < 2) return;
+    navigate(`/entity/${entityType}/merge?ids=${selected.join(',')}`);
+  };
 
   const columns: ColumnsType<MockRow> = [
     {
@@ -96,10 +112,21 @@ export default function EntityListPage() {
         subtitle={`${mockRows.length} ${t('entity.records')}`}
         actions={
           <>
-            <Button icon={<FilterOutlined />}>{t('actions.export')}</Button>
-            <Button type="primary" icon={<PlusOutlined />}>
-              {t('actions.new')}
+            <Link to={generatePath(ROUTES.DUPLICATE_LIST, { entityType })}>
+              <Button icon={<ScanOutlined />}>Duplicates</Button>
+            </Link>
+            <Button
+              icon={<MergeCellsOutlined />}
+              disabled={selected.length < 2}
+              onClick={openMerge}>
+              Merge{selected.length >= 2 ? ` (${selected.length})` : ''}
             </Button>
+            <Button icon={<FilterOutlined />}>{t('actions.export')}</Button>
+            <Link to={generatePath(ROUTES.ENTITY_NEW, { entityType })}>
+              <Button type="primary" icon={<PlusOutlined />}>
+                {t('actions.new')}
+              </Button>
+            </Link>
           </>
         }
       />
@@ -116,6 +143,10 @@ export default function EntityListPage() {
           columns={columns}
           dataSource={mockRows}
           pagination={{ pageSize: 20 }}
+          rowSelection={{
+            selectedRowKeys: selected,
+            onChange: (keys) => setSelected(keys),
+          }}
         />
       </Space>
     </>
