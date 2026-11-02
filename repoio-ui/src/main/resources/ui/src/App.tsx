@@ -12,6 +12,9 @@ import EntityMergePage from './pages/Entity/EntityMergePage';
 import HierarchyPage from './pages/Entity/HierarchyPage';
 import LineagePage from './pages/Entity/LineagePage';
 import ChangeRequestsPage from './pages/ChangeRequests/ChangeRequestsPage';
+import ChangeRequestNewPage from './pages/ChangeRequests/ChangeRequestNewPage';
+import ChangeRequestDetailPage from './pages/ChangeRequests/ChangeRequestDetailPage';
+import MyRequestsPage from './pages/ChangeRequests/MyRequestsPage';
 import PipelinesPage from './pages/Pipelines/PipelinesPage';
 import SettingsPage from './pages/Settings/SettingsPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -44,7 +47,12 @@ export default function App() {
         <Route path={ROUTES.ENTITY_LINEAGE} element={<LineagePage />} />
         <Route path={ROUTES.ENTITY_DETAIL} element={<EntityDetailPage />} />
 
+        {/* Change requests — static before :crId */}
+        <Route path={ROUTES.CHANGE_REQUEST_NEW} element={<ChangeRequestNewPage />} />
+        <Route path={ROUTES.CHANGE_REQUEST_MINE} element={<MyRequestsPage />} />
         <Route path={ROUTES.CHANGE_REQUESTS} element={<ChangeRequestsPage />} />
+        <Route path={ROUTES.CHANGE_REQUEST_DETAIL} element={<ChangeRequestDetailPage />} />
+
         <Route path={ROUTES.PIPELINES} element={<PipelinesPage />} />
         <Route path={`${ROUTES.SETTINGS}/*`} element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPage />} />

@@ -8,6 +8,7 @@ import {
   BranchesOutlined,
   NodeIndexOutlined,
   MergeCellsOutlined,
+  SwapOutlined,
 } from '@ant-design/icons';
 
 export default function EntityDetailPage() {
@@ -28,6 +29,10 @@ export default function EntityDetailPage() {
             </Link>
             <Link to={path(ROUTES.ENTITY_LINEAGE)}>
               <Button icon={<NodeIndexOutlined />}>Lineage</Button>
+            </Link>
+            <Link
+              to={`${ROUTES.CHANGE_REQUEST_NEW}?entityType=${entityType}&id=${id}`}>
+              <Button icon={<SwapOutlined />}>Request change</Button>
             </Link>
             <Button
               icon={<MergeCellsOutlined />}

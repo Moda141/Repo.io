@@ -24,6 +24,9 @@ export const ROUTES = {
 
   // Governance
   CHANGE_REQUESTS: '/change-requests',
+  CHANGE_REQUEST_NEW: '/change-requests/new',
+  CHANGE_REQUEST_MINE: '/change-requests/mine',
+  CHANGE_REQUEST_DETAIL: '/change-requests/:crId',
   PIPELINES: '/pipelines',
 
   // Admin
