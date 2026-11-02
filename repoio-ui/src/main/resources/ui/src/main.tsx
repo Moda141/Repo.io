@@ -13,6 +13,7 @@ import AppRoot from './AppRoot';
 // reset.
 import './styles/tokens.css';
 import './styles/app.less';
+import './styles/components-index.less';
 import './styles/global.css';
 import './locale/i18n';
 
