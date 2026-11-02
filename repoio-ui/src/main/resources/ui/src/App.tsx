@@ -36,6 +36,19 @@ import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/Auth/LoginPage';
 import ProfilePage from './pages/Profile/ProfilePage';
 import NotificationsPage from './pages/Notifications/NotificationsPage';
+import WorkflowsListPage from './pages/Workflows/WorkflowsListPage';
+import WorkflowBuilderPage from './pages/Workflows/WorkflowBuilderPage';
+import WorkflowDetailPage from './pages/Workflows/WorkflowDetailPage';
+import WorkflowRunsPage from './pages/Workflows/WorkflowRunsPage';
+import AlertsListPage from './pages/Alerts/AlertsListPage';
+import AlertEditorPage from './pages/Alerts/AlertEditorPage';
+import AlertChannelsPage from './pages/Alerts/AlertChannelsPage';
+import AlertHistoryPage from './pages/Alerts/AlertHistoryPage';
+import IntegrationsHubPage from './pages/Integrations/IntegrationsHubPage';
+import WebhooksPage from './pages/Integrations/WebhooksPage';
+import ShareLinksPage from './pages/Integrations/ShareLinksPage';
+import EmbedsPage from './pages/Integrations/EmbedsPage';
+import ApiReferencePage from './pages/Integrations/ApiReferencePage';
 import { ROUTES } from './constants/routes';
 
 /**
@@ -94,6 +107,27 @@ export default function App() {
         <Route path={ROUTES.SOURCE_NEW} element={<SourceNewPage />} />
         <Route path={ROUTES.SOURCE_DETAIL} element={<SourceDetailPage />} />
         <Route path={ROUTES.SOURCES} element={<SourcesPage />} />
+
+        {/* Workflows */}
+        <Route path={ROUTES.WORKFLOW_NEW} element={<WorkflowBuilderPage />} />
+        <Route path={ROUTES.WORKFLOW_EDIT} element={<WorkflowBuilderPage />} />
+        <Route path={ROUTES.WORKFLOW_RUNS} element={<WorkflowRunsPage />} />
+        <Route path={ROUTES.WORKFLOW_DETAIL} element={<WorkflowDetailPage />} />
+        <Route path={ROUTES.WORKFLOWS} element={<WorkflowsListPage />} />
+
+        {/* Alerts */}
+        <Route path={ROUTES.ALERT_NEW} element={<AlertEditorPage />} />
+        <Route path={ROUTES.ALERT_CHANNELS} element={<AlertChannelsPage />} />
+        <Route path={ROUTES.ALERT_HISTORY} element={<AlertHistoryPage />} />
+        <Route path={ROUTES.ALERT_DETAIL} element={<AlertEditorPage />} />
+        <Route path={ROUTES.ALERTS} element={<AlertsListPage />} />
+
+        {/* Integrations */}
+        <Route path={ROUTES.INTEGRATIONS_WEBHOOKS} element={<WebhooksPage />} />
+        <Route path={ROUTES.INTEGRATIONS_LINKS} element={<ShareLinksPage />} />
+        <Route path={ROUTES.INTEGRATIONS_EMBEDS} element={<EmbedsPage />} />
+        <Route path={ROUTES.INTEGRATIONS_API} element={<ApiReferencePage />} />
+        <Route path={ROUTES.INTEGRATIONS} element={<IntegrationsHubPage />} />
 
         {/* Quality & Rules */}
         <Route path={ROUTES.QUALITY} element={<DQDashboardPage />} />

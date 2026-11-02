@@ -69,6 +69,33 @@ export const ROUTES = {
   MATCHING: '/quality/matching',
   SURVIVORSHIP: '/quality/survivorship',
   PLAYGROUND: '/quality/playground',
+
+  // Workflows
+  WORKFLOWS: '/workflows',
+  WORKFLOW_NEW: '/workflows/new',
+  WORKFLOW_DETAIL: '/workflows/:workflowId',
+  WORKFLOW_EDIT: '/workflows/:workflowId/edit',
+  WORKFLOW_RUNS: '/workflows/:workflowId/runs',
+
+  // Alerts
+  ALERTS: '/alerts',
+  ALERT_NEW: '/alerts/new',
+  ALERT_DETAIL: '/alerts/:alertId',
+  ALERT_CHANNELS: '/alerts/channels',
+  ALERT_HISTORY: '/alerts/history',
+
+  // Email (admin surface)
+  EMAIL_TEMPLATES: '/settings/email/templates',
+  EMAIL_TEMPLATE_EDIT: '/settings/email/templates/:templateId',
+  EMAIL_SETTINGS: '/settings/email',
+  EMAIL_LOG: '/settings/email/log',
+
+  // Integrations (share links, embeds, webhooks, API)
+  INTEGRATIONS: '/integrations',
+  INTEGRATIONS_WEBHOOKS: '/integrations/webhooks',
+  INTEGRATIONS_LINKS: '/integrations/share-links',
+  INTEGRATIONS_EMBEDS: '/integrations/embeds',
+  INTEGRATIONS_API: '/integrations/api',
 } as const;
 
 export const ENTITY_TYPES = [
