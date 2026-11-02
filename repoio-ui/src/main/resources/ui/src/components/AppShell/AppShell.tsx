@@ -18,9 +18,12 @@ const STORAGE_KEY = 'repoio-sidebar-collapsed';
  * @layout-header-padding.
  */
 export default function AppShell() {
+  // Default to EXPANDED to match OpenMetadata (228 px wide with labels).
+  // User can collapse via the toggle; preference persists.
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     try {
-      return localStorage.getItem(STORAGE_KEY) === '1';
+      const v = localStorage.getItem(STORAGE_KEY);
+      return v === '1';
     } catch {
       return false;
     }
