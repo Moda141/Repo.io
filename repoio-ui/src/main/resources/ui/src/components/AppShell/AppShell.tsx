@@ -1,38 +1,30 @@
-import { Layout } from 'antd';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 import styles from './AppShell.module.css';
 
-const { Sider, Header, Content } = Layout;
-
 /**
- * AppShell — the three-pane layout mirrored from OpenMetadata:
- *   84px dark icon rail (left)
- *   64px white top bar with global search + user menu
- *   content area with the active route's page.
+ * AppShell — literal port of OpenMetadata's layout chrome:
+ *   84 px white icon rail (bordered) · 64 px white navbar (bordered)
+ *   · gray-blue page body (#f8f9fc).
  *
- * This is the only chrome the user sees on every logged-in route;
- * pages do not render their own header or sidebar.
+ * No Antd `<Layout>` here — raw divs so we control border/padding
+ * exactly as OpenMetadata does.
  */
 export default function AppShell() {
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider
-        width={84}
-        theme="dark"
-        collapsible={false}
-        className={styles.sider}>
+    <div className={styles.shell}>
+      <aside className={styles.sider}>
         <Sidebar />
-      </Sider>
-      <Layout>
-        <Header className={styles.header}>
+      </aside>
+      <div className={styles.main}>
+        <header className={styles.navbar}>
           <TopBar />
-        </Header>
-        <Content className={styles.content}>
+        </header>
+        <main className={styles.content}>
           <Outlet />
-        </Content>
-      </Layout>
-    </Layout>
+        </main>
+      </div>
+    </div>
   );
 }

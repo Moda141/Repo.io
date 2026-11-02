@@ -1,31 +1,86 @@
+/* Repo.io · TopBar · OpenMetadata NavBar visual match */
+
 .topBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0 24px;
+  gap: var(--repoio-space-md);
 }
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--repoio-space-xs);
+  color: var(--repoio-grey-500);
+  font-size: var(--repoio-font-sm);
+  font-weight: var(--repoio-weight-medium);
+  flex-shrink: 0;
+}
+.breadcrumb a { color: var(--repoio-grey-500); text-decoration: none; }
+.breadcrumb a:hover { color: var(--repoio-grey-900); }
 
 .searchWrap {
   flex: 1;
-  max-width: 640px;
+  display: flex;
+  justify-content: center;
 }
 
 .search {
-  background: #f9fafb;
-  border-color: transparent;
+  width: 100%;
+  max-width: 560px;
+  height: 40px;
+  background: var(--repoio-grey-50) !important;
+  border: 1px solid var(--repoio-grey-200) !important;
+  border-radius: var(--repoio-radius-md) !important;
+  box-shadow: none !important;
 }
-
 .search:hover,
 .search:focus-within {
-  background: #ffffff;
-  border-color: #d0d5dd;
-}
-
-.searchIcon {
-  color: #98a2b3;
+  background: #ffffff !important;
+  border-color: var(--repoio-grey-300) !important;
 }
 
 .right {
+  display: flex;
+  align-items: center;
+  gap: var(--repoio-space-xs);
   flex-shrink: 0;
 }
+
+.iconBtn {
+  width: 40px;
+  height: 40px;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  color: var(--repoio-grey-500) !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--repoio-radius-md) !important;
+  box-shadow: none !important;
+  font-size: 18px;
+}
+.iconBtn:hover {
+  background: var(--repoio-grey-100) !important;
+  color: var(--repoio-grey-900) !important;
+}
+
+.langPill {
+  min-width: 44px;
+  height: 32px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--repoio-grey-200);
+  border-radius: var(--repoio-radius-md);
+  background: #ffffff;
+  color: var(--repoio-grey-700);
+  font-size: var(--repoio-font-sm);
+  font-weight: var(--repoio-weight-semibold);
+  cursor: pointer;
+}
+.langPill:hover { background: var(--repoio-grey-50); color: var(--repoio-grey-900); }
+
+.avatarWrap { cursor: pointer; }

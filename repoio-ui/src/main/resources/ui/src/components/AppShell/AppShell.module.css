@@ -1,10 +1,18 @@
+/* AppShell layout — follows OpenMetadata's actual metrics exactly:
+ *   @sidebar-width: 84px
+ *   @layout-header-height: 80px
+ *   @layout-header-padding: 20px 24px
+ * (from openmetadata-ui src/styles/variables.less). The content padding and
+ * background follow .page-container in src/styles/app.less. */
+
 .sider {
   position: sticky;
   left: 0;
   top: 0;
   height: 100vh;
   z-index: 10;
-  border-right: 1px solid rgba(255, 255, 255, 0.04);
+  border-right: 1px solid var(--repoio-color-border-secondary);
+  background: var(--repoio-color-bg-primary, #ffffff);
 }
 
 .header {
@@ -13,14 +21,18 @@
   z-index: 9;
   display: flex;
   align-items: center;
-  padding: 0;
-  background: #ffffff;
-  border-bottom: 1px solid #eaecf0;
+  height: 80px !important;
+  line-height: 1 !important;
+  padding: 20px 24px !important;
+  background: var(--repoio-color-bg-primary, #ffffff) !important;
+  border-bottom: 1px solid var(--repoio-color-border-secondary, #eaecf0);
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 
 .content {
-  padding: 24px 32px 48px 32px;
-  min-height: calc(100vh - 64px);
+  /* Mirrors .page-container from app.less (padding: 0 24px 16px 24px) */
+  padding: 24px 24px 48px 24px;
+  min-height: calc(100vh - 80px);
   overflow: auto;
+  background: var(--repoio-color-bg-page, #f8f9fc);
 }

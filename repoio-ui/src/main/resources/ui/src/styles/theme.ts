@@ -37,8 +37,8 @@ export const tokens = {
   sidebarItemText: '#D0D5DD',
   sidebarItemTextActive: '#FFFFFF',
 
-  // Top bar
-  headerHeight: 64,
+  // Top bar — matches OpenMetadata @layout-header-height / padding
+  headerHeight: 80,
   headerBg: '#FFFFFF',
   headerBorder: '#EAECF0',
 
