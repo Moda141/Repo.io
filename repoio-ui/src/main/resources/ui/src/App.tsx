@@ -20,6 +20,12 @@ import ChangeRequestNewPage from './pages/ChangeRequests/ChangeRequestNewPage';
 import ChangeRequestDetailPage from './pages/ChangeRequests/ChangeRequestDetailPage';
 import MyRequestsPage from './pages/ChangeRequests/MyRequestsPage';
 import PipelinesPage from './pages/Pipelines/PipelinesPage';
+import PipelineDetailPage from './pages/Pipelines/PipelineDetailPage';
+import PipelineEditPage from './pages/Pipelines/PipelineEditPage';
+import PipelineNewPage from './pages/Pipelines/PipelineNewPage';
+import SourcesPage from './pages/Sources/SourcesPage';
+import SourceDetailPage from './pages/Sources/SourceDetailPage';
+import SourceNewPage from './pages/Sources/SourceNewPage';
 import SettingsPage from './pages/Settings/SettingsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { ROUTES } from './constants/routes';
@@ -64,7 +70,17 @@ export default function App() {
         <Route path={ROUTES.CHANGE_REQUESTS} element={<ChangeRequestsPage />} />
         <Route path={ROUTES.CHANGE_REQUEST_DETAIL} element={<ChangeRequestDetailPage />} />
 
+        {/* Pipelines — static before :pipelineId */}
+        <Route path={ROUTES.PIPELINE_NEW} element={<PipelineNewPage />} />
+        <Route path={ROUTES.PIPELINE_EDIT} element={<PipelineEditPage />} />
+        <Route path={ROUTES.PIPELINE_DETAIL} element={<PipelineDetailPage />} />
         <Route path={ROUTES.PIPELINES} element={<PipelinesPage />} />
+
+        {/* Sources */}
+        <Route path={ROUTES.SOURCE_NEW} element={<SourceNewPage />} />
+        <Route path={ROUTES.SOURCE_DETAIL} element={<SourceDetailPage />} />
+        <Route path={ROUTES.SOURCES} element={<SourcesPage />} />
+
         <Route path={`${ROUTES.SETTINGS}/*`} element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

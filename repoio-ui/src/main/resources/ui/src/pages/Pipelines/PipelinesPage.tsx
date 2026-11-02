@@ -3,9 +3,13 @@ import {
   PlayCircleOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
+  PlusOutlined,
+  ApiOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import PageHeader from '@/components/common/PageHeader';
+import { ROUTES } from '@/constants/routes';
 import type { ColumnsType } from 'antd/es/table';
 
 interface Run {
@@ -55,7 +59,11 @@ export default function PipelinesPage() {
     {
       title: 'Pipeline',
       dataIndex: 'pipeline',
-      render: (p) => <code>{p}</code>,
+      render: (p: string) => (
+        <Link to={`/pipelines/${p}`}>
+          <code>{p}</code>
+        </Link>
+      ),
     },
     { title: 'Source', dataIndex: 'source' },
     { title: 'Entity', dataIndex: 'entity' },
@@ -95,7 +103,18 @@ export default function PipelinesPage() {
       <PageHeader
         title={t('page.pipelines.title')}
         subtitle={t('page.pipelines.subtitle')}
-        actions={<Button type="primary">{t('actions.new')}</Button>}
+        actions={
+          <>
+            <Link to={ROUTES.SOURCES}>
+              <Button icon={<ApiOutlined />}>Sources</Button>
+            </Link>
+            <Link to={ROUTES.PIPELINE_NEW}>
+              <Button type="primary" icon={<PlusOutlined />}>
+                {t('actions.new')}
+              </Button>
+            </Link>
+          </>
+        }
       />
       <Space direction="vertical" size={16} style={{ width: '100%' }}>
         <Card>

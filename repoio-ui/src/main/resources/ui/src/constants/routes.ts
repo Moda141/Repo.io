@@ -34,7 +34,15 @@ export const ROUTES = {
   CHANGE_REQUEST_NEW: '/change-requests/new',
   CHANGE_REQUEST_MINE: '/change-requests/mine',
   CHANGE_REQUEST_DETAIL: '/change-requests/:crId',
+
+  // Pipelines & Sources
   PIPELINES: '/pipelines',
+  PIPELINE_NEW: '/pipelines/new',
+  PIPELINE_DETAIL: '/pipelines/:pipelineId',
+  PIPELINE_EDIT: '/pipelines/:pipelineId/edit',
+  SOURCES: '/sources',
+  SOURCE_NEW: '/sources/new',
+  SOURCE_DETAIL: '/sources/:sourceId',
 
   // Admin
   SETTINGS: '/settings',
