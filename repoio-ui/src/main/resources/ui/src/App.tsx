@@ -33,6 +33,9 @@ import SurvivorshipPage from './pages/Quality/SurvivorshipPage';
 import PlaygroundPage from './pages/Quality/PlaygroundPage';
 import SettingsPage from './pages/Settings/SettingsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import LoginPage from './pages/Auth/LoginPage';
+import ProfilePage from './pages/Profile/ProfilePage';
+import NotificationsPage from './pages/Notifications/NotificationsPage';
 import { ROUTES } from './constants/routes';
 
 /**
@@ -46,8 +49,14 @@ import { ROUTES } from './constants/routes';
 export default function App() {
   return (
     <Routes>
+      {/* Full-bleed routes (no AppShell) */}
+      <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+
+      {/* Shell routes */}
       <Route element={<AppShell />}>
         <Route index element={<Navigate to={ROUTES.HOME} replace />} />
+        <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
+        <Route path={ROUTES.NOTIFICATIONS} element={<NotificationsPage />} />
         <Route path={ROUTES.HOME} element={<HomePage />} />
         <Route path={ROUTES.EXPLORE} element={<ExplorePage />} />
 

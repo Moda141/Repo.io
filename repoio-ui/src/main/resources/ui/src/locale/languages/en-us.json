@@ -32,6 +32,17 @@
     "profile": "Profile",
     "sign_out": "Sign out"
   },
+  "auth": {
+    "sign_in": "Sign in",
+    "sso_subtitle": "Use your Nahdet Misr Entra ID account.",
+    "continue_microsoft": "Continue with Microsoft",
+    "use_password": "Sign in with a password instead",
+    "or": "or",
+    "password_disabled_prod": "Password sign-in is only for break-glass access. Prefer SSO.",
+    "remember": "Keep me signed in",
+    "forgot": "Forgot password?",
+    "need_help": "Need help?"
+  },
   "entity": {
     "customer": "Customer",
     "customer_plural": "Customers",

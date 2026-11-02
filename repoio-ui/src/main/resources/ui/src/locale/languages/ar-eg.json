@@ -32,6 +32,17 @@
     "profile": "الملف الشخصي",
     "sign_out": "تسجيل الخروج"
   },
+  "auth": {
+    "sign_in": "تسجيل الدخول",
+    "sso_subtitle": "استخدم حساب نهضة مصر على Entra ID.",
+    "continue_microsoft": "متابعة بـ Microsoft",
+    "use_password": "تسجيل الدخول بكلمة المرور",
+    "or": "أو",
+    "password_disabled_prod": "كلمة المرور للطوارئ فقط. استخدم SSO.",
+    "remember": "تذكرني",
+    "forgot": "نسيت كلمة المرور؟",
+    "need_help": "محتاج مساعدة؟"
+  },
   "entity": {
     "customer": "عميل",
     "customer_plural": "العملاء",

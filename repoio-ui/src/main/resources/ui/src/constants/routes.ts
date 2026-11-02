@@ -4,6 +4,11 @@
  * instead of hand-concatenating strings.
  */
 export const ROUTES = {
+  // Auth & profile
+  LOGIN: '/login',
+  PROFILE: '/profile',
+  NOTIFICATIONS: '/notifications',
+
   HOME: '/home',
   EXPLORE: '/explore',
 

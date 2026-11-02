@@ -1,4 +1,4 @@
-import { Input, Space, Avatar, Dropdown, Button } from 'antd';
+import { Input, Space, Avatar, Dropdown, Button, Badge } from 'antd';
 import {
   SearchOutlined,
   BellOutlined,
@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { ROUTES } from '@/constants/routes';
+import { useApplicationStore } from '@/hooks/useApplicationStore';
 import styles from './TopBar.module.css';
 
 /**
@@ -20,13 +21,22 @@ import styles from './TopBar.module.css';
 export default function TopBar() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const { user, signOut } = useApplicationStore();
   const [q, setQ] = useState('');
   const isAr = i18n.language.toLowerCase().startsWith('ar');
+  const unread = 3;
 
   const toggleLang = () => i18n.changeLanguage(isAr ? 'en-US' : 'ar-EG');
   const submitSearch = () => {
     const t = q.trim();
     navigate(t ? `${ROUTES.SEARCH}?q=${encodeURIComponent(t)}` : ROUTES.SEARCH);
+  };
+
+  const avatarLetter =
+    (user?.name || user?.email || 'M')[0]?.toUpperCase() ?? 'M';
+  const signOutAction = () => {
+    signOut();
+    navigate(ROUTES.LOGIN);
   };
 
   return (
@@ -59,11 +69,14 @@ export default function TopBar() {
           aria-label={t('actions.help')}
         />
 
-        <Button
-          type="text"
-          icon={<BellOutlined />}
-          aria-label={t('actions.notifications')}
-        />
+        <Badge count={unread} size="small" offset={[-2, 2]}>
+          <Button
+            type="text"
+            icon={<BellOutlined />}
+            aria-label={t('actions.notifications')}
+            onClick={() => navigate(ROUTES.NOTIFICATIONS)}
+          />
+        </Badge>
 
         <Dropdown
           menu={{
@@ -72,6 +85,13 @@ export default function TopBar() {
                 key: 'profile',
                 icon: <UserOutlined />,
                 label: t('user.profile'),
+                onClick: () => navigate(ROUTES.PROFILE),
+              },
+              {
+                key: 'notifications',
+                icon: <BellOutlined />,
+                label: t('actions.notifications'),
+                onClick: () => navigate(ROUTES.NOTIFICATIONS),
               },
               { type: 'divider' },
               {
@@ -79,6 +99,7 @@ export default function TopBar() {
                 icon: <LogoutOutlined />,
                 label: t('user.sign_out'),
                 danger: true,
+                onClick: signOutAction,
               },
             ],
           }}
@@ -86,7 +107,7 @@ export default function TopBar() {
           <Avatar
             style={{ cursor: 'pointer', background: '#1570EF' }}
             size={32}>
-            M
+            {avatarLetter}
           </Avatar>
         </Dropdown>
       </Space>
