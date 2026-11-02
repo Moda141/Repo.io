@@ -6,6 +6,7 @@ import {
   SwapOutlined,
   ApiOutlined,
   SettingOutlined,
+  SafetyCertificateOutlined,
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +36,11 @@ export default function Sidebar() {
       label: t('nav.change_requests'),
     },
     { key: ROUTES.PIPELINES, icon: <ApiOutlined />, label: t('nav.pipelines') },
+    {
+      key: ROUTES.QUALITY,
+      icon: <SafetyCertificateOutlined />,
+      label: t('nav.quality'),
+    },
     {
       key: ROUTES.SETTINGS,
       icon: <SettingOutlined />,

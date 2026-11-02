@@ -48,6 +48,7 @@ export default defineConfig({
           react: ['react', 'react-dom', 'react-router-dom'],
           antd: ['antd', '@ant-design/icons'],
           query: ['@tanstack/react-query', '@tanstack/react-query-devtools'],
+          charts: ['echarts', 'echarts-for-react'],
         },
       },
     },

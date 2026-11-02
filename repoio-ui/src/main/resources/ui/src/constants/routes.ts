@@ -50,6 +50,14 @@ export const ROUTES = {
   SETTINGS_ROLES: '/settings/roles',
   SETTINGS_SOURCES: '/settings/sources',
   SETTINGS_RULES: '/settings/rules',
+
+  // Data quality & rules
+  QUALITY: '/quality',
+  QUALITY_RULES: '/quality/rules',
+  QUALITY_RULE_EDIT: '/quality/rules/:ruleId',
+  MATCHING: '/quality/matching',
+  SURVIVORSHIP: '/quality/survivorship',
+  PLAYGROUND: '/quality/playground',
 } as const;
 
 export const ENTITY_TYPES = [

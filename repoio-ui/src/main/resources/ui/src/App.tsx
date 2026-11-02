@@ -26,6 +26,11 @@ import PipelineNewPage from './pages/Pipelines/PipelineNewPage';
 import SourcesPage from './pages/Sources/SourcesPage';
 import SourceDetailPage from './pages/Sources/SourceDetailPage';
 import SourceNewPage from './pages/Sources/SourceNewPage';
+import DQDashboardPage from './pages/Quality/DQDashboardPage';
+import DQRuleEditorPage from './pages/Quality/DQRuleEditorPage';
+import MatchingRulesPage from './pages/Quality/MatchingRulesPage';
+import SurvivorshipPage from './pages/Quality/SurvivorshipPage';
+import PlaygroundPage from './pages/Quality/PlaygroundPage';
 import SettingsPage from './pages/Settings/SettingsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { ROUTES } from './constants/routes';
@@ -80,6 +85,14 @@ export default function App() {
         <Route path={ROUTES.SOURCE_NEW} element={<SourceNewPage />} />
         <Route path={ROUTES.SOURCE_DETAIL} element={<SourceDetailPage />} />
         <Route path={ROUTES.SOURCES} element={<SourcesPage />} />
+
+        {/* Quality & Rules */}
+        <Route path={ROUTES.QUALITY} element={<DQDashboardPage />} />
+        <Route path={ROUTES.QUALITY_RULES} element={<DQRuleEditorPage />} />
+        <Route path={ROUTES.QUALITY_RULE_EDIT} element={<DQRuleEditorPage />} />
+        <Route path={ROUTES.MATCHING} element={<MatchingRulesPage />} />
+        <Route path={ROUTES.SURVIVORSHIP} element={<SurvivorshipPage />} />
+        <Route path={ROUTES.PLAYGROUND} element={<PlaygroundPage />} />
 
         <Route path={`${ROUTES.SETTINGS}/*`} element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPage />} />
