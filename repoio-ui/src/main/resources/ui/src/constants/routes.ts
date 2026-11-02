@@ -47,7 +47,13 @@ export const ROUTES = {
   // Admin
   SETTINGS: '/settings',
   SETTINGS_USERS: '/settings/users',
+  SETTINGS_USER_DETAIL: '/settings/users/:userId',
   SETTINGS_ROLES: '/settings/roles',
+  SETTINGS_SSO: '/settings/sso',
+  SETTINGS_API_KEYS: '/settings/api-keys',
+  SETTINGS_AUDIT: '/settings/audit',
+  SETTINGS_SCHEMA: '/settings/schema',
+  SETTINGS_SCHEMA_ENTITY: '/settings/schema/:entityType',
   SETTINGS_SOURCES: '/settings/sources',
   SETTINGS_RULES: '/settings/rules',
 
