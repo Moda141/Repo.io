@@ -1,98 +1,200 @@
-/* Repo.io · Sidebar · OpenMetadata LeftSidebar visual match */
+/* Mirrors openmetadata-ui/src/main/resources/ui/src/components/MyData/
+   LeftSidebar/left-sidebar.less. Widths follow OM's tw:w-18 (72 px) and
+   tw:w-57 (228 px). Logo container is 40 px with 20 px vertical margin.
+   top-menu grows, bottom-menu stays pinned, with a divider above it. */
 
-.sidebar {
+.aside {
+  position: sticky;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background: var(--repoio-color-bg-primary, #ffffff);
+  border-right: 1px solid var(--repoio-color-border-secondary, #eaecf0);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  height: 100%;
-  padding: var(--repoio-space-md) 0;
+  overflow: hidden;
+  z-index: 10;
+  transition: width 180ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Logo mark at the top */
-.brand {
+.collapsed {
+  width: 72px;
+  min-width: 72px;
+  max-width: 72px;
+}
+
+.expanded {
+  width: 228px;
+  min-width: 228px;
+  max-width: 228px;
+}
+
+.logoContainer {
+  height: 40px;
+  padding: 0 20px;
+  margin: 20px 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--repoio-radius-lg);
-  margin-bottom: var(--repoio-space-lg);
 }
 
-/* Nav items — list between brand and footer */
-.nav {
+.logoLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.logoLink:hover {
+  text-decoration: none;
+}
+
+.wordmark {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--repoio-color-text-primary, #101828);
+  letter-spacing: -0.02em;
+}
+
+.layout {
+  height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--repoio-space-xxs);
+}
+
+.menu {
   flex: 1;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding-right: 0;
+}
+.menu::-webkit-scrollbar { display: none; }
+
+.topMenu { flex: 1; }
+.bottomMenu { flex-shrink: 0; padding-bottom: 16px; }
+
+.list {
+  margin: 0;
+  padding: 0 8px 0 16px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.item {
-  position: relative;
+.divider {
+  height: 1px;
+  background: var(--repoio-color-border-secondary, #eaecf0);
+  margin: 16px 16px 8px 16px;
+}
+
+/* NavItem — mirrors OpenMetadata's NavItemBase visual
+   (size="lg", variant="solid"):
+   - 40px row with 10px gap
+   - 8px border radius
+   - current state: light brand bg + brand text, left accent of 2px */
+
+.navItem {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  color: var(--repoio-sidebar-icon);
-  font-size: 22px;
-  border-radius: var(--repoio-radius-md);
-  text-decoration: none !important;
+  gap: 12px;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 8px;
+  color: var(--repoio-color-text-secondary, #475467);
+  background: transparent;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 140ms ease, color 140ms ease;
+  transition: background 120ms, color 120ms;
+  border: none;
+  width: 100%;
+  text-align: inherit;
 }
 
-.item:hover {
-  background: var(--repoio-sidebar-icon-hover-bg);
-  color: var(--repoio-primary-7);
-  text-decoration: none !important;
+.navItem:hover {
+  background: var(--repoio-color-bg-secondary, #f9fafb);
+  color: var(--repoio-color-text-primary, #101828);
+  text-decoration: none;
 }
 
-.item.active {
-  background: var(--repoio-sidebar-icon-active-bg);
-  color: var(--repoio-sidebar-icon-active);
+.navItemCurrent {
+  background: #eff8ff;          /* OpenMetadata @primary-50 */
+  color: var(--repoio-color-primary-6, #1570ef);
+  position: relative;
 }
-
-/* Blue "pill" on the inner edge of an active item — OpenMetadata's
- * signature accent. */
-.item.active::before {
+.navItemCurrent::before {
   content: '';
   position: absolute;
-  left: -14px;
-  top: 10px;
-  bottom: 10px;
+  left: -4px;
+  top: 8px;
+  bottom: 8px;
   width: 3px;
-  background: var(--repoio-primary-6);
-  border-radius: 0 3px 3px 0;
+  border-radius: 3px;
+  background: var(--repoio-color-primary-6, #1570ef);
 }
-html[dir='rtl'] .item.active::before {
-  left: auto;
-  right: -14px;
-  border-radius: 3px 0 0 3px;
+.navItemCurrent:hover {
+  background: #eff8ff;
+  color: var(--repoio-color-primary-6, #1570ef);
 }
 
-.label {
-  position: absolute;
-  left: calc(100% + 14px);
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--repoio-grey-900);
-  color: #ffffff;
-  padding: 6px 10px;
-  border-radius: var(--repoio-radius-sm);
-  font-size: var(--repoio-font-sm);
-  font-weight: var(--repoio-weight-medium);
+.navIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.collapsed .navItem {
+  justify-content: center;
+  padding: 0;
+  width: 40px;
+  margin: 0 auto;
+}
+.collapsed .list {
+  padding: 0;
+  align-items: center;
+}
+.collapsed .divider {
+  margin: 16px 12px 8px 12px;
+}
+
+.navLabel {
   white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 140ms ease;
-  z-index: 20;
-  box-shadow: var(--repoio-shadow-md);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.item:hover .label { opacity: 1; }
-html[dir='rtl'] .label { left: auto; right: calc(100% + 14px); }
 
-/* Spacer that pushes a potential footer to the bottom. */
-.spacer { flex: 1; }
+.logoutBtn {
+  color: var(--repoio-color-text-secondary, #475467);
+}
+.logoutBtn:hover {
+  color: var(--repoio-color-error-primary, #d92d20);
+  background: #fef3f2;
+}
+
+.collapseToggle {
+  position: absolute;
+  bottom: 16px;
+  right: -12px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid var(--repoio-color-border-secondary, #eaecf0);
+  color: var(--repoio-color-text-tertiary, #667085);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.1);
+  z-index: 11;
+  font-size: 11px;
+}
+.collapseToggle:hover {
+  color: var(--repoio-color-primary-6, #1570ef);
+}

@@ -10,6 +10,9 @@
     "change_requests": "طلبات التعديل",
     "pipelines": "خطوط الاستيراد",
     "quality": "جودة البيانات",
+    "workflows": "سير العمل",
+    "alerts": "التنبيهات",
+    "integrations": "التكاملات",
     "settings": "الإعدادات"
   },
   "search": {

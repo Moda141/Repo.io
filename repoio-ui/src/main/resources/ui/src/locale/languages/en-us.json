@@ -10,6 +10,9 @@
     "change_requests": "Change requests",
     "pipelines": "Pipelines",
     "quality": "Quality",
+    "workflows": "Workflows",
+    "alerts": "Alerts",
+    "integrations": "Integrations",
     "settings": "Settings"
   },
   "search": {

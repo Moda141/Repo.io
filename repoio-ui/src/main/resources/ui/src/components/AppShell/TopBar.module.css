@@ -1,86 +1,101 @@
-/* Repo.io · TopBar · OpenMetadata NavBar visual match */
+/* TopBar — mirrors openmetadata-ui/.../NavBar/nav-bar.less:
+     .navbar-container { display:flex; justify-content:space-between; }
+     .navbar-container > div { height: 40px; }
+     .search-container { width: 35vw; }
+     .app-user-icon { .username { font-weight:500; line-height:21px } } */
 
-.topBar {
+.navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  gap: var(--repoio-space-md);
-}
-
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: var(--repoio-space-xs);
-  color: var(--repoio-grey-500);
-  font-size: var(--repoio-font-sm);
-  font-weight: var(--repoio-weight-medium);
-  flex-shrink: 0;
-}
-.breadcrumb a { color: var(--repoio-grey-500); text-decoration: none; }
-.breadcrumb a:hover { color: var(--repoio-grey-900); }
-
-.searchWrap {
-  flex: 1;
-  display: flex;
-  justify-content: center;
+  gap: 24px;
 }
 
 .search {
-  width: 100%;
-  max-width: 560px;
+  width: 35vw;
+  max-width: 640px;
+  min-width: 240px;
   height: 40px;
-  background: var(--repoio-grey-50) !important;
-  border: 1px solid var(--repoio-grey-200) !important;
-  border-radius: var(--repoio-radius-md) !important;
-  box-shadow: none !important;
+  display: flex;
+  align-items: center;
 }
-.search:hover,
-.search:focus-within {
+
+.searchInput {
+  background: var(--repoio-color-bg-secondary, #f9fafb) !important;
+  border-color: transparent !important;
+  height: 40px !important;
+  border-radius: 8px !important;
+}
+.searchInput:hover,
+.searchInput:focus-within {
   background: #ffffff !important;
-  border-color: var(--repoio-grey-300) !important;
+  border-color: var(--repoio-color-border, #d0d5dd) !important;
 }
 
 .right {
+  flex-shrink: 0;
+  height: 40px;
   display: flex;
   align-items: center;
-  gap: var(--repoio-space-xs);
-  flex-shrink: 0;
 }
 
 .iconBtn {
   width: 40px;
   height: 40px;
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  color: var(--repoio-grey-500) !important;
-  background: transparent !important;
-  border: 1px solid transparent !important;
-  border-radius: var(--repoio-radius-md) !important;
-  box-shadow: none !important;
-  font-size: 18px;
-}
-.iconBtn:hover {
-  background: var(--repoio-grey-100) !important;
-  color: var(--repoio-grey-900) !important;
-}
-
-.langPill {
-  min-width: 44px;
-  height: 32px;
-  padding: 0 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--repoio-grey-200);
-  border-radius: var(--repoio-radius-md);
-  background: #ffffff;
-  color: var(--repoio-grey-700);
-  font-size: var(--repoio-font-sm);
-  font-weight: var(--repoio-weight-semibold);
-  cursor: pointer;
+  color: var(--repoio-color-text-tertiary, #667085);
 }
-.langPill:hover { background: var(--repoio-grey-50); color: var(--repoio-grey-900); }
+.iconBtn:hover {
+  color: var(--repoio-color-primary-6, #1570ef);
+  background: var(--repoio-color-bg-secondary, #f9fafb);
+}
 
-.avatarWrap { cursor: pointer; }
+.langLabel {
+  margin-left: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--repoio-color-text-tertiary, #667085);
+}
+
+.userChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 10px 4px 4px;
+  margin-left: 8px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: background 120ms;
+}
+.userChip:hover {
+  background: var(--repoio-color-bg-secondary, #f9fafb);
+}
+
+.userMeta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  min-width: 0;
+}
+.userMeta .username {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--repoio-color-text-primary, #101828);
+}
+
+.dropdownHeader {
+  padding: 4px 0;
+  min-width: 220px;
+}
+.dropdownName {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--repoio-color-text-primary, #101828);
+}
+.dropdownEmail {
+  font-size: 12px;
+  color: var(--repoio-color-text-tertiary, #667085);
+}

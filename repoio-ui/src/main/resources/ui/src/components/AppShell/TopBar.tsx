@@ -1,29 +1,38 @@
-import { Input, Avatar, Dropdown, Badge, Button } from 'antd';
+import { Input, Avatar, Dropdown, Button, Badge, Tooltip, Space } from 'antd';
 import {
   SearchOutlined,
   BellOutlined,
   QuestionCircleOutlined,
+  GlobalOutlined,
   UserOutlined,
   LogoutOutlined,
-  AppstoreOutlined,
-  BookOutlined,
+  DownOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useState, type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import classNames from 'classnames';
 import { ROUTES } from '@/constants/routes';
 import { useApplicationStore } from '@/hooks/useApplicationStore';
 import styles from './TopBar.module.css';
 
 /**
- * TopBar — OpenMetadata-style navbar:
- * breadcrumb on the left, centered search, action icons on the right,
- * user avatar at the far end. Pure CSS, 40 px icon buttons, 32 px avatar.
+ * TopBar — direct port of OpenMetadata's NavBar structure, same classes:
+ *
+ *   <div class="navbar-container">
+ *     <div class="search-container">    (35vw wide)
+ *       <GlobalSearchBar />
+ *     </div>
+ *     <div>
+ *       <help /> <bell /> <lang /> <user profile icon />
+ *     </div>
+ *   </div>
+ *
+ * Rows are 40 px tall (per nav-bar.less `> div { height: 40px }`).
  */
 export default function TopBar() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation();
   const { user, signOut } = useApplicationStore();
   const [q, setQ] = useState('');
   const isAr = i18n.language.toLowerCase().startsWith('ar');
@@ -31,82 +40,80 @@ export default function TopBar() {
 
   const toggleLang = () => i18n.changeLanguage(isAr ? 'en-US' : 'ar-EG');
   const submitSearch = () => {
-    const value = q.trim();
-    navigate(value ? `${ROUTES.SEARCH}?q=${encodeURIComponent(value)}` : ROUTES.SEARCH);
+    const text = q.trim();
+    navigate(text ? `${ROUTES.SEARCH}?q=${encodeURIComponent(text)}` : ROUTES.SEARCH);
   };
 
-  const avatarLetter =
-    (user?.name || user?.email || 'M')[0]?.toUpperCase() ?? 'M';
+  const name = user?.name || 'Mohamed Mahmoud';
+  const email = user?.email || 'mohamed@nahdetmisr.com';
+  const avatarLetter = (name || email)[0]?.toUpperCase() ?? 'M';
+
   const signOutAction = () => {
     signOut();
     navigate(ROUTES.LOGIN);
   };
 
   return (
-    <div className={styles.topBar}>
-      <div className={styles.breadcrumb}>
-        <Crumbs path={location.pathname} />
-      </div>
-
-      <div className={styles.searchWrap}>
+    <div className={classNames('navbar-container', styles.navbar)}>
+      {/* Search — 35vw per OM's .search-container */}
+      <div className={classNames('search-container', styles.search)}>
         <Input
           size="middle"
           allowClear
-          prefix={<SearchOutlined style={{ color: 'var(--repoio-grey-400)' }} />}
+          prefix={<SearchOutlined style={{ color: '#98a2b3' }} />}
           placeholder={t('search.placeholder')}
-          className={styles.search}
           value={q}
           onChange={(e) => setQ(e.target.value)}
           onPressEnter={submitSearch}
+          className={styles.searchInput}
         />
       </div>
 
-      <div className={styles.right}>
-        <button
-          type="button"
-          className={styles.langPill}
-          onClick={toggleLang}
-          aria-label={t('actions.toggle_language')}>
-          {isAr ? 'EN' : 'ع'}
-        </button>
-
-        <Link to={ROUTES.INTEGRATIONS_API}>
+      {/* Right cluster — 40 px icon buttons + user chip */}
+      <Space size={4} className={styles.right}>
+        <Tooltip title={t('actions.toggle_language')}>
           <Button
             type="text"
-            className={styles.iconBtn}
-            icon={<BookOutlined />}
-            aria-label="API reference"
-          />
-        </Link>
+            icon={<GlobalOutlined />}
+            onClick={toggleLang}
+            className={styles.iconBtn}>
+            <span className={styles.langLabel}>{isAr ? 'EN' : 'ع'}</span>
+          </Button>
+        </Tooltip>
 
-        <Button
-          type="text"
-          className={styles.iconBtn}
-          icon={<AppstoreOutlined />}
-          aria-label="Apps"
-        />
-
-        <Button
-          type="text"
-          className={styles.iconBtn}
-          icon={<QuestionCircleOutlined />}
-          aria-label={t('actions.help')}
-        />
-
-        <Badge count={unread} size="small" offset={[-6, 6]}>
+        <Tooltip title={t('actions.help')}>
           <Button
             type="text"
+            icon={<QuestionCircleOutlined />}
             className={styles.iconBtn}
-            icon={<BellOutlined />}
-            aria-label={t('actions.notifications')}
-            onClick={() => navigate(ROUTES.NOTIFICATIONS)}
           />
-        </Badge>
+        </Tooltip>
+
+        <Tooltip title={t('actions.notifications')}>
+          <Badge count={unread} size="small" offset={[-4, 4]}>
+            <Button
+              type="text"
+              icon={<BellOutlined />}
+              onClick={() => navigate(ROUTES.NOTIFICATIONS)}
+              className={styles.iconBtn}
+            />
+          </Badge>
+        </Tooltip>
 
         <Dropdown
-          placement="bottomRight"
           menu={{
             items: [
+              {
+                key: 'profile-header',
+                type: 'group',
+                label: (
+                  <div className={styles.dropdownHeader}>
+                    <div className={styles.dropdownName}>{name}</div>
+                    <div className={styles.dropdownEmail}>{email}</div>
+                  </div>
+                ),
+              },
+              { type: 'divider' },
               {
                 key: 'profile',
                 icon: <UserOutlined />,
@@ -130,56 +137,28 @@ export default function TopBar() {
             ],
           }}
           trigger={['click']}>
-          <span className={styles.avatarWrap}>
+          <div
+            className={classNames('app-user-icon', styles.userChip)}
+            role="button"
+            tabIndex={0}>
             <Avatar
-              size={36}
+              size={32}
               style={{
                 background:
                   'linear-gradient(135deg, #1570EF 0%, #6938EF 100%)',
-                color: '#ffffff',
                 fontWeight: 600,
               }}>
               {avatarLetter}
             </Avatar>
-          </span>
+            <div className={styles.userMeta}>
+              <span className="username">{name.split(' ')[0]}</span>
+            </div>
+            <DownOutlined
+              style={{ fontSize: 10, color: '#667085' }}
+            />
+          </div>
         </Dropdown>
-      </div>
+      </Space>
     </div>
   );
-}
-
-const SEGMENT_LABEL: Record<string, string> = {
-  home: 'Home',
-  explore: 'Explore',
-  entity: 'Entity',
-  'change-requests': 'Change requests',
-  pipelines: 'Pipelines',
-  sources: 'Sources',
-  quality: 'Quality',
-  workflows: 'Workflows',
-  alerts: 'Alerts',
-  integrations: 'Integrations',
-  settings: 'Settings',
-  profile: 'Profile',
-  notifications: 'Notifications',
-  search: 'Search',
-  query: 'Query',
-  views: 'Views',
-  export: 'Export',
-};
-
-function Crumbs({ path }: { path: string }): ReactNode {
-  const segments = path.split('/').filter(Boolean).slice(0, 3);
-  if (segments.length === 0) return <span>Home</span>;
-  const nodes: ReactNode[] = [];
-  segments.forEach((seg, i) => {
-    const label = SEGMENT_LABEL[seg] ?? seg;
-    nodes.push(
-      <span key={`s-${i}`} style={{ color: i === segments.length - 1 ? 'var(--repoio-grey-900)' : undefined }}>
-        {label}
-      </span>
-    );
-    if (i < segments.length - 1) nodes.push(<span key={`sep-${i}`}>/</span>);
-  });
-  return <>{nodes}</>;
 }
