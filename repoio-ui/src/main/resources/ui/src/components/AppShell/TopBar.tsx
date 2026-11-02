@@ -8,6 +8,9 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { ROUTES } from '@/constants/routes';
 import styles from './TopBar.module.css';
 
 /**
@@ -16,9 +19,15 @@ import styles from './TopBar.module.css';
  */
 export default function TopBar() {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const [q, setQ] = useState('');
   const isAr = i18n.language.toLowerCase().startsWith('ar');
 
   const toggleLang = () => i18n.changeLanguage(isAr ? 'en-US' : 'ar-EG');
+  const submitSearch = () => {
+    const t = q.trim();
+    navigate(t ? `${ROUTES.SEARCH}?q=${encodeURIComponent(t)}` : ROUTES.SEARCH);
+  };
 
   return (
     <div className={styles.topBar}>
@@ -29,6 +38,9 @@ export default function TopBar() {
           prefix={<SearchOutlined className={styles.searchIcon} />}
           placeholder={t('search.placeholder')}
           className={styles.search}
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          onPressEnter={submitSearch}
         />
       </div>
 

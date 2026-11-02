@@ -7,6 +7,13 @@ export const ROUTES = {
   HOME: '/home',
   EXPLORE: '/explore',
 
+  // Search & Discovery
+  SEARCH: '/search',
+  QUERY: '/query',
+  VIEWS: '/views',
+  VIEW_DETAIL: '/views/:viewId',
+  EXPORT: '/export',
+
   // Entity read
   ENTITY_LIST: '/entity/:entityType',
   ENTITY_DETAIL: '/entity/:entityType/:id',

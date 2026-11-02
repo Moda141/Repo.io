@@ -1,8 +1,8 @@
-import { Row, Col, Card, Space, Typography } from 'antd';
+import { Row, Col, Card, Space, Typography, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import PageHeader from '@/components/common/PageHeader';
-import { ENTITY_TYPES } from '@/constants/routes';
+import { ENTITY_TYPES, ROUTES } from '@/constants/routes';
 import {
   UserOutlined,
   ShopOutlined,
@@ -10,6 +10,9 @@ import {
   EditOutlined,
   TeamOutlined,
   HomeOutlined,
+  BuildOutlined,
+  StarOutlined,
+  DownloadOutlined,
 } from '@ant-design/icons';
 import type { ReactNode } from 'react';
 
@@ -32,6 +35,21 @@ export default function ExplorePage() {
       <PageHeader
         title={t('page.explore.title')}
         subtitle={t('page.explore.subtitle')}
+        actions={
+          <>
+            <Link to={ROUTES.VIEWS}>
+              <Button icon={<StarOutlined />}>Saved views</Button>
+            </Link>
+            <Link to={ROUTES.QUERY}>
+              <Button icon={<BuildOutlined />}>Query builder</Button>
+            </Link>
+            <Link to={ROUTES.EXPORT}>
+              <Button type="primary" icon={<DownloadOutlined />}>
+                Export
+              </Button>
+            </Link>
+          </>
+        }
       />
       <Row gutter={[16, 16]}>
         {ENTITY_TYPES.map((et) => (
