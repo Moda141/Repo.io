@@ -1,67 +1,77 @@
 /*
- *  Copyright 2022 Collate.
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *  http://www.apache.org/licenses/LICENSE-2.0
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ *  Repo.io — SAP Fiori Horizon table overrides for Antd 5
+ *  Replaces OpenMetadata / Collate styling.
+ *
+ *  Design system: SAP Fiori Horizon
+ *  Reference:     SAP Fiori Design Guidelines — Responsive Table / List Report
  */
 
 @import (reference) '../variables.less';
 
+// ─── Core table wrapper ───────────────────────────────────────────────────────
+
 .ant-table-wrapper {
+  // Header cells
   .ant-table-thead {
     tr > th {
-      font-weight: var(--repoio-font-weight-medium);
-      color: @grey-600;
+      font-family: var(--sapFontFamily);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--sapContent_LabelColor, #556B82);
+      background: var(--sapList_HeaderBackground, #F5F6F7);
+      border-color: var(--sapList_BorderColor, #E8EAEB);
       border-right: none;
-      border-color: @border-color-1;
     }
+
     tr > td {
-      color: @text-color;
+      color: var(--sapContent_ValueColor, #32363A);
     }
-    background: @grey-1;
+
+    background: var(--sapList_HeaderBackground, #F5F6F7);
   }
+
+  // Body cells
   .ant-table-body {
     tr > td {
-      border-color: @border-color-1;
+      border-color: var(--sapList_BorderColor, #E8EAEB);
+      color: var(--sapContent_ValueColor, #32363A);
+      font-family: var(--sapFontFamily);
     }
   }
+
+  // Row hover
+  .ant-table-tbody > tr.ant-table-row:hover > td {
+    background: var(--sapList_Hover_Background, rgba(0, 0, 0, 0.04));
+  }
+
   .ant-table-cell {
     vertical-align: top;
   }
+
+  // Bordered variant
   .ant-table-bordered {
     table {
-      border-color: @border-color-1;
-      tbody {
-        tr {
-          td {
-            .drag-icon {
-              visibility: hidden;
-            }
+      border-color: var(--sapList_BorderColor, #E8EAEB);
 
-            .expand-icon {
-              cursor: pointer;
-            }
-
-            .expand-cell-empty-icon-container {
-              width: 8px;
-              height: 12px;
-              display: inline-flex;
-            }
-          }
+      tbody tr td {
+        .drag-icon {
+          visibility: hidden;
         }
-        .ant-table-cell-row-hover {
-          .drag-icon {
-            visibility: initial;
-          }
+        .expand-icon {
+          cursor: pointer;
+        }
+        .expand-cell-empty-icon-container {
+          width: 8px;
+          height: 12px;
+          display: inline-flex;
         }
       }
+
+      .ant-table-cell-row-hover .drag-icon {
+        visibility: initial;
+      }
     }
+
     .ant-table-container {
       border: none;
       overflow: hidden;
@@ -74,6 +84,7 @@
 
       .ant-table-content > table {
         border-top: none;
+
         tbody > tr {
           td {
             border-right: none;
@@ -83,14 +94,13 @@
             border-bottom: none;
 
             td {
-              border-bottom: 1px solid @border-color-1;
+              border-bottom: 1px solid var(--sapList_BorderColor, #E8EAEB);
             }
           }
         }
-        thead > tr {
-          th {
-            border-right: none;
-          }
+
+        thead > tr th {
+          border-right: none;
         }
       }
     }
@@ -101,96 +111,94 @@
   }
 }
 
+// ─── Small table first-column padding ────────────────────────────────────────
+
 .ant-table.ant-table-small .ant-table-thead > tr > th:first-child {
-  padding-left: var(--repoio-space-16);
+  padding-inline-start: 1rem;
 }
 
 .ant-table.ant-table-small .ant-table-tbody > tr > td:first-child {
-  padding-left: var(--repoio-space-16);
+  padding-inline-start: 1rem;
 }
 
-.drop-over-background {
-  .drop-over-child {
+// ─── Drag-and-drop highlight ──────────────────────────────────────────────────
+
+.drop-over-background .drop-over-child td {
+  background: var(--sapList_SelectionBackgroundColor, #EBF5FF) !important;
+  border: 2px dashed var(--sapBrandColor, #0070F2);
+  border-inline-start: transparent;
+
+  &:first-child {
+    border-inline-start: 2px dashed var(--sapBrandColor, #0070F2);
+  }
+  &:last-child {
+    border-inline-end: 2px dashed var(--sapBrandColor, #0070F2) !important;
+  }
+}
+
+.drop-over-table .ant-table table {
+  border-collapse: collapse;
+
+  .ant-table-tbody {
+    border: 2px dashed var(--sapBrandColor, #0070F2);
+
     td {
-      background: @active-color !important;
-      border: 2px dashed @primary-color;
-      border-left: transparent;
-
-      &:first-child {
-        border-left: 2px dashed @primary-color;
-      }
-      &:last-child {
-        border-right: 2px dashed @primary-color !important;
-      }
+      background: var(--sapList_SelectionBackgroundColor, #EBF5FF) !important;
     }
   }
 }
 
-.drop-over-table {
-  .ant-table {
-    table {
-      border-collapse: collapse;
-      .ant-table-tbody {
-        border: 2px dashed @primary-color;
-
-        td {
-          background: @active-color !important;
-        }
-      }
-    }
-  }
-}
-
-// TableV2 whole-table drop highlight — driven by React Aria's native data-drop-target
+// TableV2 whole-table drop highlight (React Aria)
 [data-drop-target] table:not(.ant-table) {
   border-collapse: collapse;
+
   tbody {
-    border: 2px dashed @primary-color;
+    border: 2px dashed var(--sapBrandColor, #0070F2);
+
     tr td {
-      background: @active-color !important;
+      background: var(--sapList_SelectionBackgroundColor, #EBF5FF) !important;
     }
   }
 }
 
-// Puts a column's filter icon before its title. Both wrappers are matched so
-// the class keeps working as call sites move from AntD to TableV2.
+// ─── Column filter icon alignment ────────────────────────────────────────────
+
 .align-table-filter-left {
   .ant-table-filter-column,
   [data-testid='column-header-content'] {
     flex-direction: row-reverse;
-    gap: var(--repoio-space-8);
+    gap: 0.5rem;
   }
 }
 
-// Setting the background color of the resizable column to  where dragger is located
-.ant-table.ant-table-bordered {
-  > .ant-table-container {
-    > .ant-table-content,
-    > .ant-table-header,
-    > .ant-table-body,
-    > .ant-table-summary {
-      > table {
-        > thead {
-          > tr {
-            > .resizable-container::before {
-              background-color: @border-color !important;
-            }
-          }
-        }
-      }
-    }
+// ─── Resizable column dragger ─────────────────────────────────────────────────
+
+.ant-table.ant-table-bordered
+  > .ant-table-container
+  > .ant-table-content,
+.ant-table.ant-table-bordered
+  > .ant-table-container
+  > .ant-table-header,
+.ant-table.ant-table-bordered
+  > .ant-table-container
+  > .ant-table-body,
+.ant-table.ant-table-bordered
+  > .ant-table-container
+  > .ant-table-summary {
+  > table > thead > tr > .resizable-container::before {
+    background-color: var(--sapContent_ForegroundBorderColor, #C5C7C8) !important;
   }
 }
 
-// Hide the border of the columns except the resizable columns
+// ─── Header divider: hide on regular cols, keep on resizable ─────────────────
+
 .ant-table-thead > tr {
-  // Regular header cells
   > th:not(:last-child):not(.ant-table-selection-column):not(
       .ant-table-row-expand-icon-cell
     ):not([colspan])::before {
-    width: 0px;
+    width: 0;
   }
-  // Resizable header cells
+
   > .resizable-container:not(:last-child):not(.ant-table-selection-column):not(
       .ant-table-row-expand-icon-cell
     ):not([colspan])::before {
@@ -198,36 +206,36 @@
   }
 }
 
-// Table icons
+// ─── Table action icons ───────────────────────────────────────────────────────
 
 .table-action-icon {
   width: 14px;
   height: 14px;
-  color: @grey-600;
+  color: var(--sapContent_LabelColor, #556B82);
   cursor: pointer;
 }
 
 .table-expand-icon {
-  margin-right: var(--repoio-space-8);
-  color: @text-color;
+  margin-inline-end: 0.5rem;
+  color: var(--sapContent_ValueColor, #32363A);
 }
 
 .filter-icon {
-  color: @grey-600;
+  color: var(--sapContent_LabelColor, #556B82);
 }
 
 .filter-icon-active {
-  color: @primary-color;
+  color: var(--sapBrandColor, #0070F2);
 }
 
 .drag-icon {
   width: 6px;
-  margin-right: var(--repoio-space-8);
-  color: @grey-4;
+  margin-inline-end: 0.5rem;
+  color: var(--sapContent_LabelColor, #556B82);
 }
 
-// Table bodies sit on bg-surface, so clamped markdown fades into that rather
-// than the page colour (a dark band in dark mode).
+// ─── Markdown clamp fade in table body ───────────────────────────────────────
+
 tbody {
-  --markdown-clamp-fade-color: var(--repoio-color-bg-surface);
+  --markdown-clamp-fade-color: var(--sapCard_Background, #FFFFFF);
 }

@@ -1,229 +1,293 @@
-# Repo.io UI — Agent Build Guide
+# UI Agent Guide — Repo.io Front-End
 
-> **READ THIS BEFORE ADDING ANY COMPONENT, PAGE, STYLE, ROUTE OR DEPENDENCY TO THE UI.**
-> This document is the contract. Deviations need a human review on PR.
-> Owner: Mohamed (Data Management & Analytics, Nahdet Misr).
-> Scope: `repoio-ui/src/main/resources/ui`.
-> Last reviewed: 2026-11-02.
-
-The point of this file is to keep Repo.io feeling like **one coherent app** as more hands add to it. Every rule below has a reason, and the reason is given — if you think a rule should bend for your case, read the reason, then say why in the PR.
+> **Design system: SAP Fiori Horizon**
+> Read this file before touching anything inside
+> `repoio-ui/src/main/resources/ui/`.
+> Deviations require a human review on PR.
 
 ---
 
-## 0 · The one-page summary
+## 0 · Quick-start checklist (read every time)
 
-1. **Follow the OpenMetadata look.** Primary `#1570EF`, 84 px dark icon rail, 64 px white top bar, `#F8F9FC` content background, Inter + IBM Plex Sans Arabic, 8 px radius, Antd 5. Design tokens live in `src/styles/theme.ts`. Never hardcode a palette value — use the token.
-2. **Antd first, custom last.** If Antd 5 has a component for the job (Table, Form, Modal, Drawer, Tabs, Timeline, Steps, Descriptions, Progress, Tag, Card, Space, Row/Col), use it. Build a custom component only when none fits.
-3. **Charts go through `src/components/common/EChart.tsx`.** Never import echarts-for-react directly in a page. Palette, font, grid defaults are centralised there.
-4. **New page = new file in `src/pages/<Area>/<PageName>Page.tsx`.** Every page starts with `<PageHeader title subtitle actions>` from `src/components/common/PageHeader.tsx`. One page per route; no "mega-pages" that render six screens.
-5. **Routes are named constants in `src/constants/routes.ts`.** No string literals in `<Route path>` or `<Link to>`. Build parameterised URLs with `generatePath(ROUTES.X, {…})`.
-6. **i18n every user-visible string.** Add the key to BOTH `src/locale/languages/en-us.json` and `ar-eg.json` in the same change. Nothing hardcoded in TSX.
-7. **Server state → TanStack Query. Durable client state → Zustand.** Local UI state → `useState`. Nothing else.
-8. **REST calls go through `src/rest/axiosClient.ts`.** Never `fetch` or raw `axios.get` from a page.
-9. **Static sub-routes before `:id`.** `/entity/:type/new` is registered BEFORE `/entity/:type/:id`.
-10. **Build must pass.** `npx tsc --noEmit` and `npx vite build` are the gates. If you added a dep, update `vite.config.ts` `manualChunks` if the chunk would exceed 500 KB.
+Before you open any file in `src/`:
 
-If you can't say "yes" to all ten, don't publish.
+1. **Read §1** (folder map) — know where the file belongs.
+2. **Read §2** (design system) — if you're touching colour, type, spacing, icons, or shell chrome, check the token table first.
+3. **Read §4** (page anatomy) — every new page follows one Fiori floorplan.
+4. **Run `npx tsc --noEmit && npx vite build`** before you push. Both must pass.
+
+If a rule here surprises you, open a PR amending the guide *first*, then the code.
 
 ---
 
-## 1 · Where things live
+## 1 · Folder map
 
 ```
-repoio-ui/src/main/resources/ui/
-├─ index.html                 Entry
-├─ package.json               Deps · ONLY add via a §9 bump
-├─ vite.config.ts             Build + proxy + chunk splits
-├─ tsconfig.json              Strict TS, @/ alias
-└─ src/
-   ├─ main.tsx                React root
-   ├─ AppRoot.tsx             Providers (Query, I18n, Antd theme, Router)
-   ├─ App.tsx                 Route table — EVERY route lives here
-   ├─ queryClient.ts          Shared TanStack client (singleton)
-   │
-   ├─ components/
-   │  ├─ AppShell/            84px rail + 64px top bar; don't touch
-   │  └─ common/              Shared primitives (PageHeader, EChart,
-   │                           ErrorBoundary). Add here when 2+ pages
-   │                           need the same thing.
-   │
-   ├─ constants/
-   │  └─ routes.ts            All routes + ENTITY_TYPES
-   │
-   ├─ hooks/
-   │  └─ useApplicationStore.ts   Zustand store (persisted)
-   │
-   ├─ locale/
-   │  ├─ i18n.ts
-   │  └─ languages/{en-us,ar-eg}.json
-   │
-   ├─ pages/<Area>/           ONE page per file. See §4.
-   │
-   ├─ rest/
-   │  ├─ axiosClient.ts       Shared axios instance (do NOT duplicate)
-   │  └─ <entity>.ts          Typed call helpers per entity
-   │
-   ├─ styles/
-   │  ├─ theme.ts             Antd ThemeConfig + token exports
-   │  └─ global.css           Reset + body font + scrollbar
-   │
-   └─ types/                  Shared TS types that cross module boundaries
+repoio-ui/src/main/resources/ui/src/
+├── components/
+│   ├── AppShell/          ← FioriShellBar.tsx, FioriSideNav.tsx, AppShell.tsx
+│   ├── common/            ← shared primitives (≥ 2 pages or planned)
+│   └── <Area>/            ← area-specific components, sibling to their page
+├── pages/
+│   └── <Area>/
+│       ├── <Name>Page.tsx
+│       └── <Name>Page.module.css   ← CSS Module for this page
+├── styles/
+│   ├── tokens.css         ← SAP Fiori Horizon CSS custom properties (source of truth)
+│   ├── variables.less     ← LESS mirrors of key tokens (@shell-bar-height, etc.)
+│   ├── app.less           ← Fiori layout primitives (.fiori-shell-bar, .fiori-side-nav, …)
+│   ├── fonts.less         ← "72" font-face declarations
+│   └── components/        ← Antd 5 class overrides using SAP tokens
+│       ├── button.less
+│       ├── table.less
+│       ├── tabs.less
+│       ├── menu.less
+│       ├── form.less
+│       ├── select.less
+│       ├── tags.less
+│       ├── drawer.less
+│       ├── pagination.less
+│       ├── radio.less
+│       └── toggle-switch.less
+├── constants/
+│   └── routes.ts          ← every route constant lives here, nowhere else
+├── locale/languages/
+│   ├── en-us.json
+│   └── ar-eg.json
+└── rest/                  ← one file per entity, typed axios helpers
 ```
 
-**Rules:**
+Rules:
 
-- A page gets its own folder (`pages/Entity/`, `pages/Quality/`, …) once there's a second page in the same area. Lone pages (`NotFoundPage.tsx`) can sit at `pages/` root.
-- Area name is **PascalCase**: `pages/ChangeRequests`, `pages/Workflows`.
-- File name is **`<Something>Page.tsx`**: `WorkflowBuilderPage.tsx`. Default export is the component with the same name.
-- Shared primitives live in `components/common/`. Area-specific components live next to the page that uses them, in a sibling file.
-- Co-located CSS Modules use `<Component>.module.css` and are imported as `styles from './X.module.css'`.
-- Do NOT invent new top-level folders (`services/`, `utils/`, `helpers/`). Put utilities in a sibling file next to the only caller, or in `src/components/common/` if shared. If something truly cross-cutting shows up, open a PR and amend §1.
+- Do **not** invent new top-level folders (`services/`, `utils/`, `helpers/`). Put utilities in a sibling file next to the only caller, or in `src/components/common/` if shared.
+- New **page** → `src/pages/<Area>/<Name>Page.tsx` + `<Name>Page.module.css`.
+- New **shared component** → `src/components/common/<Name>.tsx` + `.module.css` if needed.
+- Area-specific component (used by one page only) → sibling file: `src/pages/<Area>/<Name>.tsx`.
 
 ---
 
 ## 2 · The design system (non-negotiable)
 
-### Colors — use the token, never the hex
+The design system is **SAP Fiori Horizon**. All tokens live in
+`src/styles/tokens.css` as CSS custom properties. Import them through
+`@import '../tokens.css'` in LESS, or use them directly as `var(--sap…)` in
+CSS Modules. Never hardcode a hex unless it is a local one-off not covered by
+the token table, and add an inline comment explaining why.
 
-```ts
-import { tokens } from '@/styles/theme';
-// tokens.colorPrimary, tokens.colorSuccess, tokens.colorBgLayout, tokens.sidebarBg
-```
+### Core tokens
 
-The brand palette:
+| Purpose | Token | Fiori value |
+|---|---|---|
+| Brand / primary | `--sapBrandColor` | `#0070F2` |
+| Shell bar background | `--sapShellColor` | `#354A5E` |
+| Page background | `--sapBackgroundColor` | `#F5F6F7` |
+| Card / form background | `--sapCard_Background` | `#FFFFFF` |
+| Object header background | `--sapObjectHeader_Background` | `#FFFFFF` |
+| Group content bg | `--sapGroup_ContentBackground` | `#F5F6F7` |
+| Primary label text | `--sapContent_LabelColor` | `#556B82` |
+| Primary value text | `--sapContent_ValueColor` | `#32363A` |
+| Border (foreground) | `--sapContent_ForegroundBorderColor` | `#C5C7C8` |
+| Card border | `--sapCard_BorderColor` | (see tokens.css) |
+| Field background | `--sapField_Background` | `#FFFFFF` |
+| Field border | `--sapField_BorderColor` | `#C5C7C8` |
+| Field hover border | `--sapField_Hover_BorderColor` | `#0070F2` |
+| List header bg | `--sapList_HeaderBackground` | `#F5F6F7` |
+| List border | `--sapList_BorderColor` | `#E8EAEB` |
+| List row hover | `--sapList_Hover_Background` | `rgba(0,0,0,0.04)` |
+| List selection bg | `--sapList_SelectionBackgroundColor` | `#EBF5FF` |
+| List background | `--sapList_Background` | `#FFFFFF` |
+| Positive | `--sapPositive` | `#188918` |
+| Negative | `--sapNegative` | `#BB0000` |
+| Critical / warning | `--sapCritical` | `#E76500` |
+| Informative | `--sapInformative` | `#0070F2` |
+| Focus ring | `--sapContent_FocusColor` | `#0070F2` |
+| Shadow 0 (subtle) | `--sapContent_Shadow0` | `0 1px 2px rgba(0,0,0,0.04)` |
+| Shadow 1 (card) | `--sapContent_Shadow1` | `0 2px 8px rgba(0,0,0,0.12)` |
+| Shadow 2 (modal) | `--sapContent_Shadow2` | `0 8px 24px rgba(0,0,0,0.16)` |
+| Border radius | `--sapContent_BorderRadius` | `4px` |
+| Border radius large | `--sapContent_BorderRadius_Large` | `8px` |
 
-| Semantic         | Token                     | Value       |
-|------------------|---------------------------|-------------|
-| Primary          | `colorPrimary`            | `#1570EF`   |
-| Violet accent    | (in gradients only)       | `#6938EF`   |
-| Success          | `colorSuccess`            | `#12B76A`   |
-| Warning          | `colorWarning`            | `#F79009`   |
-| Error            | `colorError`              | `#F04438`   |
-| Info / cyan      | `colorInfo` / local       | `#1570EF` / `#06AED4` |
-| Layout bg        | `colorBgLayout`           | `#F8F9FC`   |
-| Container bg     | `colorBgContainer`        | `#FFFFFF`   |
-| Border           | `colorBorder`             | `#E4E7EC`   |
-| Border secondary | `colorBorderSecondary`    | `#EAECF0`   |
-| Text             | `colorText`               | `#101828`   |
-| Text secondary   | `colorTextSecondary`      | `#475467`   |
-| Text tertiary    | `colorTextTertiary`       | `#667085`   |
-| Sidebar bg       | `sidebarBg`               | `#0C111D`   |
+#### Button tokens
 
-For a tinted background behind an icon, use the brand color at `1A` alpha (10%):
-`background: ${tokens.colorPrimary}1A` and `color: ${tokens.colorPrimary}`.
+| Button type | Background | Border | Text |
+|---|---|---|---|
+| Emphasized (primary) | `--sapButton_Emphasized_Background` | `--sapButton_Emphasized_BorderColor` | `--sapButton_Emphasized_TextColor` |
+| Negative (danger) | `--sapButton_Negative_Background` | `--sapButton_Negative_BorderColor` | `--sapButton_Negative_TextColor` |
 
-### Type
+#### Shell layout tokens
 
-- UI font: **Inter**.
-- Arabic UI font: **IBM Plex Sans Arabic** — swapped automatically on `html[dir="rtl"]` via `src/styles/global.css`.
-- Monospace / code: **JetBrains Mono** (fallback `Menlo`, `Monaco`, `Consolas`). Use for IDs (`<code>CUST-000142</code>`), YAML/JSON, logs.
-- Headings use Antd's `<Title level={3}>` inside `PageHeader`. Don't invent sizes.
-- Body text uses Antd's `<Text>`. Secondary labels use `<Text type="secondary">`.
+| Token | Value |
+|---|---|
+| `--sapShellBar_Height` | `44px` |
+| `--sapSideNav_Width` | `272px` |
+| Side nav collapsed width | `48px` |
+
+### Typography
+
+- **UI font**: `"72"`, `"72full"`, Arial, Helvetica, sans-serif — declared by `--sapFontFamily`.
+- **Arabic UI font**: `"72"` includes Arabic glyphs; swap is automatic on `html[dir="rtl"]`.
+- **Monospace / code**: JetBrains Mono (fallback `Menlo`, `Monaco`, `Consolas`). Use for IDs, YAML/JSON, logs.
+- Set font via `font-family: var(--sapFontFamily)` — never inline-hardcode font names.
+- Body: 0.875 rem. Labels: 0.8125 rem. Headings: `font-weight: 700`, size from Antd `Typography.Title`.
 
 ### Spacing & radius
 
-- Base radius: **8 px** (`borderRadius`). Large: 12. Small: 6.
-- Control height: 36 (default), 40 (large), 28 (small). Use Antd `size="small"` for inline tables.
-- Grid gutter: **16** inside a card, **24** between major rows.
-- Page content padding is set by `AppShell`; a page never adds its own outer padding.
+- Base radius: `var(--sapContent_BorderRadius, 4px)`. Large: `var(--sapContent_BorderRadius_Large, 8px)`.
+- Shell bar height: `44px` (`--sapShellBar_Height`).
+- Side nav expanded: `272px` (`--sapSideNav_Width`); collapsed: `48px`.
+- Page content gets padding from `AppShell`; a page **never** adds its own outer padding.
+- Card padding: `1rem`. Section gutter: `1.5rem`.
 
 ### Icons
 
-- Only `@ant-design/icons`. Don't bring in a second icon pack.
-- Pick icons that read at 16/20 px — avoid overly detailed ones.
-- Icon-only buttons MUST have an `aria-label`.
+- New pages and components: **inline `<svg>` elements only**. Size at 16/20 px.
+- Do **not** import `@ant-design/icons` in new files. If an existing shared component you call uses it, that is acceptable — do not refactor it just to migrate icons.
+- Icon-only buttons **must** have an `aria-label`.
 
 ---
 
-## 3 · Dark sidebar nav
+## 3 · AppShell
 
-The 84 px icon rail is the ONLY global nav. Rules:
+The AppShell is composed of two Fiori components:
 
-- Max 7 items. If you need an 8th, something else leaves.
-- Each item is an `@ant-design/icon` + a `t('nav.<key>')` tooltip (shown on hover, LTR + RTL).
-- Add nav items by editing `components/AppShell/Sidebar.tsx` (the `navItems` array) and `locale/languages/{en-us,ar-eg}.json` under `nav.*`. Don't branch outside this file.
-- Sub-nav lives INSIDE the page (as Tabs, Segmented, Steps, or a left secondary rail), NEVER on the global sidebar.
+| Component | File | Description |
+|---|---|---|
+| `FioriShellBar` | `AppShell/FioriShellBar.tsx` | 44 px top bar, `--sapShellColor` background, product name, user avatar |
+| `FioriSideNav` | `AppShell/FioriSideNav.tsx` | Collapsible side nav: 272 px expanded / 48 px collapsed; collapse state stored in `localStorage` |
 
-Current primary nav (do not break): Home, Explore, Entities, Change requests, Pipelines, Quality, Settings.
+`AppShell.tsx` imports both and manages the layout (`display: flex`, `flex-direction: column` / `row`).
+
+Current primary nav items (do **not** break or reorder):
+Home, Explore, Entities, Change Requests, Pipelines, Quality, Settings.
+
+Rules:
+
+- Max **7** items. An 8th item means something else leaves.
+- Each item is an inline SVG icon + a `t('nav.<key>')` tooltip (LTR + RTL).
+- Add nav items by editing `FioriSideNav.tsx` (the `navItems` array) and both locale files under `nav.*`.
+- Sub-nav lives **inside** the page (as tabs, segmented control, or a secondary section list). Never on the global side nav.
 
 ---
 
-## 4 · Page anatomy
+## 4 · Page anatomy — Fiori floorplans
 
-Every page follows this shape:
+Every page maps to one of three SAP Fiori floorplans:
+
+### Overview Page (home / dashboard)
+
+Use for: landing page, summary dashboards.
 
 ```tsx
-import { PageHeader } from '@/components/common/PageHeader';
+// src/pages/<Area>/<Name>Page.tsx
+import styles from './<Name>Page.module.css';
 import { useTranslation } from 'react-i18next';
-import { Row, Col, Card } from 'antd';
 
 export default function MyPage() {
   const { t } = useTranslation();
   return (
-    <>
-      <PageHeader
-        title={t('page.my.title')}
-        subtitle={t('page.my.subtitle')}
-        actions={/* 1–3 buttons, primary action rightmost */}
-      />
+    <div className={styles.page}>
+      {/* Page header: title + subtitle */}
+      <header className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>{t('page.my.title')}</h1>
+        <p className={styles.pageSubtitle}>{t('page.my.subtitle')}</p>
+      </header>
 
-      {/* Optional: 2–4 KPI cards in a Row(gutter=16) with Col xs/md/6 */}
+      {/* KPI row: 2–4 metric tiles */}
+      <div className={styles.kpiRow}>{/* ... */}</div>
 
-      {/* Main content: Card(s) with Table, Form, Tabs, or Timeline */}
-    </>
+      {/* Tile groups or content sections */}
+      <div className={styles.tileGrid}>{/* ... */}</div>
+    </div>
   );
 }
 ```
 
-- **`PageHeader` is mandatory.** It also sets `document.title` via Helmet.
-- **Max 1 primary button** per page header (rightmost).
-- **Max 4 action buttons** per header. More means the page is doing too much.
-- **No raw `<h1>…<h6>`** outside Antd's `Typography.Title`.
-- **Breadcrumbs** are not used in Repo.io — the page title and the AppShell nav are the context.
+### List Report (master list with filters)
 
-### Lists → table
+Use for: entity lists, search results, pipeline runs.
 
-Use **Antd `<Table>`**. Columns are declared as `ColumnsType<RowType>`. Give **every column a width** except the most-flexible one (usually "Name" or "Summary") that fills remaining space. Status columns use `<Tag bordered={false} color="…">`.
+Key elements:
+- Filter bar with chip-style filter buttons (`.filterChip`, `.filterChipActive`).
+- Info strip with record count and action buttons.
+- Card grid or Antd `<Table>` for results.
+- `MessageStrip` for info / warning banners.
 
-### Forms → `<Form layout="vertical">`
+### Object Page (entity detail)
 
-Vertical layout, label above field. One field per row on narrow, 2 on medium, 3 on wide. **Never** inline-labels, **never** Antd's `horizontal` layout — it reads cramped in Arabic.
+Use for: entity detail, change request detail, pipeline detail.
 
-### KPI cards
+Key elements:
+- Object header: breadcrumb + avatar + title + key attributes facets row.
+- Tab bar with section tabs (`.tabBar`, `.tab`, `.tabActive`).
+- Attributes layout: main content area + sticky aside (`.attributesLayout`, `.aside`).
 
-4 identical `<Card>` nodes in a `<Row gutter={16}>` with `<Col xs={12} md={6}>`. Each Card has:
+### Shared rules (all floorplans)
 
-```tsx
-<Space direction="vertical" size={0}>
-  <Text type="secondary">Label</Text>
-  <span style={{ fontSize: 24, fontWeight: 600 }}>Value</span>
-</Space>
-```
-
-If you need delta/arrows, use `RiseOutlined` / `FallOutlined` + color `#027A48` (positive) / `#B42318` (negative).
+- Use **CSS Modules** (`*.module.css`) for all page-level styles. No inline style objects except for dynamic computed values.
+- Styling that applies to an Antd component globally goes in `src/styles/components/<name>.less`.
+- `document.title` is set via `<title>` or Helmet inside the page — do not rely on the shell.
+- **No raw `<h1>…<h6>`** except in CSS Module–styled page headers. Use Antd `Typography.Title` inside cards.
+- **Breadcrumbs** are allowed in Object Pages (Fiori pattern). They are not used in List Reports or Overview Pages.
 
 ---
 
-## 5 · Routing
+## 5 · RTL / Arabic support
+
+- Use **logical CSS properties** everywhere: `inset-inline-start` (not `left`), `border-inline-start` (not `border-left`), `padding-inline` (not `padding-left/right`), `margin-inline-start` (not `margin-left`), `border-start-start-radius` (not `border-top-left-radius`).
+- RTL is applied in `AppRoot` via `document.documentElement.dir = 'rtl'`. Do not add `dir="rtl"` to your own elements unless overriding a specific third-party component.
+- Test every new layout at `dir="rtl"`. The KPI row, tile grid, and aside panel must mirror correctly.
+
+---
+
+## 6 · CSS Modules conventions
+
+```css
+/* <Name>Page.module.css */
+
+.page {
+  padding: 1.5rem;
+  background: var(--sapBackgroundColor, #F5F6F7);
+}
+
+.pageHeader {
+  margin-block-end: 1.5rem;
+}
+
+.pageTitle {
+  font-family: var(--sapFontFamily);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--sapContent_ValueColor, #32363A);
+  margin: 0;
+}
+```
+
+- Class names use **camelCase**.
+- Responsive breakpoints: `@media (max-width: 768px)` for mobile, `@media (max-width: 1024px)` for tablet. Pages must be readable at 320 px minimum width.
+- Dark mode: override tokens in `src/styles/tokens.css` under `[data-theme="dark"]`; do not add per-component dark overrides.
+
+---
+
+## 7 · Routing
 
 - Every route lives in `src/constants/routes.ts` as a constant on `ROUTES`.
 - Every `<Link>` and every `navigate()` call uses `ROUTES.X` or `generatePath(ROUTES.X, {…})`.
 - **Static before dynamic.** `/x/new` is registered BEFORE `/x/:id` in `App.tsx`.
-- Nested sub-routers (like `SettingsPage`) are allowed when a surface owns a whole area — but they still register their children in one place.
+- Nested sub-routers (like `SettingsPage`) are allowed when a surface owns a whole area — they still register their children in one place.
 - Query params are read with `useSearchParams()`; never parse `window.location.search` by hand.
-- URL params are the only way to pass state between pages. Don't rely on React state to survive a navigation.
+- URL params are the only way to pass state between pages. Don't rely on React state to survive navigation.
 
 ---
 
-## 6 · State
+## 8 · State
 
-| Need                                             | Use                              |
-|--------------------------------------------------|----------------------------------|
-| Data from the server (list, fetch, mutate)       | **TanStack Query** (hooks in `rest/`) |
-| Current user, feature flags, UI prefs            | **Zustand** (`useApplicationStore`) |
+| Need | Use |
+|---|---|
+| Data from the server (list, fetch, mutate) | **TanStack Query** (hooks in `rest/`) |
+| Current user, feature flags, UI prefs | **Zustand** (`useApplicationStore`) |
 | One-page UI state (open/close, form input, selected row) | `useState` |
-| Cross-page state that isn't server data          | URL params. If URL doesn't fit, Zustand. |
-| Heavy derived data                                | `useMemo`                         |
+| Cross-page state that isn't server data | URL params. If URL doesn't fit, Zustand. |
+| Heavy derived data | `useMemo` |
 
 Rules:
 
@@ -233,191 +297,175 @@ Rules:
 
 ---
 
-## 7 · REST & API
+## 9 · REST & API
 
 - All HTTP goes through `src/rest/axiosClient.ts`. It carries the Bearer header, clears the Query cache on 401, and redirects to `/login`.
 - Group endpoints by entity in `src/rest/<entity>.ts`. Export typed helpers (`listEntities`, `getEntity`, `patchEntity`).
 - Base URL is `/api`. In dev, Vite proxies to `http://localhost:8585` (repoio-service). In prod it's same-origin.
-- Request/response shapes come from the backend's OpenAPI. Regenerate TS types with `yarn api:gen` (added when backend ships) and import from `src/types/generated`. Until that lands, keep local types minimal and clearly marked `// TODO: regenerate from spec`.
-- No endpoint, model, or mutation goes live without a matching change to `repoio-spec/src/main/resources/json/schema/entity/<entity>.json`. Backend owns the contract; UI follows.
+- Request/response shapes come from the backend's OpenAPI. Regenerate TS types with `yarn api:gen` and import from `src/types/generated`. Until that lands, keep local types minimal and marked `// TODO: regenerate from spec`.
+- No endpoint, model, or mutation goes live without a matching change to `repoio-spec/src/main/resources/json/schema/entity/<entity>.json`.
 
 ---
 
-## 8 · Charts
+## 10 · Charts
 
-Any chart — bar, line, area, scatter, pie, stacked, candlestick, heatmap — goes through `src/components/common/EChart.tsx`, which wraps `echarts-for-react`. The wrapper injects:
-
-- The Repo.io palette (6 brand colors).
-- Inter / IBM Plex Sans Arabic font.
-- Dark tooltip (bg `#101828`, white text).
-- Consistent grid insets.
+Any chart goes through `src/components/common/EChart.tsx`, which wraps `echarts-for-react`. The wrapper injects the Repo.io Fiori palette, the "72" font, and consistent grid insets.
 
 ```tsx
 import EChart from '@/components/common/EChart';
 
 const option = {
-  xAxis: { type: 'category', data: trendDays, axisLabel: { color: '#667085' } },
-  yAxis: { type: 'value', axisLabel: { color: '#667085' } },
+  xAxis: { type: 'category', data: trendDays, axisLabel: { color: 'var(--sapContent_LabelColor)' } },
+  yAxis: { type: 'value' },
   series: [{ type: 'line', data: scores, smooth: true, showSymbol: false }],
 };
 
 return <EChart option={option} height={280} />;
 ```
 
-- Threshold / goal lines go in a lighter shade of the same series color.
-- Bars above/below a threshold use `itemStyle: { color: isAbove ? success : neutral }`.
-- Area under a trend line uses a linear gradient from the series color at `0.18` alpha to transparent.
-- Never embed charts larger than 400 px tall in a KPI row.
+- Never embed charts taller than 400 px in a KPI row.
+- Area charts: linear gradient from series color at `0.18` alpha to transparent.
+- Status bar charts: `itemStyle.color` driven by `--sapPositive` / `--sapNegative` / `--sapCritical`.
 
 ---
 
-## 9 · Dependencies
+## 11 · Dependencies
 
-The approved runtime deps are listed in `package.json`. Before adding a new one:
+Approved runtime deps are listed in `package.json`. Before adding a new one:
 
 1. Is there already a dep that does this? (lodash, dayjs, antd, echarts, tanstack/react-query, axios, i18next, zustand, qs). If yes, use it.
 2. Can it be done without a new library in ≤ 50 lines of code? If yes, write it.
-3. Does the OpenMetadata UI use the same library? If yes, match its version to within one minor.
-4. Is the package maintained (released in the last 12 months, ≥ 1k weekly downloads)?
+3. Is the package maintained (released in last 12 months, ≥ 1k weekly downloads)?
 
-If you still need the dep:
+If you still need the dep: pin a minor version (`^5.3.0`, not `*`), add it to `manualChunks` in `vite.config.ts` if its gzipped contribution to any chunk exceeds 150 KB, and note in the PR which feature it unlocks.
 
-- Pin a minor version (`^5.3.0`, not `*`).
-- Add it to the matching `manualChunks` entry in `vite.config.ts` if its contribution to any chunk would exceed 150 KB gzipped.
-- Note in the PR which features it unlocks.
+**Pre-approved heavy libs**: `echarts`, `echarts-for-react`, `antd`, `@ant-design/icons` (legacy pages only), `@tanstack/react-query`, `zustand`, `i18next`, `react-i18next`, `axios`, `styled-components`, `dayjs`, `lodash`, `qs`.
 
-**Pre-approved heavy libs** (already in or planned): `echarts`, `echarts-for-react`, `antd`, `@ant-design/icons`, `@tanstack/react-query`, `zustand`, `i18next`, `react-i18next`, `axios`, `styled-components`, `dayjs`, `lodash`, `qs`.
-
-**On the port list** (ok to add when the first page that needs them lands):
-`reactflow` (lineage, workflow graph), `@uiw/react-codemirror` + the CodeMirror packages (YAML/SQL/JSON editors), `@tiptap/*` (rich-text in CR comments), `@rjsf/*` (schema-driven forms when the Settings pages need them), `react-awesome-query-builder` (if the Query Builder page is upgraded past our custom builder).
+**On the port list** (ok to add when the first page that needs them lands): `reactflow`, `@uiw/react-codemirror` + CodeMirror packages, `@tiptap/*`, `@rjsf/*`, `react-awesome-query-builder`.
 
 ---
 
-## 10 · i18n
+## 12 · i18n
 
 - Every user-visible string goes through `t('…')`.
 - Keys live in `src/locale/languages/en-us.json` and `ar-eg.json` with identical shape. Both files are updated in the same change.
 - Namespace keys by surface: `nav.*`, `actions.*`, `entity.*`, `page.<area>.*`, `user.*`, `auth.*`.
 - Interpolate with `{{var}}`: `t('invite.subject', { email })`.
-- Pluralize with `t('entity.records', { count })` — don't hand-concatenate "1 record" / "N records".
-- RTL is applied in `AppRoot` via `document.documentElement.dir`. Do not add `dir="rtl"` to your own elements unless you're overriding a specific component (as the email template editor does).
-- Date and number formatting respect the user's `dateFormat` / `numberFormat` preference (set on Profile). Format with `dayjs` and `Intl.NumberFormat` — never raw `.toLocaleString()` with no explicit locale.
+- Pluralize with `t('entity.records', { count })` — never hand-concatenate "1 record" / "N records".
+- Dates: `dayjs` with explicit locale. Numbers: `Intl.NumberFormat` — never raw `.toLocaleString()` with no locale.
 
 ---
 
-## 11 · Accessibility & responsiveness
+## 13 · Accessibility & responsiveness
 
 - All interactive elements use native keyboard controls (Antd gives you this).
 - Icon-only buttons: `aria-label`.
-- Modals: use `<Modal title=…>` so the title announces.
-- Color is never the only signal — pair with a tag label (e.g. `WARN` text + warning color).
-- Minimum target: readable on 1280 × 800. The layout uses `<Row gutter>` + `<Col xs md lg xl>`. Default `xs={24}` so pages reflow to a single column on narrow.
-- Tables set `scroll={{ x: 'max-content' }}` if any single column would overflow narrow.
+- Modals: `<Modal title={…}>` so the title announces.
+- Color is never the only signal — pair with a label (e.g. `WARN` text + warning color).
+- Minimum target: readable on 1280 × 800. The layout uses CSS Grid / Flexbox + `@media` breakpoints in the CSS Module. Default single-column on mobile.
+- Tables: `scroll={{ x: 'max-content' }}` when a column could overflow narrow viewports.
+- Focus ring: `outline: 2px solid var(--sapContent_FocusColor, #0070F2); outline-offset: 2px;` — do not suppress `:focus-visible` outlines.
 
 ---
 
-## 12 · Workflow for adding a new page
+## 14 · Workflow for adding a new page
 
-1. **Read §0–§5 again.** Yes, every time. It takes 90 seconds.
+1. **Read §0–§5 again.** Yes, every time.
 2. Add the route constant to `src/constants/routes.ts`.
-3. Create `src/pages/<Area>/<Name>Page.tsx` from the §4 template.
+3. Create `src/pages/<Area>/<Name>Page.tsx` + `<Name>Page.module.css` from the §4 floorplan template.
 4. Register it in `App.tsx`.
-5. Add i18n keys to BOTH languages.
-6. Wire it into the parent navigation (sidebar OR a page's actions row OR SettingsHub cards OR a hub page).
+5. Add i18n keys to **both** language files.
+6. Wire it into the parent navigation (side nav OR a page's actions row OR SettingsHub cards).
 7. Run `npx tsc --noEmit && npx vite build`. Both must pass.
-8. Open a PR. Mention which items in this file your change touches.
+8. Open a PR. Mention which floorplan the page follows and which sections of this guide it touches.
 
 ---
 
-## 13 · Workflow for adding a new component
+## 15 · Workflow for adding a new component
 
-Shared primitive (used by ≥ 2 pages or planned to be):
+**Shared primitive** (used by ≥ 2 pages or planned to be):
 
-1. `src/components/common/<Name>.tsx` plus `.module.css` if needed.
+1. `src/components/common/<Name>.tsx` + `.module.css` if needed.
 2. Default export, PascalCase name matches file.
-3. Props are a typed interface, documented at least by name.
-4. One short usage comment at the top of the file explaining when to reach for it.
-5. No business logic. If it needs to fetch data, pass data in via props; let the page do the fetching.
+3. Props are a typed interface.
+4. Inline SVG icons only (no `@ant-design/icons` import).
+5. No business logic — pass data via props; let the page fetch.
 
-Area-specific component (used by one page):
+**Area-specific component** (used by one page): sibling file `src/pages/<Area>/<Name>.tsx`.
 
-1. Sibling file next to the page: `src/pages/Workflows/StepBuilder.tsx`.
-2. Same rules; just scoped by location.
-
-Chart component: see §8.
+**Antd override**: add to the relevant `src/styles/components/<name>.less` using SAP tokens.
 
 ---
 
-## 14 · Workflow for adding a route under Settings
+## 16 · Workflow for adding a Settings sub-page
 
-Settings is a nested router in `src/pages/Settings/SettingsPage.tsx`. To add a sub-page:
+Settings is a nested router in `src/pages/Settings/SettingsPage.tsx`:
 
 1. Add the route constant to `routes.ts` (e.g. `SETTINGS_X`).
-2. Add the component file at `src/pages/Settings/<Area>/<Name>Page.tsx` for a group, or `src/pages/Settings/<Name>Page.tsx` for a single page.
-3. Add a `<Route path="x" element={<XPage />}>` in the `SettingsPage` `<Routes>`.
+2. Create `src/pages/Settings/<Area>/<Name>Page.tsx`.
+3. Add a `<Route path="x" element={<XPage />}>` in `SettingsPage`'s `<Routes>`.
 4. Add a hub card to the `cards` array in `SettingsHub`.
 5. i18n + build pass.
 
 ---
 
-## 15 · Hard "no" list
+## 17 · Hard "no" list
 
 - No new routing library. We use `react-router-dom` 6.
 - No new state manager. We use TanStack Query + Zustand.
-- No new form library. We use Antd `Form`. (RJSF when a JSON-Schema driven form lands — pre-approved in §9.)
-- No new icon pack.
-- No CSS-in-JS runtime beyond what styled-components (already in deps) and CSS Modules give us. Don't add emotion, don't add stitches.
-- No Tailwind. We use design tokens + CSS Modules.
-- No Redux. Not now, not later.
-- No new animation library. If you need motion, use CSS transitions or Antd's built-in.
+- No new form library. We use Antd `Form`. (RJSF when a JSON-Schema driven form lands — pre-approved.)
+- No new icon pack. New components use inline SVG.
+- No CSS-in-JS runtime beyond styled-components (already in deps) and CSS Modules. No emotion, no stitches.
+- No Tailwind. We use SAP Fiori tokens + CSS Modules.
+- No Redux.
+- No new animation library. Use CSS transitions or Antd's built-in.
 - No `any` without an inline justification comment.
-- No disabling the TS strict checks in a config file.
+- No disabling TS strict checks in a config file.
 - No committing with `tsc` or `vite build` broken.
-- No binary assets in the UI tree larger than 200 KB. Images go to `/public` as SVG; raster assets must be optimized.
-- No tracking scripts, no third-party analytics, no CDNs other than those listed in `index.html` (Google Fonts).
-- No importing from `openmetadata-ui-core-components` (that package is OpenMetadata's internal; we have our own `repoio-ui-core-components` for anything shared).
+- No binary assets in the UI tree larger than 200 KB. SVGs go to `/public`; rasters must be optimised.
+- No tracking scripts, no third-party analytics, no CDNs other than those in `index.html`.
+- No importing from `openmetadata-ui-core-components` — use `repoio-ui-core-components` for anything shared.
+- No `@ui5/webcomponents-react` — Fiori styling is achieved through CSS tokens and CSS Modules, not UI5 web components.
+- No hardcoded hex values for SAP Fiori semantic colours. Use `var(--sap…)` with a fallback.
 
 ---
 
-## 16 · When OpenMetadata and this guide disagree
+## 18 · When in doubt
 
-OpenMetadata is the structural reference, not a specification. Where its code uses a pattern this guide disallows (e.g. a Tailwind class, a stray hex literal, `fetch` inline), **this guide wins**. Port the behavior, not the deviation.
+OpenMetadata is the structural reference for patterns we haven't migrated yet. Where its code uses a pattern this guide disallows (Tailwind, stray hex literal, `fetch` inline, `@ant-design/icons` import), **this guide wins**. Port the behaviour, not the deviation.
 
-If you believe OpenMetadata's approach is better than what this guide prescribes, open a PR amending this guide first, then the code.
+If you believe OpenMetadata's or another approach is better than what this guide prescribes, open a PR amending the guide first, then the code.
 
 ---
 
-## 17 · How to extend this guide
+## 19 · How to extend this guide
 
-This file ships in the repo (`repoio-ui/UI_AGENT_GUIDE.md`) and is referenced by the backend-of-house agent prompt. To change a rule:
+This file ships in the repo (`repoio-ui/UI_AGENT_GUIDE.md`). To change a rule:
 
-1. Open a PR with the change to this file + a one-paragraph rationale.
+1. Open a PR with the change + a one-paragraph rationale.
 2. Mohamed (or a delegate) reviews.
 3. Merge. The next agent run reads the updated file.
 
-Do **not** silently change behavior in code without updating the guide.
+Do **not** silently change behaviour in code without updating the guide.
 
 ---
 
-## 18 · Current UI inventory (as of 2026-11-02)
+## 20 · Current UI inventory (as of 2026-11-03)
 
-For orientation only — this reflects what shipped, not what you must preserve verbatim.
+For orientation only — reflects what shipped, not what you must preserve verbatim.
 
-- Shell: Home, Explore
-- Entities: list, detail, edit, new, hierarchy, lineage, duplicates list, duplicate review, merge
-- Change requests: list, detail, new, mine
-- Search: results, query builder, saved views, export wizard
-- Pipelines: list, detail, edit, new
-- Sources: list, detail, new
-- Quality: dashboard, rule editor, matching, survivorship, playground
-- Workflows: list, builder, detail, runs
-- Alerts: list, editor, channels, history
-- Integrations: hub, webhooks, share links, embeds, API reference
-- Email (under Settings): templates, template edit, settings, log
-- Admin (under Settings): users, roles, SSO, API keys, audit, schema list, schema editor, settings hub
-- Auth & common: login, profile, notifications, 404
+**Migrated to SAP Fiori Horizon (CSS Modules + tokens):**
+- Shell: `FioriShellBar`, `FioriSideNav`, `AppShell`
+- Pages: Home (Overview Page), Explore (List Report), Entity Detail (Object Page)
+- Styles: `tokens.css`, `variables.less`, `app.less`, `fonts.less`
+- Component overrides: button, table, tabs, menu, form, select, tags, drawer, pagination, radio, toggle-switch
 
-Total ≈ 57 pages. Every one obeys the rules above.
+**Pending migration (still using OpenMetadata styling):**
+- EntityListPage, LoginPage, PipelinesPage, SettingsPage and sub-pages
+- Component overrides: add-edit-form-steps, code-mirror, entity-version-time-line, form-hint-doc, glossary, om-rdg, profile-picture, profiler, resizable-panels-component, rjsf, size, slider, step
+- All remaining pages (≈ 50+ pages across Entities, Change Requests, Search, Quality, Workflows, Alerts, Integrations, Admin, Auth)
+
+Total target: ≈ 57 pages. Every new page follows Fiori Horizon from the start.
 
 ---
 

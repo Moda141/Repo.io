@@ -1,46 +1,70 @@
 /*
- *  Copyright 2023 Collate.
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *  http://www.apache.org/licenses/LICENSE-2.0
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ *  Repo.io — SAP Fiori Horizon select overrides for Antd 5
+ *  Replaces OpenMetadata / Collate styling.
+ *
+ *  Design system: SAP Fiori Horizon
+ *  Reference:     SAP Fiori Design Guidelines — Select / Combo Box
  */
 
 @import (reference) '../variables.less';
 
+// ─── Custom select wrapper ────────────────────────────────────────────────────
+
 .ant-select-custom {
   width: 100%;
-  margin: var(--repoio-space-8) 0;
+  margin: 0.5rem 0;
   outline: none;
+  font-family: var(--sapFontFamily);
 }
+
 .ant-select-custom:not(.ant-select-disabled):hover .ant-select-selector {
-  border-color: @primary-color;
+  border-color: var(--sapField_Hover_BorderColor, var(--sapBrandColor, #0070F2));
 }
+
 .ant-select-focused {
-  border-color: @primary-color;
+  border-color: var(--sapField_Hover_BorderColor, var(--sapBrandColor, #0070F2));
   outline: none;
 }
 
+// ─── Advanced field select ────────────────────────────────────────────────────
+
 .ant-advaced-field-select {
-  color: @primary-color;
+  color: var(--sapBrandColor, #0070F2);
   min-width: 130px;
 }
+
+// ─── Suggestion dropdown ─────────────────────────────────────────────────────
+
 .ant-suggestion-dropdown {
   min-width: 200px !important;
 }
+
+// ─── Selected option background ───────────────────────────────────────────────
+
 .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
-  background-color: @select-item-selected-bg;
+  background-color: var(--sapList_SelectionBackgroundColor, #EBF5FF);
+  color: var(--sapBrandColor, #0070F2);
+  font-weight: 600;
 }
+
+// ─── Tree select option text overflow ────────────────────────────────────────
+
 .ant-select-tree-title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+// ─── Multi-select overflow scrolling ─────────────────────────────────────────
+
+.ant-select.trim-select {
+  .ant-select-selection-overflow {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+}
+
+// ─── Option line-wrap ─────────────────────────────────────────────────────────
 
 .no-wrap-option {
   .ant-select-item {
@@ -51,14 +75,22 @@
   }
 }
 
-.ant-select.trim-select {
-  .ant-select-selection-overflow {
-    max-height: 200px;
-    overflow-y: auto;
-  }
-}
+// ─── Dropdown popover border ──────────────────────────────────────────────────
 
-// need to add border for dropdown globally as per new design system
 .ant-select-dropdown {
-  border: 1px solid @grey-300;
+  border: 1px solid var(--sapContent_ForegroundBorderColor, #C5C7C8);
+  border-radius: var(--sapContent_BorderRadius, 4px);
+  box-shadow: var(--sapContent_Shadow1, 0 2px 8px rgba(0, 0, 0, 0.12));
+  background: var(--sapList_Background, #FFFFFF);
+  font-family: var(--sapFontFamily);
+
+  .ant-select-item {
+    font-family: var(--sapFontFamily);
+    font-size: 0.875rem;
+    color: var(--sapContent_ValueColor, #32363A);
+  }
+
+  .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background: var(--sapList_Hover_Background, rgba(0, 0, 0, 0.04));
+  }
 }
