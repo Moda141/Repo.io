@@ -16,6 +16,10 @@ Before you open any file in `src/`:
 3. **Read §4** (page anatomy) — every new page follows one Fiori floorplan.
 4. **Open `repoio-ui/design-reference/README.md`** — find the page's SAP reference
    export and approved prototype. Build to match them; pages are approved one at a time.
+   For every element on the page (button, input, table, dialog, message strip…),
+   check `design-reference/sap-s4hana/components/README.md` first and build it to
+   that spec. Shared versions live in `components/common/Fiori/`; build one there
+   the first time a page needs it. Density is **Compact** (26 px controls).
 5. **Run `npx tsc --noEmit && npx vite build`** before you push. Both must pass.
 
 If a rule here surprises you, open a PR amending the guide *first*, then the code.

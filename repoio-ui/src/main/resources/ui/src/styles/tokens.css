@@ -17,18 +17,18 @@
   --sapBrandColor_LightBackground: #EBF4FF;
 
   --sapHighlightColor: #0070F2;
-  --sapSuccessColor: #188918;
+  --sapSuccessColor: #256F3A;
   --sapWarningColor: #E76500;
-  --sapErrorColor: #B00;
+  --sapErrorColor: #AA0808;
   --sapInformationColor: #0070F2;
-  --sapNeutralColor: #6A6D70;
+  --sapNeutralColor: #788FA6;
 
   /* Status Background */
-  --sapSuccessBackground: #F5FAF5;
-  --sapWarningBackground: #FEF7F1;
-  --sapErrorBackground: #FFF8F8;
-  --sapInformationBackground: #EBF4FF;
-  --sapNeutralBackground: #F5F6F7;
+  --sapSuccessBackground: #F5FAE5;
+  --sapWarningBackground: #FFF8D6;
+  --sapErrorBackground: #FFEAF4;
+  --sapInformationBackground: #E8F3FF;
+  --sapNeutralBackground: #EFF1F2;
 
   /* ─────────────────────────────────────────────
    * Shell Bar (SAP Top Navigation)
@@ -101,9 +101,9 @@
 
   --sapContent_LineHeight: 1.4;
   --sapContent_LabelColor: #556B82;
-  --sapContent_ValueColor: #1D2D3E;
-  --sapContent_DisabledTextColor: #89919A;
-  --sapContent_PlaceholderTextColor: #89919A;
+  --sapContent_ValueColor: #131E29;
+  --sapContent_DisabledTextColor: #8396A8;
+  --sapContent_PlaceholderTextColor: #556B82;
   --sapContent_ContrastTextColor: #FFFFFF;
 
   /* ─────────────────────────────────────────────
@@ -133,34 +133,34 @@
   /* ─────────────────────────────────────────────
    * Button
    * ───────────────────────────────────────────── */
-  --sapButton_Height: 2rem;          /* 32px */
+  --sapButton_Height: 1.625rem; /* 26px — Compact density (desktop default) */
   --sapButton_FontSize: 0.875rem;
-  --sapButton_BorderRadius: 0.25rem;
+  --sapButton_BorderRadius: 0.5rem; /* 8px — Horizon */
   --sapButton_BorderWidth: 0.0625rem;
 
   /* Emphasized (primary) */
   --sapButton_Emphasized_Background: #0070F2;
   --sapButton_Emphasized_Hover_Background: #0064D9;
-  --sapButton_Emphasized_Active_Background: #0057C2;
+  --sapButton_Emphasized_Active_Background: #0064D9;
   --sapButton_Emphasized_TextColor: #FFFFFF;
   --sapButton_Emphasized_BorderColor: #0070F2;
 
   /* Standard (default) */
   --sapButton_Background: #FFFFFF;
-  --sapButton_Hover_Background: #F5F6F7;
-  --sapButton_Active_Background: #EBF4FF;
-  --sapButton_TextColor: #0070F2;
-  --sapButton_BorderColor: #BFCDD3;
+  --sapButton_Hover_Background: #EAECEE;
+  --sapButton_Active_Background: #DEE2E5;
+  --sapButton_TextColor: #0064D9;
+  --sapButton_BorderColor: #BCC3CA;
 
   /* Transparent */
   --sapButton_Transparent_Background: transparent;
-  --sapButton_Transparent_TextColor: #0070F2;
-  --sapButton_Transparent_Hover_Background: rgba(0, 112, 242, 0.06);
+  --sapButton_Transparent_TextColor: #0064D9;
+  --sapButton_Transparent_Hover_Background: #EAECEE;
 
   /* Negative */
-  --sapButton_Negative_Background: #B00;
+  --sapButton_Negative_Background: #F53232;
   --sapButton_Negative_TextColor: #FFFFFF;
-  --sapButton_Negative_BorderColor: #B00;
+  --sapButton_Negative_BorderColor: #F53232;
 
   /* ─────────────────────────────────────────────
    * Input / Form
@@ -171,18 +171,18 @@
   --sapField_ReadOnly_Background: #F5F6F7;
   --sapField_Disabled_Background: #F5F6F7;
 
-  --sapField_BorderColor: #BFCDD3;
-  --sapField_Hover_BorderColor: #89919A;
-  --sapField_Focus_BorderColor: #0070F2;
+  --sapField_BorderColor: #556B81;
+  --sapField_Hover_BorderColor: #0064D9;
+  --sapField_Focus_BorderColor: #0032A5;
   --sapField_ReadOnly_BorderColor: transparent;
-  --sapField_InvalidColor: #B00;
+  --sapField_InvalidColor: #F53232;
   --sapField_WarningColor: #E76500;
-  --sapField_SuccessColor: #188918;
+  --sapField_SuccessColor: #30914C;
 
   --sapField_BorderWidth: 0.0625rem;
   --sapField_BorderRadius: 0.25rem;
-  --sapField_Height: 2.25rem;    /* 36px */
-  --sapField_TextColor: #32363A;
+  --sapField_Height: 1.625rem; /* 26px — Compact density (desktop default) */
+  --sapField_TextColor: #131E29;
   --sapField_FontSize: 0.875rem;
   --sapField_Padding: 0 0.75rem;
 
@@ -190,21 +190,21 @@
    * Table
    * ───────────────────────────────────────────── */
   --sapList_Background: #FFFFFF;
-  --sapList_Hover_Background: #EBF4FF;
-  --sapList_Active_Background: #D1E8FF;
-  --sapList_SelectColor: #EBF4FF;
-  --sapList_HeaderBackground: #F5F6F7;
+  --sapList_Hover_Background: #EAECEE;
+  --sapList_Active_Background: #DEE2E5;
+  --sapList_SelectColor: #EBF8FF;
+  --sapList_HeaderBackground: #FFFFFF;
   --sapList_HeaderBorderColor: #E5E5E5;
   --sapList_BorderColor: #E5E5E5;
   --sapList_SeparatorColor: #E5E5E5;
 
-  --sapList_TextColor: #32363A;
-  --sapList_HeaderTextColor: #32363A;
-  --sapList_GroupHeaderTextColor: #6A6D70;
-  --sapList_FooterTextColor: #6A6D70;
+  --sapList_TextColor: #131E29;
+  --sapList_HeaderTextColor: #131E29;
+  --sapList_GroupHeaderTextColor: #131E29;
+  --sapList_FooterTextColor: #131E29;
   --sapList_FontSize: 0.875rem;
   --sapList_HeaderFontSize: 0.75rem;
-  --sapList_RowHeight: 2.75rem;  /* 44px */
+  --sapList_RowHeight: 2rem; /* 32px — Compact; Cozy is 2.75rem */
 
   /* ─────────────────────────────────────────────
    * Card (Generic)
@@ -231,7 +231,7 @@
   --sapPositiveTextColor: #256F3A;
   --sapPositiveElementColor: #30914C;
   --sapCriticalElementColor: #E76500;
-  --sapNegativeElementColor: #E00000;
+  --sapNegativeElementColor: #F53232;
   --sapNegativeTextColor: #AA0808;
   --sapButton_Accept_Background: #F5FAE5;
   --sapButton_Accept_BorderColor: #BDE986;
@@ -278,9 +278,9 @@
   /* ─────────────────────────────────────────────
    * Focus Ring
    * ───────────────────────────────────────────── */
-  --sapContent_FocusColor: #0070F2;
-  --sapContent_FocusWidth: 0.0625rem;
-  --sapContent_FocusStyle: dotted;
+  --sapContent_FocusColor: #0032A5;
+  --sapContent_FocusWidth: 0.125rem;
+  --sapContent_FocusStyle: solid;
   --sapContent_ContrastFocusColor: #FFFFFF;
 
   /* ─────────────────────────────────────────────
@@ -302,7 +302,7 @@
    * ───────────────────────────────────────────── */
   --sapScrollBar_Dimension: 0.75rem;
   --sapScrollBar_TrackColor: #F5F6F7;
-  --sapScrollBar_ThumbColor: #BFCDD3;
+  --sapScrollBar_ThumbColor: #7B91A8;
   --sapScrollBar_SymbolColor: #6A6D70;
   --sapScrollBar_Corner_Color: #F5F6F7;
 
@@ -316,9 +316,9 @@
   /* ─────────────────────────────────────────────
    * Icon
    * ───────────────────────────────────────────── */
-  --sapContent_IconColor: #0070F2;
+  --sapContent_IconColor: #0064D9;
   --sapContent_MarkerIconColor: #5B738B;
-  --sapContent_NonInteractiveIconColor: #6A6D70;
+  --sapContent_NonInteractiveIconColor: #758CA4;
 
   /* ─────────────────────────────────────────────
    * Avatar / Image
@@ -327,6 +327,68 @@
   --sapAvatar_TextColor: #FFFFFF;
   --sapAvatar_BorderRadius_Circle: 50%;
   --sapAvatar_BorderRadius_Square: 0.25rem;
+
+
+  /* ─────────────────────────────────────────────
+   * Density — SAP references show Compact (desktop) and Cozy (touch).
+   * Repo.io is desktop-first: Compact is the default everywhere.
+   * Source: design-reference/sap-s4hana/components/*.svg
+   * ───────────────────────────────────────────── */
+  --sapElement_Compact_Height: 1.625rem;  /* 26px buttons, inputs */
+  --sapElement_Height: 2.25rem;           /* 36px Cozy */
+  --sapElement_Compact_LineHeight: 2rem;  /* 32px list / menu rows */
+  --sapElement_LineHeight: 2.75rem;       /* 44px Cozy rows, info bar */
+
+  /* Message button / semantic hover + down */
+  --sapButton_Reject_Hover_Background: #E90B0B;
+  --sapButton_Critical_Background: #E76500;
+  --sapButton_Critical_Hover_Background: #DD6100;
+  --sapButton_Success_Background: #30914C;
+  --sapButton_Success_Hover_Background: #2D8646;
+  --sapButton_Information_Background: #E8F3FF;
+  --sapButton_Information_Hover_Background: #D3E8FF;
+
+  /* Table (analytical / grid) */
+  --sapList_TableGroupHeaderBackground: #EFF1F2;
+  --sapList_TableGroupHeaderBorderColor: #A8B3BD;
+  --sapList_SelectionBorderColor: #0064D9;
+  --sapList_BorderWidth: 1px;
+
+  /* Message strip */
+  --sapErrorBorderColor: #FF8EC4;
+  --sapWarningBorderColor: #FFC847;
+  --sapSuccessBorderColor: #BDE986;
+  --sapInformationBorderColor: #89D1FF;
+
+  /* Info bar (List / Table toolbar) */
+  --sapInfobar_NonInteractive_Background: #F5F6F7;
+  --sapInfobar_Active_Background: #C2FCEE;
+  --sapInfobar_Active_TextColor: #046C7A;
+
+  /* Menu */
+  --sapMenu_ItemHeight: 2rem;
+  --sapMenu_IconColor: #758CA4;
+  --sapMenu_BorderRadius: 0.5rem;
+
+  /* Busy indicator — three growing dots */
+  --sapBusyIndicator_Color: #0064D9;
+
+  /* Dialog / Message box */
+  --sapDialog_Header_BorderColor: #D9D9D9;
+  --sapDialog_Footer_BorderColor: #D9D9D9;
+  --sapDialog_BorderRadius: 0.75rem;
+
+  /* Avatar accent pairs (background / text) */
+  --sapAvatar_1_Background: #FFDBE7; --sapAvatar_1_TextColor: #BA066C;
+  --sapAvatar_2_Background: #FFF3B8; --sapAvatar_2_TextColor: #A45D00;
+  --sapAvatar_3_Background: #C2FCEE; --sapAvatar_3_TextColor: #046C7A;
+  --sapAvatar_4_Background: #DDCCF0; --sapAvatar_4_TextColor: #6C32A9;
+  --sapAvatar_5_Background: #D1EFFF; --sapAvatar_5_TextColor: #0057D2;
+  --sapAvatar_6_Background: #FFDCF3; --sapAvatar_6_TextColor: #A100C2;
+
+  /* Micro process flow */
+  --sapProcessFlow_Neutral_Color: #788FA6;
+  --sapProcessFlow_Background: #EFF1F2;
 
   /* ─────────────────────────────────────────────
    * Z-Index Scale

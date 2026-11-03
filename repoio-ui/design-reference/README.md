@@ -21,6 +21,12 @@ Before building or changing a page:
 Add a row per page as it is approved. Number SAP exports and prototypes with the
 same prefix as the row.
 
+## Component catalog
+
+`sap-s4hana/components/README.md` lists every SAP component export with its
+specs, tokens, and the code that implements it. Check it before building any
+UI element.
+
 ## Brand
 
 - `brand/repoio-logo-source.jpg`: original logo artwork.

@@ -39,8 +39,8 @@ export default function EChart({ option, height = 280, loading }: Props) {
       grid: { left: 40, right: 16, top: 32, bottom: 32 },
       tooltip: {
         trigger: 'axis',
-        backgroundColor: '#1D2D3E',
-        borderColor: '#1D2D3E',
+        backgroundColor: '#131E29',
+        borderColor: '#131E29',
         textStyle: { color: '#FFFFFF', fontSize: 12 },
       },
       ...option,

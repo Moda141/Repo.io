@@ -4,36 +4,37 @@ import arEG from 'antd/locale/ar_EG';
 import type { Locale } from 'antd/es/locale';
 
 /**
- * Design tokens — mirror OpenMetadata's palette with a slight Repo.io tilt.
- * Keep the primary blue identical so OpenMetadata-ported components look
- * at home; swap it later if the brand drifts.
+ * Antd design tokens — SAP Fiori Horizon (light, Compact density).
+ * Values come from design-reference/sap-s4hana and must match
+ * styles/tokens.css. Change both together.
  */
 export const tokens = {
   // Brand
-  colorPrimary: '#1570EF',
-  colorPrimaryHover: '#1366D9',
-  colorSuccess: '#12B76A',
-  colorWarning: '#F79009',
-  colorError: '#F04438',
-  colorInfo: '#1570EF',
+  colorPrimary: '#0070F2',
+  colorPrimaryHover: '#0064D9',
+  colorSuccess: '#30914C',
+  colorWarning: '#E76500',
+  colorError: '#F53232',
+  colorInfo: '#0070F2',
+  colorLink: '#0064D9',
 
   // Surfaces
-  colorBgLayout: '#F8F9FC',
+  colorBgLayout: '#F5F6F7',
   colorBgContainer: '#FFFFFF',
   colorBgElevated: '#FFFFFF',
-  colorBorder: '#E4E7EC',
-  colorBorderSecondary: '#EAECF0',
+  colorBorder: '#BCC3CA',
+  colorBorderSecondary: '#E5E5E5',
 
   // Text
-  colorText: '#101828',
-  colorTextSecondary: '#475467',
-  colorTextTertiary: '#667085',
-  colorTextDisabled: '#98A2B3',
+  colorText: '#131E29',
+  colorTextSecondary: '#556B82',
+  colorTextTertiary: '#758CA4',
+  colorTextDisabled: '#8396A8',
 
   // Sidebar (icon rail)
   sidebarWidth: 84,
   sidebarBg: '#0C111D',
-  sidebarItemActive: '#1570EF',
+  sidebarItemActive: '#0070F2',
   sidebarItemText: '#D0D5DD',
   sidebarItemTextActive: '#FFFFFF',
 
@@ -43,20 +44,20 @@ export const tokens = {
   headerBorder: '#EAECF0',
 
   // Shape
-  borderRadius: 8,
-  borderRadiusLG: 12,
-  borderRadiusSM: 6,
+  borderRadius: 8, // buttons, menus (Horizon)
+  borderRadiusLG: 16, // cards
+  borderRadiusSM: 4, // input fields
 
   // Type
   fontFamily:
-    'Inter, "IBM Plex Sans Arabic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif',
+    '"72", "72full", "IBM Plex Sans Arabic", Arial, Helvetica, sans-serif',
   fontFamilyCode:
     '"JetBrains Mono", Menlo, Monaco, Consolas, "Courier New", monospace',
 
-  // Density
-  controlHeight: 36,
-  controlHeightLG: 40,
-  controlHeightSM: 28,
+  // Density — Compact (26px) is the desktop default; LG = Cozy (36px)
+  controlHeight: 26,
+  controlHeightLG: 36,
+  controlHeightSM: 22,
 };
 
 export const repoioTheme: ThemeConfig = {
@@ -65,6 +66,8 @@ export const repoioTheme: ThemeConfig = {
   token: {
     colorPrimary: tokens.colorPrimary,
     colorInfo: tokens.colorInfo,
+    colorLink: tokens.colorLink,
+    colorPrimaryHover: tokens.colorPrimaryHover,
     colorSuccess: tokens.colorSuccess,
     colorWarning: tokens.colorWarning,
     colorError: tokens.colorError,

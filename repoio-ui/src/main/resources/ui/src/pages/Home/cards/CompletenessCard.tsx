@@ -28,7 +28,7 @@ export default function CompletenessCard() {
         inverse: rtl,
         axisTick: { show: false },
         axisLine: { lineStyle: { color: '#A9B4BE' } },
-        axisLabel: { color: '#1D2D3E', fontSize: 11 },
+        axisLabel: { color: '#131E29', fontSize: 11 },
       },
       yAxis: {
         type: 'value',
@@ -57,7 +57,7 @@ export default function CompletenessCard() {
             show: true,
             position: 'top',
             fontSize: 10,
-            color: '#1D2D3E',
+            color: '#131E29',
             formatter: (p) => totals[p.dataIndex].toLocaleString('en-US'),
           },
           data: completeness.weeks.map((w) => w.issues),
