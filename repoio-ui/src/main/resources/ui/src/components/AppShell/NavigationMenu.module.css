@@ -7,7 +7,7 @@
   position: fixed;
   inset-block-start: calc(var(--sapShellBar_Height) - 0.25rem);
   inset-inline-start: 0.75rem;
-  width: 18rem; /* 288px */
+  width: 288px; /* SAP Compact Navigation Menu width; px so root font size can't shrink it */
   max-width: calc(100vw - 1.5rem);
   height: min(35rem, calc(100vh - 4.5rem));
   display: flex;
@@ -90,6 +90,7 @@
 .back:hover { background: var(--sapList_Hover_Background); }
 .search {
   flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 0.375rem;
@@ -104,6 +105,7 @@
 .search input {
   flex: 1;
   min-width: 0;
+  width: 100%;
   border: 0;
   background: none;
   font-family: inherit;
