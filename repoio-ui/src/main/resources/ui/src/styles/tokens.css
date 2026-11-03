@@ -32,16 +32,19 @@
 
   /* ─────────────────────────────────────────────
    * Shell Bar (SAP Top Navigation)
-   * Shell bar height: 44px (Fiori standard)
+   * Horizon light shell (design-reference/sap-s4hana/01-overview-page.svg)
    * ───────────────────────────────────────────── */
-  --sapShellColor: #354A5E;
-  --sapShell_TextColor: #FFFFFF;
-  --sapShell_InteractiveTextColor: #FFFFFF;
-  --sapShell_InteractiveBackground: rgba(255, 255, 255, 0.1);
-  --sapShell_Hover_Background: rgba(255, 255, 255, 0.15);
-  --sapShell_Active_Background: rgba(255, 255, 255, 0.2);
-  --sapShell_BorderColor: #223548;
-  --sapShellBar_Height: 44px;
+  --sapShellColor: #FFFFFF;
+  --sapShell_TextColor: #1D2D3E;
+  --sapShell_InteractiveTextColor: #1D2D3E;
+  --sapShell_InteractiveBackground: transparent;
+  --sapShell_Hover_Background: #EAECEE;
+  --sapShell_Active_Background: #DEE2E5;
+  --sapShell_BorderColor: #E5E8EB;
+  --sapShell_Title_TextColor: #0064D9;
+  --sapShell_Search_BorderColor: #A9B4BE;
+  --sapShell_Search_Placeholder: #8396A8;
+  --sapShellBar_Height: 3.25rem; /* 52px */
 
   /* ─────────────────────────────────────────────
    * Side Navigation
@@ -97,8 +100,8 @@
   --sapFontHeader6Size: 0.75rem;
 
   --sapContent_LineHeight: 1.4;
-  --sapContent_LabelColor: #6A6D70;
-  --sapContent_ValueColor: #32363A;
+  --sapContent_LabelColor: #556B82;
+  --sapContent_ValueColor: #1D2D3E;
   --sapContent_DisabledTextColor: #89919A;
   --sapContent_PlaceholderTextColor: #89919A;
   --sapContent_ContrastTextColor: #FFFFFF;
@@ -208,8 +211,36 @@
    * ───────────────────────────────────────────── */
   --sapCard_Background: #FFFFFF;
   --sapCard_BorderColor: #E5E5E5;
-  --sapCard_BorderRadius: 0.5rem;
-  --sapCard_Shadow: 0 0 0.25rem rgba(0, 0, 0, 0.12);
+  --sapCard_BorderRadius: 1rem;
+  --sapCard_Shadow: 0 0 0.125rem 0 rgba(34, 53, 72, 0.15), 0 0.125rem 0.5rem 0 rgba(34, 53, 72, 0.15);
+  --sapCard_Gap: 1rem;
+  --sapCard_ColumnWidth: 18.75rem; /* 300px — Overview Page masonry column */
+  --sapCard_Subtitle_TextColor: #556B82;
+  --sapCard_Counter_TextColor: #556B82;
+
+  /* Dynamic page header (variant management) */
+  --sapVariant_TextColor: #0064D9;
+  --sapVariant_FontSize: 1.25rem;
+
+  /* Charts — ordered colors used in the SAP reference */
+  --sapChart_OrderedColor_1: #0070F2;
+  --sapChart_OrderedColor_2: #C87B00;
+  --sapChart_GridColor: #E5E8EB;
+
+  /* Object status — Horizon text + solid + soft button backgrounds */
+  --sapPositiveTextColor: #256F3A;
+  --sapPositiveElementColor: #30914C;
+  --sapCriticalElementColor: #E76500;
+  --sapNegativeElementColor: #E00000;
+  --sapNegativeTextColor: #AA0808;
+  --sapButton_Accept_Background: #F5FAE5;
+  --sapButton_Accept_BorderColor: #BDE986;
+  --sapButton_Accept_TextColor: #256F3A;
+  --sapButton_Reject_Background: #FFEAF4;
+  --sapButton_Reject_BorderColor: #FFD0E7;
+  --sapButton_Reject_TextColor: #AA0808;
+  --sapCalendar_Today_BorderColor: #7858FF;
+  --sapCalendar_Weekend_Background: #EAECEE;
   --sapCard_Header_Background: #FFFFFF;
   --sapCard_Header_BorderColor: #E5E5E5;
   --sapCard_Header_Height: 3rem;
@@ -338,51 +369,7 @@
   --repoio-border-radius: var(--sapContent_BorderRadius);
 }
 
-/* ─────────────────────────────────────────────
- * Dark Theme overrides (prefers-color-scheme)
- * ───────────────────────────────────────────── */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --sapBrandColor: #5BB1FF;
-    --sapBrandColor_Hover: #4DA8FF;
-    --sapBrandColor_LightBackground: #0B2035;
-    --sapShellColor: #1D2D3E;
-    --sapContent_Background: #121212;
-    --sapCard_Background: #1E1E1E;
-    --sapSideNav_Background: #1E1E1E;
-    --sapList_Background: #1E1E1E;
-    --sapList_HeaderBackground: #262626;
-    --sapField_Background: #2D2D2D;
-    --sapContent_ValueColor: #FAFAFA;
-    --sapContent_LabelColor: #ABABAB;
-    --sapContent_ForegroundBorderColor: #3D3D3D;
-    --sapList_BorderColor: #3D3D3D;
-    --sapCard_BorderColor: #3D3D3D;
-    --sapTile_Background: #1E1E1E;
-    --sapTile_BorderColor: #3D3D3D;
-  }
-}
-
-/* Explicit dark theme via data-theme attribute */
-:root[data-theme="dark"] {
-  --sapBrandColor: #5BB1FF;
-  --sapBrandColor_Hover: #4DA8FF;
-  --sapBrandColor_LightBackground: #0B2035;
-  --sapShellColor: #1D2D3E;
-  --sapContent_Background: #121212;
-  --sapCard_Background: #1E1E1E;
-  --sapSideNav_Background: #1E1E1E;
-  --sapList_Background: #1E1E1E;
-  --sapList_HeaderBackground: #262626;
-  --sapField_Background: #2D2D2D;
-  --sapContent_ValueColor: #FAFAFA;
-  --sapContent_LabelColor: #ABABAB;
-  --sapContent_ForegroundBorderColor: #3D3D3D;
-  --sapList_BorderColor: #3D3D3D;
-  --sapCard_BorderColor: #3D3D3D;
-  --sapTile_Background: #1E1E1E;
-  --sapTile_BorderColor: #3D3D3D;
-}
+/* Light Horizon only — see design-reference/README.md (Theme). */
 
 /* ─────────────────────────────────────────────
  * SAP 72 Font Face

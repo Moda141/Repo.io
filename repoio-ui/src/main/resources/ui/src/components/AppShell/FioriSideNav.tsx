@@ -126,7 +126,7 @@ export default function FioriSideNav({ collapsed, onToggle }: Props) {
       items: [
         { key: 'pipelines', label: t('nav.pipelines', 'Pipelines'), icon: <PipelineIcon />, to: ROUTES.PIPELINES ?? '/pipelines' },
         { key: 'quality', label: t('nav.quality', 'Data Quality'), icon: <QualityIcon />, to: ROUTES.QUALITY ?? '/quality' },
-        { key: 'glossary', label: t('nav.glossary', 'Glossary'), icon: <GlossaryIcon />, to: ROUTES.GLOSSARY ?? '/glossary' },
+        { key: 'glossary', label: t('nav.glossary', 'Glossary'), icon: <GlossaryIcon />, to: '/glossary' },
       ],
     },
     {

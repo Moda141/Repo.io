@@ -11,14 +11,16 @@ import { useMemo } from 'react';
  * reads as part of the same system.
  */
 
-const PALETTE = [
-  '#1570EF', // primary
-  '#6938EF', // violet
-  '#12B76A', // success
-  '#F79009', // warn
-  '#F04438', // error
-  '#06AED4', // cyan
+/** SAP Horizon ordered chart colors (design-reference/sap-s4hana). */
+export const CHART_PALETTE = [
+  '#0070F2', // sapChart_OrderedColor_1
+  '#C87B00', // sapChart_OrderedColor_2
+  '#30914C', // positive
+  '#7858FF', // indication / brand violet
+  '#E76500', // critical
+  '#AA0808', // negative
 ];
+const PALETTE = CHART_PALETTE;
 
 interface Props {
   option: EChartsOption;
@@ -32,13 +34,13 @@ export default function EChart({ option, height = 280, loading }: Props) {
       color: PALETTE,
       textStyle: {
         fontFamily:
-          'Inter, "IBM Plex Sans Arabic", -apple-system, system-ui, sans-serif',
+          '"72", "IBM Plex Sans Arabic", Arial, Helvetica, sans-serif',
       },
       grid: { left: 40, right: 16, top: 32, bottom: 32 },
       tooltip: {
         trigger: 'axis',
-        backgroundColor: '#101828',
-        borderColor: '#101828',
+        backgroundColor: '#1D2D3E',
+        borderColor: '#1D2D3E',
         textStyle: { color: '#FFFFFF', fontSize: 12 },
       },
       ...option,

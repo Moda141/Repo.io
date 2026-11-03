@@ -14,7 +14,9 @@ Before you open any file in `src/`:
 1. **Read §1** (folder map) — know where the file belongs.
 2. **Read §2** (design system) — if you're touching colour, type, spacing, icons, or shell chrome, check the token table first.
 3. **Read §4** (page anatomy) — every new page follows one Fiori floorplan.
-4. **Run `npx tsc --noEmit && npx vite build`** before you push. Both must pass.
+4. **Open `repoio-ui/design-reference/README.md`** — find the page's SAP reference
+   export and approved prototype. Build to match them; pages are approved one at a time.
+5. **Run `npx tsc --noEmit && npx vite build`** before you push. Both must pass.
 
 If a rule here surprises you, open a PR amending the guide *first*, then the code.
 
@@ -148,14 +150,16 @@ the token table, and add an inline comment explaining why.
 
 ## 3 · AppShell
 
-The AppShell is composed of two Fiori components:
+Reference: `design-reference/sap-s4hana/01-overview-page.svg` (Horizon, light).
 
 | Component | File | Description |
 |---|---|---|
-| `FioriShellBar` | `AppShell/FioriShellBar.tsx` | 44 px top bar, `--sapShellColor` background, product name, user avatar |
-| `FioriSideNav` | `AppShell/FioriSideNav.tsx` | Collapsible side nav: 272 px expanded / 48 px collapsed; collapse state stored in `localStorage` |
+| `FioriShellBar` | `AppShell/FioriShellBar.tsx` | 52 px **white** bar: menu (☰), back, repo.io logo, app title ▾, pill search field, language, notifications, help, avatar |
+| `FioriSideNav` | `AppShell/FioriSideNav.tsx` | Hidden by default; the shell bar ☰ button opens it. When open: 272 px, collapsible to 48 px. Both states stored in `localStorage` |
 
-`AppShell.tsx` imports both and manages the layout (`display: flex`, `flex-direction: column` / `row`).
+`AppShell.tsx` owns the open/collapsed state and offsets `<main>` by the nav width.
+The logo lives in `src/assets/img/brand/repoio-logo.png` (source art in
+`design-reference/brand/`). Do not redraw it as SVG or text.
 
 Current primary nav items (do **not** break or reorder):
 Home, Explore, Entities, Change Requests, Pipelines, Quality, Settings.
@@ -175,32 +179,35 @@ Every page maps to one of three SAP Fiori floorplans:
 
 ### Overview Page (home / dashboard)
 
-Use for: landing page, summary dashboards.
+Use for: landing page, summary dashboards. Reference implementation: `pages/Home/`.
+
+Shared building blocks live in `components/common/Fiori/`:
+
+| Export | SAP element |
+|---|---|
+| `DynamicPageHeader` | Variant management ("Standard ▾ / No filters active") + centred collapse handle |
+| `OvpGrid` | Masonry card columns (`columns: 4 300px`) |
+| `OvpCard` | Card shell: title, subtitle, counter ("6 of 12"), overflow "…"; `side` prop = numeric card |
+| `ObjectStatus` | Status text with icon, or solid tag when `inverted` |
+| `intlLocale()` | Intl locale with Western digits for Arabic |
 
 ```tsx
-// src/pages/<Area>/<Name>Page.tsx
-import styles from './<Name>Page.module.css';
-import { useTranslation } from 'react-i18next';
-
-export default function MyPage() {
-  const { t } = useTranslation();
-  return (
-    <div className={styles.page}>
-      {/* Page header: title + subtitle */}
-      <header className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>{t('page.my.title')}</h1>
-        <p className={styles.pageSubtitle}>{t('page.my.subtitle')}</p>
-      </header>
-
-      {/* KPI row: 2–4 metric tiles */}
-      <div className={styles.kpiRow}>{/* ... */}</div>
-
-      {/* Tile groups or content sections */}
-      <div className={styles.tileGrid}>{/* ... */}</div>
-    </div>
-  );
-}
+<DynamicPageHeader variant={t('…variant')} subtitle={t('…no_filters')} />
+<div className={styles.content}>
+  <OvpGrid>
+    <OvpCard title="…" subtitle="…" counter={t('fiori.of', { shown: 6, total: 12 })} onMore={…}>
+      …card body…
+    </OvpCard>
+  </OvpGrid>
+</div>
 ```
+
+Card types used so far (see `design-reference/README.md` for the mapping):
+analytical (KPI + EChart stacked bars), numeric, list with Approve / Reject,
+table with search, quick links, timeline, contact, calendar.
+
+Until a page has real endpoints, its data lives in `<page>SampleData.ts` and the
+header shows the "Sample data" badge. Remove both when the REST call lands.
 
 ### List Report (master list with filters)
 
@@ -228,6 +235,8 @@ Key elements:
 - `document.title` is set via `<title>` or Helmet inside the page — do not rely on the shell.
 - **No raw `<h1>…<h6>`** except in CSS Module–styled page headers. Use Antd `Typography.Title` inside cards.
 - **Breadcrumbs** are allowed in Object Pages (Fiori pattern). They are not used in List Reports or Overview Pages.
+- **Theme**: light Horizon only. `tokens.css` has no dark overrides; do not add `prefers-color-scheme: dark` rules.
+- **Digits**: format dates and numbers with `intlLocale(i18n.language)` so Arabic shows Western digits.
 
 ---
 
@@ -456,13 +465,14 @@ For orientation only — reflects what shipped, not what you must preserve verba
 
 **Migrated to SAP Fiori Horizon (CSS Modules + tokens):**
 - Shell: `FioriShellBar`, `FioriSideNav`, `AppShell`
-- Pages: Home (Overview Page), Explore (List Report), Entity Detail (Object Page)
+- Pages: Home (Overview Page — matched to `design-reference/sap-s4hana/01-overview-page.svg`, approved 2026-11-03), Explore (List Report), Entity Detail (Object Page)
+- Shared: `components/common/Fiori/` (DynamicPageHeader, OvpGrid, OvpCard, ObjectStatus)
 - Styles: `tokens.css`, `variables.less`, `app.less`, `fonts.less`
 - Component overrides: button, table, tabs, menu, form, select, tags, drawer, pagination, radio, toggle-switch
 
 **Pending migration (still using OpenMetadata styling):**
 - EntityListPage, LoginPage, PipelinesPage, SettingsPage and sub-pages
-- Component overrides: add-edit-form-steps, code-mirror, entity-version-time-line, form-hint-doc, glossary, om-rdg, profile-picture, profiler, resizable-panels-component, rjsf, size, slider, step
+- Component overrides (old OM LESS variables mapped in `styles/components/legacy-om-variables.less`): add-edit-form-steps, code-mirror, entity-version-time-line, form-hint-doc, glossary, om-rdg, profile-picture, profiler, resizable-panels-component, rjsf, size, slider, step
 - All remaining pages (≈ 50+ pages across Entities, Change Requests, Search, Quality, Workflows, Alerts, Integrations, Admin, Auth)
 
 Total target: ≈ 57 pages. Every new page follows Fiori Horizon from the start.

@@ -2,32 +2,31 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ROUTES } from '@/constants/routes';
+import repoioLogo from '@/assets/img/brand/repoio-logo.png';
 import styles from './FioriShellBar.module.css';
 
+interface Props {
+  navOpen: boolean;
+  onMenuToggle: () => void;
+}
+
 /**
- * FioriShellBar — SAP Fiori Horizon Shell Bar
+ * FioriShellBar — SAP Fiori Horizon Shell Bar (light)
  *
- * Anatomy (left → right, matches Fiori spec):
- *   [Logo] | [App Title]   [spacer]   [Search] [Notifications] [Help] [Avatar]
+ * Reference: design-reference/sap-s4hana/01-overview-page.svg
  *
- * Height: 44px (--sapShellBar_Height)
- * Background: #354A5E (--sapShellColor)
+ * Anatomy (start → end, mirrors in RTL):
+ *   [☰] [‹] [repo.io logo] | [App title ▾]   [spacer]   [Search field] [EN/ع] [🔔] [?] [Avatar]
+ *
+ * Height: 52px (--sapShellBar_Height). Background: white (--sapShellColor).
  */
-export default function FioriShellBar() {
+export default function FioriShellBar({ navOpen, onMenuToggle }: Props) {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const searchRef = useRef<HTMLInputElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  // Focus search input when it opens
-  useEffect(() => {
-    if (searchOpen) searchRef.current?.focus();
-  }, [searchOpen]);
-
-  // Close user menu on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
@@ -40,129 +39,103 @@ export default function FioriShellBar() {
 
   function handleSearchSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchOpen(false);
+    const q = searchQuery.trim();
+    if (q) {
+      navigate(`${ROUTES.SEARCH}?q=${encodeURIComponent(q)}`);
       setSearchQuery('');
     }
-  }
-
-  function toggleLanguage() {
-    i18n.changeLanguage(i18n.language === 'ar-EG' ? 'en-US' : 'ar-EG');
   }
 
   const isArabic = i18n.language === 'ar-EG';
 
   return (
-    <header
-      className={styles.shellBar}
-      role="banner"
-      aria-label="Application shell bar">
-
-      {/* Logo + App title */}
-      <Link to={ROUTES.HOME} className={styles.logoGroup} aria-label="Repo.io — Go to home">
-        {/* SAP-style logo mark */}
-        <div className={styles.logoMark} aria-hidden="true">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <rect width="28" height="28" rx="4" fill="#0070F2"/>
-            <path
-              d="M7 19.5L12.5 8.5L18 19.5M9.5 15.5H16.5"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-        <span className={styles.appTitle}>Repo.io</span>
-      </Link>
-
-      {/* Separator */}
-      <div className={styles.separator} aria-hidden="true" />
-
-      {/* App descriptor */}
-      <span className={styles.appDescriptor}>
-        {t('app.descriptor', 'Master Data')}
-      </span>
-
-      {/* Spacer */}
-      <div className={styles.spacer} />
-
-      {/* Search */}
-      {searchOpen ? (
-        <form
-          className={styles.searchForm}
-          onSubmit={handleSearchSubmit}
-          role="search"
-          aria-label="Global search">
-          <input
-            ref={searchRef}
-            type="search"
-            className={styles.searchInput}
-            placeholder={t('nav.search_placeholder', 'Search entities, fields…')}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Escape' && setSearchOpen(false)}
-            aria-label={t('nav.search_placeholder', 'Search entities, fields…')}
-          />
-        </form>
-      ) : (
-        <button
-          className={styles.iconBtn}
-          onClick={() => setSearchOpen(true)}
-          aria-label={t('nav.search', 'Search')}
-          title={t('nav.search', 'Search')}>
-          {/* Search icon */}
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5"/>
-            <path d="M11 11L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
-        </button>
-      )}
-
-      {/* Language toggle (EN / AR) */}
+    <header className={styles.shellBar} role="banner">
       <button
         className={styles.iconBtn}
-        onClick={toggleLanguage}
-        aria-label={isArabic ? 'Switch to English' : 'التبديل إلى العربية'}
-        title={isArabic ? 'Switch to English' : 'التبديل إلى العربية'}>
-        <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: 0 }}>
-          {isArabic ? 'EN' : 'ع'}
-        </span>
+        onClick={onMenuToggle}
+        aria-label={t('shell.menu', 'Menu')}
+        aria-expanded={navOpen}
+        title={t('shell.menu', 'Menu')}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
       </button>
 
-      {/* Notifications */}
       <button
+        className={`${styles.iconBtn} ${styles.backBtn} ${styles.hideSmall}`}
+        onClick={() => navigate(-1)}
+        aria-label={t('shell.back', 'Back')}
+        title={t('shell.back', 'Back')}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      <Link to={ROUTES.HOME} className={styles.logo} aria-label={t('shell.go_home', 'repo.io — Home')}>
+        <img src={repoioLogo} alt="repo.io" height={32} />
+      </Link>
+
+      <div className={`${styles.separator} ${styles.hideSmall}`} aria-hidden="true" />
+
+      <button className={styles.appTitle} type="button">
+        <span className={styles.appTitleText}>{t('shell.app_title', 'Master Data Overview')}</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      </button>
+
+      <div className={styles.spacer} />
+
+      <form className={styles.search} onSubmit={handleSearchSubmit} role="search">
+        <input
+          type="search"
+          className={styles.searchInput}
+          placeholder={t('nav.search_placeholder', 'Search records')}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          aria-label={t('nav.search_placeholder', 'Search records')}
+        />
+        <button type="submit" className={styles.searchBtn} aria-label={t('nav.search', 'Search')}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8" />
+            <path d="M20 20l-4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          </svg>
+        </button>
+      </form>
+
+      <button
+        className={styles.iconBtn}
+        onClick={() => i18n.changeLanguage(isArabic ? 'en-US' : 'ar-EG')}
+        aria-label={isArabic ? 'Switch to English' : 'التبديل إلى العربية'}
+        title={isArabic ? 'Switch to English' : 'التبديل إلى العربية'}>
+        <span className={styles.langLabel}>{isArabic ? 'EN' : 'ع'}</span>
+      </button>
+
+      <Link
+        to={ROUTES.NOTIFICATIONS}
         className={styles.iconBtn}
         aria-label={t('nav.notifications', 'Notifications')}
         title={t('nav.notifications', 'Notifications')}>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path
-            d="M8 2a5 5 0 0 1 5 5v2.5l1 1.5H2l1-1.5V7a5 5 0 0 1 5-5Z"
-            stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
-          <path d="M6.5 13a1.5 1.5 0 0 0 3 0" stroke="currentColor" strokeWidth="1.5"/>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15L6 16zM10 20a2 2 0 0 0 4 0" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
         </svg>
-      </button>
+      </Link>
 
-      {/* Help */}
       <button
-        className={styles.iconBtn}
+        className={`${styles.iconBtn} ${styles.hideSmall}`}
         aria-label={t('nav.help', 'Help')}
         title={t('nav.help', 'Help')}>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5"/>
-          <path d="M6 6.5C6 5.4 6.9 4.5 8 4.5s2 .9 2 2c0 1-1 1.5-1.5 2S8 10 8 10"
-            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          <circle cx="8" cy="12" r="0.75" fill="currentColor"/>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.7M12 17h.01" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
         </svg>
       </button>
 
-      {/* User avatar + menu */}
       <div className={styles.userMenu} ref={userMenuRef}>
         <button
           className={styles.avatar}
           onClick={() => setUserMenuOpen((o) => !o)}
-          aria-label="User account"
+          aria-label={t('shell.account', 'Account')}
           aria-expanded={userMenuOpen}
           aria-haspopup="menu">
           MM
@@ -180,16 +153,10 @@ export default function FioriShellBar() {
               className={styles.userMenuItem}
               role="menuitem"
               onClick={() => setUserMenuOpen(false)}>
-              Settings
+              {t('nav.settings', 'Settings')}
             </Link>
-            <button
-              className={styles.userMenuItem}
-              role="menuitem"
-              onClick={() => {
-                setUserMenuOpen(false);
-                /* sign out */
-              }}>
-              Sign Out
+            <button className={styles.userMenuItem} role="menuitem" onClick={() => setUserMenuOpen(false)}>
+              {t('auth.sign_out', 'Sign out')}
             </button>
           </div>
         )}

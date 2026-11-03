@@ -1,135 +1,140 @@
 /**
  * FioriShellBar.module.css
- * SAP Fiori Horizon Shell Bar — 44px top navigation
+ * SAP Fiori Horizon light Shell Bar — 52px
+ * Reference: design-reference/sap-s4hana/01-overview-page.svg
  */
 
 .shellBar {
   position: fixed;
   inset-block-start: 0;
-  inset-inline-start: 0;
-  inset-inline-end: 0;
+  inset-inline: 0;
   height: var(--sapShellBar_Height);
   background: var(--sapShellColor);
   border-bottom: 1px solid var(--sapShell_BorderColor);
   z-index: var(--sapZIndex_ShellBar);
   display: flex;
   align-items: center;
-  padding: 0 0.75rem;
-  gap: 0.5rem;
-}
-
-/* Logo + App Title */
-.logoGroup {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
+  gap: 0.375rem;
+  padding-inline: 1rem;
   color: var(--sapShell_TextColor);
-  flex-shrink: 0;
 }
 
-.logoMark {
+.iconBtn {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  background: transparent;
+  color: var(--sapShell_TextColor);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  text-decoration: none;
+  transition: background var(--sapContent_Transition_Duration) var(--sapContent_Transition_Easing);
+}
+
+.iconBtn:hover { background: var(--sapShell_Hover_Background); }
+.iconBtn:active { background: var(--sapShell_Active_Background); }
+.iconBtn:focus-visible,
+.appTitle:focus-visible,
+.logo:focus-visible,
+.avatar:focus-visible,
+.searchBtn:focus-visible {
+  outline: 2px solid var(--sapContent_FocusColor);
+  outline-offset: 2px;
+}
+
+/* Back chevron points toward the start edge — flip in RTL */
+:global([dir='rtl']) .backBtn svg { transform: scaleX(-1); }
+
+.logo {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+}
+.logo:hover { background: var(--sapShell_Hover_Background); }
+.logo img { display: block; height: 2rem; width: auto; }
+
+.separator {
+  width: 1px;
+  height: 1.5rem;
+  background: var(--sapShell_BorderColor);
+  margin-inline: 0.5rem;
   flex-shrink: 0;
 }
 
 .appTitle {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--sapShell_TextColor);
-  white-space: nowrap;
-  letter-spacing: -0.01em;
-}
-
-/* Vertical separator */
-.separator {
-  width: 1px;
-  height: 1.5rem;
-  background: rgba(255, 255, 255, 0.3);
-  flex-shrink: 0;
-}
-
-.appDescriptor {
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.8);
-  white-space: nowrap;
-  font-weight: 400;
-  flex-shrink: 0;
-}
-
-.spacer {
-  flex: 1;
-}
-
-/* Search form */
-.searchForm {
-  flex: 0 0 auto;
-  width: 220px;
-}
-
-.searchInput {
-  width: 100%;
-  height: 2rem;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: var(--sapContent_BorderRadius);
-  color: var(--sapShell_TextColor);
-  font-size: 0.875rem;
-  font-family: var(--sapFontFamily);
-  padding: 0 0.75rem;
-  transition: background 0.1s ease-in-out, border-color 0.1s ease-in-out;
-}
-
-.searchInput::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.searchInput:focus {
-  outline: 1px dotted rgba(255, 255, 255, 0.8);
-  outline-offset: 2px;
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.6);
-}
-
-/* Icon button */
-.iconBtn {
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
   border: none;
   background: transparent;
   color: var(--sapShell_TextColor);
-  border-radius: var(--sapContent_BorderRadius);
+  font-family: var(--sapFontFamily);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  padding: 0.375rem;
+  border-radius: 0.5rem;
   cursor: pointer;
-  font-size: 1rem;
-  flex-shrink: 0;
-  padding: 0;
-  transition: background 0.1s ease-in-out;
+  min-width: 0;
 }
+.appTitle:hover { background: var(--sapShell_Hover_Background); }
+.appTitleText { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.iconBtn:hover {
-  background: var(--sapShell_Hover_Background);
+.spacer { flex: 1; }
+
+/* Search — always-visible pill field */
+.search {
+  display: flex;
+  align-items: center;
+  width: min(25rem, 32vw);
+  height: 2.25rem;
+  padding-inline: 0.875rem 0.375rem;
+  border-radius: 1.125rem;
+  background: var(--sapField_Background);
+  box-shadow: inset 0 0 0 1px var(--sapShell_Search_BorderColor);
 }
+.search:focus-within { box-shadow: inset 0 0 0 2px var(--sapField_Focus_BorderColor); }
 
-.iconBtn:active {
-  background: var(--sapShell_Active_Background);
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-family: var(--sapFontFamily);
+  font-size: var(--sapFontSize);
+  color: var(--sapField_TextColor);
+  outline: none;
 }
+.searchInput::placeholder { color: var(--sapShell_Search_Placeholder); font-style: italic; }
+.searchInput::-webkit-search-cancel-button { display: none; }
 
-.iconBtn:focus-visible {
-  outline: 1px dotted rgba(255, 255, 255, 0.8);
-  outline-offset: 2px;
+.searchBtn {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--sapContent_LabelColor);
+  cursor: pointer;
 }
+.searchBtn:hover { background: var(--sapShell_Hover_Background); }
 
-/* Avatar */
+.langLabel { font-size: 0.75rem; font-weight: 700; }
+
 .avatar {
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  background: var(--sapBrandColor);
+  background: var(--sapCalendar_Today_BorderColor);
   color: #FFFFFF;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   font-family: var(--sapFontFamily);
   display: grid;
@@ -137,22 +142,10 @@
   cursor: pointer;
   border: none;
   flex-shrink: 0;
-  transition: opacity 0.1s ease-in-out;
+  margin-inline-start: 0.25rem;
 }
 
-.avatar:hover {
-  opacity: 0.9;
-}
-
-.avatar:focus-visible {
-  outline: 1px dotted rgba(255, 255, 255, 0.8);
-  outline-offset: 2px;
-}
-
-/* User Menu dropdown */
-.userMenu {
-  position: relative;
-}
+.userMenu { position: relative; }
 
 .userMenuDropdown {
   position: absolute;
@@ -165,28 +158,10 @@
   z-index: var(--sapZIndex_Popover);
   overflow: hidden;
 }
-
-.userMenuHeader {
-  padding: 0.75rem 1rem;
-}
-
-.userMenuName {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--sapContent_ValueColor);
-}
-
-.userMenuRole {
-  font-size: 0.75rem;
-  color: var(--sapContent_LabelColor);
-  margin-top: 0.125rem;
-}
-
-.userMenuDivider {
-  height: 1px;
-  background: var(--sapContent_ForegroundBorderColor);
-}
-
+.userMenuHeader { padding: 0.75rem 1rem; }
+.userMenuName { font-size: 0.9375rem; font-weight: 600; color: var(--sapContent_ValueColor); }
+.userMenuRole { font-size: 0.75rem; color: var(--sapContent_LabelColor); margin-top: 0.125rem; }
+.userMenuDivider { height: 1px; background: var(--sapContent_ForegroundBorderColor); }
 .userMenuItem {
   display: block;
   width: 100%;
@@ -199,10 +174,13 @@
   text-align: start;
   cursor: pointer;
   font-family: var(--sapFontFamily);
-  transition: background 0.1s ease-in-out;
 }
+.userMenuItem:hover { background: var(--sapList_Hover_Background); color: var(--sapBrandColor); }
 
-.userMenuItem:hover {
-  background: var(--sapList_Hover_Background);
-  color: var(--sapBrandColor);
+@media (max-width: 900px) {
+  .search { display: none; }
+}
+@media (max-width: 560px) {
+  .hideSmall { display: none; }
+  .appTitleText { max-width: 8rem; }
 }

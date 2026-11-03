@@ -4,56 +4,59 @@ import FioriShellBar from './FioriShellBar';
 import FioriSideNav from './FioriSideNav';
 import styles from './AppShell.module.css';
 
-const STORAGE_KEY = 'repoio-sidenav-collapsed';
+const NAV_OPEN_KEY = 'repoio-sidenav-open';
+const COLLAPSED_KEY = 'repoio-sidenav-collapsed';
+
+function readFlag(key: string, fallback: boolean): boolean {
+  try {
+    const v = localStorage.getItem(key);
+    return v == null ? fallback : v === '1';
+  } catch {
+    return fallback;
+  }
+}
+
+function writeFlag(key: string, value: boolean) {
+  try {
+    localStorage.setItem(key, value ? '1' : '0');
+  } catch {
+    /* storage unavailable — keep in-memory state only */
+  }
+}
 
 /**
  * AppShell — SAP Fiori Horizon layout
  *
- * Three regions (matches Fiori floorplan):
- *   <header class="fiori-shell-bar">     44px — Shell Bar
- *   <nav class="fiori-side-nav">         48px collapsed / 272px expanded — Side Navigation
- *   <main class="fiori-content-wrapper"> fills remaining viewport
+ * Reference: design-reference/sap-s4hana/01-overview-page.svg
  *
- * Shell Bar:   always visible at top (position: fixed)
- * Side Nav:    fixed on the left, persists collapse state
- * Content:     scrollable, gets margin-left matching nav width
+ *   Shell Bar (52px, white) — always visible
+ *   Side Nav  — hidden by default, opened from the shell bar menu (☰) button,
+ *               as in SAP S/4HANA Cloud. When open it can collapse to 48px.
+ *   Content   — scrollable, offset by the side nav width when it is open.
  */
 export default function AppShell() {
-  const [collapsed, setCollapsed] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem(STORAGE_KEY) === '1';
-    } catch {
-      return false;
-    }
-  });
+  const [navOpen, setNavOpen] = useState<boolean>(() => readFlag(NAV_OPEN_KEY, false));
+  const [collapsed, setCollapsed] = useState<boolean>(() => readFlag(COLLAPSED_KEY, false));
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, collapsed ? '1' : '0');
-    } catch {
-      /* ignore */
-    }
-  }, [collapsed]);
+  useEffect(() => writeFlag(NAV_OPEN_KEY, navOpen), [navOpen]);
+  useEffect(() => writeFlag(COLLAPSED_KEY, collapsed), [collapsed]);
+
+  const navWidth = !navOpen
+    ? '0px'
+    : collapsed
+      ? 'var(--sapSideNav_CollapsedWidth)'
+      : 'var(--sapSideNav_Width)';
 
   return (
     <div className={styles.shell}>
-      {/* Fiori Shell Bar — 44px top navigation */}
-      <FioriShellBar />
+      <FioriShellBar navOpen={navOpen} onMenuToggle={() => setNavOpen((o) => !o)} />
 
-      {/* Body area below shell bar */}
       <div className={styles.body}>
-        {/* Fiori Side Navigation */}
-        <FioriSideNav
-          collapsed={collapsed}
-          onToggle={() => setCollapsed((c) => !c)}
-        />
+        {navOpen && (
+          <FioriSideNav collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} />
+        )}
 
-        {/* Main content area */}
-        <main
-          className={styles.content}
-          style={{
-            marginInlineStart: collapsed ? 'var(--sapSideNav_CollapsedWidth)' : 'var(--sapSideNav_Width)',
-          }}>
+        <main className={styles.content} style={{ marginInlineStart: navWidth }}>
           <Outlet />
         </main>
       </div>
