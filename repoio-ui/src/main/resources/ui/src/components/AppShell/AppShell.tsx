@@ -1,29 +1,27 @@
 import { Outlet } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import Sidebar from './Sidebar';
-import TopBar from './TopBar';
+import FioriShellBar from './FioriShellBar';
+import FioriSideNav from './FioriSideNav';
 import styles from './AppShell.module.css';
 
-const STORAGE_KEY = 'repoio-sidebar-collapsed';
+const STORAGE_KEY = 'repoio-sidenav-collapsed';
 
 /**
- * AppShell — the three-region layout OpenMetadata uses:
- *   <aside class="app-sidebar">   (72px collapsed / 228px expanded)
- *   <header class="app-navbar-header">   (80px, 20/24 padding)
- *   <main class="page-container">        (24px top, 24px side, 16px bottom)
- * The collapsed state persists per browser (OpenMetadata persists it via
- * user preferences; we keep it local for now until the /me endpoint
- * lands). Side spacing and header padding come from
- * variables.less @sidebar-width, @layout-header-height,
- * @layout-header-padding.
+ * AppShell — SAP Fiori Horizon layout
+ *
+ * Three regions (matches Fiori floorplan):
+ *   <header class="fiori-shell-bar">     44px — Shell Bar
+ *   <nav class="fiori-side-nav">         48px collapsed / 272px expanded — Side Navigation
+ *   <main class="fiori-content-wrapper"> fills remaining viewport
+ *
+ * Shell Bar:   always visible at top (position: fixed)
+ * Side Nav:    fixed on the left, persists collapse state
+ * Content:     scrollable, gets margin-left matching nav width
  */
 export default function AppShell() {
-  // Default to EXPANDED to match OpenMetadata (228 px wide with labels).
-  // User can collapse via the toggle; preference persists.
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     try {
-      const v = localStorage.getItem(STORAGE_KEY);
-      return v === '1';
+      return localStorage.getItem(STORAGE_KEY) === '1';
     } catch {
       return false;
     }
@@ -39,15 +37,23 @@ export default function AppShell() {
 
   return (
     <div className={styles.shell}>
-      <Sidebar
-        collapsed={collapsed}
-        onToggleCollapse={() => setCollapsed((c) => !c)}
-      />
-      <div className={styles.main}>
-        <header className={styles.header}>
-          <TopBar />
-        </header>
-        <main className={styles.content}>
+      {/* Fiori Shell Bar — 44px top navigation */}
+      <FioriShellBar />
+
+      {/* Body area below shell bar */}
+      <div className={styles.body}>
+        {/* Fiori Side Navigation */}
+        <FioriSideNav
+          collapsed={collapsed}
+          onToggle={() => setCollapsed((c) => !c)}
+        />
+
+        {/* Main content area */}
+        <main
+          className={styles.content}
+          style={{
+            marginInlineStart: collapsed ? 'var(--sapSideNav_CollapsedWidth)' : 'var(--sapSideNav_Width)',
+          }}>
           <Outlet />
         </main>
       </div>

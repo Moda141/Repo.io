@@ -1,36 +1,26 @@
-/* AppShell — flex row with the sticky sidebar and a scrolling main column.
-   Follows OpenMetadata's .main-container, .app-navbar-header, .page-container
-   layout exactly (metrics come from variables.less:
-   @layout-header-height=80px, @layout-header-padding=20px 24px). */
+/**
+ * AppShell.module.css — SAP Fiori Horizon layout
+ */
 
 .shell {
   display: flex;
-  min-height: 100vh;
-  background: var(--repoio-color-bg-page, #f8f9fc);
-}
-
-.main {
-  flex: 1;
-  min-width: 0;
-  display: flex;
   flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 9;
+.body {
   display: flex;
-  align-items: center;
-  height: 80px;
-  padding: 20px 24px;
-  background: var(--repoio-color-bg-primary, #ffffff);
-  border-bottom: 1px solid var(--repoio-color-border-secondary, #eaecf0);
+  flex: 1;
+  margin-top: var(--sapShellBar_Height);
+  overflow: hidden;
+  height: calc(100vh - var(--sapShellBar_Height));
 }
 
 .content {
   flex: 1;
-  padding: 24px 24px 48px 24px;
-  min-height: 0;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--sapContent_Background);
+  transition: margin-inline-start 0.1s ease-in-out;
 }

@@ -1,0 +1,208 @@
+/**
+ * FioriShellBar.module.css
+ * SAP Fiori Horizon Shell Bar — 44px top navigation
+ */
+
+.shellBar {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+  height: var(--sapShellBar_Height);
+  background: var(--sapShellColor);
+  border-bottom: 1px solid var(--sapShell_BorderColor);
+  z-index: var(--sapZIndex_ShellBar);
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  gap: 0.5rem;
+}
+
+/* Logo + App Title */
+.logoGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--sapShell_TextColor);
+  flex-shrink: 0;
+}
+
+.logoMark {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.appTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--sapShell_TextColor);
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+/* Vertical separator */
+.separator {
+  width: 1px;
+  height: 1.5rem;
+  background: rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.appDescriptor {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+  font-weight: 400;
+  flex-shrink: 0;
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* Search form */
+.searchForm {
+  flex: 0 0 auto;
+  width: 220px;
+}
+
+.searchInput {
+  width: 100%;
+  height: 2rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--sapContent_BorderRadius);
+  color: var(--sapShell_TextColor);
+  font-size: 0.875rem;
+  font-family: var(--sapFontFamily);
+  padding: 0 0.75rem;
+  transition: background 0.1s ease-in-out, border-color 0.1s ease-in-out;
+}
+
+.searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.searchInput:focus {
+  outline: 1px dotted rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Icon button */
+.iconBtn {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background: transparent;
+  color: var(--sapShell_TextColor);
+  border-radius: var(--sapContent_BorderRadius);
+  cursor: pointer;
+  font-size: 1rem;
+  flex-shrink: 0;
+  padding: 0;
+  transition: background 0.1s ease-in-out;
+}
+
+.iconBtn:hover {
+  background: var(--sapShell_Hover_Background);
+}
+
+.iconBtn:active {
+  background: var(--sapShell_Active_Background);
+}
+
+.iconBtn:focus-visible {
+  outline: 1px dotted rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+
+/* Avatar */
+.avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--sapBrandColor);
+  color: #FFFFFF;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  font-family: var(--sapFontFamily);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  border: none;
+  flex-shrink: 0;
+  transition: opacity 0.1s ease-in-out;
+}
+
+.avatar:hover {
+  opacity: 0.9;
+}
+
+.avatar:focus-visible {
+  outline: 1px dotted rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+
+/* User Menu dropdown */
+.userMenu {
+  position: relative;
+}
+
+.userMenuDropdown {
+  position: absolute;
+  inset-block-start: calc(100% + 0.5rem);
+  inset-inline-end: 0;
+  min-width: 200px;
+  background: var(--sapOverlay_Background);
+  border-radius: var(--sapContent_BorderRadius_Large);
+  box-shadow: var(--sapOverlay_Shadow);
+  z-index: var(--sapZIndex_Popover);
+  overflow: hidden;
+}
+
+.userMenuHeader {
+  padding: 0.75rem 1rem;
+}
+
+.userMenuName {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--sapContent_ValueColor);
+}
+
+.userMenuRole {
+  font-size: 0.75rem;
+  color: var(--sapContent_LabelColor);
+  margin-top: 0.125rem;
+}
+
+.userMenuDivider {
+  height: 1px;
+  background: var(--sapContent_ForegroundBorderColor);
+}
+
+.userMenuItem {
+  display: block;
+  width: 100%;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  color: var(--sapContent_ValueColor);
+  text-decoration: none;
+  background: none;
+  border: none;
+  text-align: start;
+  cursor: pointer;
+  font-family: var(--sapFontFamily);
+  transition: background 0.1s ease-in-out;
+}
+
+.userMenuItem:hover {
+  background: var(--sapList_Hover_Background);
+  color: var(--sapBrandColor);
+}

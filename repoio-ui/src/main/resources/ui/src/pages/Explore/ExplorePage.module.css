@@ -1,0 +1,439 @@
+/**
+ * ExplorePage.module.css
+ * SAP Fiori Horizon — List Report floorplan
+ */
+
+/* ─── Page shell ─────────────────────────────────────────────────────────── */
+.page {
+  min-height: 100%;
+  background: var(--sapBackgroundColor);
+}
+
+/* ─── Dynamic Page Header ─────────────────────────────────────────────────── */
+.pageHeader {
+  background: var(--sapObjectHeader_Background, #FFFFFF);
+  border-bottom: 1px solid var(--sapContent_ForegroundBorderColor);
+  padding: 1rem 2rem;
+}
+
+.pageHeaderInner {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.headerTitle {
+  flex: 1;
+}
+
+.title {
+  font-family: var(--sapFontFamily);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--sapContent_ValueColor);
+  margin: 0 0 0.25rem;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--sapContent_LabelColor);
+  margin: 0;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Buttons */
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0 1rem;
+  height: 2rem;
+  background: var(--sapButton_Emphasized_Background, #0070F2);
+  color: var(--sapButton_Emphasized_TextColor, #FFFFFF);
+  border: 1px solid var(--sapButton_Emphasized_BorderColor, #0064D9);
+  border-radius: var(--sapContent_BorderRadius, 4px);
+  font-family: var(--sapFontFamily);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.1s ease-in-out;
+}
+
+.btnPrimary:hover {
+  background: #0064D9;
+}
+
+.btnPrimary:focus-visible {
+  outline: 2px solid var(--sapContent_FocusColor);
+  outline-offset: 2px;
+}
+
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 1rem;
+  height: 2rem;
+  background: transparent;
+  color: var(--sapButton_TextColor, #0070F2);
+  border: 1px solid var(--sapButton_BorderColor);
+  border-radius: var(--sapContent_BorderRadius, 4px);
+  font-family: var(--sapFontFamily);
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.1s ease-in-out;
+}
+
+.btnGhost:hover {
+  background: var(--sapButton_Hover_Background, rgba(0, 112, 242, 0.06));
+}
+
+/* ─── Filter Bar ──────────────────────────────────────────────────────────── */
+.filterBar {
+  background: var(--sapGroup_ContentBackground, #F5F6F7);
+  border-bottom: 1px solid var(--sapContent_ForegroundBorderColor);
+}
+
+.filterBarInner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0.625rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filterLabel {
+  font-size: 0.8125rem;
+  color: var(--sapContent_LabelColor);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.filterChip {
+  padding: 0.25rem 0.75rem;
+  background: transparent;
+  border: 1px solid var(--sapContent_ForegroundBorderColor);
+  border-radius: 1rem;
+  font-size: 0.8125rem;
+  color: var(--sapContent_LabelColor);
+  cursor: pointer;
+  font-family: var(--sapFontFamily);
+  transition: all 0.1s ease-in-out;
+  white-space: nowrap;
+}
+
+.filterChip:hover {
+  border-color: var(--sapBrandColor);
+  color: var(--sapBrandColor);
+}
+
+.filterChipActive {
+  background: var(--sapBrandColor);
+  border-color: var(--sapBrandColor);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.filterChipActive:hover {
+  color: #FFFFFF;
+  background: #0064D9;
+}
+
+.filterSpacer {
+  flex: 1;
+}
+
+/* Search box */
+.searchBox {
+  position: relative;
+  width: 240px;
+}
+
+.searchIcon {
+  position: absolute;
+  inset-inline-start: 0.625rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--sapContent_LabelColor);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  height: 2rem;
+  padding: 0 0.75rem 0 2rem;
+  background: var(--sapField_Background, #FFFFFF);
+  border: 1px solid var(--sapField_BorderColor);
+  border-radius: var(--sapContent_BorderRadius, 4px);
+  font-size: 0.875rem;
+  font-family: var(--sapFontFamily);
+  color: var(--sapField_TextColor, var(--sapContent_ValueColor));
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--sapField_Hover_BorderColor, var(--sapBrandColor));
+  box-shadow: 0 0 0 2px rgba(0, 112, 242, 0.12);
+}
+
+/* ─── Info strip ──────────────────────────────────────────────────────────── */
+.infoStrip {
+  background: var(--sapBackgroundColor);
+  border-bottom: 1px solid var(--sapContent_ForegroundBorderColor);
+  padding: 0.375rem 2rem;
+}
+
+.infoStripCount {
+  font-size: 0.8125rem;
+  color: var(--sapContent_LabelColor);
+  max-width: 1440px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* ─── Content ─────────────────────────────────────────────────────────────── */
+.content {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 1.25rem 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ─── MessageStrip (Information) ─────────────────────────────────────────── */
+.messageStrip {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 1rem;
+  background: #EBF5FF;
+  border: 1px solid #91C9FF;
+  border-radius: var(--sapContent_BorderRadius, 4px);
+  font-size: 0.875rem;
+  color: var(--sapContent_ValueColor);
+}
+
+.messageStripIcon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--sapInformative, #0070F2);
+}
+
+.messageStripText {
+  flex: 1;
+}
+
+.messageStripLink {
+  color: var(--sapLinkColor, #0070F2);
+  font-weight: 600;
+}
+
+/* ─── Card grid ───────────────────────────────────────────────────────────── */
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 0.875rem;
+}
+
+/* ─── Repository card ─────────────────────────────────────────────────────── */
+.repoCard {
+  display: flex;
+  flex-direction: column;
+  background: var(--sapCard_Background, #FFFFFF);
+  border: 1px solid var(--sapCard_BorderColor, var(--sapContent_ForegroundBorderColor));
+  border-radius: var(--sapContent_BorderRadius_Large, 8px);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    box-shadow 0.1s ease-in-out,
+    border-color 0.1s ease-in-out,
+    transform 0.1s ease-in-out;
+}
+
+.repoCard:hover {
+  box-shadow: var(--sapContent_Shadow2, 0 4px 16px rgba(0, 0, 0, 0.12));
+  border-color: var(--sapBrandColor);
+  transform: translateY(-1px);
+}
+
+.repoCard:focus-visible {
+  outline: 2px solid var(--sapContent_FocusColor);
+  outline-offset: 2px;
+}
+
+/* Card header */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1rem 0.875rem;
+}
+
+.cardIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--sapContent_BorderRadius, 4px);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.cardTitleGroup {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardName {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--sapContent_ValueColor);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardMeta {
+  font-size: 0.75rem;
+  color: var(--sapContent_LabelColor);
+  margin-top: 0.125rem;
+}
+
+/* Status badge */
+.statusBadge {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.statusDeployed {
+  background: #E8F5E9;
+  color: var(--sapPositive, #188918);
+}
+
+.statusDraft {
+  background: #FFF3E0;
+  color: var(--sapCritical, #E76500);
+}
+
+/* Card KPI cells */
+.cardStats {
+  display: flex;
+  border-top: 1px solid var(--sapContent_ForegroundBorderColor);
+}
+
+.statCell {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.statDivider {
+  width: 1px;
+  background: var(--sapContent_ForegroundBorderColor);
+}
+
+.statValue {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--sapContent_ValueColor);
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 0.6875rem;
+  color: var(--sapContent_LabelColor);
+  font-weight: 500;
+}
+
+/* Card footer */
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.5rem 0.875rem;
+  border-top: 1px solid var(--sapContent_ForegroundBorderColor);
+  background: var(--sapGroup_ContentBackground, #F9FAFB);
+}
+
+.cardFooterLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--sapLinkColor, #0070F2);
+  font-weight: 500;
+}
+
+/* ─── Empty state ─────────────────────────────────────────────────────────── */
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background: var(--sapCard_Background, #FFFFFF);
+  border: 1px solid var(--sapCard_BorderColor);
+  border-radius: var(--sapContent_BorderRadius_Large, 8px);
+}
+
+.emptyStateText {
+  font-size: 0.9375rem;
+  color: var(--sapContent_LabelColor);
+  margin: 0;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .pageHeader,
+  .filterBarInner,
+  .infoStrip,
+  .content {
+    padding-inline: 1rem;
+  }
+
+  .pageHeaderInner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .searchBox {
+    width: 100%;
+  }
+
+  .filterBarInner {
+    gap: 0.5rem;
+  }
+}

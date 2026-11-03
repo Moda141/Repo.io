@@ -1,0 +1,349 @@
+/**
+ * HomePage.module.css
+ * SAP Fiori Horizon — Overview Page / Launchpad
+ *
+ * Floorplan: Overview Page (dynamic header + tile groups + activity table)
+ * Reference: SAP Fiori Design Guidelines — Overview Page
+ */
+
+/* ─── Page shell ─────────────────────────────────────────────────────────── */
+.page {
+  min-height: 100%;
+  background: var(--sapBackgroundColor);
+}
+
+/* ─── Dynamic Page Header ─────────────────────────────────────────────────── */
+.pageHeader {
+  background: var(--sapObjectHeader_Background, #FFFFFF);
+  border-bottom: 1px solid var(--sapContent_ForegroundBorderColor);
+  padding: 1.25rem 2rem 1.5rem;
+}
+
+.pageHeaderInner {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+/* Greeting */
+.greetingGroup {
+  flex: 0 0 auto;
+}
+
+.greeting {
+  font-family: var(--sapFontFamily);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--sapContent_ValueColor);
+  margin: 0 0 0.25rem;
+  line-height: 1.25;
+}
+
+.greetingSubtitle {
+  font-size: 0.875rem;
+  color: var(--sapContent_LabelColor);
+  margin: 0;
+}
+
+/* KPI row */
+.kpiRow {
+  flex: 1;
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.kpiItem {
+  text-align: end;
+  min-width: 80px;
+}
+
+.kpiValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+  font-family: var(--sapFontFamily);
+  /* color set inline per KPI */
+}
+
+.kpiLabel {
+  font-size: 0.75rem;
+  color: var(--sapContent_LabelColor);
+  margin-top: 0.25rem;
+  white-space: nowrap;
+}
+
+.kpiDelta {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  margin-top: 0.125rem;
+}
+
+.kpiDeltaPos {
+  color: var(--sapPositive);
+}
+
+.kpiDeltaNeg {
+  color: var(--sapNegative);
+}
+
+/* ─── Content area ────────────────────────────────────────────────────────── */
+.content {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ─── Tile groups ─────────────────────────────────────────────────────────── */
+.tileGroup {
+  /* no extra bg — content area bg shows through */
+}
+
+.tileGroupHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.tileGroupTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--sapContent_ValueColor);
+  margin: 0;
+}
+
+.tileGroupLink {
+  font-size: 0.8125rem;
+  color: var(--sapLinkColor);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.tileGroupLink:hover {
+  text-decoration: underline;
+}
+
+/* ─── Tile grid ───────────────────────────────────────────────────────────── */
+.tileGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+/* ─── Individual tile ─────────────────────────────────────────────────────── */
+.tile {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1rem;
+  background: var(--sapTile_Background, #FFFFFF);
+  border: 1px solid var(--sapTile_BorderColor, var(--sapContent_ForegroundBorderColor));
+  border-radius: var(--sapContent_BorderRadius_Large, 8px);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    box-shadow 0.1s ease-in-out,
+    border-color 0.1s ease-in-out,
+    transform 0.1s ease-in-out;
+}
+
+.tile:hover {
+  box-shadow: var(--sapContent_Shadow2);
+  border-color: var(--sapBrandColor);
+  transform: translateY(-1px);
+}
+
+.tile:focus-visible {
+  outline: 2px solid var(--sapContent_FocusColor);
+  outline-offset: 2px;
+}
+
+.tileIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--sapContent_BorderRadius, 4px);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  /* background and color set inline */
+}
+
+.tileBody {
+  min-width: 0;
+  flex: 1;
+}
+
+.tileTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--sapContent_ValueColor);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tileSubtitle {
+  font-size: 0.75rem;
+  color: var(--sapContent_LabelColor);
+  margin-top: 0.125rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─── Section header (generic) ────────────────────────────────────────────── */
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--sapContent_ValueColor);
+  margin: 0;
+}
+
+/* ─── Recent Activity ─────────────────────────────────────────────────────── */
+.activityCard {
+  background: var(--sapCard_Background, #FFFFFF);
+  border: 1px solid var(--sapCard_BorderColor, var(--sapContent_ForegroundBorderColor));
+  border-radius: var(--sapContent_BorderRadius_Large, 8px);
+  overflow: hidden;
+}
+
+.activityTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.activityTable th {
+  padding: 0.625rem 1rem;
+  text-align: start;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--sapContent_LabelColor);
+  background: var(--sapList_HeaderBackground, #F5F6F7);
+  border-bottom: 1px solid var(--sapList_BorderColor);
+  white-space: nowrap;
+}
+
+.activityTable td {
+  padding: 0.75rem 1rem;
+  color: var(--sapContent_ValueColor);
+  border-bottom: 1px solid var(--sapList_BorderColor);
+  vertical-align: middle;
+}
+
+.activityTable tr:last-child td {
+  border-bottom: none;
+}
+
+.activityTable tr:hover td {
+  background: var(--sapList_Hover_Background);
+}
+
+.activityLink {
+  color: var(--sapLinkColor);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.activityLink:hover {
+  text-decoration: underline;
+}
+
+.activityWhen {
+  color: var(--sapContent_LabelColor);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+/* ─── Inline badges ───────────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge_success {
+  background: #E8F5E9;
+  color: var(--sapPositive, #188918);
+}
+
+.badge_error {
+  background: #FFEBEE;
+  color: var(--sapNegative, #BB0000);
+}
+
+.badge_warning {
+  background: #FFF3E0;
+  color: var(--sapCritical, #E76500);
+}
+
+/* ─── RTL ─────────────────────────────────────────────────────────────────── */
+[dir="rtl"] .pageHeaderInner {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .kpiRow {
+  justify-content: flex-start;
+}
+
+[dir="rtl"] .kpiItem {
+  text-align: start;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .pageHeader {
+    padding: 1rem;
+  }
+
+  .pageHeaderInner {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .kpiRow {
+    justify-content: flex-start;
+    gap: 1.25rem;
+  }
+
+  .kpiItem {
+    text-align: start;
+  }
+
+  .content {
+    padding: 1rem 1rem 2rem;
+    gap: 1.5rem;
+  }
+
+  .tileGrid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .activityTable th:nth-child(3),
+  .activityTable td:nth-child(3),
+  .activityTable th:nth-child(5),
+  .activityTable td:nth-child(5) {
+    display: none;
+  }
+}

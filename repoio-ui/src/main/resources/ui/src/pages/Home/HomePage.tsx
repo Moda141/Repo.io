@@ -1,570 +1,278 @@
-import { Row, Col, Avatar, Space } from 'antd';
-import {
-  UserOutlined,
-  TeamOutlined,
-  CommentOutlined,
-  LikeOutlined,
-  CheckCircleFilled,
-  ClockCircleFilled,
-  WarningFilled,
-  FileAddOutlined,
-  EyeOutlined,
-  BellOutlined,
-} from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import EChart from '@/components/common/EChart';
-import type { EChartsOption } from 'echarts';
-import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ROUTES } from '@/constants/routes';
+import styles from './HomePage.module.css';
 
 /**
- * HomePage (Launchpad) — rebuilt to match hub-v34 mockup's `lp` view.
+ * HomePage — SAP Fiori Horizon Launchpad + Overview Page
  *
- * Layout:
- *   <h2>Good afternoon, Mohamed</h2>
- *   <p>Your master data at a glance ...</p>
- *   Grid (1fr | 310px):
- *     Left column (hmc):
- *       Activity Feed widget (with tab chips All/@Mentions/Tasks)
- *       My Data widget (2x2 tiles)
- *       KPIs widget (3 columns: coverage bars with target)
- *       Total data assets widget (echarts line + legend)
- *     Right column:
- *       Recent announcements
- *       Following
- *       Recent views
+ * Layout follows Fiori Launchpad (node 53:7535) + Overview Page (node 53:7538):
  *
- * Visual language is OpenMetadata-based: .wd widget cards, 14 px titles,
- * blue accent, grey borders, OM spacing.
+ *  ┌──────────────────────────────────────────────────────┐
+ *  │  Dynamic Page Header                                  │
+ *  │    Greeting   |   4 KPI metrics                       │
+ *  ├──────────────────────────────────────────────────────┤
+ *  │  Tile Group: Repositories (6 tiles)                   │
+ *  ├──────────────────────────────────────────────────────┤
+ *  │  Tile Group: Tools (4 tiles)                          │
+ *  ├──────────────────────────────────────────────────────┤
+ *  │  Recent Activity table                                │
+ *  └──────────────────────────────────────────────────────┘
  */
-export default function HomePage() {
-  const hour = new Date().getHours();
-  const greet =
-    hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
+// ─── Icons ────────────────────────────────────────────────────────────────────
+function UserIcon() {
   return (
-    <>
-      <Helmet>
-        <title>Launchpad — Repo.io</title>
-      </Helmet>
-
-      {/* OM-style page header (omh) */}
-      <div style={{ marginBottom: 20 }}>
-        <h2 style={{ margin: 0, fontSize: 22, fontWeight: 600, color: '#101828' }}>
-          {greet}, Mohamed
-        </h2>
-        <p style={{ margin: '4px 0 0', color: '#667085', fontSize: 13.5 }}>
-          Your master data at a glance — what you own, what needs you, and how healthy it is.
-        </p>
-      </div>
-
-      {/* Main grid 1fr | 310px */}
-      <Row gutter={16}>
-        <Col xs={24} xl={17}>
-          <Space direction="vertical" size={16} style={{ width: '100%' }}>
-            <ActivityFeedCard />
-            <MyDataCard />
-            <KpisCard />
-            <TotalAssetsCard />
-          </Space>
-        </Col>
-        <Col xs={24} xl={7}>
-          <Space direction="vertical" size={16} style={{ width: '100%' }}>
-            <AnnouncementsCard />
-            <FollowingCard />
-            <RecentViewsCard />
-          </Space>
-        </Col>
-      </Row>
-    </>
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="10" r="5" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M4 24c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+function ShopIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M4 7h20l-2 8H6L4 7Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M4 7L6 4h16l2 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <rect x="8" y="18" width="12" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+    </svg>
+  );
+}
+function BookIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M6 4h16v20H6z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M10 9h8M10 13h8M10 17h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+function PenIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M19 4l5 5-13 13H6v-5L19 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+function TeamIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="10" cy="10" r="4" stroke="currentColor" strokeWidth="1.5"/>
+      <circle cx="20" cy="10" r="3" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M2 23c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M22 23c0-2.761-2.239-5-5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+function HomeIcon2() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M4 12L14 4l10 8v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V12Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M11 25v-8h6v8" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+function PipelineIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="5" cy="14" r="3" stroke="currentColor" strokeWidth="1.5"/>
+      <circle cx="14" cy="7" r="3" stroke="currentColor" strokeWidth="1.5"/>
+      <circle cx="14" cy="21" r="3" stroke="currentColor" strokeWidth="1.5"/>
+      <circle cx="23" cy="14" r="3" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M8 14h3M17 7l3 5M17 21l3-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+function StarIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M14 3l3.09 6.26L24 10.27l-5 4.87 1.18 6.88L14 18.77l-6.18 3.25L9 15.14 4 10.27l6.91-1.01L14 3Z"
+        stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+function SearchIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="12" cy="12" r="7" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M17.5 17.5L24 24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+function ListIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M10 8h14M10 14h14M10 20h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="5" cy="8" r="1.5" fill="currentColor"/>
+      <circle cx="5" cy="14" r="1.5" fill="currentColor"/>
+      <circle cx="5" cy="20" r="1.5" fill="currentColor"/>
+    </svg>
   );
 }
 
-/* -------------------- Activity Feed -------------------- */
+// ─── Data ─────────────────────────────────────────────────────────────────────
+const kpis = [
+  { label: 'Golden Records', value: '953K', delta: '+2.1%', positive: true, color: '#0070F2' },
+  { label: 'Source Records', value: '2.71M', delta: '+0.8%', positive: true, color: '#188918' },
+  { label: 'Pending Review', value: '1,984', delta: '-12%', positive: true, color: '#E76500' },
+  { label: 'Active Repos', value: '5 / 6', delta: '', positive: true, color: '#354A5E' },
+];
 
-function ActivityFeedCard() {
-  const items = [
-    {
-      who: 'Mona Samir',
-      initials: 'MS',
-      color: '#1570EF',
-      action: 'opened change request',
-      target: 'CR-10452 · Update phone and governorate',
-      href: '/change-requests/CR-10452',
-      meta: '2 min ago · El Ezaby Pharmacy · GR-0048213',
-      quote: 'Phone changed from +20 2 2345 1234 to +20 2 2345 1999 after site visit.',
-    },
-    {
-      who: 'Ahmed Hassan',
-      initials: 'AH',
-      color: '#6938EF',
-      action: 'approved',
-      target: 'CR-10448 · Merge CUST-000198 into CUST-000142',
-      href: '/change-requests/CR-10448',
-      meta: '14 min ago · Customers repository',
-    },
-    {
-      who: 'System',
-      initials: 'SY',
-      color: '#F79009',
-      action: 'ran',
-      target: 'Nightly Splink re-match',
-      meta: '48 min ago · 7 new candidate matches',
-    },
-    {
-      who: 'Nour Ibrahim',
-      initials: 'NI',
-      color: '#12B76A',
-      action: 'commented on',
-      target: 'CUST-000204',
-      href: '/entity/customer/CUST-000204',
-      meta: '1 h ago',
-      quote: 'Billing address changed from El Thawra to El Nasr — attached photo of signed slip.',
-    },
-  ];
+const repoTiles = [
+  { key: 'customer', label: 'Customers', subtitle: '948K golden records', icon: <UserIcon />, color: '#0070F2', to: '/entity/customer' },
+  { key: 'vendor', label: 'Vendors', subtitle: '4.1K golden records', icon: <ShopIcon />, color: '#6938EF', to: '/entity/vendor' },
+  { key: 'product', label: 'Products', subtitle: 'Draft — no records', icon: <BookIcon />, color: '#12B76A', to: '/entity/product' },
+  { key: 'author', label: 'Authors', subtitle: '2.4K golden records', icon: <PenIcon />, color: '#F79009', to: '/entity/author' },
+  { key: 'employee', label: 'Employees', subtitle: '1.2K golden records', icon: <TeamIcon />, color: '#F04438', to: '/entity/employee' },
+  { key: 'store', label: 'Stores', subtitle: '186 golden records', icon: <HomeIcon2 />, color: '#06AED4', to: '/entity/store' },
+];
+
+const toolTiles = [
+  { key: 'pipelines', label: 'Pipelines', subtitle: 'Manage data loads', icon: <PipelineIcon />, color: '#354A5E', to: '/pipelines' },
+  { key: 'quality', label: 'Data Quality', subtitle: 'Monitor rules', icon: <StarIcon />, color: '#188918', to: '/quality' },
+  { key: 'query', label: 'Query Builder', subtitle: 'Ad-hoc analysis', icon: <SearchIcon />, color: '#0070F2', to: ROUTES.QUERY },
+  { key: 'views', label: 'Saved Views', subtitle: 'Shared queries', icon: <ListIcon />, color: '#6938EF', to: ROUTES.VIEWS },
+];
+
+const recentActivity = [
+  { id: 'a1', event: 'Incremental load #2041', repo: 'Customers', source: 'Retail POS', result: '409 upserted · 3 quarantined', status: 'success' as const, when: 'Today, 09:14' },
+  { id: 'a2', event: 'Full load #2033', repo: 'Customers', source: 'Pharma ERP', result: '1.2M processed', status: 'success' as const, when: 'Yesterday' },
+  { id: 'a3', event: 'Load #2029', repo: 'Customers', source: 'Legacy CRM', result: 'Connection failed', status: 'error' as const, when: '2 days ago' },
+];
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+export default function HomePage() {
+  const { t } = useTranslation();
+
+  const greeting = (() => {
+    const h = new Date().getHours();
+    if (h < 12) return t('home.good_morning', 'Good morning');
+    if (h < 17) return t('home.good_afternoon', 'Good afternoon');
+    return t('home.good_evening', 'Good evening');
+  })();
 
   return (
-    <div className="wd" style={cardStyle}>
-      <div style={cardHeadStyle}>
-        <span>Activity Feed</span>
-        <Space size={4}>
-          <Chip on>All</Chip>
-          <Chip>@Mentions</Chip>
-          <Chip>Tasks <strong style={{ marginLeft: 4 }}>7</strong></Chip>
-        </Space>
-      </div>
-      <div>
-        {items.map((it, i) => (
-          <div
-            key={i}
-            style={{
-              display: 'flex',
-              gap: 12,
-              padding: '14px 16px',
-              borderBottom: i < items.length - 1 ? '1px solid #F2F4F7' : 'none',
-            }}>
-            <Avatar
-              size={28}
-              style={{
-                background: `${it.color}1A`,
-                color: it.color,
-                fontWeight: 700,
-                fontSize: 11,
-                flex: 'none',
-              }}>
-              {it.initials}
-            </Avatar>
-            <div style={{ flex: 1, fontSize: 12.5, color: '#344054' }}>
-              <div>
-                <strong style={{ fontWeight: 600 }}>{it.who}</strong>{' '}
-                {it.action}{' '}
-                {it.href ? (
-                  <Link to={it.href} style={{ color: '#1570EF', fontWeight: 600 }}>
-                    {it.target}
-                  </Link>
-                ) : (
-                  <strong style={{ color: '#1570EF', fontWeight: 600 }}>{it.target}</strong>
+    <div className={styles.page}>
+
+      {/* ── Dynamic Page Header ─────────────────────────────────────────── */}
+      <div className={styles.pageHeader}>
+        <div className={styles.pageHeaderInner}>
+          <div className={styles.greetingGroup}>
+            <h1 className={styles.greeting}>{greeting}, Mohamed</h1>
+            <p className={styles.greetingSubtitle}>
+              {t('home.subtitle', "Here's your master data overview")}
+            </p>
+          </div>
+          <div className={styles.kpiRow}>
+            {kpis.map((kpi) => (
+              <div key={kpi.label} className={styles.kpiItem}>
+                <div className={styles.kpiValue} style={{ color: kpi.color }}>
+                  {kpi.value}
+                </div>
+                <div className={styles.kpiLabel}>{kpi.label}</div>
+                {kpi.delta && (
+                  <div className={`${styles.kpiDelta} ${kpi.positive ? styles.kpiDeltaPos : styles.kpiDeltaNeg}`}>
+                    {kpi.delta}
+                  </div>
                 )}
               </div>
-              {it.quote && (
-                <div
-                  style={{
-                    marginTop: 6,
-                    borderInlineStart: '3px solid #D0D5DD',
-                    paddingInlineStart: 9,
-                    color: '#667085',
-                  }}>
-                  {it.quote}
-                </div>
-              )}
-              <div
-                style={{
-                  marginTop: 3,
-                  display: 'flex',
-                  gap: 14,
-                  color: '#98A2B3',
-                  fontSize: 11.5,
-                }}>
-                <span>{it.meta}</span>
-                <span style={{ cursor: 'pointer' }}><LikeOutlined /> Like</span>
-                <span style={{ cursor: 'pointer' }}><CommentOutlined /> Reply</span>
-              </div>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* -------------------- My Data -------------------- */
-
-function MyDataCard() {
-  const tiles = [
-    { label: 'Owned by me', value: '947,241', to: '/entity/customer' },
-    { label: 'Followed', value: '18', to: '/entity/customer' },
-    { label: 'Pending approvals', value: '4', to: '/change-requests' },
-    { label: 'My drafts', value: '2', to: '/change-requests/mine' },
-  ];
-  return (
-    <div className="wd" style={cardStyle}>
-      <div style={cardHeadStyle}>My Data</div>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 10,
-          padding: '12px 16px',
-        }}>
-        {tiles.map((t) => (
-          <Link
-            key={t.label}
-            to={t.to}
-            style={{
-              border: '1px solid #EAECF0',
-              borderRadius: 6,
-              padding: '10px 12px',
-              textDecoration: 'none',
-              display: 'block',
-              transition: 'border-color 120ms',
-            }}>
-            <small style={{ color: '#667085', fontSize: 11, display: 'block' }}>
-              {t.label}
-            </small>
-            <strong style={{ fontSize: 20, color: '#1570EF', fontWeight: 700 }}>
-              {t.value}
-            </strong>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* -------------------- KPIs -------------------- */
-
-function KpisCard() {
-  const kpis = [
-    { label: 'Match rate', value: 94, target: 95 },
-    { label: 'Completeness', value: 88, target: 90 },
-    { label: 'Validity', value: 96, target: 95 },
-  ];
-  return (
-    <div className="wd" style={cardStyle}>
-      <div style={cardHeadStyle}>Key performance indicators</div>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 12,
-          padding: '14px 16px',
-        }}>
-        {kpis.map((k) => (
-          <div key={k.label}>
-            <small style={{ color: '#667085', fontSize: 11.5 }}>{k.label}</small>
-            <div style={{ fontSize: 20, fontWeight: 700, margin: '2px 0 6px' }}>
-              {k.value}%
-            </div>
-            <div
-              style={{
-                height: 6,
-                borderRadius: 3,
-                background: '#EEF0F3',
-                overflow: 'hidden',
-              }}>
-              <div
-                style={{
-                  width: `${k.value}%`,
-                  height: '100%',
-                  background: '#1570EF',
-                }}
-              />
-            </div>
-            <small style={{ color: '#98A2B3', fontSize: 11 }}>
-              Target {k.target}%
-            </small>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* -------------------- Total data assets chart -------------------- */
-
-function TotalAssetsCard() {
-  const days = Array.from({ length: 14 }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (13 - i));
-    return d.toISOString().slice(5, 10);
-  });
-  const golden = [920, 921, 922, 924, 925, 927, 929, 931, 934, 937, 941, 944, 946, 948];
-  const source = [2640, 2651, 2662, 2671, 2680, 2688, 2694, 2701, 2709, 2718, 2723, 2729, 2734, 2742];
-
-  const option: EChartsOption = {
-    legend: { show: false },
-    xAxis: {
-      type: 'category',
-      data: days,
-      boundaryGap: false,
-      axisLabel: { color: '#667085', fontSize: 11 },
-      axisLine: { lineStyle: { color: '#EAECF0' } },
-    },
-    yAxis: {
-      type: 'value',
-      axisLabel: { color: '#667085', fontSize: 11 },
-      splitLine: { lineStyle: { color: '#F2F4F7' } },
-    },
-    series: [
-      {
-        type: 'line' as const,
-        name: 'Golden',
-        data: golden,
-        smooth: true,
-        showSymbol: false,
-        lineStyle: { width: 2, color: '#1570EF' },
-      },
-      {
-        type: 'line' as const,
-        name: 'Source',
-        data: source,
-        smooth: true,
-        showSymbol: false,
-        lineStyle: { width: 2, color: '#6938EF' },
-      },
-    ],
-  };
-
-  return (
-    <div className="wd" style={cardStyle}>
-      <div style={cardHeadStyle}>
-        <span>Total data assets</span>
-        <small style={{ color: '#98A2B3', fontWeight: 400 }}>last 14 days</small>
-      </div>
-      <div style={{ padding: '10px 16px' }}>
-        <EChart option={option} height={190} />
-        <div
-          style={{ display: 'flex', gap: 16, fontSize: 12, color: '#475467', padding: '4px 0' }}>
-          <LegendSwatch color="#1570EF" label="Golden · 948K (+28)" />
-          <LegendSwatch color="#6938EF" label="Source · 2.74M (+102)" />
         </div>
       </div>
-    </div>
-  );
-}
 
-/* -------------------- Right column -------------------- */
+      {/* ── Content ─────────────────────────────────────────────────────── */}
+      <div className={styles.content}>
 
-function AnnouncementsCard() {
-  const items = [
-    {
-      icon: <BellOutlined />,
-      title: 'Nightly re-match moved to 02:00 Africa/Cairo',
-      meta: 'Mohamed · 2 days ago',
-      tag: 'Scheduled',
-      color: '#1570EF',
-    },
-    {
-      icon: <WarningFilled />,
-      title: 'Pharma ERP source credential rotates on Fri',
-      meta: 'IT · yesterday',
-      tag: 'Action needed',
-      color: '#F79009',
-    },
-    {
-      icon: <CheckCircleFilled />,
-      title: 'DQ score hit 94% — all-time high',
-      meta: 'System · 3 h ago',
-      tag: 'Milestone',
-      color: '#12B76A',
-    },
-  ];
-  return (
-    <div className="wd" style={cardStyle}>
-      <div style={cardHeadStyle}>Recent announcements</div>
-      <div>
-        {items.map((it, i) => (
-          <div
-            key={i}
-            style={{
-              display: 'flex',
-              gap: 9,
-              padding: '10px 16px',
-              borderBottom: i < items.length - 1 ? '1px solid #F5F6F8' : 'none',
-              fontSize: 12.5,
-            }}>
-            <div
-              style={{
-                width: 24,
-                height: 24,
-                borderRadius: 6,
-                background: `${it.color}1A`,
-                color: it.color,
-                display: 'grid',
-                placeItems: 'center',
-                flex: 'none',
-                fontSize: 12,
-              }}>
-              {it.icon}
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 500, color: '#101828' }}>{it.title}</div>
-              <small style={{ color: '#98A2B3', fontSize: 11 }}>{it.meta}</small>
-            </div>
+        {/* Tile Group: Repositories */}
+        <section className={styles.tileGroup}>
+          <div className={styles.tileGroupHeader}>
+            <h2 className={styles.tileGroupTitle}>
+              {t('home.group_repositories', 'Repositories')}
+            </h2>
+            <Link to={ROUTES.EXPLORE} className={styles.tileGroupLink}>
+              {t('home.view_all', 'View all')}
+            </Link>
           </div>
-        ))}
+          <div className={styles.tileGrid}>
+            {repoTiles.map((tile) => (
+              <Link key={tile.key} to={tile.to} className={styles.tile}>
+                <div className={styles.tileIcon} style={{ background: `${tile.color}1A`, color: tile.color }}>
+                  {tile.icon}
+                </div>
+                <div className={styles.tileBody}>
+                  <div className={styles.tileTitle}>{tile.label}</div>
+                  <div className={styles.tileSubtitle}>{tile.subtitle}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Tile Group: Tools */}
+        <section className={styles.tileGroup}>
+          <div className={styles.tileGroupHeader}>
+            <h2 className={styles.tileGroupTitle}>
+              {t('home.group_tools', 'Tools')}
+            </h2>
+          </div>
+          <div className={styles.tileGrid}>
+            {toolTiles.map((tile) => (
+              <Link key={tile.key} to={tile.to} className={styles.tile}>
+                <div className={styles.tileIcon} style={{ background: `${tile.color}1A`, color: tile.color }}>
+                  {tile.icon}
+                </div>
+                <div className={styles.tileBody}>
+                  <div className={styles.tileTitle}>{tile.label}</div>
+                  <div className={styles.tileSubtitle}>{tile.subtitle}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Recent Activity */}
+        <section>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>
+              {t('home.recent_activity', 'Recent Activity')}
+            </h2>
+          </div>
+          <div className={styles.activityCard}>
+            <table className={styles.activityTable}>
+              <thead>
+                <tr>
+                  <th>{t('activity.event', 'Event')}</th>
+                  <th>{t('activity.repo', 'Repository')}</th>
+                  <th>{t('activity.source', 'Source')}</th>
+                  <th>{t('activity.result', 'Result')}</th>
+                  <th>{t('activity.when', 'When')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentActivity.map((a) => (
+                  <tr key={a.id}>
+                    <td>
+                      <a href="#" className={styles.activityLink}>{a.event}</a>
+                    </td>
+                    <td>{a.repo}</td>
+                    <td>{a.source}</td>
+                    <td>
+                      <span className={`${styles.badge} ${styles[`badge_${a.status}`]}`}>
+                        {a.result}
+                      </span>
+                    </td>
+                    <td className={styles.activityWhen}>{a.when}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
       </div>
+
+      {/* Hidden — satisfies ts-noUnusedLocals */}
+      <span style={{ display: 'none' }}>{t('nav.home')}</span>
     </div>
-  );
-}
-
-function FollowingCard() {
-  const items = [
-    { icon: <UserOutlined />, name: 'Acme Publishing House', meta: 'Customer · CUST-000142', href: '/entity/customer/CUST-000142' },
-    { icon: <TeamOutlined />, name: 'Nile River Bookstore', meta: 'Customer · CUST-000189', href: '/entity/customer/CUST-000189' },
-    { icon: <FileAddOutlined />, name: 'CR-10452', meta: 'Change request · in approval', href: '/change-requests/CR-10452' },
-  ];
-  return (
-    <div className="wd" style={cardStyle}>
-      <div style={cardHeadStyle}>Following</div>
-      <div>
-        {items.map((it, i) => (
-          <Link
-            key={i}
-            to={it.href}
-            style={{
-              display: 'flex',
-              gap: 9,
-              padding: '10px 16px',
-              borderBottom: i < items.length - 1 ? '1px solid #F5F6F8' : 'none',
-              fontSize: 12.5,
-              textDecoration: 'none',
-              color: 'inherit',
-            }}>
-            <div
-              style={{
-                width: 24,
-                height: 24,
-                borderRadius: 6,
-                background: '#E8F1FF',
-                color: '#1570EF',
-                display: 'grid',
-                placeItems: 'center',
-                flex: 'none',
-                fontSize: 11,
-              }}>
-              {it.icon}
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 500, color: '#101828' }}>{it.name}</div>
-              <small style={{ color: '#98A2B3', fontSize: 11 }}>{it.meta}</small>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function RecentViewsCard() {
-  const items = [
-    { name: 'CUST-000142', when: '10 min ago', href: '/entity/customer/CUST-000142' },
-    { name: 'DQ Dashboard', when: '35 min ago', href: '/quality' },
-    { name: 'c4c-customers runs', when: '1 h ago', href: '/pipelines/c4c-customers' },
-    { name: 'Enterprise customers in Egypt', when: 'Yesterday', href: '/views/V-01' },
-  ];
-  return (
-    <div className="wd" style={cardStyle}>
-      <div style={cardHeadStyle}>
-        <span>Recent views</span>
-        <small style={{ color: '#98A2B3', fontWeight: 400 }}>
-          <EyeOutlined style={{ marginRight: 4 }} />
-          You
-        </small>
-      </div>
-      <div>
-        {items.map((it, i) => (
-          <Link
-            key={i}
-            to={it.href}
-            style={{
-              display: 'flex',
-              padding: '10px 16px',
-              borderBottom: i < items.length - 1 ? '1px solid #F5F6F8' : 'none',
-              fontSize: 12.5,
-              textDecoration: 'none',
-              color: 'inherit',
-              justifyContent: 'space-between',
-            }}>
-            <span style={{ color: '#1570EF', fontWeight: 500 }}>{it.name}</span>
-            <small style={{ color: '#98A2B3', fontSize: 11 }}>
-              <ClockCircleFilled style={{ marginRight: 4 }} />
-              {it.when}
-            </small>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* -------------------- Shared -------------------- */
-
-const cardStyle: React.CSSProperties = {
-  border: '1px solid #EAECF0',
-  borderRadius: 10,
-  background: '#ffffff',
-  boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)',
-  overflow: 'hidden',
-};
-
-const cardHeadStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: '12px 16px',
-  borderBottom: '1px solid #F2F4F7',
-  fontWeight: 600,
-  fontSize: 13.5,
-  color: '#101828',
-};
-
-function Chip({
-  children,
-  on,
-}: {
-  children: ReactNode;
-  on?: boolean;
-}) {
-  return (
-    <span
-      style={{
-        padding: '3px 11px',
-        borderRadius: 14,
-        fontSize: 12,
-        fontWeight: 500,
-        cursor: 'pointer',
-        background: on ? '#E8F1FF' : 'transparent',
-        color: on ? '#1570EF' : '#475467',
-      }}>
-      {children}
-    </span>
-  );
-}
-
-function LegendSwatch({ color, label }: { color: string; label: string }) {
-  return (
-    <Space size={6}>
-      <span
-        style={{
-          width: 10,
-          height: 10,
-          borderRadius: 2,
-          background: color,
-          display: 'inline-block',
-        }}
-      />
-      {label}
-    </Space>
   );
 }
