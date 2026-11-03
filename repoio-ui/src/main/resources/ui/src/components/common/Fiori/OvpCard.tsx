@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { CardActionsButton, dragHandleProps, useCardActions } from './OvpLayout';
 import styles from './OvpCard.module.css';
 
 export interface OvpCardProps {
@@ -26,18 +27,23 @@ export interface OvpCardProps {
  */
 export default function OvpCard({ title, subtitle, counter, onMore, children, className, side }: OvpCardProps) {
   const { t } = useTranslation();
+  const personalizable = !!useCardActions();
   const header = (
-    <div className={styles.header}>
+    <div className={styles.header} {...dragHandleProps}>
       <div className={styles.headerText}>
         <h2 className={styles.title}>{title}</h2>
         {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
       </div>
-      {(onMore || counter) && (
+      {(onMore || counter || personalizable) && (
         <div className={styles.headerSide}>
-          {onMore && (
-            <button className={styles.more} onClick={onMore} aria-label={t('fiori.more_options', 'More options')}>
-              <OverflowIcon />
-            </button>
+          {personalizable ? (
+            <CardActionsButton />
+          ) : (
+            onMore && (
+              <button className={styles.more} onClick={onMore} aria-label={t('fiori.more_options', 'More options')}>
+                <OverflowIcon />
+              </button>
+            )
           )}
           {counter && <span className={styles.counter}>{counter}</span>}
         </div>

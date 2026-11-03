@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { OvpCard, intlLocale } from '@/components/common/Fiori';
-import { mergeCandidates, mergeCandidatesTotal } from '../homeSampleData';
+import { matchesHomeFilters, mergeCandidates, mergeCandidatesTotal, type HomeFilters } from '../homeSampleData';
 import styles from './cards.module.css';
 
 function scoreClass(score: number) {
@@ -11,14 +11,16 @@ function scoreClass(score: number) {
 }
 
 /** SAP "Table card" with search (Off-Contract Spend). */
-export default function MergeCandidatesCard() {
+export default function MergeCandidatesCard({ filters }: { filters: HomeFilters }) {
   const { t, i18n } = useTranslation();
   const [q, setQ] = useState('');
   const dateFmt = new Intl.DateTimeFormat(intlLocale(i18n.language), { day: 'numeric', month: 'numeric' });
 
   const query = q.trim().toLowerCase();
   const rows = mergeCandidates.filter(
-    (r) => !query || r.customer.toLowerCase().includes(query) || r.source.toLowerCase().includes(query)
+    (r) =>
+      matchesHomeFilters({ name: r.customer, domain: r.domain, sourceCode: r.source, date: r.detected }, filters) &&
+      (!query || r.customer.toLowerCase().includes(query) || r.source.toLowerCase().includes(query))
   );
 
   return (
@@ -49,7 +51,7 @@ export default function MergeCandidatesCard() {
             {rows.length === 0 ? (
               <tr>
                 <td colSpan={4} className={styles.empty}>
-                  {t('fiori.no_matches', { q: q.trim() })}
+                  {q.trim() ? t('fiori.no_matches', { q: q.trim() }) : t('fiori.filters.no_match')}
                 </td>
               </tr>
             ) : (

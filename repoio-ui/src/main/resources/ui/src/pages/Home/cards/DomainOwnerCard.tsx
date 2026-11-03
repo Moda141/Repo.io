@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { intlLocale } from '@/components/common/Fiori';
+import { CardActionsButton, dragHandleProps, intlLocale } from '@/components/common/Fiori';
 import { domainOwner } from '../homeSampleData';
 import styles from './cards.module.css';
 import cardStyles from '@/components/common/Fiori/OvpCard.module.css';
@@ -12,13 +12,16 @@ export default function DomainOwnerCard() {
   );
 
   return (
-    <article className={cardStyles.card}>
-      <div className={styles.contactTop}>
+    <article className={cardStyles.card} style={{ position: 'relative' }}>
+      <div className={styles.contactTop} {...dragHandleProps}>
         <div className={styles.photo} aria-hidden="true">{domainOwner.initials}</div>
         <div>
           <div className={styles.contactName}>{t('page.home.ovp.owner.name')}</div>
           <div className={styles.muted} style={{ fontSize: 13, marginTop: 2 }}>{t('page.home.ovp.owner.role')}</div>
         </div>
+        <span style={{ marginInlineStart: 'auto', alignSelf: 'flex-start' }}>
+          <CardActionsButton />
+        </span>
       </div>
       <div className={styles.section}>
         <h3 className={styles.sectionTitle}>{t('page.home.ovp.owner.title')}</h3>

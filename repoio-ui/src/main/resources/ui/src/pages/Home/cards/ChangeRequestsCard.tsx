@@ -1,20 +1,23 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ObjectStatus, OvpCard, OverflowIcon, STATE_COLOR } from '@/components/common/Fiori';
-import { changeRequests, changeRequestsTotal } from '../homeSampleData';
+import { changeRequests, changeRequestsTotal, matchesHomeFilters, type HomeFilters } from '../homeSampleData';
 import styles from './cards.module.css';
 
 type Decision = 'approved' | 'rejected';
 
 interface Props {
   onDecision: () => void;
+  filters: HomeFilters;
 }
+
+const STATUS_FILTER: Record<string, string> = { missing_data: 'negative', needs_review: 'critical', ready: 'positive' };
 
 /**
  * SAP "List card" (Urgent Purchase Requisition Items): title + status,
  * two attribute rows, a progress bar, and Approve / Reject actions.
  */
-export default function ChangeRequestsCard({ onDecision }: Props) {
+export default function ChangeRequestsCard({ onDecision, filters }: Props) {
   const { t } = useTranslation();
   const [decisions, setDecisions] = useState<Record<string, Decision>>({});
 
@@ -23,13 +26,23 @@ export default function ChangeRequestsCard({ onDecision }: Props) {
     onDecision();
   }
 
+  const shown = changeRequests.filter(
+    (r) =>
+      matchesHomeFilters(
+        { name: r.customer, id: r.id, domain: r.domain, sourceCode: r.sourceCode, date: r.created },
+        filters
+      ) &&
+      (!filters.status || STATUS_FILTER[filters.status] === r.state)
+  );
+
   return (
     <OvpCard
       title={t('page.home.ovp.requests.title')}
       subtitle={t('page.home.ovp.requests.subtitle')}
-      counter={t('fiori.of', { shown: changeRequests.length, total: changeRequestsTotal })}
+      counter={t('fiori.of', { shown: shown.length, total: changeRequestsTotal })}
       onMore={() => undefined}>
-      {changeRequests.map((r) => {
+      {shown.length === 0 && <div className={styles.empty}>{t('fiori.filters.no_match')}</div>}
+      {shown.map((r) => {
         const color = STATE_COLOR[r.state];
         const decision = decisions[r.id];
         return (

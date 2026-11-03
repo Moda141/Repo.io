@@ -11,23 +11,25 @@ interface Props {
   badges?: ReactNode;
   /** End-edge actions (share, export…). */
   actions?: ReactNode;
+  /** Expanded-only content under the title row, e.g. a FilterBar. */
+  children?: ReactNode;
 }
 
 /**
  * DynamicPageHeader — Fiori variant-management header with the collapse
  * handle centred on its bottom edge.
  *
- * Reference: design-reference/sap-s4hana/01-overview-page.svg
- * ("Standard ▾ / No filters active" + chevron handle).
+ * Reference: design-reference/sap-s4hana/01-overview-page.svg and
+ * components/filter-bar.svg. Collapsed, the title row and the active-filter
+ * summary stay; the filter bar (children) hides.
  */
-export default function DynamicPageHeader({ variant, subtitle, badges, actions }: Props) {
+export default function DynamicPageHeader({ variant, subtitle, badges, actions, children }: Props) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(true);
 
   return (
     <section className={`${styles.header} ${open ? '' : styles.closed}`}>
-      {open && (
-        <div className={styles.inner}>
+      <div className={styles.inner}>
           <div>
             <button className={styles.variant} type="button">
               {variant}
@@ -43,8 +45,8 @@ export default function DynamicPageHeader({ variant, subtitle, badges, actions }
             )}
           </div>
           {actions && <div className={styles.actions}>{actions}</div>}
-        </div>
-      )}
+      </div>
+      {open && children && <div className={styles.expanded}>{children}</div>}
       <button
         className={styles.handle}
         onClick={() => setOpen((o) => !o)}

@@ -48,16 +48,42 @@ a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
 .pop{position:fixed;top:calc(52px - 4px + env(safe-area-inset-top,0px));z-index:70;background:var(--card);border:1px solid var(--popover-bd);
   border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.15);font-size:14px}
 .pop::before{content:"";position:absolute;top:-7px;width:12px;height:12px;background:var(--card);border-top:1px solid var(--popover-bd);border-inline-start:1px solid var(--popover-bd);transform:rotate(-45deg)} /* page is RTL */
-.nav-menu{inset-inline-start:max(12px,env(safe-area-inset-right,0px));width:288px;max-width:calc(100vw - 24px)}
+.nav-menu{inset-inline-start:max(12px,env(safe-area-inset-right,0px));width:288px;max-width:calc(100vw - 24px);height:min(560px,calc(100vh - 72px));padding:0;display:flex;flex-direction:column}
+.nav-menu:not([hidden]){display:flex}
 .nav-menu::before{inset-inline-start:14px}
-.nm-body{padding:8px}
-.nm-title{padding:8px 8px 4px;color:var(--fg2)}
-.nm-item{display:flex;align-items:center;gap:10px;height:32px;padding-inline:8px;border-radius:6px;color:var(--fg);text-decoration:none}
-.nm-item:hover{background:var(--hover);text-decoration:none}
-.nm-item svg{color:var(--menu-icon);flex:none}
-.nm-item.active{background:var(--sel);font-weight:700}
-.nm-item.active svg{color:var(--brand)}
-.nm-foot{border-top:1px solid var(--line);margin-inline:8px;padding-block:8px}
+.nv-panel{display:flex;flex-direction:column;min-height:0;flex:1}
+.nv-scroll{flex:1;overflow-y:auto;padding:8px}
+.nv-foot{border-top:1px solid #D9D9D9;margin-inline:8px;padding-block:8px}
+.nv{display:flex;align-items:center;gap:8px;width:100%;height:32px;padding-inline:8px;border:0;border-radius:6px;background:none;color:var(--fg);font:inherit;font-size:13px;text-decoration:none;cursor:pointer;text-align:start;white-space:nowrap}
+.nv:hover{background:var(--hover);text-decoration:none}
+.nv .lbl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.nv svg{flex:none;color:var(--fg)}
+.nv.sec{color:var(--fg2);margin-top:6px}
+.nv.sec svg{color:var(--fg2)}
+.nv.grp{font-weight:600}
+.nv.child{padding-inline-start:36px}
+.nv.plain{padding-inline-start:8px;font-weight:600}
+.nv.active{background:var(--sel)}
+.nv .vbar{width:1px;height:16px;background:var(--fg);margin-inline:6px}
+.nv .chev-d{transition:transform .15s}
+.nv[aria-expanded="false"] .chev-d{transform:rotate(90deg)}
+[dir="rtl"] .nv[aria-expanded="false"] .chev-d,body .nv[aria-expanded="false"] .chev-d{transform:rotate(90deg)}
+.nv .chev-s{transform:scaleX(-1)}
+.nv-head{display:flex;align-items:center;gap:6px;padding:8px 8px 4px}
+.nv-back{width:28px;height:28px;border:0;border-radius:6px;background:none;color:var(--brand);cursor:pointer;display:grid;place-items:center}
+.nv-back:hover{background:var(--hover)}
+.nv-back svg{transform:scaleX(-1)}
+.nv-search{flex:1;display:flex;align-items:center;height:26px;border:1px solid var(--field-bd);border-radius:4px;padding-inline:8px;gap:6px;background:var(--field)}
+.nv-search input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:13px;color:var(--fg);outline:none}
+.nv-search input::placeholder{color:var(--fg2);font-style:italic}
+.nv-h{display:flex;align-items:center;justify-content:space-between;padding:10px 8px 6px;border-bottom:1px solid var(--line);margin-bottom:4px;font-weight:700;font-size:14px}
+.nv-h button{border:0;background:none;color:var(--brand);font:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:2px 4px;border-radius:4px}
+.nv-h button:hover{background:var(--hover)}
+.nv .pin{width:24px;height:24px;border:0;border-radius:4px;background:none;color:var(--brand);display:grid;place-items:center;cursor:pointer;flex:none}
+.nv .pin:hover{background:#DEE2E5}
+.nv-kids{background:#F5F6F7;border-radius:4px;margin-block:2px}
+.nv-kids .nv{padding-inline-start:28px}
+.nv-empty{padding:8px;color:var(--fg2);font-size:13px}
 .user-menu{inset-inline-end:max(12px,env(safe-area-inset-left,0px));width:304px;max-width:calc(100vw - 24px)}
 .user-menu::before{inset-inline-end:14px}
 .um-head{display:flex;flex-direction:column;align-items:center;gap:4px;padding:24px 16px 16px;text-align:center}
@@ -67,6 +93,9 @@ a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
 .um-sep{height:1px;background:var(--line);margin-inline:8px}
 .um-items{padding:4px 8px}
 .um-items .nm-item{height:40px}
+.nm-item{display:flex;align-items:center;gap:10px;padding-inline:8px;border-radius:6px;color:var(--fg);text-decoration:none}
+.nm-item:hover{background:var(--hover);text-decoration:none}
+.nm-item svg{color:var(--menu-icon);flex:none}
 .um-foot{display:flex;justify-content:flex-end;padding:8px;border-top:1px solid #D9D9D9}
 .signout{display:inline-flex;align-items:center;gap:6px;height:26px;padding-inline:8px;border:0;border-radius:8px;background:none;color:var(--brand);font:inherit;font-weight:600;cursor:pointer}
 .signout:hover{background:var(--hover)}
@@ -274,17 +303,7 @@ tbody tr:first-child{background:var(--sel)}
 </header>
 
 
-<nav class="pop nav-menu" id="navMenu" aria-label="القائمة" hidden>
-  <div class="nm-body">
-    <a class="nm-item active" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>الرئيسية</a>
-    <a class="nm-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>استكشاف</a>
-    <div class="nm-title">الحوكمة</div>
-    <a class="nm-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="4" cy="12" r="2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="5" r="2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="19" r="2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="12" r="2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 12h2M13.5 6.5l5 4M13.5 17.5l5-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>خطوط الاستيراد</a>
-    <a class="nm-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .6-4.5 4 1.3 6L12 16.3 6.6 19.2l1.3-6-4.5-4 6-.6z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>جودة البيانات</a>
-    <a class="nm-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>المسرد</a>
-  </div>
-  <div class="nm-foot"><a class="nm-item" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>الإعدادات</a></div>
-</nav>
+<nav class="pop nav-menu" id="navMenu" aria-label="القائمة" hidden></nav>
 
 <div class="pop user-menu" id="userMenu" role="menu" aria-label="الحساب" hidden>
   <div class="um-head"><div class="um-av" aria-hidden="true">م</div><div class="um-name">محمد</div><div class="um-role">مدير إدارة البيانات والتحليلات</div></div>
@@ -442,10 +461,88 @@ tbody tr:first-child{background:var(--sel)}
   /* Navigation Menu + User Menu popovers */
   const pops=[[document.getElementById('menuBtn'),document.getElementById('navMenu')],[document.getElementById('userBtn'),document.getElementById('userMenu')]];
   function closeAll(except){pops.forEach(([b,m])=>{if(m!==except){m.hidden=true;b.setAttribute('aria-expanded','false');}});}
-  pops.forEach(([b,m])=>b.addEventListener('click',e=>{e.stopPropagation();const open=m.hidden;closeAll(m);m.hidden=!open;b.setAttribute('aria-expanded',String(open));if(open){const f=m.querySelector('a,button');f&&f.focus();}}));
-  document.addEventListener('click',e=>{if(!pops.some(([b,m])=>m.contains(e.target)))closeAll();});
+  pops.forEach(([b,m])=>b.addEventListener('click',e=>{e.stopPropagation();const open=m.hidden;if(open&&m.id==='navMenu'){level='main';spaceQ='';drawMain();}closeAll(m);m.hidden=!open;b.setAttribute('aria-expanded',String(open));if(open){const f=m.querySelector('a,button');f&&f.focus();}}));
+  document.addEventListener('click',e=>{if(!e.target.isConnected)return;if(!pops.some(([b,m])=>m.contains(e.target)))closeAll();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){const o=pops.find(([b,m])=>!m.hidden);closeAll();o&&o[0].focus();}});
   pops.forEach(([,m])=>m.addEventListener('click',e=>{if(e.target.closest('a'))e.preventDefault();}));
+
+  /* Navigation Menu — Compact (navigation-menu.svg: Main Menu + All Spaces) */
+  const NI={
+    home:'<path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+    folder:'<path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 12h10M7 15h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+    spaces:'<rect x="7" y="7" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M4 16V5a1 1 0 0 1 1-1h11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+    finder:'<circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M17 4l3 3-3 3-3-3zM4 17h6M7 14v6M14 17h6M17 14v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
+    settings:'<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+    search:'<circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    pin:'<path d="M14 3l7 7-3 1-4 4 1 4-1 1-4-4-5 5M8 11l5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
+    pinOn:'<path d="M14 3l7 7-3 1-4 4 1 4-1 1-9-9 1-1 4 1 4-4z" fill="currentColor"/><path d="M8 16l-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'};
+  const ic=(k,sz=16)=>`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" aria-hidden="true">${NI[k]}</svg>`;
+  const CH_D='<svg class="chev-d" width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+  const CH_S='<svg class="chev-s" width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+  // Repo.io content mapped onto the SAP structure
+  const MAIN=[
+    {sec:'التطبيقات المفضلة',items:[
+      {grp:'الكيانات',kids:['العملاء','المنتجات','الموردون','الكتب','المؤلفون']},
+      {grp:'طلبات التعديل',space:true},
+      {grp:'مطابقة السجلات',space:true}]},
+    {sec:'مساحاتي',items:[
+      {plain:'البيانات الرئيسية',space:true},
+      {plain:'الحوكمة',space:true},
+      {plain:'الخدمة الذاتية'}]}];
+  const SPACES=[
+    {id:'mdm',t:'البيانات الرئيسية',kids:['نظرة عامة','العملاء','المنتجات','الموردون','السجلات المكررة']},
+    {id:'gov',t:'الحوكمة',kids:['جودة البيانات','قواعد الجودة','المسرد','طلبات التعديل']},
+    {id:'int',t:'التكامل',kids:['مصادر البيانات','خطوط الاستيراد','سجل التشغيل']},
+    {id:'wf',t:'سير العمل',kids:['سير العمل','التنبيهات']},
+    {id:'adm',t:'الإدارة',kids:['المستخدمون','الأدوار','سجل التدقيق']}];
+  const nav=document.getElementById('navMenu');
+  let level='main',pinned=new Set(['mdm','gov']),openSpace='mdm',spaceQ='';
+  const openSec={0:true,1:true},openGrp={0:true};
+  function drawMain(){
+    let h='<div class="nv-panel"><div class="nv-scroll" role="menu">';
+    h+=`<a class="nv active" href="#" role="menuitem">${ic('home')}<span class="lbl">الرئيسية</span></a>`;
+    MAIN.forEach((sec,si)=>{
+      h+=`<button class="nv sec" data-sec="${si}" aria-expanded="${!!openSec[si]}"><span class="lbl">${sec.sec}</span>${CH_D}</button>`;
+      if(!openSec[si])return;
+      sec.items.forEach((it,ii)=>{
+        if(it.kids){const k=si+'-'+ii;h+=`<button class="nv grp" data-grp="${k}" aria-expanded="${!!openGrp[k]||(si===0&&ii===0&&openGrp[0])}">${ic('folder')}<span class="lbl">${it.grp}</span>${CH_D}</button>`;
+          if(openGrp[k]||(si===0&&ii===0&&openGrp[0]))it.kids.forEach(c=>h+=`<a class="nv child" href="#" role="menuitem"><span class="lbl">${c}</span></a>`);}
+        else if(it.grp)h+=`<a class="nv grp" href="#" role="menuitem">${ic('folder')}<span class="lbl">${it.grp}</span>${CH_S}</a>`;
+        else h+=`<a class="nv plain" href="#" role="menuitem"><span class="lbl">${it.plain}</span>${it.space?`<span class="vbar"></span>${CH_S}`:''}</a>`;});
+    });
+    h+='</div><div class="nv-foot">';
+    h+=`<button class="nv" data-go="spaces">${ic('spaces')}<span class="lbl">كل المساحات</span></button>`;
+    h+=`<a class="nv" href="#" role="menuitem">${ic('settings')}<span class="lbl">الإعدادات</span></a>`;
+    h+='</div></div>';nav.innerHTML=h;}
+  function drawSpaces(focusSearch){
+    const q=spaceQ.trim();const match=s=>!q||s.t.includes(q)||s.kids.some(k=>k.includes(q));
+    const row=(s,showKids)=>{const on=pinned.has(s.id);const exp=openSpace===s.id||(q&&s.kids.some(k=>k.includes(q)));
+      let r=`<div class="nv" role="none"><button class="nv" style="padding:0;height:auto;flex:1" data-space="${s.id}" aria-expanded="${!!exp}">${showKids?CH_D:''}<span class="lbl">${s.t}</span></button><button class="pin" data-pin="${s.id}" aria-pressed="${on}" aria-label="${on?'إلغاء تثبيت':'تثبيت'} ${s.t}">${ic(on?'pinOn':'pin')}</button></div>`;
+      if(showKids&&exp)r+=`<div class="nv-kids">${s.kids.filter(k=>!q||k.includes(q)||s.t.includes(q)).map(k=>`<a class="nv" href="#" role="menuitem"><span class="lbl">${k}</span></a>`).join('')}</div>`;return r;};
+    let h=`<div class="nv-panel"><div class="nv-head"><button class="nv-back" data-go="main" aria-label="رجوع للقائمة الرئيسية"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      <label class="nv-search"><input id="nvq" placeholder="بحث" value="${spaceQ.replace(/"/g,'&quot;')}" aria-label="بحث في المساحات">${ic('search',14)}</label></div><div class="nv-scroll">`;
+    const pins=SPACES.filter(s=>pinned.has(s.id)&&match(s));
+    h+=`<div class="nv-h"><span>المساحات المثبتة</span>${pinned.size?'<button data-unpin="1">إلغاء تثبيت الكل</button>':''}</div>`;
+    h+=pins.length?pins.map(s=>row(s,false)).join(''):'<div class="nv-empty">لا توجد مساحات مثبتة</div>';
+    const all=SPACES.filter(match);
+    h+=`<div class="nv-h"><span>كل المساحات</span></div>`;
+    h+=all.length?all.map(s=>row(s,true)).join(''):`<div class="nv-empty">لا توجد نتائج لـ "${q.replace(/[<>&"]/g,'')}"</div>`;
+    h+='</div></div>';nav.innerHTML=h;
+    const inp=document.getElementById('nvq');
+    inp.addEventListener('input',()=>{spaceQ=inp.value;const pos=inp.selectionStart;drawSpaces(true);const n=document.getElementById('nvq');n.focus();n.setSelectionRange(pos,pos);});
+    if(focusSearch)inp.focus();}
+  const drawNav=()=>level==='main'?drawMain():drawSpaces();
+  nav.addEventListener('click',e=>{
+    const t=e.target.closest('button,a');if(!t)return;e.stopPropagation();
+    if(t.tagName==='A'){e.preventDefault();return;}
+    if(t.dataset.sec){openSec[t.dataset.sec]=!openSec[t.dataset.sec];drawMain();nav.querySelector(`[data-sec="${t.dataset.sec}"]`).focus();}
+    else if(t.dataset.grp){const k=t.dataset.grp;const cur=t.getAttribute('aria-expanded')==='true';openGrp[k]=!cur;if(k==='0-0')openGrp[0]=!cur;drawMain();nav.querySelector(`[data-grp="${k}"]`).focus();}
+    else if(t.dataset.go){level=t.dataset.go;drawNav();(nav.querySelector('#nvq')||nav.querySelector('[data-go="spaces"]'))?.focus();}
+    else if(t.dataset.space){openSpace=openSpace===t.dataset.space?null:t.dataset.space;drawSpaces();nav.querySelector(`[data-space="${t.dataset.space}"]`)?.focus();}
+    else if(t.dataset.pin){const id=t.dataset.pin;pinned.has(id)?pinned.delete(id):pinned.add(id);drawSpaces();nav.querySelector(`[data-pin="${id}"]`)?.focus();}
+    else if(t.dataset.unpin){pinned.clear();drawSpaces();}
+  });
+  drawMain();
 
   /* Collapse header */
   const dph=document.getElementById('dph');

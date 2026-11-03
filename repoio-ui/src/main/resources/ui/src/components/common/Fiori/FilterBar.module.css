@@ -1,0 +1,54 @@
+/* FilterBar — SAP Filter Bar (filter-bar.svg) */
+
+.bar {
+  max-width: 90rem;
+  margin: 0.75rem auto 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+  gap: 0.625rem 1rem;
+  align-items: end;
+}
+
+.field { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
+.field label { font-size: 0.8125rem; color: var(--sapContent_LabelColor); }
+.field input,
+.field select {
+  height: var(--sapField_Height);
+  min-width: 0;
+  padding-inline: 0.5rem;
+  border: 1px solid var(--sapField_BorderColor);
+  border-radius: var(--sapField_BorderRadius);
+  background: var(--sapField_Background);
+  color: var(--sapField_TextColor);
+  font-family: var(--sapFontFamily);
+  font-size: 0.8125rem;
+}
+.field input::placeholder { color: var(--sapContent_PlaceholderTextColor); font-style: italic; }
+.field input:hover,
+.field select:hover { border-color: var(--sapField_Hover_BorderColor); }
+.field input:focus,
+.field select:focus { outline: var(--sapContent_FocusWidth) solid var(--sapContent_FocusColor); outline-offset: -1px; }
+
+.actions { grid-column: -2 / -1; display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; }
+.go,
+.adapt {
+  height: var(--sapButton_Height);
+  padding-inline: 0.625rem;
+  border: 0;
+  border-radius: var(--sapButton_BorderRadius);
+  font-family: var(--sapFontFamily);
+  font-size: var(--sapFontSize);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.go { background: var(--sapButton_Emphasized_Background); color: var(--sapButton_Emphasized_TextColor); }
+.go:hover { background: var(--sapButton_Emphasized_Hover_Background); }
+.adapt { background: transparent; color: var(--sapButton_Transparent_TextColor); }
+.adapt:hover { background: var(--sapButton_Transparent_Hover_Background); }
+.go:focus-visible,
+.adapt:focus-visible { outline: var(--sapContent_FocusWidth) solid var(--sapContent_FocusColor); outline-offset: 1px; }
+
+@media (max-width: 900px) {
+  .actions { grid-column: 1 / -1; }
+}

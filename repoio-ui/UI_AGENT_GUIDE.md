@@ -159,7 +159,7 @@ Reference: `design-reference/sap-s4hana/01-overview-page.svg` (Horizon, light).
 | Component | File | Description |
 |---|---|---|
 | `FioriShellBar` | `AppShell/FioriShellBar.tsx` | 52 px **white** bar: menu (☰), back, repo.io logo, app title ▾, pill search field, language, notifications, help, avatar → User Menu popover (`user-menu.svg`) |
-| `NavigationMenu` | `AppShell/NavigationMenu.tsx` | Popover under the ☰ button (`navigation-menu.svg`). Overlays the page; closes on outside click, Escape, or navigation. There is **no side bar** |
+| `NavigationMenu` | `AppShell/NavigationMenu.tsx` | SAP **Compact** Navigation Menu (`navigation-menu.svg`): 288 px popover under ☰ with Home, collapsible sections, expandable groups, space rows, and an **All Spaces** level (search, pin / Unpin All). Content in `AppShell/navigationConfig.ts`. Overlays the page; there is **no side bar** |
 
 `AppShell.tsx` owns the menu's open state. `<main>` is always full width.
 The logo lives in `src/assets/img/brand/repoio-logo.png` (source art in
@@ -172,7 +172,7 @@ Rules:
 
 - Max **7** items. An 8th item means something else leaves.
 - Each item is an inline SVG icon + a `t('nav.<key>')` tooltip (LTR + RTL).
-- Add nav items by editing `NavigationMenu.tsx` (the `sections` array) and both locale files under `nav.*`.
+- Add nav items by editing `AppShell/navigationConfig.ts` (`MAIN_SECTIONS`, `SPACES`) and both locale files under `nav.menu.*`.
 - Sub-nav lives **inside** the page (as tabs, segmented control, or a secondary section list). Never on the global side nav.
 
 ---
@@ -193,6 +193,9 @@ Shared building blocks live in `components/common/Fiori/`:
 | `OvpGrid` | Masonry card columns (`columns: 4 300px`) |
 | `OvpCard` | Card shell: title, subtitle, counter ("6 of 12"), overflow "…"; `side` prop = numeric card |
 | `ObjectStatus` | Status text with icon, or solid tag when `inverted` |
+| `FilterBar`, `useActiveFiltersText` | SAP Filter Bar inside `DynamicPageHeader`: label above field, Go applies, Adapt Filters dialog; header shows "n filters active: …" |
+| `P13nDialog` | Personalization dialog: checkboxes, optional ▲▼ reorder, Reset / OK / Cancel |
+| `useCardLayout`, `PersonalizableOvpGrid`, `CardActionsButton`, `UndoToast` | Card personalization: drag a card by its header, "…" menu (hide, move earlier / later), undo toast. Layout is per browser until Variant Management has a backend |
 | `intlLocale()` | Intl locale with Western digits for Arabic |
 
 ```tsx

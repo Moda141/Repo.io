@@ -32,21 +32,26 @@ export interface ChangeRequest {
   fields: number;
   domain: 'customers';
   source: string;
+  /** Source code used by the Source filter (C4C, ERP, CSV, manual). */
+  sourceCode: string;
+  /** ISO date the request was created. */
+  created: string;
   completeness: number;
   state: ValueState;
   stateKey: 'missing_data' | 'needs_review' | 'ready';
 }
 
 export const changeRequests: ChangeRequest[] = [
-  { id: 'CR-1000352', kind: 'tax_id', customer: 'مكتبة الأجيال', fields: 12, domain: 'customers', source: 'SAP C4C', completeness: 30, state: 'negative', stateKey: 'missing_data' },
-  { id: 'CR-1000361', kind: 'new_customer', customer: 'دار المعرفة للنشر', fields: 18, domain: 'customers', source: 'manual', completeness: 55, state: 'critical', stateKey: 'needs_review' },
-  { id: 'CR-1000378', kind: 'merge', customer: 'الشركة العربية للتوزيع', fields: 24, domain: 'customers', source: 'ERP', completeness: 92, state: 'positive', stateKey: 'ready' },
-  { id: 'CR-1000384', kind: 'reclassify', customer: 'مكتبة النيل', fields: 6, domain: 'customers', source: 'CSV', completeness: 100, state: 'positive', stateKey: 'ready' },
+  { id: 'CR-1000352', kind: 'tax_id', customer: 'مكتبة الأجيال', fields: 12, domain: 'customers', source: 'SAP C4C', sourceCode: 'C4C', created: '2026-11-02', completeness: 30, state: 'negative', stateKey: 'missing_data' },
+  { id: 'CR-1000361', kind: 'new_customer', customer: 'دار المعرفة للنشر', fields: 18, domain: 'customers', source: 'manual', sourceCode: 'manual', created: '2026-11-01', completeness: 55, state: 'critical', stateKey: 'needs_review' },
+  { id: 'CR-1000378', kind: 'merge', customer: 'الشركة العربية للتوزيع', fields: 24, domain: 'customers', source: 'ERP', sourceCode: 'ERP', created: '2026-10-30', completeness: 92, state: 'positive', stateKey: 'ready' },
+  { id: 'CR-1000384', kind: 'reclassify', customer: 'مكتبة النيل', fields: 6, domain: 'customers', source: 'CSV', sourceCode: 'CSV', created: '2026-10-28', completeness: 100, state: 'positive', stateKey: 'ready' },
 ];
 export const changeRequestsTotal = 6;
 
 export interface MergeCandidate {
   customer: string;
+  domain: 'customers';
   source: string;
   /** ISO date */
   detected: string;
@@ -54,14 +59,14 @@ export interface MergeCandidate {
 }
 
 export const mergeCandidates: MergeCandidate[] = [
-  { customer: 'مكتبة الأجيال الجديدة', source: 'C4C', detected: '2026-11-01', score: 96 },
-  { customer: 'دار المعرفة للنشر', source: 'C4C', detected: '2026-11-01', score: 91 },
-  { customer: 'الشركة العربية للتوزيع', source: 'ERP', detected: '2026-10-31', score: 88 },
-  { customer: 'مؤسسة الفكر العربي', source: 'C4C', detected: '2026-10-30', score: 82 },
-  { customer: 'مكتبة النيل', source: 'CSV', detected: '2026-10-29', score: 77 },
-  { customer: 'شبكة القاهرة التعليمية', source: 'ERP', detected: '2026-10-28', score: 71 },
-  { customer: 'دار الشروق للتوزيع', source: 'C4C', detected: '2026-10-27', score: 68 },
-  { customer: 'مكتبة الإسكندرية الحديثة', source: 'CSV', detected: '2026-10-26', score: 64 },
+  { customer: 'مكتبة الأجيال الجديدة', domain: 'customers', source: 'C4C', detected: '2026-11-01', score: 96 },
+  { customer: 'دار المعرفة للنشر', domain: 'customers', source: 'C4C', detected: '2026-11-01', score: 91 },
+  { customer: 'الشركة العربية للتوزيع', domain: 'customers', source: 'ERP', detected: '2026-10-31', score: 88 },
+  { customer: 'مؤسسة الفكر العربي', domain: 'customers', source: 'C4C', detected: '2026-10-30', score: 82 },
+  { customer: 'مكتبة النيل', domain: 'customers', source: 'CSV', detected: '2026-10-29', score: 77 },
+  { customer: 'شبكة القاهرة التعليمية', domain: 'customers', source: 'ERP', detected: '2026-10-28', score: 71 },
+  { customer: 'دار الشروق للتوزيع', domain: 'customers', source: 'C4C', detected: '2026-10-27', score: 68 },
+  { customer: 'مكتبة الإسكندرية الحديثة', domain: 'customers', source: 'CSV', detected: '2026-10-26', score: 64 },
 ];
 export const mergeCandidatesTotal = 20;
 
@@ -98,3 +103,28 @@ export const todayRuns = [
 
 /** Fixed "today" for the sample calendar so screenshots stay stable. */
 export const SAMPLE_TODAY = '2026-11-03';
+
+/** Filter values from the Home filter bar (see HomePage FILTER_FIELDS). */
+export interface HomeFilters {
+  q?: string;
+  domain?: string;
+  source?: string;
+  status?: string;
+  period?: string;
+}
+
+const daysBefore = (iso: string) =>
+  Math.round((new Date(`${SAMPLE_TODAY}T00:00:00`).getTime() - new Date(`${iso}T00:00:00`).getTime()) / 864e5);
+
+/** Shared match rules so every card filters the same way. */
+export function matchesHomeFilters(
+  rec: { name: string; id?: string; domain: string; sourceCode: string; date: string },
+  f: HomeFilters
+): boolean {
+  const q = f.q?.toLowerCase();
+  if (q && !rec.name.toLowerCase().includes(q) && !(rec.id ?? '').toLowerCase().includes(q)) return false;
+  if (f.domain && rec.domain !== f.domain) return false;
+  if (f.source && rec.sourceCode !== f.source) return false;
+  if (f.period && daysBefore(rec.date) > Number(f.period)) return false;
+  return true;
+}
