@@ -17,7 +17,9 @@
     "search_placeholder": "Search records",
     "search": "Search",
     "notifications": "Notifications",
-    "help": "Help"
+    "help": "Help",
+    "section_govern": "Govern",
+    "glossary": "Glossary"
   },
   "search": {
     "placeholder": "Search customers, vendors, products, authors…"
@@ -190,7 +192,8 @@
     "back": "Back",
     "go_home": "repo.io — Home",
     "app_title": "Master Data Overview",
-    "account": "Account"
+    "account": "Account",
+    "about": "About"
   },
   "fiori": {
     "more_options": "More options",

@@ -31,7 +31,7 @@ If a rule here surprises you, open a PR amending the guide *first*, then the cod
 ```
 repoio-ui/src/main/resources/ui/src/
 ├── components/
-│   ├── AppShell/          ← FioriShellBar.tsx, FioriSideNav.tsx, AppShell.tsx
+│   ├── AppShell/          ← FioriShellBar.tsx, NavigationMenu.tsx, AppShell.tsx
 │   ├── common/            ← shared primitives (≥ 2 pages or planned)
 │   └── <Area>/            ← area-specific components, sibling to their page
 ├── pages/
@@ -158,10 +158,10 @@ Reference: `design-reference/sap-s4hana/01-overview-page.svg` (Horizon, light).
 
 | Component | File | Description |
 |---|---|---|
-| `FioriShellBar` | `AppShell/FioriShellBar.tsx` | 52 px **white** bar: menu (☰), back, repo.io logo, app title ▾, pill search field, language, notifications, help, avatar |
-| `FioriSideNav` | `AppShell/FioriSideNav.tsx` | Hidden by default; the shell bar ☰ button opens it. When open: 272 px, collapsible to 48 px. Both states stored in `localStorage` |
+| `FioriShellBar` | `AppShell/FioriShellBar.tsx` | 52 px **white** bar: menu (☰), back, repo.io logo, app title ▾, pill search field, language, notifications, help, avatar → User Menu popover (`user-menu.svg`) |
+| `NavigationMenu` | `AppShell/NavigationMenu.tsx` | Popover under the ☰ button (`navigation-menu.svg`). Overlays the page; closes on outside click, Escape, or navigation. There is **no side bar** |
 
-`AppShell.tsx` owns the open/collapsed state and offsets `<main>` by the nav width.
+`AppShell.tsx` owns the menu's open state. `<main>` is always full width.
 The logo lives in `src/assets/img/brand/repoio-logo.png` (source art in
 `design-reference/brand/`). Do not redraw it as SVG or text.
 
@@ -172,7 +172,7 @@ Rules:
 
 - Max **7** items. An 8th item means something else leaves.
 - Each item is an inline SVG icon + a `t('nav.<key>')` tooltip (LTR + RTL).
-- Add nav items by editing `FioriSideNav.tsx` (the `navItems` array) and both locale files under `nav.*`.
+- Add nav items by editing `NavigationMenu.tsx` (the `sections` array) and both locale files under `nav.*`.
 - Sub-nav lives **inside** the page (as tabs, segmented control, or a secondary section list). Never on the global side nav.
 
 ---
@@ -468,7 +468,7 @@ Do **not** silently change behaviour in code without updating the guide.
 For orientation only — reflects what shipped, not what you must preserve verbatim.
 
 **Migrated to SAP Fiori Horizon (CSS Modules + tokens):**
-- Shell: `FioriShellBar`, `FioriSideNav`, `AppShell`
+- Shell: `FioriShellBar`, `NavigationMenu`, `AppShell`
 - Pages: Home (Overview Page — matched to `design-reference/sap-s4hana/01-overview-page.svg`, approved 2026-11-03), Explore (List Report), Entity Detail (Object Page)
 - Shared: `components/common/Fiori/` (DynamicPageHeader, OvpGrid, OvpCard, ObjectStatus)
 - Styles: `tokens.css`, `variables.less`, `app.less`, `fonts.less`

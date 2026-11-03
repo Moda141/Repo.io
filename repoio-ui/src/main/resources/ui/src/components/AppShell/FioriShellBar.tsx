@@ -8,6 +8,7 @@ import styles from './FioriShellBar.module.css';
 interface Props {
   navOpen: boolean;
   onMenuToggle: () => void;
+  menuButtonRef: React.RefObject<HTMLButtonElement>;
 }
 
 /**
@@ -20,7 +21,7 @@ interface Props {
  *
  * Height: 52px (--sapShellBar_Height). Background: white (--sapShellColor).
  */
-export default function FioriShellBar({ navOpen, onMenuToggle }: Props) {
+export default function FioriShellBar({ navOpen, onMenuToggle, menuButtonRef }: Props) {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
@@ -51,10 +52,12 @@ export default function FioriShellBar({ navOpen, onMenuToggle }: Props) {
   return (
     <header className={styles.shellBar} role="banner">
       <button
-        className={styles.iconBtn}
+        ref={menuButtonRef}
+        className={`${styles.iconBtn} ${navOpen ? styles.iconBtnActive : ''}`}
         onClick={onMenuToggle}
         aria-label={t('shell.menu', 'Menu')}
         aria-expanded={navOpen}
+        aria-haspopup="menu"
         title={t('shell.menu', 'Menu')}>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
@@ -143,21 +146,45 @@ export default function FioriShellBar({ navOpen, onMenuToggle }: Props) {
 
         {userMenuOpen && (
           <div className={styles.userMenuDropdown} role="menu">
+            {/* SAP User Menu — design-reference/sap-s4hana/components/user-menu.svg */}
             <div className={styles.userMenuHeader}>
+              <div className={styles.userMenuAvatar} aria-hidden="true">MM</div>
               <div className={styles.userMenuName}>Mohamed M.</div>
               <div className={styles.userMenuRole}>Data Management Manager</div>
             </div>
             <div className={styles.userMenuDivider} />
-            <Link
-              to={ROUTES.SETTINGS}
-              className={styles.userMenuItem}
-              role="menuitem"
-              onClick={() => setUserMenuOpen(false)}>
-              {t('nav.settings', 'Settings')}
-            </Link>
-            <button className={styles.userMenuItem} role="menuitem" onClick={() => setUserMenuOpen(false)}>
-              {t('auth.sign_out', 'Sign out')}
-            </button>
+            <div className={styles.userMenuItems}>
+              <Link
+                to={ROUTES.SETTINGS}
+                className={styles.userMenuItem}
+                role="menuitem"
+                onClick={() => setUserMenuOpen(false)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.6" />
+                  <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" stroke="currentColor" strokeWidth="1.4" />
+                </svg>
+                {t('nav.settings', 'Settings')}
+              </Link>
+              <Link
+                to={ROUTES.PROFILE}
+                className={styles.userMenuItem}
+                role="menuitem"
+                onClick={() => setUserMenuOpen(false)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
+                  <path d="M12 11v6M12 7.5h.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                </svg>
+                {t('shell.about', 'About')}
+              </Link>
+            </div>
+            <div className={styles.userMenuFooter}>
+              <button className={styles.signOut} role="menuitem" onClick={() => setUserMenuOpen(false)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 3v8M7.1 6.5a7 7 0 1 0 9.8 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                </svg>
+                {t('auth.sign_out', 'Sign out')}
+              </button>
+            </div>
           </div>
         )}
       </div>

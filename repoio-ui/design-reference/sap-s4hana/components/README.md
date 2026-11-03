@@ -41,6 +41,43 @@ only, build when a page needs it.
 | Message View, Message Popover | `message-view-popover.svg` | Messages list grouped by section, filter segmented button (All / errors / warnings / success / info with counts), detail page with back arrow; popover opened from a message button | — | — | Reference |
 | Micro Process Flow | `micro-process-flow.svg` | Chain of 12 px state circles (positive / critical / negative / neutral) joined by lines; icon variant; hover tooltip; "‹ 7" / "4 ›" overflow | `--sapProcessFlow_*` | — | Tokens |
 
+## Batch 2 (2026-11-03)
+
+`Overview_page.svg` in this batch is identical to `../01-overview-page.svg`, so it is not stored twice.
+
+| Component | File | Key specs (Compact) | Tokens | Code | Status |
+|---|---|---|---|---|---|
+| Multi Combo Box | `multi-combo-box.svg` | Field with tokens ("Notebook Basic 20 ×") + "2 More" link + dropdown chevron; states Regular / Hover / Active (list popover of options) / Read only (dashed bottom border) / Disabled | `--sapField_*` | antd Select (mode multiple) via `select.less` | Tokens |
+| Navigation Menu | `navigation-menu.svg` | **Popover under the shell bar ☰ button**, overlays the page (no side bar). 288 wide, 32 rows, section titles in label color, separator before footer items (All Spaces / App Finder). Second level "All Spaces" with search, pin icons, expandable groups | `--sapMenu_*` | `AppShell/NavigationMenu.tsx` | Built |
+| Notifications | `notifications.svg` | Card-like items, radius 12: app icon in a circle, bold title, text, meta line "source • source • time" + "More"; overflow … and close ×. Popover groups by Today / Yesterday; "Important" negative tag | `--sapNotification_*` | — | Tokens |
+| Quick View | `quick-view.svg` | Popover for a person or object: avatar + name + role, then label / value groups (links for phone, email). Mobile: full screen with "4 of 12" paging | — | — | Reference |
+| Radio Button | `radio-button.svg` | 16 circle, label to the end; edit mode list under a field label; display mode shows the chosen value as text | `--sapField_*` | `radio.less` | Tokens |
+| Segmented Button | `segmented-button.svg` | Outlined group, radius 8; selected item gets `#0064D9` border and `#EBF8FF` fill | `--sapSegmentedButton_*` | `radio.less` (`.new-radio-group`) | Tokens |
+| User Menu | `user-menu.svg` | Popover 304 wide from the avatar: avatar 80 centred (edit badge), name bold, role lines, "Manage Accounts", item list with icons (Settings, Legal Information ›, About), footer with "Sign Out" transparent button at the end | `--sapMenu_*`, `--sapAvatar_*` | `AppShell/FioriShellBar.tsx` | Built |
+| Network Graph | `network-graph.svg` | Free layout (circle nodes, colored edges) and column layouts (horizontal / vertical) with node cards: icon + title + key figures, state border and state icon; colored arrows for state | `--sapIndicationColor_*` | — | Reference (use for lineage / hierarchy) |
+| Object Page Header | `object-page-header.svg` | Breadcrumb (with parent dropdown), bold title, actions (Edit emphasized, Delete, others outlined, share icon), image + attribute lines, KPI facets (label above large value, state colored), collapse + pin handle, tab bar under it. Wraps facets at L / M / S widths | `--sapObjectHeader_*` | Entity Detail page (pending re-check) | Tokens |
+| Object Number, Object Status, Inverted Object Status, Object Identifier | `object-status.svg` | Status: icon in element color, text in darker text color — Information, Warning, Success, Error, Neutral. Interactive = underlined. Indication colors 1–8. Inverted = solid "Tag". Identifier: bold title + description; link variant blue | `--sap*TextColor`, `--sap*ElementColor`, `--sapIndicationColor_1…8` | `common/Fiori/ObjectStatus` (+ `IndicationText`) | Built |
+| Overview Page | `../01-overview-page.svg` | See the Home page | — | `pages/Home` | Built |
+| Planning Calendar | `planning-calendar.svg` | Rows per person (avatar + name + byline), time grid with Days / Weeks / Months / One Month / One Week views, colored appointment blocks, "Today" + date navigation | — | — | Reference |
+| Process Flow | `process-flow.svg` | Lanes with circular step nodes (icon, progress ring colored by state), connector lines (planned dashed, regular, highlighted), node cards with states Regular / Read only / Hover / Pressed / Disabled / Dimmed / Selected; "»" chevron nodes | — | — | Reference (use for workflows) |
+| SAP Icons | `sap-icons.svg` | The SAP icon font glyph sheet (~600 icons). Draw inline SVG icons to match this style: 16 px, 1.5–1.8 stroke, rounded caps | — | inline SVGs in components | Reference |
+| Generic Tag | `tags.svg` | 24 high, radius 8, **6 px state bar at the start edge**, tinted background (Error `#FFEAF4`, Warning `#FFF8D6`, Success `#F5FAE5`, Information `#E1F4FF`, Neutral `#EFF1F2`), icon + label + colored value; hover grey `#EAECEE`; active border `#0032A5`; situation and removable (×) variants | `--sapGenericTag_*` | — | Tokens |
+| Timeline | `timeline.svg` | Vertical and horizontal, single or double sided; year group pills ("› 2024"); items are bordered boxes with initials avatar, blue name + role, timestamp, text, optional Edit / Delete links | — | `pages/Home/cards/StewardsCard` (single-sided) | Tokens |
+| Variant Management | `variant-management.svg` | Title sizes H1–H6 + snapped (collapsed header) size; states Regular / Hover / Active / Disabled. "My Views" popover (list + Save / Save As / Manage), Save View dialog (label, Set as Default, Public), Manage Views table (favorite star, sharing, default radio, created by) | `--sapVariant_*` | `common/Fiori/DynamicPageHeader` (title only — popover pending) | Tokens |
+| Visual Filter Bar | `visual-filter-bar.svg` | Filter bar of small charts (bar by country, line by month, donut by category) that filter on click; collapsed shows active filter tags | `--sapChart_*` | — | Reference |
+| VizFrame Charts | `vizframe-charts.svg` | SAP marks VizFrame as discontinued. Use the chart styles only: stacked column, line, bullet (vertical), donut, with legends under the chart | `--sapChart_*` | `common/EChart` | Tokens |
+
+## What changed in code because of batch 2
+
+- Navigation: the side bar is gone. ☰ now opens `NavigationMenu`, a popover
+  that overlays the page, as in `navigation-menu.svg`.
+- User menu rebuilt to `user-menu.svg`: large centred avatar, name, role,
+  icon items, Sign out in the footer.
+- `ObjectStatus`: text uses the darker text color and the icon the element
+  color; added Information and Neutral states and `IndicationText` (colors 1–8).
+- New tokens: status text / element colors, indication colors 1–8, generic
+  tag, segmented button, notification item.
+
 ## What changed in code because of batch 1
 
 - `tokens.css`: text `#131E29`; button radius 8 and height 26; field border

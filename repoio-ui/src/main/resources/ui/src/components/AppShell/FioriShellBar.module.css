@@ -151,31 +151,79 @@
   position: absolute;
   inset-block-start: calc(100% + 0.5rem);
   inset-inline-end: 0;
-  min-width: 200px;
+  width: 19rem; /* 304px */
   background: var(--sapOverlay_Background);
-  border-radius: var(--sapContent_BorderRadius_Large);
+  border: 1px solid var(--sapList_TableGroupHeaderBorderColor);
+  border-radius: var(--sapMenu_BorderRadius);
   box-shadow: var(--sapOverlay_Shadow);
   z-index: var(--sapZIndex_Popover);
   overflow: hidden;
-}
-.userMenuHeader { padding: 0.75rem 1rem; }
-.userMenuName { font-size: 0.9375rem; font-weight: 600; color: var(--sapContent_ValueColor); }
-.userMenuRole { font-size: 0.75rem; color: var(--sapContent_LabelColor); margin-top: 0.125rem; }
-.userMenuDivider { height: 1px; background: var(--sapContent_ForegroundBorderColor); }
-.userMenuItem {
-  display: block;
-  width: 100%;
-  padding: 0.625rem 1rem;
-  font-size: 0.875rem;
-  color: var(--sapContent_ValueColor);
-  text-decoration: none;
-  background: none;
-  border: none;
-  text-align: start;
-  cursor: pointer;
   font-family: var(--sapFontFamily);
 }
-.userMenuItem:hover { background: var(--sapList_Hover_Background); color: var(--sapBrandColor); }
+.userMenuHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1.5rem 1rem 1rem;
+  text-align: center;
+}
+.userMenuAvatar {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  margin-bottom: 0.5rem;
+  background: var(--sapAvatar_4_Background);
+  color: var(--sapAvatar_4_TextColor);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+.userMenuName { font-size: 1rem; font-weight: 700; color: var(--sapContent_ValueColor); }
+.userMenuRole { font-size: var(--sapFontSize); color: var(--sapContent_LabelColor); }
+.userMenuDivider { height: 1px; margin-inline: 0.5rem; background: var(--sapContent_ForegroundBorderColor); }
+.userMenuItems { padding: 0.25rem 0.5rem; }
+.userMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  height: 2.5rem;
+  padding-inline: 0.5rem;
+  border-radius: 0.375rem;
+  font-size: var(--sapFontSize);
+  color: var(--sapContent_ValueColor);
+  text-decoration: none;
+}
+.userMenuItem svg { color: var(--sapMenu_IconColor); }
+.userMenuItem:hover { background: var(--sapList_Hover_Background); }
+.userMenuFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem;
+  border-top: 1px solid var(--sapDialog_Footer_BorderColor);
+}
+.signOut {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: var(--sapButton_Height);
+  padding-inline: 0.5rem;
+  border: none;
+  border-radius: var(--sapButton_BorderRadius);
+  background: transparent;
+  color: var(--sapButton_Transparent_TextColor);
+  font-family: var(--sapFontFamily);
+  font-size: var(--sapFontSize);
+  font-weight: 600;
+  cursor: pointer;
+}
+.signOut:hover { background: var(--sapButton_Transparent_Hover_Background); }
+.userMenuItem:focus-visible,
+.signOut:focus-visible { outline: var(--sapContent_FocusWidth) solid var(--sapContent_FocusColor); outline-offset: -2px; }
+
+.iconBtnActive { background: var(--sapShell_Active_Background); }
 
 @media (max-width: 900px) {
   .search { display: none; }

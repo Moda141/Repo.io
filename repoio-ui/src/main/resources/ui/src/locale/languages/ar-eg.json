@@ -17,7 +17,9 @@
     "search_placeholder": "بحث في السجلات",
     "search": "بحث",
     "notifications": "الإشعارات",
-    "help": "المساعدة"
+    "help": "المساعدة",
+    "section_govern": "الحوكمة",
+    "glossary": "المسرد"
   },
   "search": {
     "placeholder": "ابحث في العملاء، الموردين، المنتجات، المؤلفين…"
@@ -190,7 +192,8 @@
     "back": "رجوع",
     "go_home": "repo.io — الرئيسية",
     "app_title": "نظرة عامة على البيانات الرئيسية",
-    "account": "الحساب"
+    "account": "الحساب",
+    "about": "حول"
   },
   "fiori": {
     "more_options": "خيارات",

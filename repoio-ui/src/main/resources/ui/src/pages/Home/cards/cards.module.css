@@ -122,8 +122,8 @@
 .table tbody tr:first-child { background: var(--sapList_SelectColor); }
 .table .end { text-align: end; }
 .positive { color: var(--sapPositiveTextColor); }
-.critical { color: var(--sapCriticalElementColor); }
-.negative { color: var(--sapNegativeElementColor); }
+.critical { color: var(--sapCriticalTextColor); }
+.negative { color: var(--sapNegativeTextColor); }
 .empty { padding: 1rem; text-align: center; color: var(--sapContent_LabelColor); }
 
 /* ── Timeline ── */

@@ -390,6 +390,40 @@
   --sapProcessFlow_Neutral_Color: #788FA6;
   --sapProcessFlow_Background: #EFF1F2;
 
+
+  /* Object Status — text vs icon colors (object-status.svg, tags.svg) */
+  --sapCriticalTextColor: #B44F00;
+  --sapInformativeTextColor: #0064D9;
+  --sapInformativeElementColor: #0070F2;
+  --sapNeutralTextColor: #556B82;
+  --sapNeutralElementColor: #788FA6;
+  --sapIndicationColor_1: #840606;
+  --sapIndicationColor_2: #AA0808;
+  --sapIndicationColor_3: #B95100;
+  --sapIndicationColor_4: #256F3A;
+  --sapIndicationColor_5: #0070F2;
+  --sapIndicationColor_6: #046C7A;
+  --sapIndicationColor_7: #5D36FF;
+  --sapIndicationColor_8: #A100C2;
+
+  /* Generic Tag — 6px state bar at the start edge + tinted background */
+  --sapGenericTag_BarWidth: 0.375rem;
+  --sapGenericTag_Height: 1.5rem;
+  --sapGenericTag_BorderRadius: 0.5rem;
+  --sapGenericTag_Neutral_Background: #EFF1F2;
+  --sapGenericTag_Information_Background: #E1F4FF;
+  --sapGenericTag_Hover_Background: #EAECEE;
+  --sapGenericTag_Active_BorderColor: #0032A5;
+
+  /* Segmented button */
+  --sapSegmentedButton_BorderRadius: 0.5rem;
+  --sapSegmentedButton_Selected_BorderColor: #0064D9;
+  --sapSegmentedButton_Selected_Background: #EBF8FF;
+
+  /* Notification list item */
+  --sapNotification_BorderRadius: 0.75rem;
+  --sapNotification_BorderColor: #D9D9D9;
+
   /* ─────────────────────────────────────────────
    * Z-Index Scale
    * ───────────────────────────────────────────── */
