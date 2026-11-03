@@ -19,6 +19,7 @@
 :root,:root[data-theme]{color-scheme:light}
 
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{margin:0;background:var(--page);color:var(--fg);font-family:var(--font);font-size:14px;direction:rtl}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--shell)}
 button{font-family:inherit}
@@ -80,9 +81,61 @@ a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
 .collapse{position:absolute;bottom:-13px;inset-inline-start:50%;transform:translateX(50%);width:28px;height:24px;border-radius:8px;background:var(--card);
   border:1px solid var(--line-strong);color:var(--brand);display:grid;place-items:center;cursor:pointer;z-index:2}
 .collapse svg{transition:transform .2s}
-.dph.closed .dph-inner{display:none}
+.dph.closed .fbar{display:none}
 .dph.closed{padding-block:6px}
 .dph.closed .collapse svg{transform:rotate(180deg)}
+
+/* ── Filter bar (filter-bar.svg) ── */
+.fbar{max-width:1440px;margin:12px auto 0;padding-inline:32px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px 16px;align-items:end}
+.ff{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ff label{font-size:13px;color:var(--fg2)}
+.ff input,.ff select{height:26px;border:1px solid var(--field-bd);border-radius:4px;background:var(--field);color:var(--fg);font:inherit;font-size:13px;padding-inline:8px;min-width:0}
+.ff input::placeholder{color:var(--fg2);font-style:italic}
+.ff input:focus,.ff select:focus{outline:2px solid var(--focus);outline-offset:-1px}
+.fbar-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;grid-column:-2/-1}
+.b-emph{height:26px;padding-inline:10px;border:0;border-radius:8px;background:var(--brand-strong);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.b-emph:hover{background:var(--brand)}
+.b-trans{height:26px;padding-inline:8px;border:0;border-radius:8px;background:none;color:var(--brand);font:inherit;font-weight:600;cursor:pointer;white-space:nowrap}
+.b-trans:hover{background:var(--hover)}
+.b-std{height:26px;padding-inline:8px;border:1px solid #BCC3CA;border-radius:8px;background:var(--card);color:var(--brand);font:inherit;cursor:pointer}
+.b-std:hover{background:var(--hover)}
+.b-std:disabled{opacity:.4;cursor:default}
+.dph-actions{display:flex;gap:4px;align-items:center}
+.active-filters{color:var(--fg2)}
+
+/* ── Card personalization ── */
+.card .ch{cursor:grab}
+.card.dragging{opacity:.4;box-shadow:0 0 0 2px var(--brand-strong)}
+.card.drop-target{box-shadow:0 0 0 2px var(--brand-strong),var(--shadow)}
+.grid.drag-on .card:not(.dragging){transition:transform .15s}
+.card-more-abs{position:absolute;top:12px;inset-inline-end:12px}
+.card{position:relative}
+.cmenu{position:fixed;z-index:80;min-width:180px;background:var(--card);border:1px solid var(--popover-bd);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.15);padding:4px}
+.cmenu button{display:flex;align-items:center;gap:10px;width:100%;height:32px;padding-inline:8px;border:0;border-radius:6px;background:none;color:var(--fg);font:inherit;cursor:pointer;text-align:start}
+.cmenu button:hover{background:var(--hover)}
+.cmenu svg{color:var(--menu-icon)}
+.empty-grid{display:none;text-align:center;padding:48px 16px;color:var(--fg2)}
+.empty-grid h3{color:var(--fg);font-size:18px;margin:0 0 6px}
+.grid:empty + .empty-grid{display:block}
+
+/* ── Dialog (dialogs.svg — P13n / Manage Cards) ── */
+.backdrop{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:16px}
+.dlg{width:min(480px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;background:var(--card);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.dlg-h{padding:12px 16px;border-bottom:1px solid #D9D9D9;font-weight:700;font-size:16px}
+.dlg-sub{padding:10px 16px 0;color:var(--fg2);font-size:13px}
+.dlg-b{overflow-y:auto;padding:6px 8px}
+.p13n{display:flex;align-items:center;gap:10px;height:40px;padding-inline:8px;border-radius:6px;border-bottom:1px solid var(--line)}
+.p13n:hover{background:var(--hover)}
+.p13n input{width:16px;height:16px;accent-color:var(--brand-strong);margin:0}
+.p13n label{flex:1;min-width:0;cursor:pointer}
+.p13n .mv{display:flex;gap:2px}
+.p13n .mv button{width:26px;height:26px;border:0;border-radius:6px;background:none;color:var(--brand);cursor:pointer;display:grid;place-items:center}
+.p13n .mv button:hover{background:#DEE2E5}
+.p13n .mv button:disabled{color:var(--fg3);cursor:default;background:none}
+.dlg-f{display:flex;align-items:center;gap:8px;padding:8px 16px;border-top:1px solid #D9D9D9}
+.dlg-f .grow{flex:1}
+.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));inset-inline-start:50%;transform:translateX(50%);z-index:95;background:#1D2D3E;color:#fff;border-radius:8px;padding:8px 14px;font-size:13px;display:flex;gap:12px;align-items:center;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.toast button{border:0;background:none;color:#89D1FF;font:inherit;font-weight:600;cursor:pointer}
 
 /* ── Card grid (masonry) ── */
 main{max-width:1440px;margin-inline:auto;padding-block:24px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -201,7 +254,7 @@ tbody tr:first-child{background:var(--sel)}
 .ev b{font-weight:600;min-width:42px;font-variant-numeric:tabular-nums;color:var(--fg2)}
 
 /* Responsive */
-@media (max-width:900px){.search{display:none}.grid,.dph-inner{padding-inline:0}}
+@media (max-width:900px){.search{display:none}.grid,.dph-inner,.fbar{padding-inline:0}.fbar-actions{grid-column:1/-1}}
 @media (max-width:560px){.app-title span.t{max-width:120px;overflow:hidden;text-overflow:ellipsis}.logo-text,.sep{display:none}.hide-s{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -247,10 +300,21 @@ tbody tr:first-child{background:var(--sel)}
   <div class="dph-inner">
     <div>
       <button class="variant">قياسي <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
-      <div class="dph-sub"><span>لا توجد فلاتر نشطة</span><span class="sample">بيانات توضيحية</span></div>
+      <div class="dph-sub"><span id="activeFilters" class="active-filters">لا توجد فلاتر نشطة</span><span class="sample">بيانات توضيحية</span></div>
     </div>
-    <button class="ibtn" aria-label="مشاركة" style="color:var(--brand)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="dph-actions">
+      <button class="b-trans" id="manageCardsBtn" aria-haspopup="dialog">إدارة البطاقات</button>
+      <button class="ibtn" aria-label="مشاركة" style="color:var(--brand)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
   </div>
+  <form class="fbar" id="fbar" role="search" aria-label="الفلاتر">
+    <div class="ff" data-f="q"><label for="f-q">بحث</label><input id="f-q" placeholder="اسم العميل أو الكود"></div>
+    <div class="ff" data-f="domain"><label for="f-domain">المجال:</label><select id="f-domain"><option value="">الكل</option><option value="customers">العملاء</option><option value="products">المنتجات</option><option value="vendors">الموردون</option></select></div>
+    <div class="ff" data-f="source"><label for="f-source">المصدر:</label><select id="f-source"><option value="">الكل</option><option value="C4C">SAP C4C</option><option value="ERP">ERP</option><option value="CSV">CSV</option><option value="manual">نموذج يدوي</option></select></div>
+    <div class="ff" data-f="status"><label for="f-status">حالة الطلب:</label><select id="f-status"><option value="">الكل</option><option value="neg">بيانات ناقصة</option><option value="crit">تحتاج مراجعة</option><option value="pos">جاهز للاعتماد</option></select></div>
+    <div class="ff" data-f="period" hidden><label for="f-period">الفترة:</label><select id="f-period"><option value="">الكل</option><option value="3">آخر 3 أيام</option><option value="7">آخر 7 أيام</option></select></div>
+    <div class="fbar-actions"><button type="submit" class="b-emph">تنفيذ</button><button type="button" class="b-trans" id="adaptBtn" aria-haspopup="dialog">تعديل الفلاتر (4)</button></div>
+  </form>
   <button class="collapse" id="collapse" aria-label="طي الرأس"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
 </section>
 
@@ -258,7 +322,7 @@ tbody tr:first-child{background:var(--sel)}
 <div class="grid">
 
   <!-- 1. Analytical card -->
-  <article class="card">
+  <article data-id="completeness" data-title="اكتمال بيانات العملاء" class="card">
     <div class="ch">
       <div class="ch-text"><div class="ch-title">اكتمال بيانات العملاء</div><div class="ch-sub">النطاق: العملاء | SAP C4C</div></div>
       <div class="ch-side"><button class="more" aria-label="خيارات"><svg width="16" height="4" viewBox="0 0 16 4"><circle cx="2" cy="2" r="1.6" fill="currentColor"/><circle cx="8" cy="2" r="1.6" fill="currentColor"/><circle cx="14" cy="2" r="1.6" fill="currentColor"/></svg></button><span class="count">4 من 12</span></div>
@@ -278,7 +342,7 @@ tbody tr:first-child{background:var(--sel)}
   </article>
 
   <!-- 2. Numeric card -->
-  <article class="card numeric">
+  <article data-id="reviews" data-title="طلبات المراجعة المفتوحة" class="card numeric">
     <div class="left">
       <div class="ch"><div class="ch-text"><div class="ch-title">طلبات المراجعة المفتوحة</div><div class="ch-sub">فريق أمناء البيانات</div></div>
         <button class="more" aria-label="خيارات"><svg width="16" height="4" viewBox="0 0 16 4"><circle cx="2" cy="2" r="1.6" fill="currentColor"/><circle cx="8" cy="2" r="1.6" fill="currentColor"/><circle cx="14" cy="2" r="1.6" fill="currentColor"/></svg></button></div>
@@ -291,9 +355,9 @@ tbody tr:first-child{background:var(--sel)}
   </article>
 
   <!-- 3. Table card -->
-  <article class="card">
+  <article data-id="merge" data-title="مرشحو الدمج" class="card">
     <div class="ch"><div class="ch-text"><div class="ch-title">مرشحو الدمج</div><div class="ch-sub">سجلات مكررة محتملة</div></div><div class="ch-side"><span class="count" id="tcount">8 من 20</span></div></div>
-    <label class="tsearch"><input id="tq" placeholder="بحث"></label>
+    <label class="tsearch"><input id="tq" placeholder="بحث داخل البطاقة"></label>
     <div class="twrap"><table>
       <thead><tr><th>العميل</th><th>المصدر</th><th>التاريخ</th><th class="num">التطابق</th></tr></thead>
       <tbody id="tbody"></tbody>
@@ -301,7 +365,7 @@ tbody tr:first-child{background:var(--sel)}
   </article>
 
   <!-- 4. Quick links -->
-  <article class="card">
+  <article data-id="links" data-title="روابط سريعة" class="card">
     <div class="ch"><div class="ch-text"><div class="ch-title">روابط سريعة</div></div><div class="ch-side"><span class="count">6 من 10</span></div></div>
     <ul class="ql">
       <li><a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M2 20c0-3.5 3-6 7-6M18 14v6M15 17h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>إنشاء عميل جديد</a></li>
@@ -314,14 +378,14 @@ tbody tr:first-child{background:var(--sel)}
   </article>
 
   <!-- 5. List card: change requests -->
-  <article class="card">
+  <article data-id="requests" data-title="طلبات التغيير العاجلة" class="card">
     <div class="ch"><div class="ch-text"><div class="ch-title">طلبات التغيير العاجلة</div><div class="ch-sub">حسب الأولوية ونسبة الاكتمال</div></div>
-      <div class="ch-side"><button class="more" aria-label="خيارات"><svg width="16" height="4" viewBox="0 0 16 4"><circle cx="2" cy="2" r="1.6" fill="currentColor"/><circle cx="8" cy="2" r="1.6" fill="currentColor"/><circle cx="14" cy="2" r="1.6" fill="currentColor"/></svg></button><span class="count">4 من 6</span></div></div>
+      <div class="ch-side"><button class="more" aria-label="خيارات"><svg width="16" height="4" viewBox="0 0 16 4"><circle cx="2" cy="2" r="1.6" fill="currentColor"/><circle cx="8" cy="2" r="1.6" fill="currentColor"/><circle cx="14" cy="2" r="1.6" fill="currentColor"/></svg></button><span class="count" id="rcount">4 من 6</span></div></div>
     <div id="reqs"></div>
   </article>
 
   <!-- 6. Contact card -->
-  <article class="card">
+  <article data-id="owner" data-title="مالك المجال" class="card">
     <div class="contact-top"><div class="photo">م</div><div><div class="c-name">محمد</div><div class="c-role">مدير إدارة البيانات والتحليلات</div></div></div>
     <div class="c-sec">
       <h4>مالك المجال</h4>
@@ -336,7 +400,7 @@ tbody tr:first-child{background:var(--sel)}
   </article>
 
   <!-- 7. Timeline card -->
-  <article class="card">
+  <article data-id="stewards" data-title="أمناء البيانات" class="card">
     <div class="ch"><div class="ch-text"><div class="ch-title">أمناء البيانات</div></div></div>
     <div class="tl">
       <div class="tl-item"><div class="tl-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 5h16v11H9l-5 4V5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
@@ -349,7 +413,7 @@ tbody tr:first-child{background:var(--sel)}
   </article>
 
   <!-- 8. Calendar card -->
-  <article class="card">
+  <article data-id="schedule" data-title="جدول التشغيل" class="card">
     <div class="ch"><div class="ch-text"><div class="ch-title">جدول التشغيل</div><div class="ch-sub">مزامنة المصادر وخطوط المعالجة</div></div>
       <div class="ch-side"><button class="more" aria-label="خيارات"><svg width="16" height="4" viewBox="0 0 16 4"><circle cx="2" cy="2" r="1.6" fill="currentColor"/><circle cx="8" cy="2" r="1.6" fill="currentColor"/><circle cx="14" cy="2" r="1.6" fill="currentColor"/></svg></button></div></div>
     <div class="cal-nav"><button id="calPrev" aria-label="الشهر السابق">‹</button><span id="calTitle"></span><button id="calNext" aria-label="الشهر التالي">›</button></div>
@@ -361,8 +425,18 @@ tbody tr:first-child{background:var(--sel)}
   </article>
 
 </div>
+<div class="empty-grid" id="emptyGrid"><h3>لا توجد بطاقات معروضة</h3><p>أضف بطاقات من "إدارة البطاقات".</p><button class="b-emph" id="emptyAdd">إدارة البطاقات</button></div>
 </main>
 
+<div class="backdrop" id="dlg" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+    <div class="dlg-h" id="dlgTitle"></div>
+    <div class="dlg-sub" id="dlgSub"></div>
+    <div class="dlg-b" id="dlgBody"></div>
+    <div class="dlg-f"><button class="b-trans" id="dlgReset">إعادة الضبط</button><span class="grow"></span><button class="b-emph" id="dlgOk">موافق</button><button class="b-trans" id="dlgCancel">إلغاء</button></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" hidden><span id="toastText"></span><button id="toastUndo">تراجع</button></div>
 <script>
 (function(){
   /* Navigation Menu + User Menu popovers */
@@ -392,37 +466,171 @@ tbody tr:first-child{background:var(--sel)}
     s+=`<text x="${cx}" y="${bot+16}" font-size="11" text-anchor="middle" fill="var(--fg)">${d.w}</text>`;});
   svg.innerHTML=s;
 
-  /* Table card with search */
-  const rows=[['مكتبة الأجيال الجديدة','C4C','1/11',96],['دار المعرفة للنشر','C4C','1/11',91],['الشركة العربية للتوزيع','ERP','31/10',88],
-    ['مؤسسة الفكر العربي','C4C','30/10',82],['مكتبة النيل','CSV','29/10',77],['شبكة القاهرة التعليمية','ERP','28/10',71],
-    ['دار الشروق للتوزيع','C4C','27/10',68],['مكتبة الإسكندرية الحديثة','CSV','26/10',64]];
+  /* ── Data (sample) ── */
+  const TODAY=new Date('2026-11-03T00:00:00');
+  const rows=[
+    {c:'مكتبة الأجيال الجديدة',src:'C4C',d:'2026-11-01',score:96,dom:'customers'},
+    {c:'دار المعرفة للنشر',src:'C4C',d:'2026-11-01',score:91,dom:'customers'},
+    {c:'الشركة العربية للتوزيع',src:'ERP',d:'2026-10-31',score:88,dom:'customers'},
+    {c:'مؤسسة الفكر العربي',src:'C4C',d:'2026-10-30',score:82,dom:'customers'},
+    {c:'مكتبة النيل',src:'CSV',d:'2026-10-29',score:77,dom:'customers'},
+    {c:'شبكة القاهرة التعليمية',src:'ERP',d:'2026-10-28',score:71,dom:'customers'},
+    {c:'دار الشروق للتوزيع',src:'C4C',d:'2026-10-27',score:68,dom:'customers'},
+    {c:'مكتبة الإسكندرية الحديثة',src:'CSV',d:'2026-10-26',score:64,dom:'customers'}];
+  const reqs=[
+    {n:'تحديث الرقم الضريبي — مكتبة الأجيال',c:'مكتبة الأجيال',id:'CR-1000352',f:'12 حقلاً',dom:'customers',src:'C4C',srcL:'SAP C4C',d:'2026-11-02',p:30,st:['neg','بيانات ناقصة']},
+    {n:'إضافة عميل — دار المعرفة للنشر',c:'دار المعرفة للنشر',id:'CR-1000361',f:'18 حقلاً',dom:'customers',src:'manual',srcL:'نموذج يدوي',d:'2026-11-01',p:55,st:['crit','تحتاج مراجعة']},
+    {n:'دمج سجلين — الشركة العربية للتوزيع',c:'الشركة العربية للتوزيع',id:'CR-1000378',f:'24 حقلاً',dom:'customers',src:'ERP',srcL:'ERP',d:'2026-10-30',p:92,st:['pos','جاهز للاعتماد']},
+    {n:'تعديل التصنيف — مكتبة النيل',c:'مكتبة النيل',id:'CR-1000384',f:'6 حقول',dom:'customers',src:'CSV',srcL:'CSV',d:'2026-10-28',p:100,st:['pos','جاهز للاعتماد']}];
+  const DOM_L={customers:'العملاء',products:'المنتجات',vendors:'الموردون'};
+  const esc=t=>String(t).replace(/[<>&"]/g,m=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[m]));
+
+  /* ── Filter bar (applied on Go, as in filter-bar.svg) ── */
+  const F={q:'',domain:'',source:'',status:'',period:''};
+  const FL={q:'بحث',domain:'المجال',source:'المصدر',status:'حالة الطلب',period:'الفترة'};
+  const fbar=document.getElementById('fbar');
+  const daysAgo=iso=>Math.round((TODAY-new Date(iso+'T00:00:00'))/864e5);
+  function matches(o){
+    if(F.q&&!(o.c.includes(F.q)||(o.id||'').toLowerCase().includes(F.q.toLowerCase())))return false;
+    if(F.domain&&o.dom!==F.domain)return false;
+    if(F.source&&o.src!==F.source)return false;
+    if(F.period&&daysAgo(o.d)>+F.period)return false;
+    return true;
+  }
+  fbar.addEventListener('submit',e=>{e.preventDefault();
+    for(const k in F){const el=document.getElementById('f-'+k);F[k]=el&&!el.closest('.ff').hidden?el.value.trim():'';}
+    const act=Object.keys(F).filter(k=>F[k]);
+    document.getElementById('activeFilters').textContent=act.length?`${act.length} ${act.length===1?'فلتر نشط':'فلاتر نشطة'}: ${act.map(k=>FL[k]).join('، ')}`:'لا توجد فلاتر نشطة';
+    renderT();renderReqs();});
+
+  /* ── Table card (Off-Contract Spend pattern) ── */
   const tb=document.getElementById('tbody'),tq=document.getElementById('tq'),tc=document.getElementById('tcount');
-  function renderT(){const q=tq.value.trim();const f=rows.filter(r=>!q||r[0].includes(q)||r[1].toLowerCase().includes(q.toLowerCase()));
-    tb.innerHTML=f.length?f.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td class="num ${r[3]>=90?'s-pos':r[3]>=75?'s-crit':'s-neg'}">${r[3]}%</td></tr>`).join('')
-      :`<tr><td colspan="4" class="empty">لا توجد سجلات مطابقة لـ "${q.replace(/[<>&"]/g,'')}"</td></tr>`;
+  function renderT(){const q=tq.value.trim();
+    const f=rows.filter(r=>matches(r)&&(!q||r.c.includes(q)||r.src.toLowerCase().includes(q.toLowerCase())));
+    tb.innerHTML=f.length?f.map(r=>`<tr><td>${r.c}</td><td>${r.src}</td><td>${+r.d.slice(8)}/${+r.d.slice(5,7)}</td><td class="num ${r.score>=90?'s-pos':r.score>=75?'s-crit':'s-neg'}">${r.score}%</td></tr>`).join('')
+      :`<tr><td colspan="4" class="empty">لا توجد سجلات مطابقة للفلاتر${q?` و"${esc(q)}"`:''}</td></tr>`;
     tc.textContent=`${f.length} من 20`;}
   tq.addEventListener('input',renderT);renderT();
 
-  /* List card: change requests with approve / reject */
-  const reqs=[
-    {n:'تحديث الرقم الضريبي — مكتبة الأجيال',id:'CR-1000352',f:'12 حقلاً',d:'العملاء',src:'SAP C4C',p:30,st:['neg','بيانات ناقصة']},
-    {n:'إضافة عميل — دار المعرفة للنشر',id:'CR-1000361',f:'18 حقلاً',d:'العملاء',src:'نموذج يدوي',p:55,st:['crit','تحتاج مراجعة']},
-    {n:'دمج سجلين — الشركة العربية للتوزيع',id:'CR-1000378',f:'24 حقلاً',d:'العملاء',src:'ERP',p:92,st:['pos','جاهز للاعتماد']},
-    {n:'تعديل التصنيف — مكتبة النيل',id:'CR-1000384',f:'6 حقول',d:'العملاء',src:'CSV',p:100,st:['pos','جاهز للاعتماد']}];
+  /* ── List card: change requests with approve / reject ── */
   const icon={neg:'<svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>',
     crit:'<svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2z" fill="currentColor"/><path d="M12 9v5M12 17.5h.01" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>',
     pos:'<svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7 12l3.5 3.5L17 9" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>'};
   const col={neg:'var(--neg-solid)',crit:'var(--crit)',pos:'var(--pos-solid)'};
-  const box=document.getElementById('reqs'),open=document.getElementById('openCount');let openN=20;
-  box.innerHTML=reqs.map((r,i)=>`<div class="req" data-i="${i}">
+  const box=document.getElementById('reqs'),open=document.getElementById('openCount'),rcount=document.getElementById('rcount');
+  let openN=20;const decided={};
+  function renderReqs(){
+    const f=reqs.filter(r=>matches(r)&&(!F.status||r.st[0]===F.status));
+    rcount.textContent=`${f.length} من 6`;
+    box.innerHTML=f.length?f.map(r=>`<div class="req" data-id="${r.id}">
     <div class="row"><span class="req-name">${r.n}</span><span class="st ${r.st[0]}">${icon[r.st[0]]}${r.st[1]}</span></div>
     <div class="row"><span class="k">${r.id}</span><span class="v">${r.f}</span></div>
-    <div class="row"><span class="k">المجال: ${r.d}</span><span class="v">${r.src}</span></div>
+    <div class="row"><span class="k">المجال: ${DOM_L[r.dom]}</span><span class="v">${r.srcL}</span></div>
     <div class="bar"><div class="bar-track"><div class="bar-fill" style="width:${r.p}%;background:${col[r.st[0]]}"></div></div><span style="color:${col[r.st[0]]}">${r.p}%</span></div>
-    <div class="actions"><button class="btn ok">اعتماد</button><button class="btn no">رفض</button><button class="more" aria-label="خيارات"><svg width="16" height="4" viewBox="0 0 16 4"><circle cx="2" cy="2" r="1.6" fill="currentColor"/><circle cx="8" cy="2" r="1.6" fill="currentColor"/><circle cx="14" cy="2" r="1.6" fill="currentColor"/></svg></button></div></div>`).join('');
-  box.addEventListener('click',e=>{const b=e.target.closest('.btn');if(!b)return;const a=b.closest('.actions');
-    const ok=b.classList.contains('ok');a.innerHTML=`<span class="done-msg" style="color:${ok?'var(--pos)':'var(--neg)'}">${ok?'تم الاعتماد':'تم الرفض'}</span>`;
-    openN=Math.max(0,openN-1);open.textContent=openN;});
+    <div class="actions">${decided[r.id]?`<span class="done-msg" style="color:${decided[r.id]==='ok'?'var(--pos)':'var(--neg)'}">${decided[r.id]==='ok'?'تم الاعتماد':'تم الرفض'}</span>`:`<button class="btn ok">اعتماد</button><button class="btn no">رفض</button><button class="more" aria-label="خيارات الطلب"><svg width="16" height="4" viewBox="0 0 16 4"><circle cx="2" cy="2" r="1.6" fill="currentColor"/><circle cx="8" cy="2" r="1.6" fill="currentColor"/><circle cx="14" cy="2" r="1.6" fill="currentColor"/></svg></button>`}</div></div>`).join('')
+      :`<div class="empty" style="padding:16px">لا توجد طلبات مطابقة للفلاتر</div>`;}
+  box.addEventListener('click',e=>{const b=e.target.closest('.btn');if(!b)return;
+    decided[b.closest('.req').dataset.id]=b.classList.contains('ok')?'ok':'no';
+    openN=Math.max(0,openN-1);open.textContent=openN;renderReqs();});
+  renderReqs();
+
+  /* ── Card personalization: drag & drop, hide, Manage Cards ── */
+  const grid=document.querySelector('.grid');
+  const ALL=[...grid.querySelectorAll('article[data-id]')];
+  const byId=Object.fromEntries(ALL.map(a=>[a.dataset.id,a]));
+  const DEFAULT=ALL.map(a=>a.dataset.id);
+  const KEY='repoio-home-cards';
+  let layout={order:[...DEFAULT],hidden:[]};
+  try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&Array.isArray(saved.order)){layout={order:saved.order.filter(id=>byId[id]).concat(DEFAULT.filter(id=>!saved.order.includes(id))),hidden:(saved.hidden||[]).filter(id=>byId[id])};}}catch(e){}
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(layout));}catch(e){}};
+  function applyLayout(){grid.innerHTML='';layout.order.forEach(id=>{if(!layout.hidden.includes(id))grid.appendChild(byId[id]);});}
+
+  // Every card gets an overflow button with "Hide card" (SAP card header "…")
+  const MORE_SVG='<svg width="16" height="4" viewBox="0 0 16 4"><circle cx="2" cy="2" r="1.6" fill="currentColor"/><circle cx="8" cy="2" r="1.6" fill="currentColor"/><circle cx="14" cy="2" r="1.6" fill="currentColor"/></svg>';
+  ALL.forEach(a=>{
+    let m=a.querySelector('.ch .more, .ch-side .more');
+    if(!m){m=document.createElement('button');m.className='more';m.innerHTML=MORE_SVG;
+      const side=a.querySelector('.ch-side')||a.querySelector('.ch');
+      if(side&&side.classList.contains('ch-side'))side.prepend(m);
+      else if(side)side.appendChild(m);
+      else{m.classList.add('card-more-abs');a.appendChild(m);}}
+    m.classList.add('card-more');m.setAttribute('aria-label',`خيارات البطاقة: ${a.dataset.title}`);m.setAttribute('aria-haspopup','menu');
+  });
+
+  let menuEl=null;
+  function closeMenu(){if(menuEl){menuEl.remove();menuEl=null;}}
+  grid.addEventListener('click',e=>{const m=e.target.closest('.card-more');if(!m)return;e.stopPropagation();closeMenu();
+    const card=m.closest('article');const r=m.getBoundingClientRect();
+    menuEl=document.createElement('div');menuEl.className='cmenu';menuEl.setAttribute('role','menu');
+    menuEl.innerHTML=`<button role="menuitem" data-a="hide"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 3l18 18M10.6 6.1A10 10 0 0 1 12 6c5 0 9 6 9 6a17 17 0 0 1-3 3.4M6.6 6.6A17 17 0 0 0 3 12s4 6 9 6a9 9 0 0 0 4-1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>إخفاء البطاقة</button>
+      <button role="menuitem" data-a="up"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M6 11l6-6 6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>تقديم البطاقة</button>
+      <button role="menuitem" data-a="down"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M6 13l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>تأخير البطاقة</button>`;
+    document.body.appendChild(menuEl);
+    const w=menuEl.offsetWidth;menuEl.style.top=(r.bottom+4)+'px';menuEl.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left))+'px';
+    menuEl.querySelector('button').focus();
+    menuEl.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;const id=card.dataset.id;closeMenu();
+      if(b.dataset.a==='hide'){layout.hidden.push(id);save();applyLayout();toast(`تم إخفاء "${card.dataset.title}"`,()=>{layout.hidden=layout.hidden.filter(x=>x!==id);save();applyLayout();});}
+      else{const vis=layout.order.filter(x=>!layout.hidden.includes(x));const i=vis.indexOf(id),j=b.dataset.a==='up'?i-1:i+1;
+        if(j>=0&&j<vis.length){const a1=layout.order.indexOf(vis[i]),a2=layout.order.indexOf(vis[j]);[layout.order[a1],layout.order[a2]]=[layout.order[a2],layout.order[a1]];save();applyLayout();}
+        m.focus();}});
+  });
+  document.addEventListener('click',e=>{if(menuEl&&!menuEl.contains(e.target))closeMenu();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
+
+  // Drag & drop by the card header (or anywhere on the contact card's top area)
+  let dragEl=null;
+  grid.addEventListener('pointerdown',e=>{const a=e.target.closest('article');if(!a)return;
+    const handle=e.target.closest('.ch, .contact-top');const onCtrl=e.target.closest('button,a,input,select,label');
+    a.draggable=!!handle&&!onCtrl;});
+  grid.addEventListener('dragstart',e=>{const a=e.target.closest('article');if(!a||!a.draggable)return;
+    dragEl=a;a.classList.add('dragging');grid.classList.add('drag-on');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',a.dataset.id);});
+  grid.addEventListener('dragover',e=>{if(!dragEl)return;e.preventDefault();
+    const t=e.target.closest('article');if(!t||t===dragEl)return;
+    grid.querySelectorAll('.drop-target').forEach(x=>x.classList.remove('drop-target'));t.classList.add('drop-target');
+    const r=t.getBoundingClientRect();const before=e.clientY<r.top+r.height/2;
+    if(before){if(t.previousElementSibling!==dragEl)grid.insertBefore(dragEl,t);}else if(t.nextElementSibling!==dragEl)grid.insertBefore(dragEl,t.nextElementSibling);});
+  grid.addEventListener('dragend',()=>{if(!dragEl)return;dragEl.classList.remove('dragging');dragEl.draggable=false;grid.classList.remove('drag-on');
+    grid.querySelectorAll('.drop-target').forEach(x=>x.classList.remove('drop-target'));
+    const vis=[...grid.children].map(a=>a.dataset.id);layout.order=vis.concat(layout.order.filter(id=>!vis.includes(id)));save();dragEl=null;});
+
+  // Toast with undo
+  const toastEl=document.getElementById('toast');let toastT,undoFn;
+  function toast(text,undo){document.getElementById('toastText').textContent=text;undoFn=undo;document.getElementById('toastUndo').hidden=!undo;toastEl.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>toastEl.hidden=true,5000);}
+  document.getElementById('toastUndo').onclick=()=>{undoFn&&undoFn();toastEl.hidden=true;};
+
+  // P13n dialog (Manage Cards / Adapt Filters)
+  const dlg=document.getElementById('dlg');let dlgState=null,dlgOpener=null;
+  function openList({title,sub,items,reorder,onOk,onReset,opener}){dlgOpener=opener;
+    dlgState=items.map(x=>({...x}));document.getElementById('dlgTitle').textContent=title;document.getElementById('dlgSub').textContent=sub;
+    const body=document.getElementById('dlgBody');
+    const draw=()=>{body.innerHTML=dlgState.map((x,i)=>`<div class="p13n"><input type="checkbox" id="p-${x.id}" ${x.on?'checked':''} data-i="${i}"><label for="p-${x.id}">${x.title}</label>${reorder?`<span class="mv"><button data-mv="-1" data-i="${i}" aria-label="تقديم ${x.title}" ${i===0?'disabled':''}>▲</button><button data-mv="1" data-i="${i}" aria-label="تأخير ${x.title}" ${i===dlgState.length-1?'disabled':''}>▼</button></span>`:''}</div>`).join('');};
+    draw();
+    body.onchange=e=>{const i=e.target.dataset.i;if(i!=null)dlgState[i].on=e.target.checked;};
+    body.onclick=e=>{const b=e.target.closest('button[data-mv]');if(!b)return;const i=+b.dataset.i,j=i+ +b.dataset.mv;[dlgState[i],dlgState[j]]=[dlgState[j],dlgState[i]];draw();body.querySelector(`button[data-i="${j}"][data-mv="${b.dataset.mv}"]`)?.focus();};
+    document.getElementById('dlgOk').onclick=()=>{onOk(dlgState);closeDlg();};
+    document.getElementById('dlgReset').onclick=()=>{dlgState=onReset();draw();};
+    dlg.hidden=false;body.querySelector('input')?.focus();}
+  function closeDlg(){dlg.hidden=true;dlgOpener?.focus();}
+  document.getElementById('dlgCancel').onclick=closeDlg;
+  dlg.addEventListener('click',e=>{if(e.target===dlg)closeDlg();});
+  dlg.addEventListener('keydown',e=>{if(e.key==='Escape')closeDlg();});
+
+  function manageCards(opener){openList({opener,title:'إدارة البطاقات',sub:'اختر البطاقات المعروضة ورتّبها. يمكنك أيضاً سحب أي بطاقة من رأسها.',reorder:true,
+    items:layout.order.map(id=>({id,title:byId[id].dataset.title,on:!layout.hidden.includes(id)})),
+    onReset:()=>DEFAULT.map(id=>({id,title:byId[id].dataset.title,on:true})),
+    onOk:st=>{layout={order:st.map(x=>x.id),hidden:st.filter(x=>!x.on).map(x=>x.id)};save();applyLayout();}});}
+  document.getElementById('manageCardsBtn').onclick=e=>manageCards(e.currentTarget);
+  document.getElementById('emptyAdd').onclick=e=>manageCards(e.currentTarget);
+
+  const FIELDS=[...fbar.querySelectorAll('.ff')];const FDEF=FIELDS.map(f=>f.dataset.f);const FDEF_ON=['q','domain','source','status'];
+  const adaptBtn=document.getElementById('adaptBtn');
+  const syncAdapt=()=>{adaptBtn.textContent=`تعديل الفلاتر (${FIELDS.filter(f=>!f.hidden).length})`;};
+  adaptBtn.onclick=e=>openList({opener:e.currentTarget,title:'تعديل الفلاتر',sub:'اختر الحقول الظاهرة في شريط الفلاتر.',reorder:false,
+    items:FIELDS.map(f=>({id:f.dataset.f,title:FL[f.dataset.f],on:!f.hidden})),
+    onReset:()=>FDEF.map(id=>({id,title:FL[id],on:FDEF_ON.includes(id)})),
+    onOk:st=>{st.forEach(x=>{fbar.querySelector(`[data-f="${x.id}"]`).hidden=!x.on;});syncAdapt();}});
+  syncAdapt();
+  applyLayout();
 
   /* Calendar — Saturday-first week, Fri/Sat weekend */
   const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
