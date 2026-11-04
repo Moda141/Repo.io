@@ -315,6 +315,27 @@ table.rt tbody tr.sel td:first-child{box-shadow:inset -4px 0 0 var(--brand-stron
 .facet .fv.lg{font-size:22px}
 @media (max-width:900px){.vfbar{grid-template-columns:1fr}.gi2,.gi2 .grp{grid-template-columns:1fr}}
 
+/* Grid Table (SAP ui.table.Table) */
+.gt-wrap{overflow:auto;max-height:460px;border-top:1px solid #D9D9D9}
+table.gt{border-collapse:separate;border-spacing:0;font-size:13px;width:max-content;min-width:100%}
+table.gt th,table.gt td{height:32px;padding:0 10px;border-inline-end:1px solid #E5E5E5;border-bottom:1px solid #E5E5E5;white-space:nowrap;background:#fff}
+table.gt th{position:sticky;top:0;z-index:2;font-weight:600;background:#fff;border-bottom:1px solid #A8B3BD;text-align:start;vertical-align:middle}
+table.gt th .ty{display:block;font-weight:400;font-size:11px;color:var(--fg2)}
+table.gt th{height:40px}
+table.gt .rs{position:sticky;inset-inline-start:0;z-index:1;width:40px;min-width:40px;text-align:center;color:var(--fg2);background:#F5F6F7;border-inline-end:1px solid #D9D9D9;padding:0}
+table.gt th.rs{z-index:3;background:#F5F6F7}
+table.gt tbody tr:hover td{background:var(--hover)}
+table.gt tbody tr:hover td.rs{background:#E5E8EB}
+table.gt tbody tr.sel td{background:var(--sel)}
+table.gt tbody tr.sel td.rs{background:#D1E8FF;box-shadow:inset -3px 0 0 var(--brand-strong)}
+table.gt td.n{text-align:end;font-variant-numeric:tabular-nums}
+table.gt td.nullc{background:#FFF5F9}
+.gt-foot{display:flex;align-items:center;gap:12px;padding:8px 16px;border-top:1px solid #D9D9D9;font-size:12px;color:var(--fg2);flex-wrap:wrap}
+.gt-foot .grow{flex:1}
+
+/* Source icons */
+.srcic{display:inline-grid;place-items:center;border-radius:6px;color:#fff;flex:none;font-weight:700;letter-spacing:-.02em}
+
 /* Segmented button (segmented-button.svg) */
 .seg{display:inline-flex;border:1px solid #BCC3CA;border-radius:8px;overflow:hidden;background:#fff}
 .seg button{height:26px;padding-inline:10px;border:0;background:none;color:var(--brand);font:inherit;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
@@ -471,7 +492,7 @@ const D = {
         ['آخر تحديث خلال 24 ساعة','—','pos',0,'2026-11-04 06:00'],
         ['تطابق محتمل في الاسم والمدينة (Splink ≥ 0.9)','CustomerName, City','crit',4821,'2026-11-03 22:00']]},
     lineage:[
-      {h:'المصدر',nodes:[{t:'SAP C4C',i:'db',kv:[['الكيان','BusinessPartner'],['المزامنة','02:00']]}]},
+      {h:'المصدر',nodes:[{t:'SAP C4C',i:'db',src:'c4c',kv:[['الكيان','BusinessPartner'],['المزامنة','02:00']]}]},
       {h:'الاستيراد',nodes:[{t:'c4c_customer_ingest',i:'pipe',kv:[['النوع','OData pull'],['الحالة','نجح']],st:'pos'}]},
       {h:'الجدول',nodes:[{t:'Customer',i:'table',kv:[['الصفوف','951,247'],['الجودة','87.3%']],current:true}]},
       {h:'المطابقة والدمج',nodes:[{t:'customer_match',i:'pipe',kv:[['القواعد','Splink v2'],['مكررات','4,821']],st:'crit'},{t:'KNA1 (S/4HANA)',i:'table',kv:[['الصفوف','948,120'],['الجودة','83.9%']]}]},
@@ -480,6 +501,12 @@ const D = {
 
 /* ───────────── Helpers ───────────── */
 const fmt=n=>Number(n).toLocaleString('en-US');
+/* Per-source icon: glyph by connector type on the source's colour (not vendor logos) */
+const SRC_IC={
+  c4c:{bg:'#0070F2',glyph:'<path d="M7 18a4 4 0 0 1-.6-7.96A5.5 5.5 0 0 1 17 8.5a4.5 4.5 0 0 1 .5 8.97V18z" fill="#fff"/><path d="M9.5 13.5h5M9.5 15.5h3" stroke="#0070F2" stroke-width="1.4" stroke-linecap="round"/>',tag:'CRM'},
+  s4:{bg:'#1D2D3E',glyph:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/>',tag:'ERP'},
+  csv:{bg:'#30914C',glyph:'<path d="M6 3h8l4 4v14H6z" fill="#fff"/><path d="M14 3v4h4" fill="none" stroke="#30914C" stroke-width="1.4"/><path d="M8.5 11h7M8.5 14h7M8.5 17h7M11 11v6" stroke="#30914C" stroke-width="1.3"/>',tag:'CSV'}};
+function srcIcon(sid,size=20){const I=SRC_IC[sid];const pad=Math.round(size*.18);return `<span class="srcic" style="width:${size}px;height:${size}px;background:${I.bg};border-radius:${Math.max(4,Math.round(size*.22))}px" aria-hidden="true"><svg width="${size-pad*2}" height="${size-pad*2}" viewBox="0 0 24 24">${I.glyph}</svg></span>`;}
 const ltr=v=>`<bdi dir="ltr">${v}</bdi>`;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const qState=q=>q>=90?'pos':q>=75?'crit':'neg';
@@ -624,7 +651,14 @@ function sxCard(r,i){const R=D.repos[r],[hs,hl]=repoHealth(R),sel=selRepos.has(r
       <div><div class="cl">السجلات الذهبية:</div>${capbar(R.golden,R.cap,`${fmt(R.golden)} من ${fmt(R.cap)}`)}</div>
       <div><div class="cl">التخزين:</div>${capbar(R.storage[0],R.storage[1],`${R.storage[0]} GB من ${R.storage[1]} GB`)}</div>
       <span class="chipx">${R.model}</span></div>
-    <div class="ft"><span title="مصادر البيانات">${svg('db',13)}${R.sources.length}</span><span title="الجداول">${svg('table',13)}${tables}</span><span title="خطوط الاستيراد">${svg('pipe',13)}${R.pipes}</span><button class="b b-std" data-act="edit">تعديل</button></div></div>`;}
+    <div class="ft"><span title="مصادر البيانات" style="gap:2px">${R.sources.map(x=>srcIcon(x,16)).join('')}</span><span title="الجداول">${svg('table',13)}${tables}</span><span title="خطوط الاستيراد">${svg('pipe',13)}${R.pipes}</span><button class="b b-std" data-act="edit">تعديل</button></div></div>`;}
+function repoTable(list){const all=list.every(r=>selRepos.has(r));
+  return `<div class="section"><div class="rt-bar"><h2 class="rt-title">المستودعات <span class="num">(${list.length})</span></h2><button class="b b-trans">إنشاء</button><button class="b b-trans" ${selRepos.size?'':'disabled'}>حذف</button>${RT_ICONS}</div>
+  <div class="twrap"><table class="rt"><thead><tr><th class="chk"><input type="checkbox" class="cb" data-rselall="1" ${all?'checked':''} aria-label="تحديد الكل"></th><th>المستودع</th><th>مصادر البيانات</th><th>نموذج البيانات</th><th class="end">السجلات الذهبية</th><th class="end">التخزين</th><th class="end">الجودة</th><th></th></tr></thead><tbody>
+  ${list.map(r=>{const R=D.repos[r],[hs,hl]=repoHealth(R),qs=qState(R.quality);return rtRow({id:r,sel:selRepos.has(r),selAttr:'data-rsel',go:`repo:${r}`,title:R.code,desc:esc(R.name),
+    pop:[['الحالة',st(hs,hl)],['تاريخ النشر',R.deployed==='—'?'لم يُنشر بعد':ltr(R.deployed)]],
+    cells:[`<td><span style="display:inline-flex;gap:4px">${R.sources.map(x=>`<span title="${esc(D.sources[x].name)}">${srcIcon(x,20)}</span>`).join('')}</span></td>`,`<td>${R.model}</td>`,`<td class="end">${R.golden?fmt(R.golden):'—'} <span class="sub">/ ${fmt(R.cap)}</span></td>`,`<td class="end">${ltr(R.storage[0]+' GB')} <span class="sub">/ ${R.storage[1]}</span></td>`,`<td class="end"><span class="st ${qs} num">${ltr(R.quality.toFixed(1)+'%')}</span></td>`]});}).join('')}
+  </tbody></table></div></div>`;}
 function miniDonut(H){const parts=[['pos','#30914C'],['crit','#E76500'],['neg','#F53232'],['info','#0070F2'],['neutral','#788FA6']];const tot=parts.reduce((a,[k])=>a+H[k],0)||1;const R=11,C=2*Math.PI*R;let off=0,g='';
   parts.forEach(([k,c])=>{if(!H[k])return;const len=C*H[k]/tot;g+=`<circle cx="15" cy="15" r="${R}" fill="none" stroke="${c}" stroke-width="6" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 15 15)"/>`;off+=len;});
   return `<svg class="minidonut" width="30" height="30" viewBox="0 0 30 30" role="img" aria-label="توزيع الحالة">${g}</svg>`;}
@@ -649,7 +683,7 @@ function viewDomain(id){
         <div class="cap"><div class="cl">السجلات الذهبية المخصصة</div>${capbar(cap,lic,`${fmt(cap)} من ${fmt(lic)}`)}</div>
         <div class="cap"><div class="cl">التخزين المستخدم</div>${capbar(su,sc,`${su.toFixed(1)} GB من ${sc} GB`)}</div>
         <div class="cap"><div class="cl">التخزين المخصص</div>${capbar(sc,slic,`${sc} GB من ${slic} GB`)}</div></div></div>
-    ${list.length?`<div class="sx-grid ${spView==='list'?'sx-list':''}">${list.map(sxCard).join('')}</div>`:'<div class="section"><div class="empty">لا توجد مستودعات مطابقة</div></div>'}
+    ${!list.length?'<div class="section"><div class="empty">لا توجد مستودعات مطابقة</div></div>':spView==='grid'?`<div class="sx-grid">${list.map(sxCard).join('')}</div>`:repoTable(list)}
   </main>`;
 }
 
@@ -660,7 +694,7 @@ function viewRepo(id){
   const R=D.repos[id];
   if(!openSrc[id]){openSrc[id]=[...R.sources];activeSrc[id]=R.sources[0];}
   const open=openSrc[id],sid=activeSrc[id];
-  const tabs=`<div class="inst" role="tablist" aria-label="مصادر البيانات المفتوحة">${open.map(x=>`<div class="itab" role="tab" tabindex="${x===sid?0:-1}" aria-selected="${x===sid}" data-inst="${x}">${svg('db',14)}<span>${esc(D.sources[x].name)}</span><span class="x" role="button" tabindex="0" data-close="${x}" aria-label="إغلاق ${esc(D.sources[x].name)}">${DEL_IC.replace(/15/g,'12')}</span></div>`).join('')}
+  const tabs=`<div class="inst" role="tablist" aria-label="مصادر البيانات المفتوحة">${open.map(x=>`<div class="itab" role="tab" tabindex="${x===sid?0:-1}" aria-selected="${x===sid}" data-inst="${x}">${srcIcon(x,18)}<span>${esc(D.sources[x].name)}</span><span class="x" role="button" tabindex="0" data-close="${x}" aria-label="إغلاق ${esc(D.sources[x].name)}">${DEL_IC.replace(/15/g,'12')}</span></div>`).join('')}
     <div class="iadd"><button data-act="addInst" aria-label="فتح مصدر بيانات" aria-haspopup="menu"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div></div>`;
   if(!sid)return tabs+`<section class="ph"><div class="ph-in" style="padding-bottom:16px">${crumbs()}<div class="oh-top"><h1 class="oh-title" tabindex="-1">${esc(R.name)}</h1></div></div></section>
     <main><div class="section"><div class="ill"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" style="color:var(--icon)">${SI.db}</svg><h3>لا توجد مصادر بيانات مفتوحة</h3><p>افتح مصدراً من زر + أعلاه.</p><button class="b b-emph" data-act="reopenAll">فتح كل المصادر</button></div></div></main>`;
@@ -671,8 +705,8 @@ function viewRepo(id){
   return tabs+`<section class="ph ${headerCollapsed?'collapsed':''}"><div class="ph-in">${crumbs()}
     <div class="oh-top"><div><h1 class="oh-title" tabindex="-1">${esc(S.name)}</h1></div>
       <div class="oh-actions"><button class="b b-emph">تعديل</button><button class="b b-std">حذف</button><button class="b b-std">مزامنة الآن</button><button class="rt-ic" aria-label="مشاركة">${SHARE_IC}</button></div></div>
-    <div class="oh-body"><div class="oh-img" style="background:#F5F6F7;color:#1D2D3E;border:1px solid var(--line)">${svg('db',30)}</div>
-      <dl class="oh-attrs"><dt>الموصّل:</dt><dd>${esc(S.type)}</dd><dt>العنوان:</dt><dd>${ltr(esc(S.host))}</dd><dt>المستودع:</dt><dd><a href="#" onclick="return false">${esc(R.name)}</a></dd></dl>
+    <div class="oh-body">${srcIcon(sid,56)}
+      <dl class="oh-attrs"><dt>الموصّل:</dt><dd>${esc(S.type)} <span class="chip">${SRC_IC[sid].tag}</span></dd><dt>العنوان:</dt><dd>${ltr(esc(S.host))}</dd><dt>المستودع:</dt><dd><a href="#" onclick="return false">${esc(R.name)}</a></dd></dl>
       <div class="facet"><div class="fl">الحالة</div><div class="fv lg st ${S.state}">${esc(S.stateL)}</div></div>
       <div class="facet"><div class="fl">آخر مزامنة</div><div class="fv lg">${ltr(S.sync.slice(11))}</div></div>
       <div class="facet"><div class="fl">Tables</div><div class="fv lg">${k.tbl}</div></div>
@@ -707,7 +741,7 @@ function viewTable(src,schema,id){
   const T=findTable(src,schema,id),S=D.sources[src],X=D.table;
   const tabs=[['sample','البيانات النموذجية'],['dq','مراجعة جودة البيانات'],['desc','الوصف'],['lineage','الـ Lineage']];
   return `<section class="ph ${headerCollapsed?'collapsed':''}"><div class="ph-in">${crumbs()}
-    <div class="oh-top"><div><h1 class="oh-title" tabindex="-1">${esc(T.name)}</h1><div class="oh-sub">جدول · ${esc(S.name)} / ${esc(schema)}</div></div>
+    <div class="oh-top"><div><h1 class="oh-title" tabindex="-1">${esc(T.name)}</h1><div class="oh-sub" style="display:flex;align-items:center;gap:6px">جدول · ${srcIcon(src,16)} ${esc(S.name)} / ${esc(schema)}</div></div>
       <div class="oh-actions"><button class="b b-emph">تعديل الوصف</button><button class="b b-std">تشغيل فحص الجودة</button><button class="b b-std">طلب تعديل</button></div></div>
     <div class="oh-body"><div class="oh-img" style="background:#0070F2">${svg('table',28)}</div>
       <dl class="oh-attrs"><dt>المالك:</dt><dd>${esc(X.owner)}</dd><dt>أمين البيانات:</dt><dd>${esc(X.steward)}</dd><dt>الوسوم:</dt><dd>${X.tags.map(t=>`<span class="chip">${t}</span>`).join(' ')}</dd></dl>
@@ -720,11 +754,16 @@ function viewTable(src,schema,id){
     </div>${handle()}</section>
   <main id="panel" role="tabpanel" aria-labelledby="tab-${tab}">${({sample:tabSample,dq:tabDQ,desc:tabDesc,lineage:tabLineage})[tab](T)}</main>`;
 }
+let gridSel=new Set();
 function tabSample(){const X=D.table;
-  return `<div class="strip info">${ICON.info.replace('<svg','<svg style="color:var(--info-el);flex:none;margin-top:2px"')}<span>عينة من 8 صفوف من آخر فحص. الحقول الفارغة معلّمة بـ <span class="null">فارغ</span>. البيانات توضيحية.</span></div>
-  <div class="section"><div class="sec-h"><h2 class="sec-title">البيانات النموذجية</h2><div class="sec-tools"><button class="b b-trans">تصدير</button></div></div>
-  <div class="twrap"><table><thead><tr>${X.columns.map(c=>`<th>${c[0]}<br><span class="sub" style="font-weight:400">${c[1]}</span></th>`).join('')}</tr></thead><tbody>
-  ${X.sample.map(r=>`<tr>${r.map(v=>`<td>${v==null?'<span class="null">فارغ</span>':`<bdi${/^[+\d]/.test(v)?' dir="ltr"':''}>${esc(v)}</bdi>`}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;}
+  const num=c=>c[1]==='date'?false:false;
+  return `<div class="strip info">${ICON.info.replace('<svg','<svg style="color:var(--info-el);flex:none;margin-top:2px"')}<span>عينة من آخر فحص. الخلايا الفارغة مظللة ومعلّمة بـ <span class="null">فارغ</span>. البيانات توضيحية.</span></div>
+  <div class="section"><div class="rt-bar"><h2 class="rt-title">البيانات النموذجية <span class="num">(${X.sample.length})</span></h2>
+    <label class="tsearch" style="width:240px"><input id="gtq" placeholder="بحث في العينة" aria-label="بحث في العينة">${SEARCH_IC}</label>
+    <button class="b b-trans">تحديث العينة</button>${RT_ICONS}</div>
+  <div class="gt-wrap" tabindex="0" role="region" aria-label="جدول البيانات النموذجية"><table class="gt" role="grid"><thead><tr><th class="rs" scope="col"><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">رقم الصف</span>#</th>${X.columns.map(c=>`<th scope="col">${c[0]}<span class="ty">${c[1]}${c[3]?' · إلزامي':''}</span></th>`).join('')}</tr></thead><tbody>
+  ${X.sample.map((r,ri)=>`<tr class="${gridSel.has(ri)?'sel':''}" data-grow="${ri}" aria-selected="${gridSel.has(ri)}"><td class="rs">${ri+1}</td>${r.map(v=>v==null?'<td class="nullc"><span class="null">فارغ</span></td>':`<td><bdi${/^[+\d]/.test(v)?' dir="ltr"':''}>${esc(v)}</bdi></td>`).join('')}</tr>`).join('')}</tbody></table></div>
+  <div class="gt-foot"><span>عرض ${X.sample.length} من ${fmt(951247)} صف</span><span>·</span><span>${X.columns.length} أعمدة</span><span class="grow"></span><span>${gridSel.size?`${gridSel.size} صفوف محددة`:'اضغط رقم الصف للتحديد'}</span></div></div>`;}
 let testFilter='all';
 function ring(v,color){const r=34,c=2*Math.PI*r;return `<svg class="ring" viewBox="0 0 84 84" role="img" aria-label="${v.toFixed(1)}%"><circle cx="42" cy="42" r="${r}" fill="none" stroke="#EFF1F2" stroke-width="8"/><circle cx="42" cy="42" r="${r}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${c*v/100} ${c}" transform="rotate(-90 42 42)"/><text x="42" y="47" text-anchor="middle" font-size="15" font-weight="600" fill="#131E29">${v.toFixed(0)}%</text></svg>`;}
 function trendSvg(){const W=520,H=160,L=40,R=40,T=18,B=26;const vals=D.trend.map(t=>t[1]);const min=78,max=100;
@@ -770,7 +809,7 @@ function tabDesc(){const X=D.table;
     ${X.columns.map(c=>`<tr><td class="ttl">${c[0]}</td><td><span class="chip">${c[1]}</span></td><td>${esc(c[2])}</td><td>${c[3]?st('info','إلزامي'):'—'}</td></tr>`).join('')}</tbody></table></div></div>`;}
 function tabLineage(){const L=D.table.lineage;
   return `<div class="section"><div class="sec-h"><h2 class="sec-title">الـ Lineage</h2><span class="sub">من المصدر إلى السجل الذهبي والتقارير</span></div>
-  <div class="lin"><div class="lin-cols" id="lin">${L.map((col,ci)=>`<div class="lin-col"><div class="lin-h">${col.h}</div>${col.nodes.map((n,ni)=>`<div class="node ${n.current?'current':''} ${n.st||''}" data-n="${ci}-${ni}"><div class="nh">${svg(n.i,14)}<span>${esc(n.t)}</span>${n.st?ICON[n.st].replace('<svg','<svg style="color:'+QCOL[n.st]+';margin-inline-start:auto"'):''}</div><div class="nb">${n.kv.map(([k,v])=>`<span>${k}</span><b>${esc(v)}</b>`).join('')}</div></div>`).join('')}</div>`).join('')}
+  <div class="lin"><div class="lin-cols" id="lin">${L.map((col,ci)=>`<div class="lin-col"><div class="lin-h">${col.h}</div>${col.nodes.map((n,ni)=>`<div class="node ${n.current?'current':''} ${n.st||''}" data-n="${ci}-${ni}"><div class="nh">${n.src?srcIcon(n.src,16):svg(n.i,14)}<span>${esc(n.t)}</span>${n.st?ICON[n.st].replace('<svg','<svg style="color:'+QCOL[n.st]+';margin-inline-start:auto"'):''}</div><div class="nb">${n.kv.map(([k,v])=>`<span>${k}</span><b>${esc(v)}</b>`).join('')}</div></div>`).join('')}</div>`).join('')}
   <svg class="edges" id="edges" aria-hidden="true"></svg></div></div></div>`;}
 function drawEdges(){const box=document.getElementById('lin');if(!box)return;const r0=box.getBoundingClientRect();const sv=document.getElementById('edges');let h='<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#788FA6"/></marker></defs>';
   D.table.edges.forEach(([c1,n1,c2,n2])=>{const a=box.querySelector(`[data-n="${c1}-${n1}"]`).getBoundingClientRect(),b=box.querySelector(`[data-n="${c2}-${n2}"]`).getBoundingClientRect();
@@ -801,6 +840,7 @@ function activate(el){
     go(t.p);return;}
   if(el.dataset.close){const repo=path[path.length-1].id,x=el.dataset.close;openSrc[repo]=openSrc[repo].filter(y=>y!==x);if(activeSrc[repo]===x)activeSrc[repo]=openSrc[repo][0];render();(app.querySelector('.itab[aria-selected="true"]')||app.querySelector('[data-act="addInst"]')).focus();return;}
   if(el.dataset.inst){activeSrc[path[path.length-1].id]=el.dataset.inst;srcQ='';render();app.querySelector('.itab[aria-selected="true"]').focus();return;}
+  if(el.dataset.grow!=null){const r=+el.dataset.grow;gridSel.has(r)?gridSel.delete(r):gridSel.add(r);render();return;}
   if(el.dataset.anchor){srcTab=el.dataset.anchor;render();document.getElementById(srcTab)?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});app.querySelector(`[data-anchor="${srcTab}"]`).focus({preventScroll:true});return;}
   if(el.dataset.vfd){vfDomain=vfDomain===el.dataset.vfd?null:el.dataset.vfd;render();app.querySelector(`[data-vfd="${el.dataset.vfd}"]`)?.focus();return;}
   if(el.dataset.vfs){vfStatus=vfStatus===el.dataset.vfs?null:el.dataset.vfs;render();app.querySelector(`circle[data-vfs="${el.dataset.vfs}"]`)?.focus();return;}
@@ -829,9 +869,10 @@ app.addEventListener('click',e=>{
     else if(cb.dataset.selall){const vis=[...app.querySelectorAll('[data-sel]')].map(x=>x.dataset.sel);cb.checked?vis.forEach(v=>selDomains.add(v)):vis.forEach(v=>selDomains.delete(v));render();app.querySelector('[data-selall]').focus();}
     else if(cb.dataset.tsel){cb.checked?selTables.add(cb.dataset.tsel):selTables.delete(cb.dataset.tsel);render();app.querySelector(`[data-tsel="${cb.dataset.tsel}"]`).focus();}
     else if(cb.dataset.tselall){const vis=[...app.querySelectorAll('[data-tsel]')].map(x=>x.dataset.tsel);cb.checked?vis.forEach(v=>selTables.add(v)):vis.forEach(v=>selTables.delete(v));render();app.querySelector('[data-tselall]').focus();}
+    else if(cb.dataset.rselall){const vis=[...app.querySelectorAll('[data-rsel]')].map(x=>x.dataset.rsel);cb.checked?vis.forEach(v=>selRepos.add(v)):vis.forEach(v=>selRepos.delete(v));render();app.querySelector('[data-rselall]').focus();}
     else if(cb.dataset.rsel){cb.checked?selRepos.add(cb.dataset.rsel):selRepos.delete(cb.dataset.rsel);render();app.querySelector(`[data-rsel="${cb.dataset.rsel}"]`).focus();}
     return;}
-  const el=e.target.closest('[data-close],[data-inst],[data-anchor],[data-vfd],[data-vfs],[data-vfx],[data-spv],[data-del],[data-inopen],[data-view],[data-rf],[data-tf],[data-act],[data-go],[data-crumb],[data-schema],[data-tab]');if(el)activate(el);});
+  const el=e.target.closest('[data-close],[data-inst],[data-grow],[data-anchor],[data-vfd],[data-vfs],[data-vfx],[data-spv],[data-del],[data-inopen],[data-view],[data-rf],[data-tf],[data-act],[data-go],[data-crumb],[data-schema],[data-tab]');if(el)activate(el);});
 /* Toast with undo */
 let toastT;function showToast(text,undo){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);}
   t.innerHTML=`<span>${esc(text)}</span>${undo?'<button>تراجع</button>':''}`;t.hidden=false;const b=t.querySelector('button');if(b)b.onclick=()=>{undo();t.hidden=true;};clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,5000);}
@@ -839,7 +880,7 @@ let toastT;function showToast(text,undo){let t=document.getElementById('toast');
 let imenu=null;function closeImenu(){if(imenu){imenu.remove();imenu=null;}}
 function openImenu(btn){closeImenu();const repo=path[path.length-1].id;const others=Object.keys(D.sources).filter(x=>!openSrc[repo].includes(x));
   imenu=document.createElement('div');imenu.className='imenu';imenu.setAttribute('role','menu');
-  imenu.innerHTML=others.length?others.map(x=>`<button role="menuitem" data-inopen="${x}">${svg('db',14)}${esc(D.sources[x].name)}${D.repos[repo].sources.includes(x)?'':' <span class="sub">(مصدر آخر)</span>'}</button>`).join(''):'<div class="none">كل المصادر مفتوحة</div>';
+  imenu.innerHTML=others.length?others.map(x=>`<button role="menuitem" data-inopen="${x}">${srcIcon(x,18)}${esc(D.sources[x].name)}${D.repos[repo].sources.includes(x)?'':' <span class="sub">(مصدر آخر)</span>'}</button>`).join(''):'<div class="none">كل المصادر مفتوحة</div>';
   document.body.appendChild(imenu);const r=btn.getBoundingClientRect();imenu.style.top=(r.bottom+4)+'px';imenu.style.left=Math.max(8,Math.min(innerWidth-imenu.offsetWidth-8,r.left))+'px';
   imenu.addEventListener('click',e=>{const b=e.target.closest('[data-inopen]');if(b)activate(b);});imenu.querySelector('button')?.focus();}
 document.addEventListener('click',e=>{if(imenu&&!imenu.contains(e.target)&&!e.target.closest('[data-act="addInst"]'))closeImenu();});
