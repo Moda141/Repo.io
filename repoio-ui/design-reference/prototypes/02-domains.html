@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Repo.io Domains</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
@@ -155,6 +156,82 @@ tr.grp[aria-expanded="false"] .gchev{transform:rotate(90deg)}
 .node.pos{border-color:var(--pos-el)} .node.crit{border-color:var(--crit-el)}
 .lin svg.edges{position:absolute;inset:0;pointer-events:none;overflow:visible}
 
+/* Segmented button (segmented-button.svg) */
+.seg{display:inline-flex;border:1px solid #BCC3CA;border-radius:8px;overflow:hidden;background:#fff}
+.seg button{height:26px;padding-inline:10px;border:0;background:none;color:var(--brand);font:inherit;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.seg button+button{border-inline-start:1px solid #BCC3CA}
+.seg button[aria-pressed="true"]{background:var(--sel);box-shadow:inset 0 0 0 1px var(--brand);font-weight:600}
+.seg button:hover:not([aria-pressed="true"]){background:var(--hover)}
+.seg .cnt{font-variant-numeric:tabular-nums;color:var(--fg2);font-weight:400}
+
+/* Object cards (cards.svg — Object Card) */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.ocard{background:#fff;border-radius:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;cursor:pointer;transition:box-shadow .15s;min-width:0;text-align:start;border:0;padding:0;font:inherit;color:inherit}
+.ocard:hover{box-shadow:0 0 0 1px var(--brand-strong),var(--shadow)}
+.oc-h{display:flex;gap:12px;align-items:flex-start;padding:16px 16px 8px}
+.oc-ic{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;color:#fff;flex:none}
+.oc-t{flex:1;min-width:0}
+.oc-title{font-weight:700;font-size:15px}
+.oc-sub{font-size:12px;color:var(--fg2);margin-top:2px}
+.oc-desc{padding:0 16px;color:var(--fg2);font-size:13px;line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:40px}
+.oc-kpi{display:flex;align-items:flex-end;gap:12px;padding:12px 16px 4px}
+.oc-kpi .big{font-size:28px;line-height:1;font-variant-numeric:tabular-nums}
+.oc-kpi .lbl{font-size:12px;color:var(--fg2)}
+.oc-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 16px;margin-top:8px;border-top:1px solid var(--line)}
+.oc-facts div{min-width:0}
+.oc-facts .fl{font-size:12px;color:var(--fg2)}
+.oc-facts .fv{font-size:15px;margin-top:2px;font-variant-numeric:tabular-nums}
+.oc-foot{display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid var(--line);font-size:13px;margin-top:auto}
+.oc-foot .more{margin-inline-start:auto;color:var(--brand);font-weight:600;display:inline-flex;align-items:center;gap:4px}
+.oc-foot .more svg{transform:scaleX(-1)}
+.av{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:600;flex:none}
+.mbar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;flex:1;min-width:60px;margin-bottom:6px;position:relative}
+.mbar i{display:block;height:100%}
+.mbar b{position:absolute;top:-3px;bottom:-3px;width:2px;background:#131E29}
+
+/* List with object identifier + micro process flow (micro-process-flow.svg) */
+.olist{list-style:none;margin:0;padding:0}
+.oli{display:grid;grid-template-columns:minmax(180px,1.4fr) auto minmax(220px,1.4fr) minmax(130px,.9fr) 110px 24px;gap:16px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);cursor:pointer}
+.oli:hover{background:var(--hover)}
+.oli:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+.oli .id .n{font-weight:700;color:var(--brand)}
+.oli .id .d{font-size:12px;color:var(--fg2);margin-top:2px}
+.oli .go{color:var(--icon)} .oli .go svg{transform:scaleX(-1)}
+.oli .gold .fl{font-size:12px;color:var(--fg2)} .oli .gold .fv{font-variant-numeric:tabular-nums}
+.mpf{display:flex;align-items:center;gap:0}
+.mpf .stp{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:52px}
+.mpf .c{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;color:#fff}
+.mpf .c.pos{background:var(--pos-el)} .mpf .c.crit{background:var(--crit-el)} .mpf .c.neg{background:var(--neg-el)}
+.mpf .c.neutral{background:#fff;box-shadow:inset 0 0 0 1.5px #788FA6}
+.mpf .c.current{box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--brand-strong)}
+.mpf .sl{font-size:11px;color:var(--fg2);white-space:nowrap}
+.mpf .ln{width:14px;height:1.5px;background:#788FA6;margin-bottom:16px}
+.gtag.pos{background:var(--pos-bg)}.gtag.pos::before{background:var(--pos-el)}
+.gtag.crit{background:var(--crit-bg)}.gtag.crit::before{background:var(--crit-el)}
+
+/* Quality screen */
+.dq-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr);gap:16px}
+.kpi-card{padding:4px 16px 16px}
+.kpi-row{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.kpi-big{font-size:44px;line-height:1;font-variant-numeric:tabular-nums}
+.kpi-side{display:grid;grid-template-columns:auto auto auto;column-gap:18px;font-size:13px;text-align:center}
+.kpi-side span:nth-child(-n+3){color:var(--fg2)}
+.trend{width:100%;height:auto;display:block;margin-top:12px}
+.dims{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:12px;padding:4px 16px 16px}
+.dim-t{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.dim-t .nm{font-weight:600;font-size:13px}
+.dim-t .ct{font-size:12px;color:var(--fg2)}
+.ring{width:76px;height:76px}
+.formula{margin:0 16px 16px;padding:10px 12px;border-radius:8px;background:var(--neutral-bg);font-size:12px;color:var(--fg2);line-height:1.7}
+.formula b{color:var(--fg);font-weight:600}
+.cbars{padding:4px 16px 16px;display:grid;gap:8px}
+.cbar{display:grid;grid-template-columns:120px 1fr 52px;gap:10px;align-items:center;font-size:13px}
+.cbar .tr{height:14px;background:var(--neutral-bg);border-radius:3px;position:relative;overflow:hidden}
+.cbar .tr i{display:block;height:100%;border-radius:3px}
+.cbar .req{font-size:11px;color:var(--fg2)}
+.tests .rule{white-space:normal;min-width:240px}
+.pct{font-size:12px;color:var(--fg2)}
+@media (max-width:900px){.dq-grid{grid-template-columns:1fr}.oli{grid-template-columns:1fr auto;}.oli .mpf,.oli .gold,.oli .q{grid-column:1/-1}}
 @media (max-width:900px){.search{display:none}.grid2{grid-template-columns:1fr}.fbar-actions{grid-column:1/-1}}
 @media (max-width:560px){.hide-s{display:none}.dim{grid-template-columns:100px 1fr 48px}.dim .w{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -178,19 +255,21 @@ tr.grp[aria-expanded="false"] .gchev{transform:rotate(90deg)}
 (function(){
 /* ───────────── Sample data (illustrative) ───────────── */
 const D = {
+  trend:[["10/28",82.1],["10/29",83.4],["10/30",84.0],["10/31",85.2],["11/01",84.7],["11/02",86.1],["11/03",86.9],["11/04",87.3]],
+  target:95,
   domains: [
     {id:'customers',name:'العملاء',en:'Customer',color:'#0070F2',desc:'بيانات العملاء والموزعين والمدارس والمكتبات التي تتعامل مع المجموعة.',owner:'محمد',repos:['customer-master','distribution','schools']},
     {id:'products',name:'المنتجات',en:'Product',color:'#30914C',desc:'الكتب والمطبوعات والمنتجات الرقمية مع بيانات ISBN والتسعير.',owner:'كريم فوزي',repos:['catalog','digital']},
     {id:'vendors',name:'الموردون',en:'Vendor',color:'#E76500',desc:'المطابع وموردو الورق والخدمات.',owner:'هالة سمير',repos:['vendor-master']},
     {id:'authors',name:'المؤلفون والحقوق',en:'Author & Rights',color:'#7858FF',desc:'المؤلفون والمترجمون وعقود الحقوق والإتاوات.',owner:'سارة عادل',repos:['authors']}],
   repos: {
-    'customer-master':{name:'Customer Master',status:'Deployed',model:'Customer v3',golden:951247,quality:87.3,sources:['c4c','s4','csv']},
-    'distribution':{name:'شركاء التوزيع',status:'Deployed',model:'Partner v1',golden:1840,quality:91.2,sources:['s4']},
-    'schools':{name:'حسابات المدارس',status:'Draft',model:'School v1',golden:0,quality:72.5,sources:['csv']},
-    'catalog':{name:'كتالوج الكتب',status:'Deployed',model:'Book v2',golden:38500,quality:96.2,sources:['s4','csv']},
-    'digital':{name:'المنتجات الرقمية',status:'Draft',model:'Digital v1',golden:0,quality:68.0,sources:['csv']},
-    'vendor-master':{name:'Vendor Master',status:'Deployed',model:'Vendor v2',golden:612,quality:89.4,sources:['s4']},
-    'authors':{name:'سجل المؤلفين',status:'Archived',model:'Author v1',golden:4210,quality:81.0,sources:['csv']}},
+    'customer-master':{name:'Customer Master',flow:['pos','pos','crit','pos'],status:'Deployed',model:'Customer v3',golden:951247,quality:87.3,sources:['c4c','s4','csv']},
+    'distribution':{name:'شركاء التوزيع',flow:['pos','pos','pos','pos'],status:'Deployed',model:'Partner v1',golden:1840,quality:91.2,sources:['s4']},
+    'schools':{name:'حسابات المدارس',flow:['pos','crit','neutral','neutral'],status:'Draft',model:'School v1',golden:0,quality:72.5,sources:['csv']},
+    'catalog':{name:'كتالوج الكتب',flow:['pos','pos','pos','pos'],status:'Deployed',model:'Book v2',golden:38500,quality:96.2,sources:['s4','csv']},
+    'digital':{name:'المنتجات الرقمية',flow:['pos','neutral','neutral','neutral'],status:'Draft',model:'Digital v1',golden:0,quality:68.0,sources:['csv']},
+    'vendor-master':{name:'Vendor Master',flow:['pos','pos','pos','crit'],status:'Deployed',model:'Vendor v2',golden:612,quality:89.4,sources:['s4']},
+    'authors':{name:'سجل المؤلفين',flow:['pos','pos','pos','neutral'],status:'Archived',model:'Author v1',golden:4210,quality:81.0,sources:['csv']}},
   sources: {
     c4c:{name:'SAP C4C',type:'SAP Cloud for Customer (OData)',host:'my345678.crm.ondemand.com',sync:'2026-11-04 02:00',state:'pos',stateL:'نجحت المزامنة',schemas:{
       'sales':[
@@ -261,7 +340,15 @@ const SI={db:'<ellipse cx="12" cy="6" rx="8" ry="3" stroke="currentColor" stroke
   chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
   folder:'<path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>'};
 const svg=(k,s=16)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" aria-hidden="true">${SI[k]}</svg>`;
+const FLOW=['المصادر','الاستيراد','المطابقة','النشر'];
+const FLOW_L={pos:'مكتمل',crit:'يحتاج انتباه',neg:'فشل',neutral:'لم يبدأ'};
+const AVC=[['#DDCCF0','#6C32A9'],['#C2FCEE','#046C7A'],['#FFF3B8','#A45D00'],['#FFDBE7','#BA066C']];
+const initials=n=>n.split(' ').map(w=>w[0]).slice(0,2).join(' ');
+const CHK='<svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>';
+const EXC='<svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M12 5v9M12 19h.01" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>';
+function mpf(flow){const cur=flow.findIndex(f=>f!=='pos');return `<div class="mpf" role="img" aria-label="${FLOW.map((l,i)=>l+': '+FLOW_L[flow[i]]).join('، ')}">${flow.map((f,i)=>`${i?'<span class="ln"></span>':''}<span class="stp" title="${FLOW[i]}: ${FLOW_L[f]}"><span class="c ${f} ${i===cur?'current':''}">${f==='pos'?CHK:f==='crit'||f==='neg'?EXC:''}</span><span class="sl">${FLOW[i]}</span></span>`).join('')}</div>`;}
 const REPO_ST={Deployed:['pos','منشور'],Draft:['info','مسودة'],Archived:['neutral','مؤرشف']};
+let domView='cards';
 
 /* ───────────── Navigation state ───────────── */
 let path=[]; // e.g. [{k:'domain',id}, {k:'repo',id}, {k:'source',id}, {k:'table',schema,id}]
@@ -284,12 +371,24 @@ function findTable(src,schema,id){return D.sources[src].schemas[schema].find(t=>
 
 function handle(){return `<div class="handle"><button data-act="collapse" aria-label="${headerCollapsed?'توسيع الرأس':'طي الرأس'}" aria-expanded="${!headerCollapsed}"><svg class="ch" width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6-6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button><button aria-label="تثبيت الرأس"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M14 3l7 7-3 1-4 4 1 4-1 1-4-4-5 5M8 11l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>`;}
 
-/* ───────────── Level 0: Domains (List Report) ───────────── */
+/* ───────────── Level 0: Domains (List Report — Object Cards / table) ───────────── */
 function domainStats(d){let golden=0,q=0,srcs=new Set();d.repos.forEach(r=>{const R=D.repos[r];golden+=R.golden;q+=R.quality;R.sources.forEach(s=>srcs.add(s));});return {golden,q:q/d.repos.length,sources:srcs.size};}
+function domainCard(d,i){const s=domainStats(d),qs=qState(s.q),[ab,af]=AVC[i%AVC.length];
+  return `<button class="ocard" data-go="domain:${d.id}" aria-label="${esc(d.name)}: ${d.repos.length} مستودعات، الجودة ${s.q.toFixed(1)}%">
+    <div class="oc-h"><span class="oc-ic" style="background:${d.color}">${svg('folder',20)}</span><span class="oc-t"><div class="oc-title">${esc(d.name)}</div><div class="oc-sub">${d.en}</div></span>${st(qs,qs==='pos'?'ضمن الهدف':'دون الهدف')}</div>
+    <div class="oc-desc">${esc(d.desc)}</div>
+    <div class="oc-kpi"><div><div class="lbl">متوسط الجودة</div><div class="big st ${qs}" style="font-size:28px">${ltr(s.q.toFixed(1)+'<small style="font-size:14px">%</small>')}</div></div>
+      <div class="mbar" title="الهدف ${D.target}%"><i style="width:${s.q}%;background:${QCOL[qs]}"></i><b style="inset-inline-start:${D.target}%"></b></div></div>
+    <div class="oc-facts"><div><div class="fl">المستودعات</div><div class="fv">${d.repos.length}</div></div><div><div class="fl">المصادر</div><div class="fv">${s.sources}</div></div><div><div class="fl">سجلات ذهبية</div><div class="fv">${fmt(s.golden)}</div></div></div>
+    <div class="oc-foot"><span class="av" style="background:${ab};color:${af}">${initials(d.owner)}</span><span>${esc(d.owner)}</span><span class="more">المستودعات ${GO}</span></div></button>`;}
 function viewDomains(){
   const rows=D.domains.filter(d=>(!domQ||d.name.includes(domQ)||d.en.toLowerCase().includes(domQ.toLowerCase()))&&(!domOwner||d.owner===domOwner));
   const owners=[...new Set(D.domains.map(d=>d.owner))];
   const active=[domQ&&'بحث',domOwner&&'المالك'].filter(Boolean);
+  const table=`<div class="section"><div class="twrap"><table><thead><tr><th>الدومين</th><th class="hide-s">الوصف</th><th>المالك</th><th class="end">المستودعات</th><th class="end">مصادر البيانات</th><th class="end">السجلات الذهبية</th><th>متوسط الجودة</th><th aria-hidden="true"></th></tr></thead><tbody>
+    ${rows.map(d=>{const s=domainStats(d);return `<tr class="nav" tabindex="0" data-go="domain:${d.id}"><td><span class="cell-name"><span class="dot" style="background:${d.color}"></span><span><span class="ttl">${esc(d.name)}</span><br><span class="sub">${d.en}</span></span></span></td>
+      <td class="hide-s" style="white-space:normal;max-width:360px;color:var(--fg2)">${esc(d.desc)}</td><td>${esc(d.owner)}</td><td class="end">${d.repos.length}</td><td class="end">${s.sources}</td><td class="end">${fmt(s.golden)}</td><td>${score(s.q)}</td><td class="go">${GO}</td></tr>`;}).join('')}
+    </tbody></table></div></div>`;
   return `<section class="ph ${headerCollapsed?'collapsed':''}"><div class="ph-in">
     <button class="variant">قياسي <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     <div class="vsub">${active.length?`${active.length} ${active.length===1?'فلتر نشط':'فلاتر نشطة'}: ${active.join('، ')}`:'لا توجد فلاتر نشطة'}</div>
@@ -298,18 +397,19 @@ function viewDomains(){
       <div class="ff"><label for="fo">المالك:</label><select id="fo"><option value="">الكل</option>${owners.map(o=>`<option ${o===domOwner?'selected':''}>${esc(o)}</option>`).join('')}</select></div>
       <div class="fbar-actions"><button class="b b-emph" type="submit">تنفيذ</button><button class="b b-trans" type="button">تعديل الفلاتر (2)</button></div>
     </form></div>${handle()}</section>
-  <main><div class="section">
-    <div class="sec-h"><h1 class="sec-title" tabindex="-1">الدومينات <span class="sub num">(${rows.length})</span></h1>
-      <div class="sec-tools"><button class="b b-std">إنشاء دومين</button><button class="b b-trans">تعديل</button></div></div>
-    <div class="twrap"><table><thead><tr><th>الدومين</th><th class="hide-s">الوصف</th><th>المالك</th><th class="end">المستودعات</th><th class="end">مصادر البيانات</th><th class="end">السجلات الذهبية</th><th>متوسط الجودة</th><th aria-hidden="true"></th></tr></thead><tbody>
-    ${rows.length?rows.map(d=>{const s=domainStats(d);return `<tr class="nav" tabindex="0" data-go="domain:${d.id}"><td><span class="cell-name"><span class="dot" style="background:${d.color}"></span><span><span class="ttl">${esc(d.name)}</span><br><span class="sub">${d.en}</span></span></span></td>
-      <td class="hide-s" style="white-space:normal;max-width:360px;color:var(--fg2)">${esc(d.desc)}</td><td>${esc(d.owner)}</td><td class="end">${d.repos.length}</td><td class="end">${s.sources}</td><td class="end">${fmt(s.golden)}</td><td>${score(s.q)}</td><td class="go">${GO}</td></tr>`;}).join(''):`<tr><td colspan="8" class="empty">لا توجد دومينات مطابقة للفلاتر</td></tr>`}
-    </tbody></table></div></div></main>`;
+  <main><div class="sec-h" style="padding-inline:0"><h1 class="sec-title" tabindex="-1">الدومينات <span class="sub num">(${rows.length})</span></h1>
+      <div class="sec-tools"><button class="b b-std">إنشاء دومين</button>
+      <span class="seg" role="group" aria-label="طريقة العرض"><button data-view="cards" aria-pressed="${domView==='cards'}">${svg('folder',14)}بطاقات</button><button data-view="table" aria-pressed="${domView==='table'}">${svg('table',14)}جدول</button></span></div></div>
+    ${rows.length?(domView==='cards'?`<div class="cards">${rows.map(domainCard).join('')}</div>`:table):'<div class="section"><div class="empty">لا توجد دومينات مطابقة للفلاتر</div></div>'}</main>`;
 }
 
-/* ───────────── Level 1: Domain (Object Page) ───────────── */
+/* ───────────── Level 1: Domain (Object Page — repositories as an object list) ───────────── */
+let repoFilter='all';
 function viewDomain(id){
   const d=D.domains.find(x=>x.id===id), s=domainStats(d);
+  const counts={all:d.repos.length};d.repos.forEach(r=>{const k=D.repos[r].status;counts[k]=(counts[k]||0)+1;});
+  const list=d.repos.filter(r=>repoFilter==='all'||D.repos[r].status===repoFilter);
+  const TAG={Deployed:'pos',Draft:'info',Archived:'neutral'};
   return `<section class="ph ${headerCollapsed?'collapsed':''}"><div class="ph-in">${crumbs()}
     <div class="oh-top"><div><h1 class="oh-title" tabindex="-1">${esc(d.name)}</h1><div class="oh-sub">دومين · ${d.en}</div></div>
       <div class="oh-actions"><button class="b b-emph">تعديل</button><button class="b b-std">إضافة مستودع</button></div></div>
@@ -320,13 +420,19 @@ function viewDomain(id){
       <div class="facet"><div class="fl">السجلات الذهبية</div><div class="fv">${fmt(s.golden)}</div></div>
       <div class="facet"><div class="fl">متوسط الجودة</div><div class="fv st ${qState(s.q)}" style="font-size:20px">${s.q.toFixed(1)}%</div></div>
     </div></div>${handle()}</section>
-  <main><div class="section"><div class="sec-h"><h2 class="sec-title">المستودعات <span class="sub num">(${d.repos.length})</span></h2></div>
-    <div class="twrap"><table><thead><tr><th>المستودع</th><th>الحالة</th><th>نموذج البيانات</th><th class="end">مصادر البيانات</th><th class="end">السجلات الذهبية</th><th>الجودة</th><th aria-hidden="true"></th></tr></thead><tbody>
-    ${d.repos.map(r=>{const R=D.repos[r];const [s1,l1]=REPO_ST[R.status];return `<tr class="nav" tabindex="0" data-go="repo:${r}"><td class="ttl">${esc(R.name)}</td><td>${st(s1,l1)}</td><td>${R.model}</td><td class="end">${R.sources.length}</td><td class="end">${R.golden?fmt(R.golden):'—'}</td><td>${score(R.quality)}</td><td class="go">${GO}</td></tr>`;}).join('')}
-    </tbody></table></div></div></main>`;
+  <main><div class="section"><div class="sec-h"><h2 class="sec-title">المستودعات <span class="sub num">(${list.length})</span></h2>
+      <span class="seg" role="group" aria-label="تصفية حسب الحالة">${[['all','الكل'],['Deployed','منشور'],['Draft','مسودة'],['Archived','مؤرشف']].filter(([k])=>k==='all'||counts[k]).map(([k,l])=>`<button data-rf="${k}" aria-pressed="${repoFilter===k}">${l} <span class="cnt">${counts[k]||0}</span></button>`).join('')}</span></div>
+    <ul class="olist">${list.map(r=>{const R=D.repos[r];const [,l1]=REPO_ST[R.status];return `<li class="oli" tabindex="0" role="link" data-go="repo:${r}">
+      <div class="id"><div class="n">${esc(R.name)}</div><div class="d">${R.model} · ${R.sources.length} ${R.sources.length===1?'مصدر':'مصادر'}</div></div>
+      <span class="gtag ${TAG[R.status]}">${l1}</span>
+      ${mpf(R.flow)}
+      <div class="q">${score(R.quality)}</div>
+      <div class="gold"><div class="fl">سجلات ذهبية</div><div class="fv">${R.golden?fmt(R.golden):'—'}</div></div>
+      <span class="go">${GO}</span></li>`;}).join('')}</ul></div></main>`;
 }
 
-/* ───────────── Level 2: Repository (Object Page) ───────────── */
+/* ───────────── Level 2: Repository (Object Page — data sources as object cards) ───────────── */
+function srcStats(S){const all=Object.values(S.schemas).flat();return {sch:Object.keys(S.schemas).length,tbl:all.length,rows:all.reduce((a,t)=>a+t.rows,0),q:all.reduce((a,t)=>a+t.q,0)/all.length};}
 function viewRepo(id){
   const R=D.repos[id];const [s1,l1]=REPO_ST[R.status];
   return `<section class="ph ${headerCollapsed?'collapsed':''}"><div class="ph-in">${crumbs()}
@@ -334,15 +440,17 @@ function viewRepo(id){
       <div class="oh-actions"><button class="b b-emph">تعديل</button><button class="b b-std">إضافة مصدر بيانات</button><button class="b b-std">تشغيل المطابقة</button></div></div>
     <div class="oh-body">
       <div class="facet"><div class="fl">الحالة</div><div class="fv">${st(s1,l1)}</div></div>
+      <div class="facet"><div class="fl">مراحل المعالجة</div><div class="fv">${mpf(R.flow)}</div></div>
       <div class="facet"><div class="fl">السجلات الذهبية</div><div class="fv">${R.golden?fmt(R.golden):'—'}</div></div>
       <div class="facet"><div class="fl">الجودة</div><div class="fv st ${qState(R.quality)}" style="font-size:20px">${R.quality.toFixed(1)}%</div></div>
-      <div class="facet"><div class="fl">مصادر البيانات</div><div class="fv">${R.sources.length}</div></div>
     </div></div>${handle()}</section>
-  <main><div class="section"><div class="sec-h"><h2 class="sec-title">مصادر البيانات <span class="sub num">(${R.sources.length})</span></h2></div>
-    <div class="twrap"><table><thead><tr><th>المصدر</th><th>نوع الموصّل</th><th class="hide-s">العنوان</th><th>آخر مزامنة</th><th>الحالة</th><th class="end">Schemas</th><th class="end">Tables</th><th aria-hidden="true"></th></tr></thead><tbody>
-    ${R.sources.map(s=>{const S=D.sources[s];const sch=Object.keys(S.schemas);const tbl=sch.reduce((a,k)=>a+S.schemas[k].length,0);
-      return `<tr class="nav" tabindex="0" data-go="source:${s}"><td class="ttl"><span class="cell-name">${svg('db')}${esc(S.name)}</span></td><td>${esc(S.type)}</td><td class="hide-s" style="color:var(--fg2)">${esc(S.host)}</td><td class="num">${ltr(S.sync)}</td><td>${st(S.state,S.stateL)}</td><td class="end">${sch.length}</td><td class="end">${tbl}</td><td class="go">${GO}</td></tr>`;}).join('')}
-    </tbody></table></div></div></main>`;
+  <main><div class="sec-h" style="padding-inline:0"><h2 class="sec-title">مصادر البيانات <span class="sub num">(${R.sources.length})</span></h2></div>
+    <div class="cards">${R.sources.map(sid=>{const S=D.sources[sid],k=srcStats(S),qs=qState(k.q);return `<button class="ocard" data-go="source:${sid}" aria-label="${esc(S.name)}">
+      <div class="oc-h"><span class="oc-ic" style="background:#1D2D3E">${svg('db',20)}</span><span class="oc-t"><div class="oc-title">${esc(S.name)}</div><div class="oc-sub">${esc(S.type)}</div></span>${st(S.state,S.stateL)}</div>
+      <div class="oc-kpi"><div><div class="lbl">جودة الجداول</div><div class="big st ${qs}" style="font-size:28px">${ltr(k.q.toFixed(1)+'<small style="font-size:14px">%</small>')}</div></div>
+        <div class="mbar"><i style="width:${k.q}%;background:${QCOL[qs]}"></i><b style="inset-inline-start:${D.target}%"></b></div></div>
+      <div class="oc-facts"><div><div class="fl">Schemas</div><div class="fv">${k.sch}</div></div><div><div class="fl">Tables</div><div class="fv">${k.tbl}</div></div><div><div class="fl">الصفوف</div><div class="fv">${fmt(k.rows)}</div></div></div>
+      <div class="oc-foot"><span class="sub">آخر مزامنة ${ltr(S.sync)}</span><span class="more">الجداول ${GO}</span></div></button>`;}).join('')}</div></main>`;
 }
 
 /* ───────────── Level 3: Data Source — schemas & tables (Analytical Table) ───────────── */
@@ -395,18 +503,41 @@ function tabSample(){const X=D.table;
   <div class="section"><div class="sec-h"><h2 class="sec-title">البيانات النموذجية</h2><div class="sec-tools"><button class="b b-trans">تصدير</button></div></div>
   <div class="twrap"><table><thead><tr>${X.columns.map(c=>`<th>${c[0]}<br><span class="sub" style="font-weight:400">${c[1]}</span></th>`).join('')}</tr></thead><tbody>
   ${X.sample.map(r=>`<tr>${r.map(v=>`<td>${v==null?'<span class="null">فارغ</span>':`<bdi${/^[+\d]/.test(v)?' dir="ltr"':''}>${esc(v)}</bdi>`}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;}
+let testFilter='all';
+function ring(v,color){const r=34,c=2*Math.PI*r;return `<svg class="ring" viewBox="0 0 84 84" role="img" aria-label="${v.toFixed(1)}%"><circle cx="42" cy="42" r="${r}" fill="none" stroke="#EFF1F2" stroke-width="8"/><circle cx="42" cy="42" r="${r}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${c*v/100} ${c}" transform="rotate(-90 42 42)"/><text x="42" y="47" text-anchor="middle" font-size="15" font-weight="600" fill="#131E29">${v.toFixed(0)}%</text></svg>`;}
+function trendSvg(){const W=520,H=160,L=40,R=40,T=18,B=26;const vals=D.trend.map(t=>t[1]);const min=78,max=100;
+  const x=i=>W-R-(i*(W-R-L)/(vals.length-1)); /* RTL: oldest on the right */
+  const y=v=>T+(max-v)*(H-T-B)/(max-min);
+  let g='';[80,85,90,95,100].forEach(v=>{g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="#E5E5E5"/><text x="${W-R+6}" y="${y(v)+4}" font-size="10" fill="#556B82">${v}%</text>`;});
+  const pts=vals.map((v,i)=>`${x(i)},${y(v)}`).join(' ');
+  const area=`${x(0)},${y(min)} ${pts} ${x(vals.length-1)},${y(min)}`;
+  g+=`<line x1="${L}" x2="${W-R}" y1="${y(D.target)}" y2="${y(D.target)}" stroke="#256F3A" stroke-dasharray="4 3"/><text x="${L+70}" y="${y(D.target)-5}" font-size="10" direction="rtl" text-anchor="start" fill="#256F3A">الهدف <tspan direction="ltr" unicode-bidi="embed">${D.target}%</tspan></text>`;
+  g+=`<polygon points="${area}" fill="#0070F2" opacity=".08"/><polyline points="${pts}" fill="none" stroke="#0070F2" stroke-width="2"/>`;
+  vals.forEach((v,i)=>{const last=i===vals.length-1;g+=`<circle cx="${x(i)}" cy="${y(v)}" r="${last?4.5:2.5}" fill="${last?'#0070F2':'#fff'}" stroke="#0070F2" stroke-width="1.5"/>`;});
+  D.trend.forEach((t,i)=>{if(i%2===1||i===vals.length-1)g+=`<text x="${x(i)}" y="${H-8}" font-size="10" text-anchor="middle" fill="#556B82">${t[0]}</text>`;});
+  g+=`<text x="${x(vals.length-1)}" y="${y(vals[vals.length-1])-9}" font-size="11" font-weight="600" text-anchor="middle" fill="#131E29">${vals[vals.length-1]}%</text>`;
+  return `<svg class="trend" viewBox="0 0 ${W} ${H}" role="img" aria-label="درجة الجودة آخر 8 أيام، من ${vals[0]}% إلى ${vals[vals.length-1]}%">${g}</svg>`;}
 function tabDQ(T){const X=D.table.dq;
-  const total=X.dims.reduce((a,d)=>a+d[2]*d[3],0)/100;
-  return `<div class="grid2"><div class="section"><div class="sec-h"><h2 class="sec-title">درجة الجودة</h2><span class="sub">النموذج المعتمد: دقة 30% · اكتمال 25% · صلاحية 20% · حداثة 15% · تفرد 10%</span></div>
-    <div class="dq-top"><div><div class="dq-score st ${qState(total)}" style="font-size:40px">${total.toFixed(1)}%</div><div class="sub" style="margin-top:6px">آخر فحص ${ltr(T.prof)}</div></div>
-    <div class="dq-dims">${X.dims.map(([l,k,w,v])=>{const s=qState(v);return `<div class="dim"><span>${l}</span><span class="score" style="min-width:0"><span class="trk"><span class="fil" style="width:${v}%;background:${QCOL[s]}"></span></span></span><span class="st ${s} num">${v.toFixed(1)}%</span><span class="w">وزن ${w}%</span></div>`;}).join('')}</div></div></div>
-  <div class="section"><div class="sec-h"><h2 class="sec-title">اكتمال الأعمدة</h2><span class="sub">نسبة القيم الفارغة</span></div>
-    <div class="twrap"><table><thead><tr><th>العمود</th><th>إلزامي</th><th>الفارغ</th></tr></thead><tbody>
-    ${D.table.columns.map(c=>{const s=c[4]>20?'neg':c[4]>5?'crit':'pos';return `<tr><td>${c[0]}</td><td>${c[3]?'نعم':'لا'}</td><td>${st(s,c[4].toFixed(1)+'%')}</td></tr>`;}).join('')}</tbody></table></div></div></div>
-  <div class="strip warn">${ICON.crit.replace('<svg','<svg style="color:var(--crit-el);flex:none;margin-top:2px"')}<span>4,821 سجلاً مرشحاً للدمج. افتح <a href="#" onclick="return false">مرشحو الدمج</a> لمراجعتها.</span></div>
-  <div class="section"><div class="sec-h"><h2 class="sec-title">اختبارات الجودة <span class="sub num">(${X.tests.length})</span></h2></div>
+  const total=X.dims.reduce((a,d)=>a+d[2]*d[3],0)/100, qs=qState(total), dev=total-D.target, prev=D.trend[D.trend.length-2][1];
+  const counts={all:X.tests.length,neg:0,crit:0,pos:0};X.tests.forEach(t=>counts[t[2]]++);
+  const tests=X.tests.filter(t=>testFilter==='all'||t[2]===testFilter);
+  const cols=[...D.table.columns].sort((a,b)=>b[4]-a[4]);
+  return `<div class="dq-grid">
+  <div class="section"><div class="sec-h"><h2 class="sec-title">درجة الجودة</h2>${st(qs,qs==='pos'?'ضمن الهدف':'دون الهدف')}</div>
+    <div class="kpi-card"><div class="kpi-row"><div class="kpi-big st ${qs}" style="font-size:44px">${ltr(total.toFixed(1)+'<small style="font-size:18px">%</small>')}</div>
+      <div class="kpi-side"><span>الهدف</span><span>الانحراف</span><span>منذ أمس</span><span class="num">${D.target}%</span><span class="num st neg">${ltr((dev>0?'+':'−')+Math.abs(dev).toFixed(1))}</span><span class="num st pos">${ltr('+'+(total-prev).toFixed(1))}</span></div></div>
+      <div class="sub" style="margin-top:6px">آخر فحص ${ltr(T.prof)} · آخر 8 أيام</div>${trendSvg()}</div></div>
+  <div class="section"><div class="sec-h"><h2 class="sec-title">أبعاد الجودة</h2><span class="sub">الدرجة × الوزن = المساهمة</span></div>
+    <div class="dims">${X.dims.map(([l,k,w,v])=>{const s=qState(v);return `<div class="dim-t"><span class="nm">${l}</span>${ring(v,QCOL[s])}<span class="gtag neutral" style="font-size:11px">الوزن ${ltr(w+'%')}</span><span class="ct">يساهم بـ <b class="num" style="color:var(--fg)">${(w*v/100).toFixed(1)}</b> من ${w} نقطة</span></div>`;}).join('')}</div>
+    <p class="formula"><b>طريقة الحساب:</b> نموذج الجودة المعتمد — الدقة والمطابقة 30%، الاكتمال 25%، الصلاحية والاتساق 20%، الحداثة 15%، التفرد 10%. مجموع المساهمات = <b class="num">${total.toFixed(1)}%</b>. إذا لم تتوفر قياسات كافية لبُعد ما تظهر الدرجة "غير متاح — بيانات الجودة غير كافية" ولا تُحتسب.</p></div></div>
+  <div class="strip warn">${ICON.crit.replace('<svg','<svg style="color:var(--crit-el);flex:none;margin-top:2px"')}<span><b>أكبر فرصة للتحسين: الاكتمال.</b> عمودا Email وPhone فارغان في 37.8% و28.9% من الصفوف. و4,821 سجلاً مرشحاً للدمج — افتح <a href="#" onclick="return false">مرشحو الدمج</a>.</span></div>
+  <div class="dq-grid">
+  <div class="section"><div class="sec-h"><h2 class="sec-title">اكتمال الأعمدة</h2><span class="sub">نسبة القيم الفارغة، الأعلى أولاً</span></div>
+    <div class="cbars">${cols.map(c=>{const s=c[4]>20?'neg':c[4]>5?'crit':'pos';return `<div class="cbar"><span>${c[0]}${c[3]?' <span class="req">إلزامي</span>':''}</span><span class="tr" role="img" aria-label="${c[0]} فارغ ${c[4]}%"><i style="width:${Math.max(c[4],.6)}%;background:${QCOL[s]}"></i></span><span class="st ${s} num">${c[4].toFixed(1)}%</span></div>`;}).join('')}</div></div>
+  <div class="section tests"><div class="sec-h"><h2 class="sec-title">اختبارات الجودة</h2>
+    <span class="seg" role="group" aria-label="تصفية الاختبارات">${[['all','الكل',''],['neg','فشل',ICON.neg],['crit','تحذير',ICON.crit],['pos','نجح',ICON.pos]].map(([k,l,ic])=>`<button data-tf="${k}" aria-pressed="${testFilter===k}"><span class="st ${k==='all'?'':k}" style="gap:4px">${ic}${l}</span> <span class="cnt">${counts[k]}</span></button>`).join('')}</span></div>
     <div class="twrap"><table><thead><tr><th>القاعدة</th><th>العمود</th><th>النتيجة</th><th class="end">صفوف فاشلة</th><th>آخر تشغيل</th></tr></thead><tbody>
-    ${X.tests.map(([r,c,s,f,d])=>`<tr><td style="white-space:normal">${esc(r)}</td><td>${esc(c)}</td><td>${st(s,{pos:'نجح',crit:'تحذير',neg:'فشل'}[s])}</td><td class="end">${f?fmt(f):'—'}</td><td class="num">${ltr(d)}</td></tr>`).join('')}</tbody></table></div></div>`;}
+    ${tests.map(([r,c,s,f,d])=>`<tr><td class="rule">${esc(r)}</td><td><span class="chip">${esc(c)}</span></td><td>${st(s,{pos:'نجح',crit:'تحذير',neg:'فشل'}[s])}</td><td class="end">${f?`${fmt(f)} <span class="pct">(${(f/T.rows*100).toFixed(1)}%)</span>`:'—'}</td><td class="num">${ltr(d)}</td></tr>`).join('')}</tbody></table></div></div></div>`;}
 function tabDesc(){const X=D.table;
   return `<div class="grid2"><div class="section"><div class="sec-h"><h2 class="sec-title">الوصف</h2><button class="b b-trans">تعديل</button></div><p class="prose">${esc(X.desc)}</p></div>
   <div class="section"><div class="sec-h"><h2 class="sec-title">الحوكمة</h2></div><dl class="kv"><dt>المالك</dt><dd>${esc(X.owner)}</dd><dt>أمين البيانات</dt><dd>${esc(X.steward)}</dd>
@@ -436,19 +567,22 @@ function render(){
 function activate(el){
   const g=el.dataset.go;
   if(g){const [k,a,b]=g.split(':');
-    if(k==='domain')go([{k,id:a}]);
+    if(k==='domain'){repoFilter='all';go([{k,id:a}]);}
     else if(k==='repo')go([...path,{k,id:a}]);
     else if(k==='source'){srcQ='';closedSchemas.clear();go([...path,{k,id:a}]);}
-    else if(k==='table')go([...path,{k,schema:a,id:b}]);return;}
+    else if(k==='table'){testFilter='all';go([...path,{k,schema:a,id:b}]);}return;}
   if(el.dataset.crumb!=null){go(path.slice(0,+el.dataset.crumb));return;}
   if(el.dataset.schema){const k=el.dataset.schema;closedSchemas.has(k)?closedSchemas.delete(k):closedSchemas.add(k);render();app.querySelector(`[data-schema="${k}"]`)?.focus();return;}
   if(el.dataset.tab){tab=el.dataset.tab;render();document.getElementById('tab-'+tab).focus();return;}
+  if(el.dataset.view){domView=el.dataset.view;render();app.querySelector(`[data-view="${domView}"]`).focus();return;}
+  if(el.dataset.rf){repoFilter=el.dataset.rf;render();app.querySelector(`[data-rf="${repoFilter}"]`).focus();return;}
+  if(el.dataset.tf){testFilter=el.dataset.tf;render();app.querySelector(`[data-tf="${testFilter}"]`).focus();return;}
   const act=el.dataset.act;
   if(act==='collapse'){headerCollapsed=!headerCollapsed;render();app.querySelector('[data-act="collapse"]').focus();}
   if(act==='expandAll'){closedSchemas.clear();render();}
   if(act==='collapseAll'){Object.keys(D.sources[path[path.length-1].id].schemas).forEach(k=>closedSchemas.add(k));render();}
 }
-app.addEventListener('click',e=>{const el=e.target.closest('[data-go],[data-crumb],[data-schema],[data-tab],[data-act]');if(el)activate(el);});
+app.addEventListener('click',e=>{const el=e.target.closest('[data-view],[data-rf],[data-tf],[data-go],[data-crumb],[data-schema],[data-tab],[data-act]');if(el)activate(el);});
 app.addEventListener('keydown',e=>{
   const el=e.target.closest('[data-go],[data-schema]');if(el&&(e.key==='Enter'||e.key===' ')){e.preventDefault();activate(el);return;}
   const t=e.target.closest('[role="tab"]');if(t&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){const list=[...app.querySelectorAll('[role="tab"]')];const i=list.indexOf(t);const d=e.key==='ArrowLeft'?1:-1;/* RTL */
