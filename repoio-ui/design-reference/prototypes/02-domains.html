@@ -306,6 +306,9 @@ table.rt tbody tr.sel td:first-child{box-shadow:inset -4px 0 0 var(--brand-stron
 .anchors{display:flex;gap:2px;overflow-x:auto;margin-top:-6px}
 .anchors .tab{height:40px;font-size:13px}
 .op-sec{margin-bottom:28px;scroll-margin-top:68px}
+.lnk{border:0;background:none;padding:0;font:inherit;color:var(--link,#0064D9);cursor:pointer}.lnk:hover{text-decoration:underline}
+.rchips{display:inline-flex;flex-wrap:wrap;gap:4px}.rchip{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border:1px solid #D9D9D9;border-radius:11px;background:#fff;font:inherit;font-size:12px;color:#131E29;cursor:pointer;white-space:nowrap}.rchip svg{color:#7858FF}.rchip:hover{background:#EAECEE}.rchip:focus-visible{outline:2px solid #0032A5;outline-offset:1px}
+.mattr{display:block;font-size:12px;line-height:20px;white-space:nowrap}.mattr .m{color:#556B82}
 .op-sec>h2{font-size:18px;font-weight:700;margin:0 0 10px}
 .gi2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 40px;padding:14px 16px 18px}
 .gi2 .grp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 24px;align-content:start}
@@ -452,7 +455,7 @@ const D = {
   repos: {
     'customer-master':{owners:['محمد','سارة عادل','أحمد ناصر'],tags:['PII','Tier 1','C4C'],code:'CUSTOMER_MASTER',deployed:'2026-10-02 10:19',cap:1500000,storage:[42.6,100],pipes:4,name:'Customer Master',flow:['pos','pos','crit','pos'],status:'Deployed',model:'Customer v3',golden:951247,quality:87.3,sources:['c4c','s4','csv']},
     'distribution':{owners:['هالة سمير'],tags:['Tier 2','شركاء'],code:'DISTRIBUTION_PARTNERS',deployed:'2026-09-21 10:23',cap:5000,storage:[1.2,10],pipes:1,name:'شركاء التوزيع',flow:['pos','pos','pos','pos'],status:'Deployed',model:'Partner v1',golden:1840,quality:91.2,sources:['s4']},
-    'schools':{owners:['سارة عادل','منى حسن'],tags:['مسودة','تعليم'],code:'SCHOOL_ACCOUNTS',deployed:'—',cap:20000,storage:[0.3,10],pipes:1,name:'حسابات المدارس',flow:['pos','crit','neutral','neutral'],status:'Draft',model:'School v1',golden:0,quality:72.5,sources:['csv']},
+    'schools':{owners:['سارة عادل','منى حسن'],tags:['مسودة','تعليم'],code:'SCHOOL_ACCOUNTS',deployed:'—',cap:20000,storage:[0.3,10],pipes:1,name:'حسابات المدارس',flow:['pos','crit','neutral','neutral'],status:'Draft',model:'School v1',golden:0,quality:72.5,sources:['csv','c4c']},
     'catalog':{owners:['كريم فوزي','نور الدين'],tags:['Tier 1','ISBN'],code:'BOOK_CATALOG',deployed:'2026-08-11 10:14',cap:100000,storage:[6.8,50],pipes:2,name:'كتالوج الكتب',flow:['pos','pos','pos','pos'],status:'Deployed',model:'Book v2',golden:38500,quality:96.2,sources:['s4','csv']},
     'digital':{owners:['كريم فوزي'],tags:['رقمي'],code:'DIGITAL_PRODUCTS',deployed:'—',cap:20000,storage:[0.1,10],pipes:1,name:'المنتجات الرقمية',flow:['pos','neutral','neutral','neutral'],status:'Draft',model:'Digital v1',golden:0,quality:68.0,sources:['csv']},
     'vendor-master':{owners:['هالة سمير','عمر طارق'],tags:['Tier 1','مشتريات'],code:'VENDOR_MASTER',deployed:'2026-07-30 10:16',cap:2000,storage:[0.9,10],pipes:1,name:'Vendor Master',flow:['pos','pos','pos','crit'],status:'Deployed',model:'Vendor v2',golden:612,quality:89.4,sources:['s4']},
@@ -468,9 +471,9 @@ const D = {
         {id:'territory',name:'Territory',rows:212,cols:11,q:94.8,prof:'2026-11-04 06:00'}]}},
     s4:{auth:'Basic (RFC user)',sched:'يومياً 01:30',owner:'كريم فوزي',name:'SAP S/4HANA',type:'SAP S/4HANA (CDS views)',host:'s4prd.nahdetmisr.local',sync:'2026-11-04 01:30',state:'crit',stateL:'مزامنة جزئية',schemas:{
       'sd':[{id:'kna1',name:'KNA1 — Customer General',rows:948120,cols:86,q:83.9,prof:'2026-11-04 05:00'},{id:'knvv',name:'KNVV — Sales Data',rows:1102340,cols:64,q:88.2,prof:'2026-11-04 05:00'}],
-      'mm':[{id:'mara',name:'MARA — Material',rows:41230,cols:120,q:92.7,prof:'2026-11-04 05:00'}]}},
+      'mm':[{id:'mara',name:'MARA — Material',rows:41230,cols:120,q:92.7,prof:'2026-11-04 05:00'},{id:'lfa1',name:'LFA1 — Vendor Master',rows:2140,cols:72,q:89.1,prof:'2026-11-04 05:00'}]}},
     csv:{auth:'—',sched:'يدوي',owner:'سارة عادل',name:'رفع ملفات CSV',type:'Excel / CSV upload',host:'—',sync:'2026-11-02 14:12',state:'neutral',stateL:'يدوي',schemas:{
-      'uploads':[{id:'school_list',name:'school_list_2026.csv',rows:3820,cols:14,q:72.5,prof:'2026-11-02 14:15'}]}}},
+      'uploads':[{id:'school_list',name:'school_list_2026.csv',rows:3820,cols:14,q:72.5,prof:'2026-11-02 14:15'},{id:'new_customers',name:'new_customers_q3.csv',rows:1260,cols:12,q:76.8,prof:'2026-10-15 11:02'},{id:'book_list',name:'book_list_2026.csv',rows:6420,cols:18,q:90.3,prof:'2026-10-30 09:40'},{id:'digital_skus',name:'digital_skus.csv',rows:410,cols:9,q:68.0,prof:'2026-10-12 16:20'},{id:'authors_csv',name:'authors_archive.csv',rows:4210,cols:11,q:81.0,prof:'2025-12-01 10:21'}]}}},
   models:{
     'Customer v3':{entity:'Customer',ver:'3.2',status:'pos',statusL:'معتمد',approved:'2026-09-28',approver:'محمد',owner:'محمد',
       match:'Splink — احتمال ≥ 0.90 دمج تلقائي، 0.75–0.90 مراجعة يدوية',block:'المدينة + أول 3 أحرف من الاسم',surv:'الأحدث من المصدر الأعلى أولوية',
@@ -480,8 +483,8 @@ const D = {
         ['CustomerGroup','code',0,'—','c4c,s4','أولوية المصدر'],['Status','code',1,'—','c4c','أولوية المصدر'],['CreatedOn','date',0,'—','c4c,s4','الأقدم']]},
     'Partner v1':{entity:'Partner',ver:'1.4',status:'pos',statusL:'معتمد',approved:'2026-09-15',approver:'هالة سمير',owner:'هالة سمير',match:'مطابقة تامة على الرقم الضريبي',block:'الرقم الضريبي',surv:'أولوية المصدر',priority:['s4'],
       attrs:[['PartnerID','string',1,'مفتاح','s4','—'],['PartnerName','string',1,'مطابقة تقريبية','s4','أولوية المصدر'],['TaxID','string',1,'مطابقة تامة','s4','—'],['Region','code',0,'—','s4','أولوية المصدر']]},
-    'School v1':{entity:'School',ver:'0.9',status:'info',statusL:'مسودة',approved:'—',approver:'—',owner:'سارة عادل',match:'لم تُحدد بعد',block:'—',surv:'—',priority:['csv'],
-      attrs:[['SchoolCode','string',1,'مفتاح','csv','—'],['SchoolName','string',1,'مطابقة تقريبية','csv','—'],['Governorate','code',1,'Blocking','csv','—']]},
+    'School v1':{entity:'School',ver:'0.9',status:'info',statusL:'مسودة',approved:'—',approver:'—',owner:'سارة عادل',match:'لم تُحدد بعد',block:'—',surv:'—',priority:['csv','c4c'],
+      attrs:[['SchoolCode','string',1,'مفتاح','csv,c4c','—'],['SchoolName','string',1,'مطابقة تقريبية','csv,c4c','—'],['Governorate','code',1,'Blocking','csv,c4c','—'],['SchoolEmail','string',0,'—','c4c','—']]},
     'Book v2':{entity:'Book',ver:'2.1',status:'pos',statusL:'معتمد',approved:'2026-08-01',approver:'كريم فوزي',owner:'كريم فوزي',match:'مطابقة تامة على ISBN، ثم تقريبية على العنوان',block:'ISBN',surv:'أولوية المصدر',priority:['s4','csv'],
       attrs:[['ISBN','string',1,'مطابقة تامة','s4,csv','—'],['Title','string',1,'مطابقة تقريبية','s4,csv','الأعلى جودة'],['Author','string',1,'مطابقة تقريبية','csv','الأحدث'],['Grade','code',0,'—','s4','أولوية المصدر'],['Price','decimal',0,'—','s4','الأحدث']]},
     'Digital v1':{entity:'DigitalProduct',ver:'0.3',status:'info',statusL:'مسودة',approved:'—',approver:'—',owner:'كريم فوزي',match:'لم تُحدد بعد',block:'—',surv:'—',priority:['csv'],
@@ -490,6 +493,14 @@ const D = {
       attrs:[['VendorID','string',1,'مفتاح','s4','—'],['VendorName','string',1,'مطابقة تقريبية','s4','أولوية المصدر'],['TaxID','string',1,'مطابقة تامة','s4','—'],['BankCountry','code',0,'—','s4','أولوية المصدر']]},
     'Author v1':{entity:'Author',ver:'1.0',status:'neutral',statusL:'مؤرشف',approved:'2025-11-20',approver:'سارة عادل',owner:'سارة عادل',match:'مطابقة تقريبية على الاسم',block:'أول حرفين',surv:'الأحدث',priority:['csv'],
       attrs:[['AuthorID','string',1,'مفتاح','csv','—'],['AuthorName','string',1,'مطابقة تقريبية','csv','الأحدث'],['Nationality','code',0,'—','csv','الأحدث']]}},
+  /* which source tables each repository uses: repo → {source: [table ids]} */
+  usage:{'customer-master':{c4c:['customer','customer_address','contact_person','sales_area'],s4:['kna1','knvv'],csv:['new_customers']},
+    'distribution':{s4:['kna1','knvv']},'schools':{csv:['school_list'],c4c:['customer','customer_address']},
+    'catalog':{s4:['mara'],csv:['book_list']},'digital':{csv:['digital_skus']},'vendor-master':{s4:['lfa1']},'authors':{csv:['authors_csv']}},
+  /* field → [repo, model attribute] for C4C sales.Customer */
+  fieldMap:{CustomerID:[['customer-master','CustomerID'],['schools','SchoolCode']],CustomerName:[['customer-master','CustomerName'],['schools','SchoolName']],
+    TaxID:[['customer-master','TaxID']],Email:[['customer-master','Email'],['schools','SchoolEmail']],Phone:[['customer-master','Phone']],
+    City:[['customer-master','City'],['schools','Governorate']],CustomerGroup:[['customer-master','CustomerGroup']],Status:[['customer-master','Status']],CreatedOn:[['customer-master','CreatedOn']]},
   /* golden records the repository contributes to: [id, name, sub, sources, sourceRecords, matchProb, quality, lastMerge, state] */
   golden:{
     'customer-master':[['GR-C-000184','مكتبة الشروق','القاهرة · مكتبات',['c4c','s4','csv'],4,0.98,96.4,'2026-11-04 02:06','pos'],
@@ -740,6 +751,11 @@ function viewDomain(id){
 
 /* ───────────── Level 2: Repository (Object Page · anchor bar: Model / Golden records / Data sources) ───────────── */
 let repoTab='rp-model', gq='', gFilter='all';
+function reposOfSource(sid){return Object.keys(D.repos).filter(r=>D.repos[r].sources.includes(sid));}
+function reposOfTable(sid,tid){return Object.keys(D.repos).filter(r=>(D.usage[r]?.[sid]||[]).includes(tid));}
+function domOfRepo(r){return D.domains.find(d=>d.repos.includes(r));}
+const repoLink=r=>`<button class="lnk" data-go="xrepo:${r}">${esc(D.repos[r].name)}</button>`;
+const repoChips=list=>list.length?`<span class="rchips">${list.map(r=>`<button class="rchip" data-go="xrepo:${r}" title="${esc(D.repos[r].model)}">${svg('gold',12)}${esc(D.repos[r].name)}</button>`).join('')}</span>`:'<span class="sub">غير مستخدم</span>';
 const GST={pos:'معتمد',crit:'قيد المراجعة',neg:'تعارض',neutral:'مؤرشف'};
 function viewRepo(id){
   const R=D.repos[id], M=D.models[R.model], G=(D.golden[id]||[]), [hs,hl]=repoHealth(R), qs=qState(R.quality);
@@ -819,12 +835,13 @@ function viewSources(id){
   const S=D.sources[sid],k=srcStats(S),qs=qState(k.q);
   const tbls=Object.entries(S.schemas).flatMap(([g,list])=>list.map(t=>({...t,schema:g}))).filter(t=>!srcQ||t.name.toLowerCase().includes(srcQ.toLowerCase())||t.schema.includes(srcQ));
   const allSel=tbls.length&&tbls.every(t=>selTables.has(t.id));
-  const anchors=[['sec-general','معلومات عامة'],['sec-tables','Schemas و Tables'],['sec-sync','سجل المزامنة']];
+  const anchors=[['sec-general','معلومات عامة'],['sec-repos','المستودعات المشاركة'],['sec-tables','Schemas و Tables'],['sec-sync','سجل المزامنة']];
+  const srcRepos=reposOfSource(sid);
   return tabs+`<section class="ph ${headerCollapsed?'collapsed':''}"><div class="ph-in">${crumbs()}
     <div class="oh-top"><div><h1 class="oh-title" tabindex="-1">${esc(S.name)}</h1></div>
       <div class="oh-actions"><button class="b b-emph">تعديل</button><button class="b b-std">حذف</button><button class="b b-std">مزامنة الآن</button><button class="rt-ic" aria-label="مشاركة">${SHARE_IC}</button></div></div>
     <div class="oh-body">${srcIcon(sid,56)}
-      <dl class="oh-attrs"><dt>الموصّل:</dt><dd>${esc(S.type)} <span class="chip">${SRC_IC[sid].tag}</span></dd><dt>العنوان:</dt><dd>${ltr(esc(S.host))}</dd><dt>المستودع:</dt><dd><a href="#" onclick="return false">${esc(R.name)}</a></dd></dl>
+      <dl class="oh-attrs"><dt>الموصّل:</dt><dd>${esc(S.type)} <span class="chip">${SRC_IC[sid].tag}</span></dd><dt>العنوان:</dt><dd>${ltr(esc(S.host))}</dd><dt>يشارك في:</dt><dd>${reposOfSource(sid).length} مستودعات</dd></dl>
       <div class="facet"><div class="fl">الحالة</div><div class="fv lg st ${S.state}">${esc(S.stateL)}</div></div>
       <div class="facet"><div class="fl">آخر مزامنة</div><div class="fv lg">${ltr(S.sync.slice(11))}</div></div>
       <div class="facet"><div class="fl">Tables</div><div class="fv lg">${k.tbl}</div></div>
@@ -836,16 +853,25 @@ function viewSources(id){
     <section class="op-sec" id="sec-general"><h2>معلومات عامة</h2><div class="section" style="margin:0"><div class="gi2">
       <div class="grp"><h3>تفاصيل الاتصال</h3><div class="f"><div class="fl">معرّف المصدر</div><div class="fv">${ltr(sid.toUpperCase()+'-0001')}</div></div><div class="f"><div class="fl">جدول المزامنة</div><div class="fv">${esc(S.sched)}</div></div>
         <div class="f"><div class="fl">المصادقة</div><div class="fv">${esc(S.auth)}</div></div><div class="f"><div class="fl">آخر مزامنة</div><div class="fv">${ltr(S.sync)}</div></div></div>
-      <div class="grp"><h3>تفاصيل الإعداد</h3><div class="f"><div class="fl">المستودع</div><div class="fv"><a href="#" onclick="return false">${esc(R.name)}</a></div></div><div class="f"><div class="fl">نموذج البيانات</div><div class="fv">${R.model}</div></div>
+      <div class="grp"><h3>تفاصيل الإعداد</h3><div class="f" style="grid-column:1/-1"><div class="fl">المستودعات المشاركة</div><div class="fv">${repoChips(srcRepos)}</div></div>
         <div class="f"><div class="fl">المالك</div><div class="fv">${esc(S.owner)}</div></div><div class="f"><div class="fl">Schemas</div><div class="fv">${k.sch}</div></div><div class="f"><div class="fl">العنوان</div><div class="fv">${ltr(esc(S.host))}</div></div></div></div></div></section>
+    <section class="op-sec" id="sec-repos"><h2>المستودعات المشاركة</h2><div class="section" style="margin:0">
+      <div class="rt-bar"><h3 class="rt-title">المستودعات <span class="num">(${srcRepos.length})</span></h3><span class="sub">كل مستودع يستخدم هذا المصدر كمدخل لنموذجه</span>${RT_ICONS}</div>
+      <div class="twrap"><table class="rt"><thead><tr><th class="chk"><input type="checkbox" class="cb" aria-label="تحديد الكل"></th><th>المستودع</th><th>الدومين</th><th>النموذج</th><th class="end">أولوية المصدر</th><th>الجداول المستخدمة</th><th class="end">سمات مربوطة</th><th>الحالة</th><th></th></tr></thead><tbody>
+      ${srcRepos.map(r=>{const RR=D.repos[r],M=D.models[RR.model],[hs,hl]=repoHealth(RR),used=(D.usage[r]?.[sid]||[]),pr=M.priority.indexOf(sid)+1,attrs=M.attrs.filter(a=>a[4].split(',').includes(sid)).length,dm=domOfRepo(r);
+        return rtRow({id:r,sel:false,selAttr:'data-xrs',go:`xrepo:${r}`,title:esc(RR.name),desc:ltr(RR.code),
+          cells:[`<td>${dm?esc(dm.name):'—'}</td>`,`<td><span class="chipx" style="position:static">${esc(RR.model)}</span></td>`,`<td class="end num">${pr?pr+' <span class="sub">من '+M.priority.length+'</span>':'—'}</td>`,
+            `<td>${used.length?used.map(t=>{const sc=Object.keys(S.schemas).find(g=>S.schemas[g].some(x=>x.id===t));return `<span class="chip" style="margin:0 0 2px 4px">${esc(S.schemas[sc].find(x=>x.id===t).name)}</span>`;}).join(''):'—'}</td>`,
+            `<td class="end num">${attrs} <span class="sub">من ${M.attrs.length}</span></td>`,`<td>${st(hs,hl)}</td>`]});}).join('')}
+      </tbody></table></div></div></section>
     <section class="op-sec" id="sec-tables"><h2>Schemas و Tables</h2><div class="section" style="margin:0">
       <div class="rt-bar"><h3 class="rt-title">Tables <span class="num">(${tbls.length})</span></h3>
         <label class="tsearch" style="width:300px"><input id="srcq" value="${esc(srcQ)}" placeholder="بحث" aria-label="بحث عن جدول">${SEARCH_IC}</label>
         <button class="b b-trans">إضافة</button><button class="b b-trans" ${selTables.size?'':'disabled'}>حذف${selTables.size?` (${selTables.size})`:''}</button>${RT_ICONS}</div>
-      <div class="twrap"><table class="rt"><thead><tr><th class="chk"><input type="checkbox" class="cb" data-tselall="1" ${allSel?'checked':''} aria-label="تحديد الكل"></th><th>الجدول</th><th>Schema</th><th class="end">الصفوف</th><th class="end">الأعمدة</th><th class="end">الجودة</th><th></th></tr></thead><tbody>
+      <div class="twrap"><table class="rt"><thead><tr><th class="chk"><input type="checkbox" class="cb" data-tselall="1" ${allSel?'checked':''} aria-label="تحديد الكل"></th><th>الجدول</th><th>Schema</th><th>يُستخدم في</th><th class="end">الصفوف</th><th class="end">الأعمدة</th><th class="end">الجودة</th><th>آخر فحص</th><th></th></tr></thead><tbody>
       ${tbls.length?tbls.map(t=>{const tq=qState(t.q);return rtRow({id:t.id,sel:selTables.has(t.id),selAttr:'data-tsel',go:`table:${sid}:${t.schema}:${t.id}`,title:esc(t.name),desc:'Schema: '+esc(t.schema),
-        pop:[['الحالة',`<span class="st ${tq}">${tq==='pos'?'ضمن الهدف':tq==='crit'?'دون الهدف':'حرج'}</span>`],['آخر فحص',ltr(t.prof)]],
-        cells:[`<td>${esc(t.schema)}</td>`,`<td class="end">${fmt(t.rows)}</td>`,`<td class="end">${t.cols}</td>`,`<td class="end"><span class="st ${tq} num">${ltr(t.q.toFixed(1)+'%')}</span></td>`]});}).join(''):`<tr><td colspan="7" class="empty">لا توجد جداول مطابقة لـ "${esc(srcQ)}"</td></tr>`}
+
+        cells:[`<td>${esc(t.schema)}</td>`,`<td>${repoChips(reposOfTable(sid,t.id))}</td>`,`<td class="end">${fmt(t.rows)}</td>`,`<td class="end">${t.cols}</td>`,`<td class="end"><span class="st ${tq} num">${ltr(t.q.toFixed(1)+'%')}</span></td>`,`<td class="num">${ltr(t.prof)}</td>`]});}).join(''):`<tr><td colspan="9" class="empty">لا توجد جداول مطابقة لـ "${esc(srcQ)}"</td></tr>`}
       </tbody></table></div></div></section>
     <section class="op-sec" id="sec-sync"><h2>سجل المزامنة</h2><div class="section" style="margin:0">
       <div class="rt-bar"><h3 class="rt-title">التشغيلات <span class="num">(${D.runs.length})</span></h3><button class="b b-trans">مزامنة الآن</button>${RT_ICONS}</div>
@@ -862,7 +888,7 @@ function viewTable(src,schema,id){
     <div class="oh-top"><div><h1 class="oh-title" tabindex="-1">${esc(T.name)}</h1><div class="oh-sub" style="display:flex;align-items:center;gap:6px">جدول · ${srcIcon(src,16)} ${esc(S.name)} / ${esc(schema)}</div></div>
       <div class="oh-actions"><button class="b b-emph">تعديل الوصف</button><button class="b b-std">تشغيل فحص الجودة</button><button class="b b-std">طلب تعديل</button></div></div>
     <div class="oh-body"><div class="oh-img" style="background:#0070F2">${svg('table',28)}</div>
-      <dl class="oh-attrs"><dt>المالك:</dt><dd>${esc(X.owner)}</dd><dt>أمين البيانات:</dt><dd>${esc(X.steward)}</dd><dt>الوسوم:</dt><dd>${X.tags.map(t=>`<span class="chip">${t}</span>`).join(' ')}</dd></dl>
+      <dl class="oh-attrs"><dt>المالك:</dt><dd>${esc(X.owner)}</dd><dt>أمين البيانات:</dt><dd>${esc(X.steward)}</dd><dt>الوسوم:</dt><dd>${X.tags.map(t=>`<span class="chip">${t}</span>`).join(' ')}</dd><dt>يُستخدم في:</dt><dd>${repoChips(reposOfTable(src,id))}</dd></dl>
       <div class="facet"><div class="fl">الصفوف</div><div class="fv">${fmt(T.rows)}</div></div>
       <div class="facet"><div class="fl">الأعمدة</div><div class="fv">${T.cols}</div></div>
       <div class="facet"><div class="fl">درجة الجودة</div><div class="fv st ${qState(T.q)}" style="font-size:20px">${T.q.toFixed(1)}%</div></div>
@@ -972,10 +998,10 @@ function tabDesc(){const X=D.table, T=findTable(path[path.length-1].src,path[pat
     <div class="rt-bar"><h3 class="rt-title">الأعمدة <span class="num">(${X.columns.length})</span></h3>
       <label class="tsearch" style="width:240px"><input placeholder="بحث" aria-label="بحث في الأعمدة">${SEARCH_IC}</label>
       <button class="b b-trans">ربط بمصطلح</button><button class="b b-trans">تعديل الأوصاف</button>${RT_ICONS}</div>
-    <div class="twrap"><table class="rt"><thead><tr><th class="chk"><input type="checkbox" class="cb" aria-label="تحديد الكل"></th><th>العمود</th><th>النوع</th><th>إلزامي</th><th>مصطلح المسرد</th><th class="end">الفارغ</th><th></th></tr></thead><tbody>
-    ${X.columns.map(c=>{const s2=c[4]>20?'neg':c[4]>5?'crit':'pos';const term=X.colTerms[c[0]];return rtRow({id:c[0],sel:false,selAttr:'data-colsel',title:c[0],desc:esc(c[2]),
+    <div class="twrap"><table class="rt"><thead><tr><th class="chk"><input type="checkbox" class="cb" aria-label="تحديد الكل"></th><th>العمود</th><th>النوع</th><th>إلزامي</th><th>مصطلح المسرد</th><th>المستودعات</th><th>النماذج والسمات</th><th class="end">الفارغ</th><th></th></tr></thead><tbody>
+    ${X.columns.map(c=>{const s2=c[4]>20?'neg':c[4]>5?'crit':'pos';const term=X.colTerms[c[0]],L=path[path.length-1],isC=L.id==='customer'&&L.src==='c4c',fm=isC?(D.fieldMap[c[0]]||[]):[];return rtRow({id:c[0],sel:false,selAttr:'data-colsel',title:c[0],desc:esc(c[2]),
       pop0:[['إلزامي',c[3]?st('info','إلزامي'):'لا'],['مفتاح',c[0]==='CustomerID'?'مفتاح أساسي':'—']],
-      cells:[`<td><span class="chip">${c[1]}</span>${c[0]==='CustomerID'?' <span class="sub">مفتاح</span>':''}</td>`,`<td>${c[3]?st('info','إلزامي'):'لا'}</td>`,`<td>${term?`<span class="gtag info">${esc(term)}</span>`:'<span class="sub">غير مربوط</span>'}</td>`,`<td class="end"><span class="st ${s2} num">${ltr(c[4].toFixed(1)+'%')}</span></td>`]});}).join('')}
+      cells:[`<td><span class="chip">${c[1]}</span>${c[0]==='CustomerID'?' <span class="sub">مفتاح</span>':''}</td>`,`<td>${c[3]?st('info','إلزامي'):'لا'}</td>`,`<td>${term?`<span class="gtag info">${esc(term)}</span>`:'<span class="sub">غير مربوط</span>'}</td>`,`<td>${repoChips(isC?fm.map(m=>m[0]):reposOfTable(L.src,L.id))}</td>`,`<td>${fm.length?fm.map(([r,a])=>`<span class="mattr"><span class="m">${esc(D.repos[r].model)} ›</span> ${ltr(a)}</span>`).join(''):'—'}</td>`,`<td class="end"><span class="st ${s2} num">${ltr(c[4].toFixed(1)+'%')}</span></td>`]});}).join('')}
     </tbody></table></div></div></section>`;}
 
 function tabLineage(){const L=D.table.lineage;
@@ -1003,6 +1029,7 @@ function activate(el){
   const g=el.dataset.go;
   if(g){const [k,a,b,c]=g.split(':');
     if(k==='domain'){spQ='';selRepos.clear();go([{k,id:a}]);}
+    else if(k==='xrepo'){const dm=domOfRepo(a);repoTab='rp-model';gq='';gFilter='all';go([{k:'domain',id:dm.id},{k:'repo',id:a}]);}
     else if(k==='repo'){repoTab='rp-model';gq='';gFilter='all';go([...path,{k,id:a}]);}
     else if(k==='srcs'){const repo=path[path.length-1].id;if(!openSrc[repo])openSrc[repo]=[...D.repos[repo].sources];if(!openSrc[repo].includes(a))openSrc[repo].push(a);activeSrc[repo]=a;srcTab='sec-general';selTables.clear();srcQ='';closedSchemas.clear();go([...path,{k,id:repo}]);}
     else if(k==='table'){testFilter='all';go([...path,{k,src:a,schema:b,id:c}]);}return;}
