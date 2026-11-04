@@ -333,6 +333,13 @@ table.gt td.nullc{background:#FFF5F9}
 .gt-foot{display:flex;align-items:center;gap:12px;padding:8px 16px;border-top:1px solid #D9D9D9;font-size:12px;color:var(--fg2);flex-wrap:wrap}
 .gt-foot .grow{flex:1}
 
+.avg{display:flex;align-items:center}
+.avg .av{width:24px;height:24px;border:2px solid #fff;margin-inline-start:-6px;font-size:10px}
+.avg .av:first-child{margin-inline-start:0}
+.avg .more{margin-inline-start:6px;font-size:12px;color:var(--fg2)}
+.tags{display:flex;gap:4px;flex-wrap:wrap}
+.tags .gtag{height:20px;font-size:11px}
+
 /* Source icons */
 .srcic{display:inline-grid;place-items:center;border-radius:6px;color:#fff;flex:none;font-weight:700;letter-spacing:-.02em}
 
@@ -443,13 +450,13 @@ const D = {
     {id:'vendors',updated:'2026-10-30',name:'الموردون',en:'Vendor',color:'#E76500',desc:'المطابع وموردو الورق والخدمات.',owner:'هالة سمير',repos:['vendor-master']},
     {id:'authors',updated:'2026-09-14',name:'المؤلفون والحقوق',en:'Author & Rights',color:'#7858FF',desc:'المؤلفون والمترجمون وعقود الحقوق والإتاوات.',owner:'سارة عادل',repos:['authors']}],
   repos: {
-    'customer-master':{code:'CUSTOMER_MASTER',deployed:'2026-10-02 10:19',cap:1500000,storage:[42.6,100],pipes:4,name:'Customer Master',flow:['pos','pos','crit','pos'],status:'Deployed',model:'Customer v3',golden:951247,quality:87.3,sources:['c4c','s4','csv']},
-    'distribution':{code:'DISTRIBUTION_PARTNERS',deployed:'2026-09-21 10:23',cap:5000,storage:[1.2,10],pipes:1,name:'شركاء التوزيع',flow:['pos','pos','pos','pos'],status:'Deployed',model:'Partner v1',golden:1840,quality:91.2,sources:['s4']},
-    'schools':{code:'SCHOOL_ACCOUNTS',deployed:'—',cap:20000,storage:[0.3,10],pipes:1,name:'حسابات المدارس',flow:['pos','crit','neutral','neutral'],status:'Draft',model:'School v1',golden:0,quality:72.5,sources:['csv']},
-    'catalog':{code:'BOOK_CATALOG',deployed:'2026-08-11 10:14',cap:100000,storage:[6.8,50],pipes:2,name:'كتالوج الكتب',flow:['pos','pos','pos','pos'],status:'Deployed',model:'Book v2',golden:38500,quality:96.2,sources:['s4','csv']},
-    'digital':{code:'DIGITAL_PRODUCTS',deployed:'—',cap:20000,storage:[0.1,10],pipes:1,name:'المنتجات الرقمية',flow:['pos','neutral','neutral','neutral'],status:'Draft',model:'Digital v1',golden:0,quality:68.0,sources:['csv']},
-    'vendor-master':{code:'VENDOR_MASTER',deployed:'2026-07-30 10:16',cap:2000,storage:[0.9,10],pipes:1,name:'Vendor Master',flow:['pos','pos','pos','crit'],status:'Deployed',model:'Vendor v2',golden:612,quality:89.4,sources:['s4']},
-    'authors':{code:'AUTHOR_REGISTRY',deployed:'2025-12-01 10:21',cap:10000,storage:[2.1,10],pipes:1,name:'سجل المؤلفين',flow:['pos','pos','pos','neutral'],status:'Archived',model:'Author v1',golden:4210,quality:81.0,sources:['csv']}},
+    'customer-master':{owners:['محمد','سارة عادل','أحمد ناصر'],tags:['PII','Tier 1','C4C'],code:'CUSTOMER_MASTER',deployed:'2026-10-02 10:19',cap:1500000,storage:[42.6,100],pipes:4,name:'Customer Master',flow:['pos','pos','crit','pos'],status:'Deployed',model:'Customer v3',golden:951247,quality:87.3,sources:['c4c','s4','csv']},
+    'distribution':{owners:['هالة سمير'],tags:['Tier 2','شركاء'],code:'DISTRIBUTION_PARTNERS',deployed:'2026-09-21 10:23',cap:5000,storage:[1.2,10],pipes:1,name:'شركاء التوزيع',flow:['pos','pos','pos','pos'],status:'Deployed',model:'Partner v1',golden:1840,quality:91.2,sources:['s4']},
+    'schools':{owners:['سارة عادل','منى حسن'],tags:['مسودة','تعليم'],code:'SCHOOL_ACCOUNTS',deployed:'—',cap:20000,storage:[0.3,10],pipes:1,name:'حسابات المدارس',flow:['pos','crit','neutral','neutral'],status:'Draft',model:'School v1',golden:0,quality:72.5,sources:['csv']},
+    'catalog':{owners:['كريم فوزي','نور الدين'],tags:['Tier 1','ISBN'],code:'BOOK_CATALOG',deployed:'2026-08-11 10:14',cap:100000,storage:[6.8,50],pipes:2,name:'كتالوج الكتب',flow:['pos','pos','pos','pos'],status:'Deployed',model:'Book v2',golden:38500,quality:96.2,sources:['s4','csv']},
+    'digital':{owners:['كريم فوزي'],tags:['رقمي'],code:'DIGITAL_PRODUCTS',deployed:'—',cap:20000,storage:[0.1,10],pipes:1,name:'المنتجات الرقمية',flow:['pos','neutral','neutral','neutral'],status:'Draft',model:'Digital v1',golden:0,quality:68.0,sources:['csv']},
+    'vendor-master':{owners:['هالة سمير','عمر طارق'],tags:['Tier 1','مشتريات'],code:'VENDOR_MASTER',deployed:'2026-07-30 10:16',cap:2000,storage:[0.9,10],pipes:1,name:'Vendor Master',flow:['pos','pos','pos','crit'],status:'Deployed',model:'Vendor v2',golden:612,quality:89.4,sources:['s4']},
+    'authors':{owners:['سارة عادل'],tags:['حقوق','مؤرشف'],code:'AUTHOR_REGISTRY',deployed:'2025-12-01 10:21',cap:10000,storage:[2.1,10],pipes:1,name:'سجل المؤلفين',flow:['pos','pos','pos','neutral'],status:'Archived',model:'Author v1',golden:4210,quality:81.0,sources:['csv']}},
   sources: {
     c4c:{auth:'OAuth 2.0 (Communication User)',sched:'يومياً 02:00',owner:'محمد',name:'SAP C4C',type:'SAP Cloud for Customer (OData)',host:'my345678.crm.ondemand.com',sync:'2026-11-04 02:00',state:'pos',stateL:'نجحت المزامنة',schemas:{
       'sales':[
@@ -649,15 +656,20 @@ function sxCard(r,i){const R=D.repos[r],[hs,hl]=repoHealth(R),sel=selRepos.has(r
     <hr><div class="bd"><div>${st(hs,hl)}</div>
       <div>${R.deployed==='—'?'لم يُنشر بعد':'نُشر في '+ltr(R.deployed)}</div>
       <div><div class="cl">السجلات الذهبية:</div>${capbar(R.golden,R.cap,`${fmt(R.golden)} من ${fmt(R.cap)}`)}</div>
-      <div><div class="cl">التخزين:</div>${capbar(R.storage[0],R.storage[1],`${R.storage[0]} GB من ${R.storage[1]} GB`)}</div>
+      <div><div class="cl">المالكون:</div>${avGroup(R.owners)}</div>
+      <div><div class="cl">الوسوم:</div>${tagList(R.tags)}</div>
       <span class="chipx">${R.model}</span></div>
     <div class="ft"><span title="مصادر البيانات" style="gap:2px">${R.sources.map(x=>srcIcon(x,16)).join('')}</span><span title="الجداول">${svg('table',13)}${tables}</span><span title="خطوط الاستيراد">${svg('pipe',13)}${R.pipes}</span><button class="b b-std" data-act="edit">تعديل</button></div></div>`;}
+const AVC2=[['#DDCCF0','#6C32A9'],['#C2FCEE','#046C7A'],['#FFF3B8','#A45D00'],['#FFDBE7','#BA066C'],['#D1EFFF','#0057D2'],['#FFDCF3','#A100C2']];
+function avGroup(names,max=3){const ini=n=>n.split(' ').map(w=>w[0]).slice(0,2).join('');const col=n=>AVC2[[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%AVC2.length];
+  return `<span class="avg" role="img" aria-label="المالكون: ${names.map(esc).join('، ')}">${names.slice(0,max).map(n=>{const [b,f]=col(n);return `<span class="av" title="${esc(n)}" style="background:${b};color:${f}">${ini(n)}</span>`;}).join('')}${names.length>max?`<span class="more">+${names.length-max}</span>`:''}${names.length===1?`<span class="more" style="color:var(--fg)">${esc(names[0])}</span>`:''}</span>`;}
+function tagList(tags){return `<span class="tags">${tags.map(t=>`<span class="gtag neutral">${esc(t)}</span>`).join('')}</span>`;}
 function repoTable(list){const all=list.every(r=>selRepos.has(r));
   return `<div class="section"><div class="rt-bar"><h2 class="rt-title">المستودعات <span class="num">(${list.length})</span></h2><button class="b b-trans">إنشاء</button><button class="b b-trans" ${selRepos.size?'':'disabled'}>حذف</button>${RT_ICONS}</div>
-  <div class="twrap"><table class="rt"><thead><tr><th class="chk"><input type="checkbox" class="cb" data-rselall="1" ${all?'checked':''} aria-label="تحديد الكل"></th><th>المستودع</th><th>مصادر البيانات</th><th>نموذج البيانات</th><th class="end">السجلات الذهبية</th><th class="end">التخزين</th><th class="end">الجودة</th><th></th></tr></thead><tbody>
+  <div class="twrap"><table class="rt"><thead><tr><th class="chk"><input type="checkbox" class="cb" data-rselall="1" ${all?'checked':''} aria-label="تحديد الكل"></th><th>المستودع</th><th>مصادر البيانات</th><th>نموذج البيانات</th><th class="end">السجلات الذهبية</th><th>المالكون</th><th>الوسوم</th><th class="end">الجودة</th><th></th></tr></thead><tbody>
   ${list.map(r=>{const R=D.repos[r],[hs,hl]=repoHealth(R),qs=qState(R.quality);return rtRow({id:r,sel:selRepos.has(r),selAttr:'data-rsel',go:`repo:${r}`,title:R.code,desc:esc(R.name),
     pop:[['الحالة',st(hs,hl)],['تاريخ النشر',R.deployed==='—'?'لم يُنشر بعد':ltr(R.deployed)]],
-    cells:[`<td><span style="display:inline-flex;gap:4px">${R.sources.map(x=>`<span title="${esc(D.sources[x].name)}">${srcIcon(x,20)}</span>`).join('')}</span></td>`,`<td>${R.model}</td>`,`<td class="end">${R.golden?fmt(R.golden):'—'} <span class="sub">/ ${fmt(R.cap)}</span></td>`,`<td class="end">${ltr(R.storage[0]+' GB')} <span class="sub">/ ${R.storage[1]}</span></td>`,`<td class="end"><span class="st ${qs} num">${ltr(R.quality.toFixed(1)+'%')}</span></td>`]});}).join('')}
+    cells:[`<td><span style="display:inline-flex;gap:4px">${R.sources.map(x=>`<span title="${esc(D.sources[x].name)}">${srcIcon(x,20)}</span>`).join('')}</span></td>`,`<td>${R.model}</td>`,`<td class="end">${R.golden?fmt(R.golden):'—'} <span class="sub">/ ${fmt(R.cap)}</span></td>`,`<td>${avGroup(R.owners)}</td>`,`<td>${tagList(R.tags)}</td>`,`<td class="end"><span class="st ${qs} num">${ltr(R.quality.toFixed(1)+'%')}</span></td>`]});}).join('')}
   </tbody></table></div></div>`;}
 function miniDonut(H){const parts=[['pos','#30914C'],['crit','#E76500'],['neg','#F53232'],['info','#0070F2'],['neutral','#788FA6']];const tot=parts.reduce((a,[k])=>a+H[k],0)||1;const R=11,C=2*Math.PI*R;let off=0,g='';
   parts.forEach(([k,c])=>{if(!H[k])return;const len=C*H[k]/tot;g+=`<circle cx="15" cy="15" r="${R}" fill="none" stroke="${c}" stroke-width="6" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 15 15)"/>`;off+=len;});
@@ -667,7 +679,7 @@ function viewDomain(id){
   const list=d.repos.filter(r=>!spQ||D.repos[r].name.toLowerCase().includes(spQ.toLowerCase())||D.repos[r].code.toLowerCase().includes(spQ.toLowerCase()));
   const H={pos:0,crit:0,neg:0,info:0,neutral:0};d.repos.forEach(r=>H[repoHealth(D.repos[r])[0]]++);
   const gold=d.repos.reduce((a,r)=>a+D.repos[r].golden,0),cap=d.repos.reduce((a,r)=>a+D.repos[r].cap,0),lic=cap*1.5;
-  const su=d.repos.reduce((a,r)=>a+D.repos[r].storage[0],0),sc=d.repos.reduce((a,r)=>a+D.repos[r].storage[1],0),slic=sc*2;
+  const qavg=d.repos.reduce((a,r)=>a+D.repos[r].quality,0)/d.repos.length, owners=new Set(d.repos.flatMap(r=>D.repos[r].owners));
   const one=selRepos.size===1,any=selRepos.size>0;
   return `<section class="ph"><div class="ph-in" style="padding-bottom:12px">${crumbs()}
     <div class="oh-top"><div><h1 class="oh-title" tabindex="-1">${esc(d.name)}</h1><div class="oh-sub">دومين · ${d.en} · المالك: ${esc(d.owner)}</div></div></div></div></section>
@@ -681,8 +693,8 @@ function viewDomain(id){
       <div class="sx-cap">
         <div class="cap"><div class="cl">السجلات الذهبية المستخدمة ${ICON.info.replace('width="14" height="14"','width="12" height="12"').replace('<svg','<svg style="color:var(--fg2)"')}</div>${capbar(gold,cap,`${fmt(gold)} من ${fmt(cap)}`)}</div>
         <div class="cap"><div class="cl">السجلات الذهبية المخصصة</div>${capbar(cap,lic,`${fmt(cap)} من ${fmt(lic)}`)}</div>
-        <div class="cap"><div class="cl">التخزين المستخدم</div>${capbar(su,sc,`${su.toFixed(1)} GB من ${sc} GB`)}</div>
-        <div class="cap"><div class="cl">التخزين المخصص</div>${capbar(sc,slic,`${sc} GB من ${slic} GB`)}</div></div></div>
+        <div class="cap"><div class="cl">متوسط الجودة مقابل الهدف</div>${capbar(qavg,100,`${qavg.toFixed(1)}% · الهدف ${D.target}%`)}</div>
+        <div class="cap"><div class="cl">المالكون</div><div style="height:14px;display:flex;align-items:center">${avGroup([...owners],5)}</div></div></div></div>
     ${!list.length?'<div class="section"><div class="empty">لا توجد مستودعات مطابقة</div></div>':spView==='grid'?`<div class="sx-grid">${list.map(sxCard).join('')}</div>`:repoTable(list)}
   </main>`;
 }
