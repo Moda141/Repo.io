@@ -489,6 +489,10 @@ const D = {
       ['C-00140022','مكتبة النيل','أسيوط','+20 88 231 4455',null,'602-118-045','مكتبات','نشط','2022-02-17'],
       ['C-00151190','دار الشروق للتوزيع',null,'+20 2 2402 3399','sales@example.com','118-640-993','موزعون','نشط','2022-06-30'],
       ['C-00163377','مكتبة الإسكندرية الحديثة','الإسكندرية',null,null,'734-201-558','مكتبات','نشط','2023-04-12']],
+    dimDesc:{accuracy:'مطابقة القيم مع المصدر المرجعي (S/4HANA) وقواعد التسوية',completeness:'نسبة الحقول المطلوبة غير الفارغة',validity:'مطابقة الصيغ والقيم المسموح بها (الرقم الضريبي، الهاتف)',freshness:'عمر آخر تحديث مقارنة بالجدول المتفق عليه',uniqueness:'غياب السجلات المكررة بالمفتاح والمطابقة التقريبية'},
+    dimTests:{accuracy:2,completeness:1,validity:1,freshness:1,uniqueness:2},
+    colTerms:{CustomerID:'معرّف العميل',CustomerName:'اسم العميل',TaxID:'الرقم الضريبي',CustomerGroup:'التصنيف التجاري',Status:'عميل نشط'},
+    sensitivity:'سري — يحتوي بيانات شخصية', retention:'7 سنوات بعد آخر معاملة', updatedDesc:'2026-10-20',
     dq:{ // approved weighting (Accuracy 30, Completeness 25, Validity 20, Freshness 15, Uniqueness 10)
       dims:[['الدقة والمطابقة','accuracy',30,89.7],['الاكتمال','completeness',25,78.4],['الصلاحية والاتساق','validity',20,88.6],['الحداثة','freshness',15,99.0],['التفرد','uniqueness',10,82.1]],
       tests:[
@@ -790,35 +794,88 @@ function trendSvg(){const W=520,H=160,L=40,R=40,T=18,B=26;const vals=D.trend.map
   D.trend.forEach((t,i)=>{if(i%2===1||i===vals.length-1)g+=`<text x="${x(i)}" y="${H-8}" font-size="10" text-anchor="middle" fill="#556B82">${t[0]}</text>`;});
   g+=`<text x="${x(vals.length-1)}" y="${y(vals[vals.length-1])-9}" font-size="11" font-weight="600" text-anchor="middle" fill="#131E29">${vals[vals.length-1]}%</text>`;
   return `<svg class="trend" viewBox="0 0 ${W} ${H}" role="img" aria-label="درجة الجودة آخر 8 أيام، من ${vals[0]}% إلى ${vals[vals.length-1]}%">${g}</svg>`;}
-function tabDQ(T){const X=D.table.dq;
+function tabDQ(T){const X=D.table.dq,Y=D.table;
   const total=X.dims.reduce((a,d)=>a+d[2]*d[3],0)/100, qs=qState(total), dev=total-D.target, prev=D.trend[D.trend.length-2][1];
   const counts={all:X.tests.length,neg:0,crit:0,pos:0};X.tests.forEach(t=>counts[t[2]]++);
   const tests=X.tests.filter(t=>testFilter==='all'||t[2]===testFilter);
-  const cols=[...D.table.columns].sort((a,b)=>b[4]-a[4]);
-  return `<div class="dq-grid">
-  <div class="section"><div class="sec-h"><h2 class="sec-title">درجة الجودة</h2>${st(qs,qs==='pos'?'ضمن الهدف':'دون الهدف')}</div>
-    <div class="kpi-card"><div class="kpi-row"><div class="kpi-big st ${qs}" style="font-size:44px">${ltr(total.toFixed(1)+'<small style="font-size:18px">%</small>')}</div>
-      <div class="kpi-side"><span>الهدف</span><span>الانحراف</span><span>منذ أمس</span><span class="num">${D.target}%</span><span class="num st neg">${ltr((dev>0?'+':'−')+Math.abs(dev).toFixed(1))}</span><span class="num st pos">${ltr('+'+(total-prev).toFixed(1))}</span></div></div>
-      <div class="sub" style="margin-top:6px">آخر فحص ${ltr(T.prof)} · آخر 8 أيام</div>${trendSvg()}</div></div>
-  <div class="section"><div class="sec-h"><h2 class="sec-title">أبعاد الجودة</h2><span class="sub">الدرجة × الوزن = المساهمة</span></div>
-    <div class="dims">${X.dims.map(([l,k,w,v])=>{const s=qState(v);return `<div class="dim-t"><span class="nm">${l}</span>${ring(v,QCOL[s])}<span class="gtag neutral" style="font-size:11px">الوزن ${ltr(w+'%')}</span><span class="ct">يساهم بـ <b class="num" style="color:var(--fg)">${(w*v/100).toFixed(1)}</b> من ${w} نقطة</span></div>`;}).join('')}</div>
-    <p class="formula"><b>طريقة الحساب:</b> نموذج الجودة المعتمد — الدقة والمطابقة 30%، الاكتمال 25%، الصلاحية والاتساق 20%، الحداثة 15%، التفرد 10%. مجموع المساهمات = <b class="num">${total.toFixed(1)}%</b>. إذا لم تتوفر قياسات كافية لبُعد ما تظهر الدرجة "غير متاح — بيانات الجودة غير كافية" ولا تُحتسب.</p></div></div>
-  <div class="strip warn">${ICON.crit.replace('<svg','<svg style="color:var(--crit-el);flex:none;margin-top:2px"')}<span><b>أكبر فرصة للتحسين: الاكتمال.</b> عمودا Email وPhone فارغان في 37.8% و28.9% من الصفوف. و4,821 سجلاً مرشحاً للدمج — افتح <a href="#" onclick="return false">مرشحو الدمج</a>.</span></div>
-  <div class="dq-grid">
-  <div class="section"><div class="sec-h"><h2 class="sec-title">اكتمال الأعمدة</h2><span class="sub">نسبة القيم الفارغة، الأعلى أولاً</span></div>
-    <div class="cbars">${cols.map(c=>{const s=c[4]>20?'neg':c[4]>5?'crit':'pos';return `<div class="cbar"><span>${c[0]}${c[3]?' <span class="req">إلزامي</span>':''}</span><span class="tr" role="img" aria-label="${c[0]} فارغ ${c[4]}%"><i style="width:${Math.max(c[4],.6)}%;background:${QCOL[s]}"></i></span><span class="st ${s} num">${c[4].toFixed(1)}%</span></div>`;}).join('')}</div></div>
-  <div class="section tests"><div class="sec-h"><h2 class="sec-title">اختبارات الجودة</h2>
-    <span class="seg" role="group" aria-label="تصفية الاختبارات">${[['all','الكل',''],['neg','فشل',ICON.neg],['crit','تحذير',ICON.crit],['pos','نجح',ICON.pos]].map(([k,l,ic])=>`<button data-tf="${k}" aria-pressed="${testFilter===k}"><span class="st ${k==='all'?'':k}" style="gap:4px">${ic}${l}</span> <span class="cnt">${counts[k]}</span></button>`).join('')}</span></div>
-    <div class="twrap"><table><thead><tr><th>القاعدة</th><th>العمود</th><th>النتيجة</th><th class="end">صفوف فاشلة</th><th>آخر تشغيل</th></tr></thead><tbody>
-    ${tests.map(([r,c,s,f,d])=>`<tr><td class="rule">${esc(r)}</td><td><span class="chip">${esc(c)}</span></td><td>${st(s,{pos:'نجح',crit:'تحذير',neg:'فشل'}[s])}</td><td class="end">${f?`${fmt(f)} <span class="pct">(${(f/T.rows*100).toFixed(1)}%)</span>`:'—'}</td><td class="num">${ltr(d)}</td></tr>`).join('')}</tbody></table></div></div></div>`;}
-function tabDesc(){const X=D.table;
-  return `<div class="grid2"><div class="section"><div class="sec-h"><h2 class="sec-title">الوصف</h2><button class="b b-trans">تعديل</button></div><p class="prose">${esc(X.desc)}</p></div>
-  <div class="section"><div class="sec-h"><h2 class="sec-title">الحوكمة</h2></div><dl class="kv"><dt>المالك</dt><dd>${esc(X.owner)}</dd><dt>أمين البيانات</dt><dd>${esc(X.steward)}</dd>
-    <dt>مصطلحات المسرد</dt><dd style="display:flex;gap:6px;flex-wrap:wrap">${X.terms.map(t=>`<span class="gtag info">${esc(t)}</span>`).join('')}</dd>
-    <dt>الوسوم</dt><dd style="display:flex;gap:6px;flex-wrap:wrap">${X.tags.map(t=>`<span class="gtag neutral">${t}</span>`).join('')}</dd></dl></div></div>
-  <div class="section"><div class="sec-h"><h2 class="sec-title">الأعمدة <span class="sub num">(${X.columns.length})</span></h2></div>
-    <div class="twrap"><table><thead><tr><th>العمود</th><th>النوع</th><th>الوصف</th><th>إلزامي</th></tr></thead><tbody>
-    ${X.columns.map(c=>`<tr><td class="ttl">${c[0]}</td><td><span class="chip">${c[1]}</span></td><td>${esc(c[2])}</td><td>${c[3]?st('info','إلزامي'):'—'}</td></tr>`).join('')}</tbody></table></div></div>`;}
+  const cols=[...Y.columns].sort((a,b)=>b[4]-a[4]);
+  const RL={pos:'نجح',crit:'تحذير',neg:'فشل'};
+  return `
+  <section class="op-sec"><h2>ملخص الجودة</h2><div class="section" style="margin:0">
+    <div class="oh-body" style="padding:16px 16px 4px;margin:0">
+      <div class="facet"><div class="fl">درجة الجودة</div><div class="fv lg st ${qs}" style="font-size:28px">${ltr(total.toFixed(1)+'%')}</div></div>
+      <div class="facet"><div class="fl">الهدف</div><div class="fv lg">${ltr(D.target+'%')}</div></div>
+      <div class="facet"><div class="fl">الانحراف</div><div class="fv lg st neg">${ltr((dev>0?'+':'−')+Math.abs(dev).toFixed(1))}</div></div>
+      <div class="facet"><div class="fl">منذ أمس</div><div class="fv lg st pos">${ltr('+'+(total-prev).toFixed(1))}</div></div>
+      <div class="facet"><div class="fl">الاختبارات الفاشلة</div><div class="fv lg st neg">${counts.neg} <span class="sub">من ${counts.all}</span></div></div>
+      <div class="facet"><div class="fl">آخر فحص</div><div class="fv lg" style="font-size:16px;padding-top:4px">${ltr(T.prof)}</div></div>
+      <div class="facet"><div class="fl">الحالة</div><div class="fv" style="padding-top:4px">${st(qs,qs==='pos'?'ضمن الهدف':'دون الهدف')}</div></div></div>
+    <div style="padding:0 16px 12px;max-width:620px">${trendSvg()}</div>
+    <p class="formula"><b>طريقة الحساب:</b> النموذج المعتمد — الدقة والمطابقة 30%، الاكتمال 25%، الصلاحية والاتساق 20%، الحداثة 15%، التفرد 10%. الدرجة = مجموع (درجة البعد × وزنه). البعد الذي لا تتوفر له قياسات كافية يظهر "غير متاح — بيانات الجودة غير كافية" ولا يُحتسب.</p></div></section>
+
+  <div class="strip warn" style="margin-inline:0">${ICON.crit.replace('<svg','<svg style="color:var(--crit-el);flex:none;margin-top:2px"')}<span><b>أكبر فرصة للتحسين: الاكتمال.</b> عمودا Email وPhone فارغان في 37.8% و28.9% من الصفوف، و4,821 سجلاً مرشحاً للدمج. <a href="#" onclick="return false">افتح مرشحي الدمج</a></span></div>
+
+  <section class="op-sec"><h2>أبعاد الجودة</h2><div class="section" style="margin:0">
+    <div class="rt-bar"><h3 class="rt-title">الأبعاد <span class="num">(${X.dims.length})</span></h3><button class="b b-trans">تعديل الأوزان</button>${RT_ICONS}</div>
+    <div class="twrap"><table class="rt"><thead><tr><th class="chk"><input type="checkbox" class="cb" aria-label="تحديد الكل"></th><th>البعد</th><th class="end">الوزن</th><th class="end">الدرجة</th><th>مقابل الهدف</th><th class="end">المساهمة</th><th class="end">الاختبارات</th><th></th></tr></thead><tbody>
+    ${X.dims.map(([l,k,w,v])=>{const s2=qState(v);return rtRow({id:k,sel:false,selAttr:'data-dimsel',title:l,desc:esc(Y.dimDesc[k]),
+      pop0:[['الاختبارات المرتبطة',String(Y.dimTests[k])],['آخر قياس',ltr(T.prof)]],
+      cells:[`<td class="end num">${ltr(w+'%')}</td>`,`<td class="end"><span class="st ${s2} num">${ltr(v.toFixed(1)+'%')}</span></td>`,
+        `<td style="min-width:160px"><span class="mbar" style="display:block;margin:6px 0"><i style="width:${v}%;background:${QCOL[s2]}"></i><b style="inset-inline-start:${D.target}%"></b></span></td>`,
+        `<td class="end num">${ltr((w*v/100).toFixed(1))} <span class="sub">/ ${w}</span></td>`,`<td class="end num">${Y.dimTests[k]}</td>`]});}).join('')}
+    </tbody></table></div></div></section>
+
+  <section class="op-sec"><h2>اختبارات الجودة</h2><div class="section tests" style="margin:0">
+    <div class="rt-bar"><h3 class="rt-title">الاختبارات <span class="num">(${tests.length})</span></h3>
+      <span class="seg" role="group" aria-label="تصفية الاختبارات">${[['all','الكل',''],['neg','فشل',ICON.neg],['crit','تحذير',ICON.crit],['pos','نجح',ICON.pos]].map(([k,l,ic])=>`<button data-tf="${k}" aria-pressed="${testFilter===k}"><span class="st ${k==='all'?'':k}" style="gap:4px">${ic}${l}</span> <span class="cnt">${counts[k]}</span></button>`).join('')}</span>
+      <button class="b b-trans">إضافة قاعدة</button><button class="b b-trans">تشغيل الكل</button>${RT_ICONS}</div>
+    <div class="twrap"><table class="rt"><thead><tr><th class="chk"><input type="checkbox" class="cb" aria-label="تحديد الكل"></th><th>القاعدة</th><th>العمود</th><th>النتيجة</th><th class="end">صفوف فاشلة</th><th class="end">النسبة</th><th>آخر تشغيل</th><th></th></tr></thead><tbody>
+    ${tests.length?tests.map(([r,c,s2,f,d],n)=>rtRow({id:'t'+n,sel:false,selAttr:'data-tsel2',title:esc(r),desc:'قاعدة '+(c.includes(',')?'مطابقة':'تحقق'),
+      pop0:[['النتيجة',st(s2,RL[s2])],['آخر تشغيل',ltr(d)]],
+      cells:[`<td>${c.split(',').map(x=>`<span class="chip" style="margin-inline-end:4px">${esc(x.trim())}</span>`).join('')}</td>`,`<td>${st(s2,RL[s2])}</td>`,`<td class="end num">${f?fmt(f):'—'}</td>`,`<td class="end num">${f?ltr((f/T.rows*100).toFixed(1)+'%'):'—'}</td>`,`<td class="num">${ltr(d)}</td>`]})).join(''):`<tr><td colspan="8" class="empty">لا توجد اختبارات بهذه النتيجة</td></tr>`}
+    </tbody></table></div></div></section>
+
+  <section class="op-sec"><h2>اكتمال الأعمدة</h2><div class="section" style="margin:0">
+    <div class="rt-bar"><h3 class="rt-title">الأعمدة <span class="num">(${cols.length})</span></h3><span class="sub">مرتبة حسب نسبة القيم الفارغة</span>${RT_ICONS}</div>
+    <div class="twrap"><table class="rt"><thead><tr><th class="chk"><input type="checkbox" class="cb" aria-label="تحديد الكل"></th><th>العمود</th><th>النوع</th><th>إلزامي</th><th class="end">الفارغ</th><th style="min-width:200px">الاكتمال</th><th></th></tr></thead><tbody>
+    ${cols.map(c=>{const s2=c[4]>20?'neg':c[4]>5?'crit':'pos';return rtRow({id:c[0],sel:false,selAttr:'data-csel',title:c[0],desc:esc(c[2]),
+      pop0:[['إلزامي',c[3]?'نعم':'لا'],['الحالة',st(s2,s2==='pos'?'مكتمل':s2==='crit'?'ناقص جزئياً':'ناقص')]],
+      cells:[`<td><span class="chip">${c[1]}</span></td>`,`<td>${c[3]?'نعم':'لا'}</td>`,`<td class="end"><span class="st ${s2} num">${ltr(c[4].toFixed(1)+'%')}</span></td>`,
+        `<td><span class="mbar" style="display:block;margin:6px 0"><i style="width:${(100-c[4]).toFixed(1)}%;background:${QCOL[s2]}"></i></span></td>`]});}).join('')}
+    </tbody></table></div></div></section>`;}
+
+function tabDesc(){const X=D.table, T=findTable(path[path.length-1].src,path[path.length-1].schema,path[path.length-1].id);
+  const S=D.sources[path[path.length-1].src], R=D.repos[path[1].id], dom=D.domains.find(d=>d.id===path[0].id);
+  return `
+  <section class="op-sec"><h2>الوصف</h2><div class="section" style="margin:0">
+    <div class="sec-h"><span class="sub">آخر تحديث للوصف ${ltr(X.updatedDesc)} · بواسطة ${esc(X.steward)}</span><button class="b b-trans">تعديل الوصف</button></div>
+    <p class="prose">${esc(X.desc)}</p></div></section>
+
+  <section class="op-sec"><h2>معلومات عامة</h2><div class="section" style="margin:0"><div class="gi2">
+    <div class="grp"><h3>الملكية</h3>
+      <div class="f"><div class="fl">المالك</div><div class="fv">${avGroup([X.owner])}</div></div>
+      <div class="f"><div class="fl">أمين البيانات</div><div class="fv">${avGroup([X.steward])}</div></div>
+      <div class="f"><div class="fl">الدومين</div><div class="fv"><a href="#" onclick="return false">${esc(dom.name)}</a></div></div>
+      <div class="f"><div class="fl">المستودع</div><div class="fv"><a href="#" onclick="return false">${esc(R.name)}</a></div></div>
+      <div class="f"><div class="fl">مصدر البيانات</div><div class="fv" style="display:flex;align-items:center;gap:6px">${srcIcon(path[path.length-1].src,18)} ${esc(S.name)}</div></div>
+      <div class="f"><div class="fl">Schema</div><div class="fv">${esc(path[path.length-1].schema)}</div></div></div>
+    <div class="grp"><h3>التصنيف والحوكمة</h3>
+      <div class="f" style="grid-column:1/-1"><div class="fl">مصطلحات المسرد</div><div class="fv tags" style="margin-top:4px">${X.terms.map(t=>`<span class="gtag info">${esc(t)}</span>`).join('')}</div></div>
+      <div class="f"><div class="fl">الوسوم</div><div class="fv">${tagList(X.tags)}</div></div>
+      <div class="f"><div class="fl">مستوى الحساسية</div><div class="fv">${st('crit',X.sensitivity)}</div></div>
+      <div class="f"><div class="fl">مدة الاحتفاظ</div><div class="fv">${esc(X.retention)}</div></div>
+      <div class="f"><div class="fl">الصفوف / الأعمدة</div><div class="fv num">${fmt(T.rows)} / ${T.cols}</div></div></div></div></div></section>
+
+  <section class="op-sec"><h2>الأعمدة</h2><div class="section" style="margin:0">
+    <div class="rt-bar"><h3 class="rt-title">الأعمدة <span class="num">(${X.columns.length})</span></h3>
+      <label class="tsearch" style="width:240px"><input placeholder="بحث" aria-label="بحث في الأعمدة">${SEARCH_IC}</label>
+      <button class="b b-trans">ربط بمصطلح</button><button class="b b-trans">تعديل الأوصاف</button>${RT_ICONS}</div>
+    <div class="twrap"><table class="rt"><thead><tr><th class="chk"><input type="checkbox" class="cb" aria-label="تحديد الكل"></th><th>العمود</th><th>النوع</th><th>إلزامي</th><th>مصطلح المسرد</th><th class="end">الفارغ</th><th></th></tr></thead><tbody>
+    ${X.columns.map(c=>{const s2=c[4]>20?'neg':c[4]>5?'crit':'pos';const term=X.colTerms[c[0]];return rtRow({id:c[0],sel:false,selAttr:'data-colsel',title:c[0],desc:esc(c[2]),
+      pop0:[['إلزامي',c[3]?st('info','إلزامي'):'لا'],['مفتاح',c[0]==='CustomerID'?'مفتاح أساسي':'—']],
+      cells:[`<td><span class="chip">${c[1]}</span>${c[0]==='CustomerID'?' <span class="sub">مفتاح</span>':''}</td>`,`<td>${c[3]?st('info','إلزامي'):'لا'}</td>`,`<td>${term?`<span class="gtag info">${esc(term)}</span>`:'<span class="sub">غير مربوط</span>'}</td>`,`<td class="end"><span class="st ${s2} num">${ltr(c[4].toFixed(1)+'%')}</span></td>`]});}).join('')}
+    </tbody></table></div></div></section>`;}
+
 function tabLineage(){const L=D.table.lineage;
   return `<div class="section"><div class="sec-h"><h2 class="sec-title">الـ Lineage</h2><span class="sub">من المصدر إلى السجل الذهبي والتقارير</span></div>
   <div class="lin"><div class="lin-cols" id="lin">${L.map((col,ci)=>`<div class="lin-col"><div class="lin-h">${col.h}</div>${col.nodes.map((n,ni)=>`<div class="node ${n.current?'current':''} ${n.st||''}" data-n="${ci}-${ni}"><div class="nh">${n.src?srcIcon(n.src,16):svg(n.i,14)}<span>${esc(n.t)}</span>${n.st?ICON[n.st].replace('<svg','<svg style="color:'+QCOL[n.st]+';margin-inline-start:auto"'):''}</div><div class="nb">${n.kv.map(([k,v])=>`<span>${k}</span><b>${esc(v)}</b>`).join('')}</div></div>`).join('')}</div>`).join('')}
