@@ -19,6 +19,12 @@ Before building or changing a page:
 | 01 | Home | `/home` | Overview Page (node `53:7537`) | `sap-s4hana/01-overview-page.svg` | `prototypes/01-home-overview.html` (screenshots: `01-home-implemented.{ar,en}.png`) | Approved 2026-11-03, implemented |
 | 02 | Domains (Domain → Repositories → Data Sources → Table) | `/domains` (planned) | Domains: **Analytical List Page** (visual filters + column chart + Responsive Table) · Repositories: **Spaces page** · Data Sources: **Multi Instance Object Page** with anchor bar · Table: Object Page with tabs | `sap-s4hana/patterns/analytical-list-page.png`, `responsive-table.png`, `spaces-page.png`, `object-page-instance.png`, `multi-instance.png` | `prototypes/02-domains.html` | Prototype — waiting for approval |
 
+`prototypes/00-clickable-prototype.html` is the combined click-through: Home with
+the Domains prototype embedded. Open Domains from the navigation menu (مساحاتي ›
+الدومينات, the entity items, or All Spaces), the "مصادر البيانات" quick link, or the
+domain owner card; the logo or ☰ in Domains returns to Home. Rebuild it whenever
+01 or 02 changes.
+
 Add a row per page as it is approved. Number SAP exports and prototypes with the
 same prefix as the row.
 
