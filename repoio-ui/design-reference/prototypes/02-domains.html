@@ -156,6 +156,97 @@ tr.grp[aria-expanded="false"] .gchev{transform:rotate(90deg)}
 .node.pos{border-color:var(--pos-el)} .node.crit{border-color:var(--crit-el)}
 .lin svg.edges{position:absolute;inset:0;pointer-events:none;overflow:visible}
 
+/* Responsive Table (responsive-table) */
+.rt-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;flex-wrap:wrap}
+.rt-bar .rt-title{font-size:15px;font-weight:700;margin:0;margin-inline-end:auto}
+.rt-ic{width:26px;height:26px;border:0;border-radius:8px;background:none;color:var(--brand);display:grid;place-items:center;cursor:pointer}
+.rt-ic:hover{background:var(--hover)}
+.rt-sep{width:1px;height:18px;background:var(--line2)}
+.b:disabled{opacity:.4;cursor:default;background:none}
+table.rt td{height:auto;padding-block:8px;vertical-align:top}
+table.rt th{height:36px}
+table.rt td.chk,table.rt th.chk{width:36px;padding-inline:12px 0}
+table.rt tr{border-inline-start:0}
+table.rt tbody tr{cursor:pointer;box-shadow:none}
+table.rt tbody tr:hover td{background:var(--hover)}
+table.rt tbody tr.sel td{background:var(--sel)}
+table.rt tbody tr.sel td:first-child{box-shadow:inset -4px 0 0 var(--brand-strong)}
+.cb{width:16px;height:16px;margin:2px 0 0;accent-color:var(--brand-strong);cursor:pointer}
+.oid .n{font-weight:700;color:var(--brand)}
+.oid .d{font-size:12px;color:var(--fg2);margin-top:2px}
+.popin{margin-top:8px;display:grid;gap:6px;font-size:12px}
+.popin .pl{color:var(--fg2)}
+.rowact{display:flex;gap:2px;justify-content:flex-end;align-items:center;white-space:nowrap}
+.rowact .go{color:var(--icon);display:grid;place-items:center;width:22px}
+.rowact .go svg{transform:scaleX(-1)}
+.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));inset-inline-start:50%;transform:translateX(50%);z-index:95;background:#1D2D3E;color:#fff;border-radius:8px;padding:8px 14px;font-size:13px;display:flex;gap:12px;align-items:center;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.toast button{border:0;background:none;color:#89D1FF;font:inherit;font-weight:600;cursor:pointer}
+
+/* Spaces page (SAP Datasphere Spaces) */
+.sp-sum{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 16px;background:#fff;border-radius:16px;box-shadow:var(--shadow);margin-bottom:16px}
+.sp-count{display:flex;align-items:center;gap:12px;font-size:14px;flex-wrap:wrap}
+.sp-count b{font-size:18px;font-variant-numeric:tabular-nums}
+.sp-count .k{display:inline-flex;align-items:center;gap:4px;font-size:16px;font-variant-numeric:tabular-nums}
+.sp-cap{display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:12px;flex:1;min-width:280px}
+.cap .cl{font-size:12px;color:var(--fg2);margin-bottom:3px}
+.capbar{position:relative;height:14px;border-radius:7px;background:#EFF1F2;box-shadow:inset 0 0 0 1px #A8B3BD;overflow:hidden}
+.capbar i{display:block;height:100%;background:#354A5E}
+.capbar i{position:absolute;inset-block:0;inset-inline-start:0}
+.capbar span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#131E29;font-variant-numeric:tabular-nums;white-space:nowrap}
+.capbar span.on{color:#fff;background:#354A5E}
+.sp-charts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:16px;margin-bottom:16px}
+.donut-wrap{display:flex;align-items:center;gap:20px;padding:4px 16px 16px;flex-wrap:wrap}
+.legend{display:grid;gap:8px;font-size:13px}
+.legend span{display:flex;align-items:center;gap:8px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.hbars{padding:4px 16px 16px;display:grid;gap:10px}
+.hb{display:grid;grid-template-columns:140px 1fr 56px;gap:10px;align-items:center;font-size:13px}
+.hb .tr{position:relative;height:16px;background:#EFF1F2;border-radius:3px}
+.hb .tr i{position:absolute;inset-block:0;inset-inline-start:0;border-radius:3px}
+.hb .tr b{position:absolute;top:-4px;bottom:-4px;width:2px;background:#256F3A}
+.sp-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.sp-tools .grow{flex:1}
+.sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.space{background:#fff;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;cursor:pointer;min-width:0;transition:box-shadow .15s}
+.space:hover{box-shadow:var(--shadow)}
+.space.sel{border-color:var(--brand-strong);box-shadow:0 0 0 1px var(--brand-strong)}
+.space:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.space .h{display:flex;gap:8px;align-items:flex-start;padding:12px 12px 4px}
+.space .h .t{flex:1;min-width:0}
+.space .code{font-weight:700;font-size:14px;direction:ltr;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.space .nm{font-size:12px;color:var(--fg2);margin-top:2px}
+.space .bd{padding:6px 12px;display:grid;gap:8px;font-size:12px}
+.space .bd .cl{color:var(--fg2);margin-bottom:3px}
+.space .ft{display:flex;align-items:center;gap:12px;padding:8px 12px;border-top:1px solid var(--line);margin-top:auto;font-size:12px;color:var(--fg2)}
+.space .ft span{display:inline-flex;align-items:center;gap:4px;font-variant-numeric:tabular-nums}
+.space .ft .b{margin-inline-start:auto}
+.ltag{display:inline-flex;align-items:center;height:22px;padding-inline:8px;border:1px solid #A8B3BD;border-radius:4px;background:#F5F6F7;font-size:12px;width:max-content}
+.sp-list .space{flex-direction:row;align-items:center}
+
+/* Multi Instance (instance tabs) */
+.inst{background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:stretch;gap:2px;overflow-x:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.itab{display:flex;align-items:center;gap:8px;height:40px;padding-inline:12px 6px;border:0;border-bottom:3px solid transparent;background:none;color:var(--fg);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.itab:hover{background:var(--hover)}
+.itab[aria-selected="true"]{border-bottom-color:var(--brand-strong);font-weight:700}
+.itab svg{color:var(--icon)}
+.itab .x{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;color:var(--fg2)}
+.itab .x:hover{background:var(--active);color:var(--fg)}
+.iadd{position:relative;display:flex;align-items:center}
+.iadd>button{width:32px;height:32px;margin-block:4px;border:0;border-radius:8px;background:none;color:var(--brand);cursor:pointer;display:grid;place-items:center}
+.iadd>button:hover{background:var(--hover)}
+.imenu{position:fixed;z-index:80;min-width:220px;background:#fff;border:1px solid var(--pop-bd);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.15);padding:4px}
+.imenu button{display:flex;align-items:center;gap:8px;width:100%;height:32px;padding-inline:8px;border:0;border-radius:6px;background:none;color:var(--fg);font:inherit;font-size:13px;cursor:pointer;text-align:start}
+.imenu button:hover{background:var(--hover)}
+.imenu .none{padding:8px;color:var(--fg2);font-size:13px}
+.gi{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 32px;padding:4px 16px 16px}
+.gi h3{font-size:14px;margin:4px 0 6px;grid-column:span 1}
+.gi .grp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px;align-content:start}
+.gi .grp .ttl3{grid-column:1/-1;font-weight:700;font-size:14px;margin-top:4px}
+.gi .f .fl{font-size:12px;color:var(--fg2)} .gi .f .fv{font-size:13px;margin-top:2px}
+.ill{display:flex;flex-direction:column;align-items:center;gap:8px;padding:56px 16px;text-align:center;color:var(--fg2)}
+.ill h3{margin:0;color:var(--fg);font-size:18px}
+@media (max-width:900px){.sp-charts{grid-template-columns:1fr}.sp-cap{grid-template-columns:1fr}.gi,.gi .grp{grid-template-columns:1fr}}
+
 /* Segmented button (segmented-button.svg) */
 .seg{display:inline-flex;border:1px solid #BCC3CA;border-radius:8px;overflow:hidden;background:#fff}
 .seg button{height:26px;padding-inline:10px;border:0;background:none;color:var(--brand);font:inherit;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
@@ -258,20 +349,20 @@ const D = {
   trend:[["10/28",82.1],["10/29",83.4],["10/30",84.0],["10/31",85.2],["11/01",84.7],["11/02",86.1],["11/03",86.9],["11/04",87.3]],
   target:95,
   domains: [
-    {id:'customers',name:'العملاء',en:'Customer',color:'#0070F2',desc:'بيانات العملاء والموزعين والمدارس والمكتبات التي تتعامل مع المجموعة.',owner:'محمد',repos:['customer-master','distribution','schools']},
-    {id:'products',name:'المنتجات',en:'Product',color:'#30914C',desc:'الكتب والمطبوعات والمنتجات الرقمية مع بيانات ISBN والتسعير.',owner:'كريم فوزي',repos:['catalog','digital']},
-    {id:'vendors',name:'الموردون',en:'Vendor',color:'#E76500',desc:'المطابع وموردو الورق والخدمات.',owner:'هالة سمير',repos:['vendor-master']},
-    {id:'authors',name:'المؤلفون والحقوق',en:'Author & Rights',color:'#7858FF',desc:'المؤلفون والمترجمون وعقود الحقوق والإتاوات.',owner:'سارة عادل',repos:['authors']}],
+    {id:'customers',updated:'2026-11-04',name:'العملاء',en:'Customer',color:'#0070F2',desc:'بيانات العملاء والموزعين والمدارس والمكتبات التي تتعامل مع المجموعة.',owner:'محمد',repos:['customer-master','distribution','schools']},
+    {id:'products',updated:'2026-11-03',name:'المنتجات',en:'Product',color:'#30914C',desc:'الكتب والمطبوعات والمنتجات الرقمية مع بيانات ISBN والتسعير.',owner:'كريم فوزي',repos:['catalog','digital']},
+    {id:'vendors',updated:'2026-10-30',name:'الموردون',en:'Vendor',color:'#E76500',desc:'المطابع وموردو الورق والخدمات.',owner:'هالة سمير',repos:['vendor-master']},
+    {id:'authors',updated:'2026-09-14',name:'المؤلفون والحقوق',en:'Author & Rights',color:'#7858FF',desc:'المؤلفون والمترجمون وعقود الحقوق والإتاوات.',owner:'سارة عادل',repos:['authors']}],
   repos: {
-    'customer-master':{name:'Customer Master',flow:['pos','pos','crit','pos'],status:'Deployed',model:'Customer v3',golden:951247,quality:87.3,sources:['c4c','s4','csv']},
-    'distribution':{name:'شركاء التوزيع',flow:['pos','pos','pos','pos'],status:'Deployed',model:'Partner v1',golden:1840,quality:91.2,sources:['s4']},
-    'schools':{name:'حسابات المدارس',flow:['pos','crit','neutral','neutral'],status:'Draft',model:'School v1',golden:0,quality:72.5,sources:['csv']},
-    'catalog':{name:'كتالوج الكتب',flow:['pos','pos','pos','pos'],status:'Deployed',model:'Book v2',golden:38500,quality:96.2,sources:['s4','csv']},
-    'digital':{name:'المنتجات الرقمية',flow:['pos','neutral','neutral','neutral'],status:'Draft',model:'Digital v1',golden:0,quality:68.0,sources:['csv']},
-    'vendor-master':{name:'Vendor Master',flow:['pos','pos','pos','crit'],status:'Deployed',model:'Vendor v2',golden:612,quality:89.4,sources:['s4']},
-    'authors':{name:'سجل المؤلفين',flow:['pos','pos','pos','neutral'],status:'Archived',model:'Author v1',golden:4210,quality:81.0,sources:['csv']}},
+    'customer-master':{code:'CUSTOMER_MASTER',deployed:'2026-10-02 10:19',cap:1500000,storage:[42.6,100],pipes:4,name:'Customer Master',flow:['pos','pos','crit','pos'],status:'Deployed',model:'Customer v3',golden:951247,quality:87.3,sources:['c4c','s4','csv']},
+    'distribution':{code:'DISTRIBUTION_PARTNERS',deployed:'2026-09-21 10:23',cap:5000,storage:[1.2,10],pipes:1,name:'شركاء التوزيع',flow:['pos','pos','pos','pos'],status:'Deployed',model:'Partner v1',golden:1840,quality:91.2,sources:['s4']},
+    'schools':{code:'SCHOOL_ACCOUNTS',deployed:'—',cap:20000,storage:[0.3,10],pipes:1,name:'حسابات المدارس',flow:['pos','crit','neutral','neutral'],status:'Draft',model:'School v1',golden:0,quality:72.5,sources:['csv']},
+    'catalog':{code:'BOOK_CATALOG',deployed:'2026-08-11 10:14',cap:100000,storage:[6.8,50],pipes:2,name:'كتالوج الكتب',flow:['pos','pos','pos','pos'],status:'Deployed',model:'Book v2',golden:38500,quality:96.2,sources:['s4','csv']},
+    'digital':{code:'DIGITAL_PRODUCTS',deployed:'—',cap:20000,storage:[0.1,10],pipes:1,name:'المنتجات الرقمية',flow:['pos','neutral','neutral','neutral'],status:'Draft',model:'Digital v1',golden:0,quality:68.0,sources:['csv']},
+    'vendor-master':{code:'VENDOR_MASTER',deployed:'2026-07-30 10:16',cap:2000,storage:[0.9,10],pipes:1,name:'Vendor Master',flow:['pos','pos','pos','crit'],status:'Deployed',model:'Vendor v2',golden:612,quality:89.4,sources:['s4']},
+    'authors':{code:'AUTHOR_REGISTRY',deployed:'2025-12-01 10:21',cap:10000,storage:[2.1,10],pipes:1,name:'سجل المؤلفين',flow:['pos','pos','pos','neutral'],status:'Archived',model:'Author v1',golden:4210,quality:81.0,sources:['csv']}},
   sources: {
-    c4c:{name:'SAP C4C',type:'SAP Cloud for Customer (OData)',host:'my345678.crm.ondemand.com',sync:'2026-11-04 02:00',state:'pos',stateL:'نجحت المزامنة',schemas:{
+    c4c:{auth:'OAuth 2.0 (Communication User)',sched:'يومياً 02:00',owner:'محمد',name:'SAP C4C',type:'SAP Cloud for Customer (OData)',host:'my345678.crm.ondemand.com',sync:'2026-11-04 02:00',state:'pos',stateL:'نجحت المزامنة',schemas:{
       'sales':[
         {id:'customer',name:'Customer',rows:951247,cols:42,q:87.3,prof:'2026-11-04 06:00'},
         {id:'customer_address',name:'CustomerAddress',rows:1204511,cols:18,q:79.6,prof:'2026-11-04 06:00'},
@@ -279,11 +370,12 @@ const D = {
       'master':[
         {id:'sales_area',name:'SalesArea',rows:54,cols:9,q:98.1,prof:'2026-11-04 06:00'},
         {id:'territory',name:'Territory',rows:212,cols:11,q:94.8,prof:'2026-11-04 06:00'}]}},
-    s4:{name:'SAP S/4HANA',type:'SAP S/4HANA (CDS views)',host:'s4prd.nahdetmisr.local',sync:'2026-11-04 01:30',state:'crit',stateL:'مزامنة جزئية',schemas:{
+    s4:{auth:'Basic (RFC user)',sched:'يومياً 01:30',owner:'كريم فوزي',name:'SAP S/4HANA',type:'SAP S/4HANA (CDS views)',host:'s4prd.nahdetmisr.local',sync:'2026-11-04 01:30',state:'crit',stateL:'مزامنة جزئية',schemas:{
       'sd':[{id:'kna1',name:'KNA1 — Customer General',rows:948120,cols:86,q:83.9,prof:'2026-11-04 05:00'},{id:'knvv',name:'KNVV — Sales Data',rows:1102340,cols:64,q:88.2,prof:'2026-11-04 05:00'}],
       'mm':[{id:'mara',name:'MARA — Material',rows:41230,cols:120,q:92.7,prof:'2026-11-04 05:00'}]}},
-    csv:{name:'رفع ملفات CSV',type:'Excel / CSV upload',host:'—',sync:'2026-11-02 14:12',state:'neutral',stateL:'يدوي',schemas:{
+    csv:{auth:'—',sched:'يدوي',owner:'سارة عادل',name:'رفع ملفات CSV',type:'Excel / CSV upload',host:'—',sync:'2026-11-02 14:12',state:'neutral',stateL:'يدوي',schemas:{
       'uploads':[{id:'school_list',name:'school_list_2026.csv',rows:3820,cols:14,q:72.5,prof:'2026-11-02 14:15'}]}}},
+  runs:[['RUN-20261104-0200','2026-11-04 02:00','6د 12ث',18240,'pos'],['RUN-20261103-0200','2026-11-03 02:00','5د 58ث',17105,'pos'],['RUN-20261102-0200','2026-11-02 02:00','7د 40ث',22390,'crit'],['RUN-20261101-0200','2026-11-01 02:00','6د 03ث',16820,'pos'],['RUN-20261031-0200','2026-10-31 02:00','—',0,'neg']],
   /* Table detail (only "Customer" is fully filled; others reuse it with their own header) */
   table: {
     desc:'سجل العميل الرئيسي كما يأتي من SAP C4C (كيان BusinessPartner بدور Customer). هو المصدر المعتمد لاسم العميل وتصنيفه وبيانات الاتصال الأساسية، ويُستخدم لبناء السجل الذهبي في مستودع Customer Master.',
@@ -351,10 +443,11 @@ const REPO_ST={Deployed:['pos','منشور'],Draft:['info','مسودة'],Archive
 let domView='cards';
 
 /* ───────────── Navigation state ───────────── */
-let path=[]; // e.g. [{k:'domain',id}, {k:'repo',id}, {k:'source',id}, {k:'table',schema,id}]
+let path=[]; // [{k:'domain',id}, {k:'repo',id}, {k:'table',src,schema,id}]
+const openSrc={}, activeSrc={}; let srcTab='tables', selDomains=new Set(), selRepos=new Set(), spView='grid', toastUndo=null;
 let tab='sample', headerCollapsed=false, domQ='', domOwner='';
 const app=document.getElementById('app');
-function go(p,opts={}){path=p; if(!opts.keepTab)tab='sample'; headerCollapsed=false; render(); window.scrollTo(0,0); (app.querySelector('h1')||app).focus?.();}
+function go(p,opts={}){path=p;crumbParts=[]; if(!opts.keepTab)tab='sample'; headerCollapsed=false; render(); window.scrollTo(0,0); (app.querySelector('h1')||app).focus?.();}
 document.getElementById('backBtn').onclick=()=>{if(path.length)go(path.slice(0,-1));};
 document.getElementById('homeLink').onclick=e=>{e.preventDefault();go([]);};
 
@@ -362,33 +455,31 @@ function crumbs(){
   const parts=[{l:'الدومينات',p:[]}];
   path.forEach((x,i)=>{const p=path.slice(0,i+1);
     if(x.k==='domain')parts.push({l:D.domains.find(d=>d.id===x.id).name,p});
-    if(x.k==='repo')parts.push({l:D.repos[x.id].name,p});
-    if(x.k==='source')parts.push({l:D.sources[x.id].name,p});
-    if(x.k==='table')parts.push({l:x.schema+' / '+findTable(path[2].id,x.schema,x.id).name,p});});
+    if(x.k==='repo'){parts.push({l:D.repos[x.id].name,p});if(i===path.length-1&&activeSrc[x.id])parts.push({l:D.sources[activeSrc[x.id]].name,p});}
+    if(x.k==='table'){parts.push({l:D.sources[x.src].name,p:path.slice(0,i),src:x.src});parts.push({l:x.schema+' / '+findTable(x.src,x.schema,x.id).name,p});}});
   return `<nav class="crumbs" aria-label="مسار التنقل">${parts.map((c,i)=>i<parts.length-1?`<button data-crumb="${i}">${esc(c.l)}</button><span class="slash">/</span>`:`<span aria-current="page">${esc(c.l)}</span>`).join('')}</nav>`;
 }
+let crumbParts=[];
 function findTable(src,schema,id){return D.sources[src].schemas[schema].find(t=>t.id===id);}
 
 function handle(){return `<div class="handle"><button data-act="collapse" aria-label="${headerCollapsed?'توسيع الرأس':'طي الرأس'}" aria-expanded="${!headerCollapsed}"><svg class="ch" width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6-6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button><button aria-label="تثبيت الرأس"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M14 3l7 7-3 1-4 4 1 4-1 1-4-4-5 5M8 11l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>`;}
 
-/* ───────────── Level 0: Domains (List Report — Object Cards / table) ───────────── */
+/* ───────────── Level 0: Domains (Responsive Table) ───────────── */
 function domainStats(d){let golden=0,q=0,srcs=new Set();d.repos.forEach(r=>{const R=D.repos[r];golden+=R.golden;q+=R.quality;R.sources.forEach(s=>srcs.add(s));});return {golden,q:q/d.repos.length,sources:srcs.size};}
-function domainCard(d,i){const s=domainStats(d),qs=qState(s.q),[ab,af]=AVC[i%AVC.length];
-  return `<button class="ocard" data-go="domain:${d.id}" aria-label="${esc(d.name)}: ${d.repos.length} مستودعات، الجودة ${s.q.toFixed(1)}%">
-    <div class="oc-h"><span class="oc-ic" style="background:${d.color}">${svg('folder',20)}</span><span class="oc-t"><div class="oc-title">${esc(d.name)}</div><div class="oc-sub">${d.en}</div></span>${st(qs,qs==='pos'?'ضمن الهدف':'دون الهدف')}</div>
-    <div class="oc-desc">${esc(d.desc)}</div>
-    <div class="oc-kpi"><div><div class="lbl">متوسط الجودة</div><div class="big st ${qs}" style="font-size:28px">${ltr(s.q.toFixed(1)+'<small style="font-size:14px">%</small>')}</div></div>
-      <div class="mbar" title="الهدف ${D.target}%"><i style="width:${s.q}%;background:${QCOL[qs]}"></i><b style="inset-inline-start:${D.target}%"></b></div></div>
-    <div class="oc-facts"><div><div class="fl">المستودعات</div><div class="fv">${d.repos.length}</div></div><div><div class="fl">المصادر</div><div class="fv">${s.sources}</div></div><div><div class="fl">سجلات ذهبية</div><div class="fv">${fmt(s.golden)}</div></div></div>
-    <div class="oc-foot"><span class="av" style="background:${ab};color:${af}">${initials(d.owner)}</span><span>${esc(d.owner)}</span><span class="more">المستودعات ${GO}</span></div></button>`;}
+const RT_ICONS=`<span class="rt-sep"></span>
+  <button class="rt-ic" aria-label="نسخ"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M4 16V5a1 1 0 0 1 1-1h11" stroke="currentColor" stroke-width="1.6"/></svg></button>
+  <button class="rt-ic" aria-label="إعدادات الجدول"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+  <button class="rt-ic" aria-label="تصدير"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4M12 4v11M7 10l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+  <span class="rt-sep"></span>
+  <button class="rt-ic" aria-label="ملء الشاشة"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>`;
+const EDIT_IC='<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 20h4L19 9l-4-4L4 16z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+const DEL_IC='<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+let domRTQ='';
 function viewDomains(){
-  const rows=D.domains.filter(d=>(!domQ||d.name.includes(domQ)||d.en.toLowerCase().includes(domQ.toLowerCase()))&&(!domOwner||d.owner===domOwner));
+  const rows=D.domains.filter(d=>(!domQ||d.name.includes(domQ)||d.en.toLowerCase().includes(domQ.toLowerCase()))&&(!domOwner||d.owner===domOwner)&&(!domRTQ||d.name.includes(domRTQ)||d.en.toLowerCase().includes(domRTQ.toLowerCase())));
   const owners=[...new Set(D.domains.map(d=>d.owner))];
   const active=[domQ&&'بحث',domOwner&&'المالك'].filter(Boolean);
-  const table=`<div class="section"><div class="twrap"><table><thead><tr><th>الدومين</th><th class="hide-s">الوصف</th><th>المالك</th><th class="end">المستودعات</th><th class="end">مصادر البيانات</th><th class="end">السجلات الذهبية</th><th>متوسط الجودة</th><th aria-hidden="true"></th></tr></thead><tbody>
-    ${rows.map(d=>{const s=domainStats(d);return `<tr class="nav" tabindex="0" data-go="domain:${d.id}"><td><span class="cell-name"><span class="dot" style="background:${d.color}"></span><span><span class="ttl">${esc(d.name)}</span><br><span class="sub">${d.en}</span></span></span></td>
-      <td class="hide-s" style="white-space:normal;max-width:360px;color:var(--fg2)">${esc(d.desc)}</td><td>${esc(d.owner)}</td><td class="end">${d.repos.length}</td><td class="end">${s.sources}</td><td class="end">${fmt(s.golden)}</td><td>${score(s.q)}</td><td class="go">${GO}</td></tr>`;}).join('')}
-    </tbody></table></div></div>`;
+  const all=rows.length&&rows.every(d=>selDomains.has(d.id));
   return `<section class="ph ${headerCollapsed?'collapsed':''}"><div class="ph-in">
     <button class="variant">قياسي <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     <div class="vsub">${active.length?`${active.length} ${active.length===1?'فلتر نشط':'فلاتر نشطة'}: ${active.join('، ')}`:'لا توجد فلاتر نشطة'}</div>
@@ -397,87 +488,111 @@ function viewDomains(){
       <div class="ff"><label for="fo">المالك:</label><select id="fo"><option value="">الكل</option>${owners.map(o=>`<option ${o===domOwner?'selected':''}>${esc(o)}</option>`).join('')}</select></div>
       <div class="fbar-actions"><button class="b b-emph" type="submit">تنفيذ</button><button class="b b-trans" type="button">تعديل الفلاتر (2)</button></div>
     </form></div>${handle()}</section>
-  <main><div class="sec-h" style="padding-inline:0"><h1 class="sec-title" tabindex="-1">الدومينات <span class="sub num">(${rows.length})</span></h1>
-      <div class="sec-tools"><button class="b b-std">إنشاء دومين</button>
-      <span class="seg" role="group" aria-label="طريقة العرض"><button data-view="cards" aria-pressed="${domView==='cards'}">${svg('folder',14)}بطاقات</button><button data-view="table" aria-pressed="${domView==='table'}">${svg('table',14)}جدول</button></span></div></div>
-    ${rows.length?(domView==='cards'?`<div class="cards">${rows.map(domainCard).join('')}</div>`:table):'<div class="section"><div class="empty">لا توجد دومينات مطابقة للفلاتر</div></div>'}</main>`;
+  <main><div class="section">
+    <div class="rt-bar"><h1 class="rt-title" tabindex="-1">الدومينات <span class="num">(${rows.length})</span></h1>
+      <label class="tsearch"><input id="rtq" value="${esc(domRTQ)}" placeholder="بحث" aria-label="بحث في الجدول"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></label>
+      <button class="b b-trans">إنشاء</button><button class="b b-trans" data-act="delSel" ${selDomains.size?'':'disabled'}>حذف${selDomains.size?` (${selDomains.size})`:''}</button>${RT_ICONS}</div>
+    <div class="twrap"><table class="rt"><thead><tr><th class="chk"><input type="checkbox" class="cb" data-selall="1" ${all?'checked':''} aria-label="تحديد الكل"></th><th>الدومين</th><th>المالك</th><th class="hide-s">الوصف</th><th class="end">المستودعات</th><th class="end">المصادر</th><th class="end">السجلات الذهبية</th><th class="end">متوسط الجودة</th><th><span class="sub" style="font-weight:400">إجراءات</span></th></tr></thead><tbody>
+    ${rows.length?rows.map(d=>{const s=domainStats(d),qs=qState(s.q),sel=selDomains.has(d.id);return `<tr class="${sel?'sel':''}" data-go="domain:${d.id}" tabindex="0" aria-selected="${sel}">
+      <td class="chk"><input type="checkbox" class="cb" data-sel="${d.id}" ${sel?'checked':''} aria-label="تحديد ${esc(d.name)}"></td>
+      <td><div class="oid"><div class="n">${esc(d.name)}</div><div class="d">${d.en}</div></div>
+        <div class="popin"><div><div class="pl">الحالة:</div>${st(qs,qs==='pos'?'ضمن الهدف':'دون الهدف')}</div><div><div class="pl">آخر تحديث:</div>${ltr(d.updated)}</div></div></td>
+      <td>${esc(d.owner)}</td><td class="hide-s" style="white-space:normal;max-width:300px;color:var(--fg2)">${esc(d.desc)}</td>
+      <td class="end">${d.repos.length}</td><td class="end">${s.sources}</td><td class="end">${fmt(s.golden)}</td>
+      <td class="end"><span class="st ${qs} num">${ltr(s.q.toFixed(1)+'%')}</span></td>
+      <td><div class="rowact"><button class="rt-ic" data-act="edit" aria-label="تعديل ${esc(d.name)}">${EDIT_IC}</button><button class="rt-ic" data-del="${d.id}" aria-label="حذف ${esc(d.name)}">${DEL_IC}</button><span class="go">${GO}</span></div></td></tr>`;}).join(''):`<tr><td colspan="9" class="empty">لا توجد دومينات مطابقة</td></tr>`}
+    </tbody></table></div></div></main>`;
 }
 
-/* ───────────── Level 1: Domain (Object Page — repositories as an object list) ───────────── */
-let repoFilter='all';
+/* ───────────── Level 1: Domain → Repositories (Spaces page + status chart) ───────────── */
+let spQ='';
+function repoHealth(R){if(R.status==='Draft')return ['info','مسودة'];if(R.status==='Archived')return ['neutral','مؤرشف'];return R.flow.some(f=>f==='neg')?['neg','فشل']:R.flow.some(f=>f==='crit')||R.quality<85?['crit','يحتاج انتباه']:['pos','سليم'];}
+function capbar(used,total,label){const pct=Math.min(100,used/total*100);/* dark text over the empty part, white text over the fill (fill grows from the start edge = right in RTL) */
+  return `<div class="capbar" role="img" aria-label="${label}"><span>${label}</span><span class="on" style="clip-path:inset(0 0 0 ${100-pct}%)">${label}</span></div>`;}
+function donut(parts){const R=40,C=2*Math.PI*R,tot=parts.reduce((a,p)=>a+p.v,0)||1;let off=0,seg='';
+  parts.forEach(p=>{if(!p.v)return;const len=C*p.v/tot;seg+=`<circle cx="56" cy="56" r="${R}" fill="none" stroke="${p.c}" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 56 56)"/>`;off+=len;});
+  return `<svg width="112" height="112" viewBox="0 0 112 112" role="img" aria-label="${parts.map(p=>p.l+' '+p.v).join('، ')}"><circle cx="56" cy="56" r="${R}" fill="none" stroke="#EFF1F2" stroke-width="16"/>${seg}<text x="56" y="54" text-anchor="middle" font-size="22" font-weight="700" fill="#131E29">${tot}</text><text x="56" y="72" text-anchor="middle" font-size="11" fill="#556B82">مستودعات</text></svg>`;}
+function spaceCard(r){const R=D.repos[r],[hs,hl]=repoHealth(R),sel=selRepos.has(r);
+  const tables=R.sources.reduce((a,s)=>a+Object.values(D.sources[s].schemas).flat().length,0);
+  return `<div class="space ${sel?'sel':''}" tabindex="0" role="link" data-go="repo:${r}" aria-label="${esc(R.name)}: ${hl}">
+    <div class="h"><div class="t"><div class="code">${R.code}</div><div class="nm">${esc(R.name)}</div></div><input type="checkbox" class="cb" data-rsel="${r}" ${sel?'checked':''} aria-label="تحديد ${esc(R.name)}"></div>
+    <div class="bd"><div>${st(hs,hl)}</div>
+      <div class="sub">${R.deployed==='—'?'لم يُنشر بعد':'نُشر في '+ltr(R.deployed)}</div>
+      <div><div class="cl">السجلات الذهبية:</div>${capbar(R.golden,R.cap,`${fmt(R.golden)} من ${fmt(R.cap)}`)}</div>
+      <div><div class="cl">التخزين:</div>${capbar(R.storage[0],R.storage[1],`${R.storage[0]} GB من ${R.storage[1]} GB`)}</div>
+      <div><div class="cl">الجودة:</div>${score(R.quality)}</div>
+      <span class="ltag">${R.model}</span></div>
+    <div class="ft"><span title="مصادر البيانات">${svg('db',14)}${R.sources.length}</span><span title="الجداول">${svg('table',14)}${tables}</span><span title="خطوط الاستيراد">${svg('pipe',14)}${R.pipes}</span><button class="b b-std" data-act="edit">تعديل</button></div></div>`;}
 function viewDomain(id){
   const d=D.domains.find(x=>x.id===id), s=domainStats(d);
-  const counts={all:d.repos.length};d.repos.forEach(r=>{const k=D.repos[r].status;counts[k]=(counts[k]||0)+1;});
-  const list=d.repos.filter(r=>repoFilter==='all'||D.repos[r].status===repoFilter);
-  const TAG={Deployed:'pos',Draft:'info',Archived:'neutral'};
+  const list=d.repos.filter(r=>!spQ||D.repos[r].name.toLowerCase().includes(spQ.toLowerCase())||D.repos[r].code.toLowerCase().includes(spQ.toLowerCase()));
+  const H={pos:0,crit:0,neg:0,info:0,neutral:0};d.repos.forEach(r=>H[repoHealth(D.repos[r])[0]]++);
+  const gold=d.repos.reduce((a,r)=>a+D.repos[r].golden,0),cap=d.repos.reduce((a,r)=>a+D.repos[r].cap,0);
+  const su=d.repos.reduce((a,r)=>a+D.repos[r].storage[0],0),sc=d.repos.reduce((a,r)=>a+D.repos[r].storage[1],0);
+  const parts=[{l:'سليم',v:H.pos,c:'#30914C'},{l:'يحتاج انتباه',v:H.crit,c:'#E76500'},{l:'فشل',v:H.neg,c:'#F53232'},{l:'مسودة',v:H.info,c:'#0070F2'},{l:'مؤرشف',v:H.neutral,c:'#788FA6'}];
   return `<section class="ph ${headerCollapsed?'collapsed':''}"><div class="ph-in">${crumbs()}
-    <div class="oh-top"><div><h1 class="oh-title" tabindex="-1">${esc(d.name)}</h1><div class="oh-sub">دومين · ${d.en}</div></div>
-      <div class="oh-actions"><button class="b b-emph">تعديل</button><button class="b b-std">إضافة مستودع</button></div></div>
-    <div class="oh-body"><div class="oh-img" style="background:${d.color}">${svg('folder',28)}</div>
-      <dl class="oh-attrs"><dt>المالك:</dt><dd>${esc(d.owner)}</dd><dt>الوصف:</dt><dd style="max-width:42ch;white-space:normal">${esc(d.desc)}</dd></dl>
-      <div class="facet"><div class="fl">المستودعات</div><div class="fv">${d.repos.length}</div></div>
-      <div class="facet"><div class="fl">مصادر البيانات</div><div class="fv">${s.sources}</div></div>
-      <div class="facet"><div class="fl">السجلات الذهبية</div><div class="fv">${fmt(s.golden)}</div></div>
-      <div class="facet"><div class="fl">متوسط الجودة</div><div class="fv st ${qState(s.q)}" style="font-size:20px">${s.q.toFixed(1)}%</div></div>
-    </div></div>${handle()}</section>
-  <main><div class="section"><div class="sec-h"><h2 class="sec-title">المستودعات <span class="sub num">(${list.length})</span></h2>
-      <span class="seg" role="group" aria-label="تصفية حسب الحالة">${[['all','الكل'],['Deployed','منشور'],['Draft','مسودة'],['Archived','مؤرشف']].filter(([k])=>k==='all'||counts[k]).map(([k,l])=>`<button data-rf="${k}" aria-pressed="${repoFilter===k}">${l} <span class="cnt">${counts[k]||0}</span></button>`).join('')}</span></div>
-    <ul class="olist">${list.map(r=>{const R=D.repos[r];const [,l1]=REPO_ST[R.status];return `<li class="oli" tabindex="0" role="link" data-go="repo:${r}">
-      <div class="id"><div class="n">${esc(R.name)}</div><div class="d">${R.model} · ${R.sources.length} ${R.sources.length===1?'مصدر':'مصادر'}</div></div>
-      <span class="gtag ${TAG[R.status]}">${l1}</span>
-      ${mpf(R.flow)}
-      <div class="q">${score(R.quality)}</div>
-      <div class="gold"><div class="fl">سجلات ذهبية</div><div class="fv">${R.golden?fmt(R.golden):'—'}</div></div>
-      <span class="go">${GO}</span></li>`;}).join('')}</ul></div></main>`;
+    <div class="oh-top"><div><h1 class="oh-title" tabindex="-1">${esc(d.name)}</h1><div class="oh-sub">دومين · ${d.en} · المالك: ${esc(d.owner)}</div></div>
+      <div class="oh-actions"><button class="b b-emph">تعديل الدومين</button></div></div>
+    <div class="oh-body"><dl class="oh-attrs"><dt>الوصف:</dt><dd style="max-width:60ch;white-space:normal">${esc(d.desc)}</dd></dl></div></div>${handle()}</section>
+  <main>
+    <div class="sp-sum"><div class="sp-count"><span>المستودعات <b>${d.repos.length}</b></span><span class="k st pos">${ICON.pos}${H.pos}</span><span class="k st crit">${ICON.crit}${H.crit}</span><span class="k st neg">${ICON.neg}${H.neg}</span><span class="k st info">${ICON.info}${H.info}</span></div>
+      <div class="sp-cap"><div class="cap"><div class="cl">السجلات الذهبية المستخدمة</div>${capbar(gold,cap,`${fmt(gold)} من ${fmt(cap)}`)}</div>
+        <div class="cap"><div class="cl">التخزين المستخدم</div>${capbar(su,sc,`${su.toFixed(1)} GB من ${sc} GB`)}</div>
+        <div class="cap"><div class="cl">متوسط الجودة مقابل الهدف</div>${capbar(s.q,100,`${s.q.toFixed(1)}% · الهدف ${D.target}%`)}</div></div></div>
+    <div class="sp-charts">
+      <div class="section"><div class="sec-h"><h2 class="sec-title">حالة المستودعات</h2></div><div class="donut-wrap">${donut(parts)}<div class="legend">${parts.map(p=>`<span><i style="background:${p.c}"></i>${p.l} <b class="num">${p.v}</b></span>`).join('')}</div></div></div>
+      <div class="section"><div class="sec-h"><h2 class="sec-title">الجودة حسب المستودع</h2><span class="sub">الخط الأخضر = الهدف ${D.target}%</span></div>
+        <div class="hbars">${d.repos.map(r=>{const R=D.repos[r],qs=qState(R.quality);return `<div class="hb"><span>${esc(R.name)}</span><span class="tr" role="img" aria-label="${esc(R.name)} ${R.quality}%"><i style="width:${R.quality}%;background:${QCOL[qs]}"></i><b style="inset-inline-start:${D.target}%"></b></span><span class="st ${qs} num">${ltr(R.quality.toFixed(1)+'%')}</span></div>`;}).join('')}</div></div></div>
+    <div class="sp-tools"><button class="b b-trans">إنشاء</button><button class="b b-trans" ${selRepos.size===1?'':'disabled'}>تعديل</button><button class="b b-trans" ${selRepos.size?'':'disabled'}>حذف</button><button class="b b-trans" ${selRepos.size?'':'disabled'}>قفل</button><button class="b b-trans">مراقبة</button><span class="grow"></span>
+      <span class="seg" role="group" aria-label="طريقة العرض"><button data-spv="grid" aria-pressed="${spView==='grid'}" aria-label="بطاقات"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg></button><button data-spv="list" aria-pressed="${spView==='list'}" aria-label="قائمة"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span>
+      <label class="tsearch"><input id="spq" value="${esc(spQ)}" placeholder="بحث في المستودعات" aria-label="بحث في المستودعات"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></label></div>
+    ${list.length?`<div class="sp-grid ${spView==='list'?'sp-list':''}" style="${spView==='list'?'grid-template-columns:1fr':''}">${list.map(spaceCard).join('')}</div>`:'<div class="section"><div class="empty">لا توجد مستودعات مطابقة</div></div>'}
+  </main>`;
 }
 
-/* ───────────── Level 2: Repository (Object Page — data sources as object cards) ───────────── */
+/* ───────────── Level 2: Repository → Data Sources (Multi Instance page) ───────────── */
 function srcStats(S){const all=Object.values(S.schemas).flat();return {sch:Object.keys(S.schemas).length,tbl:all.length,rows:all.reduce((a,t)=>a+t.rows,0),q:all.reduce((a,t)=>a+t.q,0)/all.length};}
-function viewRepo(id){
-  const R=D.repos[id];const [s1,l1]=REPO_ST[R.status];
-  return `<section class="ph ${headerCollapsed?'collapsed':''}"><div class="ph-in">${crumbs()}
-    <div class="oh-top"><div><h1 class="oh-title" tabindex="-1">${esc(R.name)}</h1><div class="oh-sub">مستودع · ${R.model}</div></div>
-      <div class="oh-actions"><button class="b b-emph">تعديل</button><button class="b b-std">إضافة مصدر بيانات</button><button class="b b-std">تشغيل المطابقة</button></div></div>
-    <div class="oh-body">
-      <div class="facet"><div class="fl">الحالة</div><div class="fv">${st(s1,l1)}</div></div>
-      <div class="facet"><div class="fl">مراحل المعالجة</div><div class="fv">${mpf(R.flow)}</div></div>
-      <div class="facet"><div class="fl">السجلات الذهبية</div><div class="fv">${R.golden?fmt(R.golden):'—'}</div></div>
-      <div class="facet"><div class="fl">الجودة</div><div class="fv st ${qState(R.quality)}" style="font-size:20px">${R.quality.toFixed(1)}%</div></div>
-    </div></div>${handle()}</section>
-  <main><div class="sec-h" style="padding-inline:0"><h2 class="sec-title">مصادر البيانات <span class="sub num">(${R.sources.length})</span></h2></div>
-    <div class="cards">${R.sources.map(sid=>{const S=D.sources[sid],k=srcStats(S),qs=qState(k.q);return `<button class="ocard" data-go="source:${sid}" aria-label="${esc(S.name)}">
-      <div class="oc-h"><span class="oc-ic" style="background:#1D2D3E">${svg('db',20)}</span><span class="oc-t"><div class="oc-title">${esc(S.name)}</div><div class="oc-sub">${esc(S.type)}</div></span>${st(S.state,S.stateL)}</div>
-      <div class="oc-kpi"><div><div class="lbl">جودة الجداول</div><div class="big st ${qs}" style="font-size:28px">${ltr(k.q.toFixed(1)+'<small style="font-size:14px">%</small>')}</div></div>
-        <div class="mbar"><i style="width:${k.q}%;background:${QCOL[qs]}"></i><b style="inset-inline-start:${D.target}%"></b></div></div>
-      <div class="oc-facts"><div><div class="fl">Schemas</div><div class="fv">${k.sch}</div></div><div><div class="fl">Tables</div><div class="fv">${k.tbl}</div></div><div><div class="fl">الصفوف</div><div class="fv">${fmt(k.rows)}</div></div></div>
-      <div class="oc-foot"><span class="sub">آخر مزامنة ${ltr(S.sync)}</span><span class="more">الجداول ${GO}</span></div></button>`;}).join('')}</div></main>`;
-}
-
-/* ───────────── Level 3: Data Source — schemas & tables (Analytical Table) ───────────── */
 const closedSchemas=new Set(); let srcQ='';
-function viewSource(id){
-  const S=D.sources[id];const sch=Object.keys(S.schemas);const tbl=sch.reduce((a,k)=>a+S.schemas[k].length,0);
-  const q=srcQ.trim().toLowerCase();
-  let body='',shown=0;
-  sch.forEach(k=>{const list=S.schemas[k].filter(t=>!q||t.name.toLowerCase().includes(q)||k.includes(q));if(!list.length)return;shown+=list.length;
-    const open=!closedSchemas.has(k)||q;
-    body+=`<tr class="grp" tabindex="0" data-schema="${k}" aria-expanded="${!!open}"><td colspan="7"><span class="gchev">⌄</span>${svg('folder',14)} Schema: ${esc(k)} <span class="sub">(${list.length})</span></td></tr>`;
-    if(open)body+=list.map(t=>`<tr class="nav" tabindex="0" data-go="table:${k}:${t.id}"><td style="padding-inline-start:36px"><span class="cell-name">${svg('table',14)}<span class="ttl">${esc(t.name)}</span></span></td><td class="end">${fmt(t.rows)}</td><td class="end">${t.cols}</td><td>${score(t.q)}</td><td class="num">${ltr(t.prof)}</td><td class="go">${GO}</td></tr>`).join('');});
-  return `<section class="ph ${headerCollapsed?'collapsed':''}"><div class="ph-in">${crumbs()}
+function viewRepo(id){
+  const R=D.repos[id];
+  if(!openSrc[id]){openSrc[id]=[...R.sources];activeSrc[id]=R.sources[0];}
+  const open=openSrc[id],sid=activeSrc[id];
+  const tabs=`<div class="inst" role="tablist" aria-label="مصادر البيانات المفتوحة">${open.map(x=>`<div class="itab" role="tab" tabindex="${x===sid?0:-1}" aria-selected="${x===sid}" data-inst="${x}">${svg('db',14)}<span>${esc(D.sources[x].name)}</span><span class="x" role="button" tabindex="0" data-close="${x}" aria-label="إغلاق ${esc(D.sources[x].name)}">${DEL_IC.replace('15','12').replace('15','12')}</span></div>`).join('')}
+    <div class="iadd"><button data-act="addInst" aria-label="فتح مصدر بيانات" aria-haspopup="menu"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div></div>`;
+  if(!sid)return tabs+`<section class="ph"><div class="ph-in" style="padding-bottom:16px">${crumbs()}<div class="oh-top"><h1 class="oh-title" tabindex="-1">${esc(R.name)}</h1></div></div></section>
+    <main><div class="section"><div class="ill"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" style="color:var(--icon)">${SI.db}</svg><h3>لا توجد مصادر بيانات مفتوحة</h3><p>افتح مصدراً من زر + أعلاه.</p><button class="b b-emph" data-act="reopenAll">فتح كل المصادر</button></div></div></main>`;
+  const S=D.sources[sid],k=srcStats(S),sch=Object.keys(S.schemas);
+  const sTabs=[['general','معلومات عامة'],['tables','Schemas و Tables'],['sync','سجل المزامنة']];
+  let body='';
+  if(srcTab==='general'){
+    body=`<div class="section"><div class="sec-h"><h2 class="sec-title">معلومات عامة</h2></div><div class="gi">
+      <div class="grp"><div class="ttl3">تفاصيل الاتصال</div><div class="f"><div class="fl">الموصّل</div><div class="fv">${esc(S.type)}</div></div><div class="f"><div class="fl">العنوان</div><div class="fv">${ltr(esc(S.host))}</div></div><div class="f"><div class="fl">المصادقة</div><div class="fv">${esc(S.auth)}</div></div><div class="f"><div class="fl">المالك</div><div class="fv">${esc(S.owner)}</div></div></div>
+      <div class="grp"><div class="ttl3">الإعداد</div><div class="f"><div class="fl">المستودع</div><div class="fv"><a href="#" onclick="return false">${esc(R.name)}</a></div></div><div class="f"><div class="fl">جدول المزامنة</div><div class="fv">${esc(S.sched)}</div></div><div class="f"><div class="fl">آخر مزامنة</div><div class="fv">${ltr(S.sync)}</div></div><div class="f"><div class="fl">الحالة</div><div class="fv">${st(S.state,S.stateL)}</div></div></div></div></div>`;
+  } else if(srcTab==='tables'){
+    const q=srcQ.trim().toLowerCase();let rows='',shown=0;
+    sch.forEach(g=>{const list=S.schemas[g].filter(t=>!q||t.name.toLowerCase().includes(q)||g.includes(q));if(!list.length)return;shown+=list.length;const opn=!closedSchemas.has(g)||q;
+      rows+=`<tr class="grp" tabindex="0" data-schema="${g}" aria-expanded="${!!opn}"><td colspan="6"><span class="gchev">⌄</span>${svg('folder',14)} Schema: ${esc(g)} <span class="sub">(${list.length})</span></td></tr>`;
+      if(opn)rows+=list.map(t=>`<tr class="nav" tabindex="0" data-go="table:${sid}:${g}:${t.id}"><td style="padding-inline-start:36px"><span class="cell-name">${svg('table',14)}<span class="ttl">${esc(t.name)}</span></span></td><td class="end">${fmt(t.rows)}</td><td class="end">${t.cols}</td><td>${score(t.q)}</td><td class="num">${ltr(t.prof)}</td><td class="go">${GO}</td></tr>`).join('');});
+    body=`<div class="section"><div class="rt-bar"><h2 class="rt-title">Schemas و Tables <span class="num">(${shown})</span></h2>
+      <label class="tsearch"><input id="srcq" value="${esc(srcQ)}" placeholder="بحث عن جدول" aria-label="بحث عن جدول"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></label>
+      <button class="b b-trans" data-act="expandAll">توسيع الكل</button><button class="b b-trans" data-act="collapseAll">طي الكل</button>${RT_ICONS}</div>
+      <div class="twrap"><table><thead><tr><th>الاسم</th><th class="end">الصفوف</th><th class="end">الأعمدة</th><th>الجودة</th><th>آخر فحص</th><th aria-hidden="true"></th></tr></thead><tbody>${rows||`<tr><td colspan="6" class="empty">لا توجد جداول مطابقة لـ "${esc(srcQ)}"</td></tr>`}</tbody></table></div></div>`;
+  } else {
+    body=`<div class="section"><div class="rt-bar"><h2 class="rt-title">سجل المزامنة <span class="num">(${D.runs.length})</span></h2><button class="b b-trans">مزامنة الآن</button>${RT_ICONS}</div>
+      <div class="twrap"><table class="rt"><thead><tr><th>التشغيل</th><th>البدء</th><th>المدة</th><th class="end">صفوف معالجة</th><th>النتيجة</th></tr></thead><tbody>
+      ${D.runs.map(([id,t,dur,n,s])=>`<tr><td><div class="oid"><div class="n">${ltr(id)}</div><div class="d">${esc(S.name)}</div></div></td><td class="num">${ltr(t)}</td><td>${dur}</td><td class="end">${n?fmt(n):'—'}</td><td>${st(s,{pos:'نجح',crit:'نجح مع تحذيرات',neg:'فشل'}[s])}</td></tr>`).join('')}</tbody></table></div></div>`;
+  }
+  return tabs+`<section class="ph ${headerCollapsed?'collapsed':''}"><div class="ph-in">${crumbs()}
     <div class="oh-top"><div><h1 class="oh-title" tabindex="-1">${esc(S.name)}</h1><div class="oh-sub">مصدر بيانات · ${esc(S.type)}</div></div>
       <div class="oh-actions"><button class="b b-emph">مزامنة الآن</button><button class="b b-std">تعديل الاتصال</button><button class="b b-std">تشغيل الفحص</button></div></div>
     <div class="oh-body"><div class="oh-img" style="background:#1D2D3E">${svg('db',28)}</div>
-      <dl class="oh-attrs"><dt>الموصّل:</dt><dd>${esc(S.type)}</dd><dt>العنوان:</dt><dd>${esc(S.host)}</dd></dl>
+      <dl class="oh-attrs"><dt>المستودع:</dt><dd>${esc(R.name)}</dd><dt>العنوان:</dt><dd>${ltr(esc(S.host))}</dd><dt>المالك:</dt><dd>${esc(S.owner)}</dd></dl>
       <div class="facet"><div class="fl">الحالة</div><div class="fv">${st(S.state,S.stateL)}</div></div>
       <div class="facet"><div class="fl">آخر مزامنة</div><div class="fv" style="font-size:16px">${ltr(S.sync)}</div></div>
-      <div class="facet"><div class="fl">Schemas</div><div class="fv">${sch.length}</div></div>
-      <div class="facet"><div class="fl">Tables</div><div class="fv">${tbl}</div></div>
-    </div></div>${handle()}</section>
-  <main><div class="section"><div class="sec-h"><h2 class="sec-title">Schemas و Tables <span class="sub num">(${shown})</span></h2>
-      <div class="sec-tools"><label class="tsearch"><input id="srcq" value="${esc(srcQ)}" placeholder="بحث عن جدول" aria-label="بحث عن جدول">${'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'}</label>
-      <button class="b b-trans" data-act="expandAll">توسيع الكل</button><button class="b b-trans" data-act="collapseAll">طي الكل</button></div></div>
-    <div class="twrap"><table><thead><tr><th>الاسم</th><th class="end">الصفوف</th><th class="end">الأعمدة</th><th>الجودة</th><th>آخر فحص</th><th aria-hidden="true"></th></tr></thead><tbody>
-    ${body||`<tr><td colspan="7" class="empty">لا توجد جداول مطابقة لـ "${esc(srcQ)}"</td></tr>`}</tbody></table></div></div></main>`;
+      <div class="facet"><div class="fl">Tables</div><div class="fv">${k.tbl}</div></div>
+      <div class="facet"><div class="fl">جودة الجداول</div><div class="fv st ${qState(k.q)}" style="font-size:20px">${ltr(k.q.toFixed(1)+'%')}</div></div></div>
+    <div class="tabs" role="tablist" aria-label="أقسام مصدر البيانات">${sTabs.map(([t,l])=>`<button class="tab" role="tab" aria-selected="${srcTab===t}" tabindex="${srcTab===t?0:-1}" data-stab="${t}">${l}</button>`).join('')}</div>
+    </div>${handle()}</section><main>${body}</main>`;
 }
 
 /* ───────────── Level 4: Table (Object Page with tabs) ───────────── */
@@ -559,19 +674,31 @@ function drawEdges(){const box=document.getElementById('lin');if(!box)return;con
 /* ───────────── Render + events ───────────── */
 function render(){
   const last=path[path.length-1];
-  app.innerHTML=!last?viewDomains():last.k==='domain'?viewDomain(last.id):last.k==='repo'?viewRepo(last.id):last.k==='source'?viewSource(last.id):viewTable(path[2].id,last.schema,last.id);
+  app.innerHTML=!last?viewDomains():last.k==='domain'?viewDomain(last.id):last.k==='repo'?viewRepo(last.id):viewTable(last.src,last.schema,last.id);
+  const rq=document.getElementById('rtq');if(rq)rq.oninput=()=>{const pos=rq.selectionStart;domRTQ=rq.value;render();const n=document.getElementById('rtq');n.focus();n.setSelectionRange(pos,pos);};
+  const pq=document.getElementById('spq');if(pq)pq.oninput=()=>{const pos=pq.selectionStart;spQ=pq.value;render();const n=document.getElementById('spq');n.focus();n.setSelectionRange(pos,pos);};
   if(last&&last.k==='table'&&tab==='lineage')requestAnimationFrame(drawEdges);
   const sq=document.getElementById('srcq');if(sq)sq.oninput=()=>{const pos=sq.selectionStart;srcQ=sq.value;render();const n=document.getElementById('srcq');n.focus();n.setSelectionRange(pos,pos);};
   const df=document.getElementById('domFilter');if(df)df.onsubmit=e=>{e.preventDefault();domQ=document.getElementById('fq').value.trim();domOwner=document.getElementById('fo').value;render();};
 }
 function activate(el){
   const g=el.dataset.go;
-  if(g){const [k,a,b]=g.split(':');
-    if(k==='domain'){repoFilter='all';go([{k,id:a}]);}
-    else if(k==='repo')go([...path,{k,id:a}]);
-    else if(k==='source'){srcQ='';closedSchemas.clear();go([...path,{k,id:a}]);}
-    else if(k==='table'){testFilter='all';go([...path,{k,schema:a,id:b}]);}return;}
-  if(el.dataset.crumb!=null){go(path.slice(0,+el.dataset.crumb));return;}
+  if(g){const [k,a,b,c]=g.split(':');
+    if(k==='domain'){spQ='';selRepos.clear();go([{k,id:a}]);}
+    else if(k==='repo'){srcTab='tables';srcQ='';closedSchemas.clear();go([...path,{k,id:a}]);}
+    else if(k==='table'){testFilter='all';go([...path,{k,src:a,schema:b,id:c}]);}return;}
+  if(el.dataset.crumb!=null){const i=+el.dataset.crumb;
+    // rebuild the same parts crumbs() renders, to map index → path
+    const parts=[{p:[]}];path.forEach((x,n)=>{const p=path.slice(0,n+1);if(x.k==='domain')parts.push({p});if(x.k==='repo'){parts.push({p});if(n===path.length-1&&activeSrc[x.id])parts.push({p});}if(x.k==='table'){parts.push({p:path.slice(0,n),src:x.src});parts.push({p});}});
+    const t=parts[i];if(t.src){const repo=t.p[t.p.length-1].id;activeSrc[repo]=t.src;if(!openSrc[repo].includes(t.src))openSrc[repo].push(t.src);}
+    go(t.p);return;}
+  if(el.dataset.close){const repo=path[path.length-1].id,x=el.dataset.close;openSrc[repo]=openSrc[repo].filter(y=>y!==x);if(activeSrc[repo]===x)activeSrc[repo]=openSrc[repo][0];render();(app.querySelector('.itab[aria-selected="true"]')||app.querySelector('[data-act="addInst"]')).focus();return;}
+  if(el.dataset.inst){activeSrc[path[path.length-1].id]=el.dataset.inst;srcQ='';render();app.querySelector('.itab[aria-selected="true"]').focus();return;}
+  if(el.dataset.stab){srcTab=el.dataset.stab;render();app.querySelector(`[data-stab="${srcTab}"]`).focus();return;}
+  if(el.dataset.spv){spView=el.dataset.spv;render();app.querySelector(`[data-spv="${spView}"]`).focus();return;}
+  if(el.dataset.del){const id=el.dataset.del,i=D.domains.findIndex(d=>d.id===id),item=D.domains[i];D.domains.splice(i,1);selDomains.delete(id);render();
+    showToast(`تم حذف "${item.name}" (توضيحي)`,()=>{D.domains.splice(i,0,item);render();});return;}
+  if(el.dataset.inopen){const repo=path[path.length-1].id;openSrc[repo].push(el.dataset.inopen);activeSrc[repo]=el.dataset.inopen;closeImenu();render();return;}
   if(el.dataset.schema){const k=el.dataset.schema;closedSchemas.has(k)?closedSchemas.delete(k):closedSchemas.add(k);render();app.querySelector(`[data-schema="${k}"]`)?.focus();return;}
   if(el.dataset.tab){tab=el.dataset.tab;render();document.getElementById('tab-'+tab).focus();return;}
   if(el.dataset.view){domView=el.dataset.view;render();app.querySelector(`[data-view="${domView}"]`).focus();return;}
@@ -580,11 +707,33 @@ function activate(el){
   const act=el.dataset.act;
   if(act==='collapse'){headerCollapsed=!headerCollapsed;render();app.querySelector('[data-act="collapse"]').focus();}
   if(act==='expandAll'){closedSchemas.clear();render();}
-  if(act==='collapseAll'){Object.keys(D.sources[path[path.length-1].id].schemas).forEach(k=>closedSchemas.add(k));render();}
+  if(act==='collapseAll'){Object.keys(D.sources[activeSrc[path[path.length-1].id]].schemas).forEach(k=>closedSchemas.add(k));render();}
+  if(act==='reopenAll'){const repo=path[path.length-1].id;openSrc[repo]=[...D.repos[repo].sources];activeSrc[repo]=openSrc[repo][0];render();}
+  if(act==='delSel'){const ids=[...selDomains];const removed=ids.map(id=>[D.domains.findIndex(d=>d.id===id),D.domains.find(d=>d.id===id)]).sort((a,b)=>a[0]-b[0]);
+    D.domains=D.domains.filter(d=>!selDomains.has(d.id));selDomains.clear();render();showToast(`تم حذف ${removed.length} (توضيحي)`,()=>{removed.forEach(([i,d])=>D.domains.splice(i,0,d));render();});}
+  if(act==='addInst'){openImenu(el);}
 }
-app.addEventListener('click',e=>{const el=e.target.closest('[data-view],[data-rf],[data-tf],[data-go],[data-crumb],[data-schema],[data-tab],[data-act]');if(el)activate(el);});
+app.addEventListener('click',e=>{
+  const cb=e.target.closest('input[type=checkbox]');
+  if(cb){e.stopPropagation();if(cb.dataset.sel){cb.checked?selDomains.add(cb.dataset.sel):selDomains.delete(cb.dataset.sel);render();app.querySelector(`[data-sel="${cb.dataset.sel}"]`).focus();}
+    else if(cb.dataset.selall){const vis=[...app.querySelectorAll('[data-sel]')].map(x=>x.dataset.sel);cb.checked?vis.forEach(v=>selDomains.add(v)):vis.forEach(v=>selDomains.delete(v));render();app.querySelector('[data-selall]').focus();}
+    else if(cb.dataset.rsel){cb.checked?selRepos.add(cb.dataset.rsel):selRepos.delete(cb.dataset.rsel);render();app.querySelector(`[data-rsel="${cb.dataset.rsel}"]`).focus();}
+    return;}
+  const el=e.target.closest('[data-close],[data-inst],[data-stab],[data-spv],[data-del],[data-inopen],[data-view],[data-rf],[data-tf],[data-act],[data-go],[data-crumb],[data-schema],[data-tab]');if(el)activate(el);});
+/* Toast with undo */
+let toastT;function showToast(text,undo){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);}
+  t.innerHTML=`<span>${esc(text)}</span>${undo?'<button>تراجع</button>':''}`;t.hidden=false;const b=t.querySelector('button');if(b)b.onclick=()=>{undo();t.hidden=true;};clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,5000);}
+/* "+" menu on the instance bar */
+let imenu=null;function closeImenu(){if(imenu){imenu.remove();imenu=null;}}
+function openImenu(btn){closeImenu();const repo=path[path.length-1].id;const others=Object.keys(D.sources).filter(x=>!openSrc[repo].includes(x));
+  imenu=document.createElement('div');imenu.className='imenu';imenu.setAttribute('role','menu');
+  imenu.innerHTML=others.length?others.map(x=>`<button role="menuitem" data-inopen="${x}">${svg('db',14)}${esc(D.sources[x].name)}${D.repos[repo].sources.includes(x)?'':' <span class="sub">(مصدر آخر)</span>'}</button>`).join(''):'<div class="none">كل المصادر مفتوحة</div>';
+  document.body.appendChild(imenu);const r=btn.getBoundingClientRect();imenu.style.top=(r.bottom+4)+'px';imenu.style.left=Math.max(8,Math.min(innerWidth-imenu.offsetWidth-8,r.left))+'px';
+  imenu.addEventListener('click',e=>{const b=e.target.closest('[data-inopen]');if(b)activate(b);});imenu.querySelector('button')?.focus();}
+document.addEventListener('click',e=>{if(imenu&&!imenu.contains(e.target)&&!e.target.closest('[data-act="addInst"]'))closeImenu();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeImenu();});
 app.addEventListener('keydown',e=>{
-  const el=e.target.closest('[data-go],[data-schema]');if(el&&(e.key==='Enter'||e.key===' ')){e.preventDefault();activate(el);return;}
+  if(e.target.matches('input'))return;const el=e.target.closest('[data-close],[data-inst],[data-go],[data-schema]');if(el&&(e.key==='Enter'||e.key===' ')){e.preventDefault();activate(el);return;}
   const t=e.target.closest('[role="tab"]');if(t&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){const list=[...app.querySelectorAll('[role="tab"]')];const i=list.indexOf(t);const d=e.key==='ArrowLeft'?1:-1;/* RTL */
     const n=list[(i+d+list.length)%list.length];tab=n.dataset.tab;render();document.getElementById('tab-'+tab).focus();}});
 window.addEventListener('resize',()=>{if(tab==='lineage')drawEdges();});

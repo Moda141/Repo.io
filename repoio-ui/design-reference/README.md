@@ -17,7 +17,7 @@ Before building or changing a page:
 | # | Repo.io page | Route | SAP floorplan | SAP reference | Approved prototype | Status |
 |---|---|---|---|---|---|---|
 | 01 | Home | `/home` | Overview Page (node `53:7537`) | `sap-s4hana/01-overview-page.svg` | `prototypes/01-home-overview.html` (screenshots: `01-home-implemented.{ar,en}.png`) | Approved 2026-11-03, implemented |
-| 02 | Domains (drill-down: Domain → Repository → Data Source → Schema/Table → Table) | `/domains` (planned) | List Report + Object Pages; Analytical Table (grouped schemas); Network Graph (lineage) | `sap-s4hana/components/filter-bar.svg`, `analytical-table.svg`, `object-page-header.svg`, `network-graph.svg` | `prototypes/02-domains.html` | Prototype — waiting for approval |
+| 02 | Domains (Domain → Repositories → Data Sources → Table) | `/domains` (planned) | Domains: **Responsive Table** · Repositories: **Spaces page** + status charts · Data Sources: **Multi Instance** object page · Table: Object Page with tabs | `sap-s4hana/patterns/responsive-table.png`, `spaces-page.png`, `multi-instance.png`; `components/analytical-table.svg`, `network-graph.svg` | `prototypes/02-domains.html` | Prototype — waiting for approval |
 
 Add a row per page as it is approved. Number SAP exports and prototypes with the
 same prefix as the row.
