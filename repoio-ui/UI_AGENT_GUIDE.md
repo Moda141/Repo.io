@@ -1,3 +1,8 @@
+> **Scope (2026-11-08):** this guide covers the **React migration baseline**
+> only. The target console is OpenUI5 (`sap.tnt.ToolPage` +
+> `SideNavigation`, theme `sap_fiori_3`). See CLAUDE.md §4 and the
+> `repoio-ui5-frontend` skill. Do not start new screens in React.
+
 # UI Agent Guide — Repo.io Front-End
 
 > **Design system: SAP Fiori Horizon**
