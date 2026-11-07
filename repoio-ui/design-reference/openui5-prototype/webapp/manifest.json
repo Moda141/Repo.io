@@ -1,0 +1,75 @@
+{
+	"_version": "1.65.0",
+	"sap.app": {
+		"id": "repoio.proto",
+		"type": "application",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": ["en", "ar"],
+			"fallbackLocale": "en"
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": { "version": "0.1.0" }
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": { "desktop": true, "tablet": true, "phone": true }
+	},
+	"sap.ui5": {
+		"rootView": { "viewName": "repoio.proto.view.App", "type": "XML", "id": "app" },
+		"dependencies": {
+			"minUI5Version": "1.136.0",
+			"libs": {
+				"sap.ui.core": {}, "sap.m": {}, "sap.tnt": {}, "sap.f": {},
+				"sap.uxap": {}, "sap.ui.layout": {}, "sap.ui.table": {}
+			}
+		},
+		"contentDensities": { "compact": true, "cozy": false },
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "repoio.proto.i18n.i18n",
+					"async": true,
+					"supportedLocales": ["en", "ar"],
+					"fallbackLocale": "en"
+				}
+			},
+			"data": { "type": "sap.ui.model.json.JSONModel", "uri": "model/sample-data.json" },
+			"nav": { "type": "sap.ui.model.json.JSONModel", "uri": "model/navigation.json" },
+			"home": { "type": "sap.ui.model.json.JSONModel", "uri": "model/home.json" }
+		},
+		"resources": { "css": [{ "uri": "css/style.css" }] },
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"type": "View",
+				"viewType": "XML",
+				"path": "repoio.proto.view",
+				"controlId": "pageContainer",
+				"controlAggregation": "pages",
+				"async": true,
+				"bypassed": { "target": "placeholder" }
+			},
+			"routes": [
+				{ "name": "home", "pattern": "", "target": "home" },
+				{ "name": "domains", "pattern": "domains", "target": "domains" },
+				{ "name": "domain", "pattern": "domains/{domainId}", "target": "domain" },
+				{ "name": "repository", "pattern": "domains/{domainId}/repositories/{repoId}", "target": "repository" },
+				{ "name": "sources", "pattern": "domains/{domainId}/repositories/{repoId}/sources/{sourceId}", "target": "sources" },
+				{ "name": "table", "pattern": "domains/{domainId}/repositories/{repoId}/sources/{sourceId}/tables/{schema}/{tableId}", "target": "table" },
+				{ "name": "page", "pattern": "page/{key}", "target": "placeholder" }
+			],
+			"targets": {
+				"home": { "id": "home", "name": "Home", "level": 1 },
+				"domains": { "id": "domains", "name": "Domains", "level": 2 },
+				"domain": { "id": "domain", "name": "Domain", "level": 3 },
+				"repository": { "id": "repository", "name": "Repository", "level": 4 },
+				"sources": { "id": "sources", "name": "Sources", "level": 5 },
+				"table": { "id": "table", "name": "Table", "level": 6 },
+				"placeholder": { "id": "placeholder", "name": "Placeholder", "level": 2 }
+			}
+		}
+	}
+}

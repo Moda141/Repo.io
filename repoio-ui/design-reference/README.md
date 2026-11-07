@@ -16,8 +16,8 @@ Before building or changing a page:
 
 | # | Repo.io page | Route | SAP floorplan | SAP reference | Approved prototype | Status |
 |---|---|---|---|---|---|---|
-| 01 | Home | `/home` | Overview Page (node `53:7537`) | `sap-s4hana/01-overview-page.svg` | `prototypes/01-home-overview.html` (screenshots: `01-home-implemented.{ar,en}.png`) | Approved 2026-11-03 · implemented in the React baseline · **to rework**: Quartz Light + SideNavigation shell, rebuild in OpenUI5 (M4) |
-| 02 | Domains (Domain → Repositories → Data Sources → Table) | `/domains` (planned) | Domains: **Analytical List Page** (visual filters + column chart + Responsive Table) · Repositories: **Spaces page** · Data Sources: **Multi Instance Object Page** with anchor bar · Table: Object Page with tabs | `sap-s4hana/patterns/analytical-list-page.png`, `responsive-table.png`, `spaces-page.png`, `object-page-instance.png`, `multi-instance.png` | `prototypes/02-domains.html` | Prototype — structure approved (multi-repository domains, ADR-0001) · **to rework**: Quartz Light + SideNavigation shell |
+| 01 | Home | `/home` | Overview Page (node `53:7537`) | `sap-s4hana/01-overview-page.svg` | OpenUI5: `openui5-prototype/` route `#/` (screenshot `prototypes/openui5/01-home.ar.png`). Earlier HTML: `prototypes/01-home-overview.html` | Redesigned in OpenUI5 on Quartz Light (2026-11-08) · waiting for review |
+| 02 | Domains (Domain → Repositories → Data Sources → Table) | `/domains` (planned) | Domains: **Analytical List Page** (visual filters + column chart + Responsive Table) · Repositories: **Spaces page** · Data Sources: **Multi Instance Object Page** with anchor bar · Table: Object Page with tabs | `sap-s4hana/patterns/analytical-list-page.png`, `responsive-table.png`, `spaces-page.png`, `object-page-instance.png`, `multi-instance.png` | `prototypes/02-domains.html` | Redesigned in OpenUI5 on Quartz Light (2026-11-08): `openui5-prototype/` routes `#/domains…` (screenshots `prototypes/openui5/02-*.png`) · waiting for review |
 
 `prototypes/00-clickable-prototype.html` is the combined click-through: Home with
 the Domains prototype embedded. Open Domains from the navigation menu (مساحاتي ›
@@ -45,9 +45,10 @@ UI element.
 - Console shell: Tool Page Layout. That is `sap.tnt.ToolPage` +
   `sap.tnt.ToolHeader` + `sap.tnt.SideNavigation` with its search field.
 - Theme: **Quartz Light** (`sap_fiori_3`). No dark variant in v1.
-- Prototypes 01–02 were drawn on Horizon tokens with a compact pop-over
-  navigation menu. They must be reworked to the locked shell and theme
-  before they serve as the visual contract for M4.
+- The visual contract is now the OpenUI5 prototype in `openui5-prototype/`
+  (real OpenUI5 1.136 controls, ToolPage shell, `sap_fiori_3`). The earlier
+  HTML prototypes 01–02 (Horizon tokens, pop-over menu) are kept for history
+  only.
 - Controls must exist in **OpenUI5**. Patterns used so far that are
   SAPUI5-only (Fiori elements or licensed libraries):
   - Overview Page (`sap.ovp`): rebuild with `sap.f.GridContainer` +

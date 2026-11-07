@@ -1,0 +1,71 @@
+<mvc:View controllerName="repoio.proto.controller.Domains"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="true">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading><Title text="{i18n>nav.domains}" level="H1"/></f:heading>
+				<f:expandedContent><Text text="{i18n>domains.subtitle}"/></f:expandedContent>
+				<f:snappedContent><Text text="{view>/domains/filterText}"/></f:snappedContent>
+				<f:actions>
+					<ObjectStatus text="{i18n>common.sample}" state="Warning" inverted="true"/>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader pinnable="true">
+				<VBox>
+					<FlexBox wrap="Wrap" alignItems="Start">
+						<Panel headerText="{i18n>domains.vf.golden}" width="22rem" class="sapUiSmallMarginEnd repoioVfPanel">
+							<rc:EChart id="vfGolden" height="10rem" select=".onVfGolden" ariaLabel="{i18n>domains.vf.golden}"/>
+						</Panel>
+						<Panel headerText="{i18n>domains.vf.status}" width="22rem" class="sapUiSmallMarginEnd repoioVfPanel">
+							<rc:EChart id="vfStatus" height="10rem" select=".onVfStatus" ariaLabel="{i18n>domains.vf.status}"/>
+						</Panel>
+						<Panel headerText="{i18n>domains.vf.quality}" width="22rem" class="repoioVfPanel">
+							<rc:EChart id="vfQuality" height="10rem" select=".onVfQuality" ariaLabel="{i18n>domains.vf.quality}"/>
+						</Panel>
+					</FlexBox>
+					<HBox alignItems="Center" visible="{= ${view>/domains/tokens}.length > 0 }" class="sapUiTinyMarginTop">
+						<Label text="{i18n>domains.filteredBy}" class="sapUiTinyMarginEnd"/>
+						<Tokenizer tokens="{view>/domains/tokens}" tokenDelete=".onTokenDelete" width="40rem">
+							<Token key="{view>key}" text="{view>text}"/>
+						</Tokenizer>
+					</HBox>
+				</VBox>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<Table id="domainsTable" items="{data>/domains}" mode="MultiSelect" growing="true" sticky="ColumnHeaders,HeaderToolbar"
+				noDataText="{i18n>home.noMatch}" popinLayout="GridSmall" updateFinished=".onTableUpdated">
+				<headerToolbar>
+					<OverflowToolbar>
+						<Title text="{view>/domains/title}" level="H2"/>
+						<ToolbarSpacer/>
+						<SearchField width="16rem" liveChange=".onSearch" placeholder="{i18n>common.search}"/>
+						<Button text="{i18n>common.export}" type="Transparent" icon="sap-icon://excel-attachment"/>
+					</OverflowToolbar>
+				</headerToolbar>
+				<columns>
+					<Column width="30%"><Text text="{i18n>domains.col.domain}"/></Column>
+					<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>domains.col.team}"/></Column>
+					<Column hAlign="End"><Text text="{i18n>domains.col.repos}"/></Column>
+					<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>domains.col.golden}"/></Column>
+					<Column hAlign="End" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>domains.col.sources}"/></Column>
+					<Column hAlign="End"><Text text="{i18n>domains.col.quality}"/></Column>
+					<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>domains.col.updated}"/></Column>
+				</columns>
+				<items>
+					<ColumnListItem type="Navigation" press=".onDomainPress">
+						<ObjectIdentifier title="{= ${view>/lang} === 'ar' ? ${data>name} : ${data>nameEn} }" text="{data>desc}" titleActive="false"/>
+						<VBox><Text text="{= ${view>/lang} === 'ar' ? ${data>teamAr} : ${data>team} }"/><Label text="{data>owner}"/></VBox>
+						<ObjectNumber number="{data>repoCount}"/>
+						<ObjectNumber number="{path: 'data>golden', formatter: '.fmt.num'}"/>
+						<ObjectNumber number="{data>sourceCount}"/>
+						<ObjectNumber number="{path: 'data>quality', formatter: '.fmt.pct'}" state="{data>qualityState}"/>
+						<Text text="{data>updated}"/>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

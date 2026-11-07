@@ -1,0 +1,63 @@
+{
+	"_comment": "Illustrative sample data for the Home prototype. Not governed KPI results.",
+	"announcement": {
+		"text_ar": "صيانة مجدولة لخدمة المزامنة مع SAP S/4HANA يوم الخميس 6 نوفمبر من 01:00 إلى 03:00 — قد تتأخر بيانات الموردين.",
+		"text_en": "Scheduled maintenance of the SAP S/4HANA sync on Thursday 6 November, 01:00–03:00. Vendor data may be delayed."
+	},
+	"completeness": { "value": 87.3, "target": 95, "deviation": -7.7, "weeks": [
+		{ "week": "W41", "valid": 28400, "issues": 11900 },
+		{ "week": "W42", "valid": 20100, "issues": 9800 },
+		{ "week": "W43", "valid": 24000, "issues": 9200 },
+		{ "week": "W44", "valid": 26800, "issues": 4100 }
+	] },
+	"openItems": { "open": 20, "total": 42, "rows": [
+		{ "key": "awaitingApproval", "count": 4 },
+		{ "key": "myRequests", "count": 3 },
+		{ "key": "matchDetection", "count": 13 }
+	] },
+	"changeRequests": [
+		{ "id": "CR-1000352", "kind": "tax_id", "customer": "مكتبة الأجيال", "fields": 12, "domain": "customers", "source": "C4C", "created": "2026-11-02", "completeness": 30, "state": "Error", "stateKey": "missing_data" },
+		{ "id": "CR-1000361", "kind": "new_customer", "customer": "دار المعرفة للنشر", "fields": 18, "domain": "customers", "source": "manual", "created": "2026-11-01", "completeness": 55, "state": "Warning", "stateKey": "needs_review" },
+		{ "id": "CR-1000378", "kind": "merge", "customer": "الشركة العربية للتوزيع", "fields": 24, "domain": "customers", "source": "ERP", "created": "2026-10-30", "completeness": 92, "state": "Success", "stateKey": "ready" },
+		{ "id": "CR-1000384", "kind": "reclassify", "customer": "مكتبة النيل", "fields": 6, "domain": "customers", "source": "CSV", "created": "2026-10-28", "completeness": 100, "state": "Success", "stateKey": "ready" }
+	],
+	"changeRequestsTotal": 6,
+	"mergeCandidates": [
+		{ "customer": "مكتبة الأجيال الجديدة", "domain": "customers", "source": "C4C", "detected": "2026-11-01", "score": 96 },
+		{ "customer": "دار المعرفة للنشر", "domain": "customers", "source": "C4C", "detected": "2026-11-01", "score": 91 },
+		{ "customer": "الشركة العربية للتوزيع", "domain": "customers", "source": "ERP", "detected": "2026-10-31", "score": 88 },
+		{ "customer": "مؤسسة الفكر العربي", "domain": "customers", "source": "C4C", "detected": "2026-10-30", "score": 82 },
+		{ "customer": "مكتبة النيل", "domain": "customers", "source": "CSV", "detected": "2026-10-29", "score": 77 },
+		{ "customer": "شبكة القاهرة التعليمية", "domain": "customers", "source": "ERP", "detected": "2026-10-28", "score": 71 }
+	],
+	"mergeCandidatesTotal": 20,
+	"pipelines": [
+		{ "name": "c4c_customer_ingest", "stage": "ingest", "last": "2026-11-04 02:00", "state": "Success", "stateKey": "pos" },
+		{ "name": "s4_partner_pull", "stage": "ingest", "last": "2026-11-04 01:30", "state": "Warning", "stateKey": "crit" },
+		{ "name": "customer_standardise", "stage": "standardise", "last": "2026-11-04 02:20", "state": "Success", "stateKey": "pos" },
+		{ "name": "customer_dq_suite", "stage": "dq", "last": "2026-11-04 06:00", "state": "Warning", "stateKey": "crit" },
+		{ "name": "customer_match", "stage": "match", "last": "2026-11-03 22:00", "state": "Warning", "stateKey": "crit" },
+		{ "name": "customer_survivorship", "stage": "survivorship", "last": "2026-11-04 02:40", "state": "Success", "stateKey": "pos" }
+	],
+	"stewardNotes": [
+		{ "initials": "SA", "name_ar": "سارة عادل", "name_en": "Sara Adel", "role_ar": "أمينة بيانات العملاء", "role_en": "Customer data steward", "at": "2026-11-03 11:40",
+		  "text_ar": "راجعت 214 سجلاً مكرراً في نطاق التوزيع التجاري، ودمجت 187 منها. السجلات المتبقية تحتاج تأكيد الرقم الضريبي من فريق المبيعات.",
+		  "text_en": "Reviewed 214 duplicates in the commercial distribution scope and merged 187. The rest need tax ID confirmation from Sales." },
+		{ "initials": "KF", "name_ar": "كريم فوزي", "name_en": "Karim Fawzy", "role_ar": "أمين بيانات المنتجات", "role_en": "Product data steward", "at": "2026-11-02 16:15",
+		  "text_ar": "أضاف قاعدة جودة جديدة لصيغة ISBN-13، وتم تطبيقها على 38,500 منتج. نسبة النجاح 96.2%.",
+		  "text_en": "Added a new ISBN-13 format rule, applied to 38,500 products. Pass rate 96.2%." }
+	],
+	"owner": { "initials": "MM", "name_ar": "محمد", "name_en": "Mohamed", "title_ar": "مدير إدارة البيانات والتحليلات", "title_en": "Data Management & Analytics Manager",
+		"email": "mdm-team@example.com", "lastReview": "2026-10-20" },
+	"runDays": ["2026-11-03", "2026-11-05", "2026-11-10", "2026-11-12", "2026-11-17", "2026-11-19", "2026-11-24", "2026-11-26"],
+	"todayRuns": [ { "time": "02:00", "key": "sync_c4c" }, { "time": "06:00", "key": "nightly_quality" } ],
+	"today": "2026-11-03",
+	"links": [
+		{ "key": "templatesCatalog", "icon": "sap-icon://add-document" },
+		{ "key": "matchDetection", "icon": "sap-icon://compare" },
+		{ "key": "testCases", "icon": "sap-icon://quality-issue" },
+		{ "key": "domains", "icon": "sap-icon://database" },
+		{ "key": "modelsRules", "icon": "sap-icon://shield" },
+		{ "key": "auditLog", "icon": "sap-icon://history" }
+	]
+}

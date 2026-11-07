@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Repo.io</title>
+	<script>
+		// Prototype language switch: ar (RTL, default) or en (LTR), remembered per browser.
+		(function () {
+			var lang = "ar";
+			try { lang = localStorage.getItem("repoio-lang") || "ar"; } catch (e) { /* storage blocked */ }
+			window["sap-ui-config"] = { language: lang };
+		}());
+	</script>
+	<script id="sap-ui-bootstrap"
+		src="resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_fiori_3"
+		data-sap-ui-libs="sap.m,sap.tnt,sap.f,sap.uxap,sap.ui.layout,sap.ui.table"
+		data-sap-ui-resource-roots='{"repoio.proto": "./"}'
+		data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+		data-sap-ui-compat-version="edge"
+		data-sap-ui-async="true">
+	</script>
+	<style>html, body { height: 100%; margin: 0; }</style>
+</head>
+<body class="sapUiBody sapUiSizeCompact" id="content">
+	<div data-sap-ui-component data-name="repoio.proto" data-id="container" data-settings='{"id": "repoio"}' style="height:100%"></div>
+</body>
+</html>

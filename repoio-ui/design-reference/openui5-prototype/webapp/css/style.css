@@ -1,0 +1,9 @@
+/* Repo.io prototype — only small layout helpers; colors and type come from sap_fiori_3. */
+.repoioLogo { cursor: pointer; }
+.repoioProtoBadge { font-size: 0.75rem; color: var(--sapCriticalTextColor); }
+.repoioCard { width: 100%; }
+.repoioCardBody { padding: 0 1rem 1rem; }
+.repoioKpi .sapMNCValueScr { font-size: 1.75rem; }
+.repoioMuted { color: var(--sapContent_LabelColor); }
+.repoioChart { width: 100%; direction: ltr; } /* ECharts lays out SVG text itself; RTL is handled in each option */
+.repoioNoWrap { white-space: nowrap; }

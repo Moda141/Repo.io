@@ -1,0 +1,43 @@
+{
+	"_comment": "Mirrors docs/ui-pages.md. In the product this tree is served by the role-filtered navigation API; here it is static.",
+	"items": [
+		{ "key": "home", "icon": "sap-icon://home", "route": "home" },
+		{ "key": "explore", "icon": "sap-icon://search" },
+		{ "key": "feeds", "icon": "sap-icon://feed" },
+		{ "key": "businessOperation", "group": true, "items": [
+			{ "key": "favorites", "icon": "sap-icon://favorite", "items": [
+				{ "key": "awaitingApproval" }, { "key": "myRepo" }, { "key": "myRequests" }
+			] },
+			{ "key": "domains", "icon": "sap-icon://database", "route": "domains" },
+			{ "key": "goldenRecords", "icon": "sap-icon://badge" },
+			{ "key": "relationships", "icon": "sap-icon://chain-link", "items": [
+				{ "key": "relationshipsList" }, { "key": "relationshipBuilder" }
+			] },
+			{ "key": "changeRequests", "icon": "sap-icon://request", "items": [
+				{ "key": "openChangeRequests" }, { "key": "templatesCatalog" }, { "key": "templateAuthoring" }, { "key": "referenceData" }
+			] },
+			{ "key": "dataQuality", "icon": "sap-icon://quality-issue", "items": [
+				{ "key": "testCases" }, { "key": "alerts" }
+			] },
+			{ "key": "stewardship", "icon": "sap-icon://group", "items": [
+				{ "key": "matchDetection" }, { "key": "quarantine" }, { "key": "modelsRules" }
+			] },
+			{ "key": "pythonWorkspace", "icon": "sap-icon://syntax" }
+		] },
+		{ "key": "ontologyExplorer", "icon": "sap-icon://tree" },
+		{ "key": "workflows", "icon": "sap-icon://process", "items": [
+			{ "key": "workflowsList" }, { "key": "newWorkflow" }
+		] },
+		{ "key": "systemAdministration", "group": true, "items": [
+			{ "key": "analytics", "icon": "sap-icon://business-objects-experience", "items": [
+				{ "key": "reports" }, { "key": "broadcasts" }
+			] },
+			{ "key": "administration", "icon": "sap-icon://action-settings", "items": [
+				{ "key": "users" }, { "key": "rolesAccess" }, { "key": "systemConfiguration" }, { "key": "announcements" }, { "key": "auditLog" }
+			] },
+			{ "key": "integrationHub", "icon": "sap-icon://connected", "items": [
+				{ "key": "connections" }, { "key": "apiManagement" }, { "key": "dataSync" }, { "key": "dataJobs" }
+			] }
+		] }
+	]
+}

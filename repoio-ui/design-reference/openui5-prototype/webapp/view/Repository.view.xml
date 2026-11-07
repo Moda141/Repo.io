@@ -1,0 +1,208 @@
+<mvc:View controllerName="repoio.proto.controller.Repository"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns:f="sap.f" xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core">
+	<uxap:ObjectPageLayout id="page" showTitleInHeaderContent="true" upperCaseAnchorBar="false" headerContentPinnable="true">
+		<uxap:headerTitle>
+			<uxap:ObjectPageDynamicHeaderTitle>
+				<uxap:breadcrumbs>
+					<Breadcrumbs currentLocationText="{view>/repo/name}">
+						<Link text="{i18n>nav.domains}" press=".onToDomains"/>
+						<Link text="{view>/repo/domainName}" press=".onToDomain"/>
+					</Breadcrumbs>
+				</uxap:breadcrumbs>
+				<uxap:expandedHeading><Title text="{view>/repo/name}" level="H1" wrapping="true"/></uxap:expandedHeading>
+				<uxap:snappedHeading><Title text="{view>/repo/name}" level="H1"/></uxap:snappedHeading>
+				<uxap:expandedContent><Text text="{i18n>repo.repository} · {view>/repo/code}"/></uxap:expandedContent>
+				<uxap:snappedContent><Text text="{view>/repo/code} · {view>/repo/model}"/></uxap:snappedContent>
+				<uxap:actions>
+					<Button text="{i18n>common.edit}" type="Emphasized"/>
+					<Button text="{i18n>repo.publish}"/>
+					<Button text="{i18n>repo.runMatch}"/>
+				</uxap:actions>
+			</uxap:ObjectPageDynamicHeaderTitle>
+		</uxap:headerTitle>
+		<uxap:headerContent>
+			<FlexBox wrap="Wrap" alignItems="Start">
+				<Avatar src="sap-icon://badge" displaySize="M" backgroundColor="Accent5" class="sapUiSmallMarginEnd"/>
+				<VBox class="sapUiMediumMarginEnd" width="20rem">
+					<ObjectAttribute title="{i18n>domains.col.domain}" text="{view>/repo/domainName}" active="true" press=".onToDomain"/>
+					<ObjectAttribute title="{i18n>repo.model}" text="{view>/repo/model}" active="true" press=".onToModel"/>
+					<HBox alignItems="Center" class="sapUiTinyMarginTop">
+						<Label text="{i18n>repo.owners}:" class="sapUiTinyMarginEnd"/>
+						<f:AvatarGroup items="{view>/repo/owners}" groupType="Individual" avatarDisplaySize="XS">
+							<f:AvatarGroupItem initials="{view>initials}" tooltip="{view>name}"/>
+						</f:AvatarGroup>
+					</HBox>
+					<HBox items="{view>/repo/tags}" wrap="Wrap" class="sapUiTinyMarginTop">
+						<GenericTag text="{view>}" design="StatusIconHidden" status="Information" class="sapUiTinyMarginEnd"/>
+					</HBox>
+				</VBox>
+				<VBox class="sapUiMediumMarginEnd">
+					<Label text="{i18n>domains.col.status}"/>
+					<ObjectStatus text="{path: 'view>/repo/healthKey', formatter: '.healthText'}" state="{view>/repo/healthState}" class="sapMObjectStatusLarge"/>
+				</VBox>
+				<VBox class="sapUiMediumMarginEnd">
+					<Label text="{i18n>repo.golden}"/>
+					<ObjectNumber number="{path: 'view>/repo/golden', formatter: '.fmt.num'}" class="sapMObjectNumberLarge"/>
+				</VBox>
+				<VBox class="sapUiMediumMarginEnd">
+					<Label text="{i18n>domains.col.sources}"/>
+					<ObjectNumber number="{view>/repo/sourceRows/length}" class="sapMObjectNumberLarge"/>
+				</VBox>
+				<VBox class="sapUiMediumMarginEnd">
+					<Label text="{i18n>domains.col.quality}"/>
+					<ObjectNumber number="{path: 'view>/repo/quality', formatter: '.fmt.pct'}" state="{view>/repo/qualityState}" class="sapMObjectNumberLarge"/>
+				</VBox>
+				<VBox>
+					<Label text="{i18n>repo.deployed}"/>
+					<Text text="{= ${view>/repo/deployed} === '—' ? ${i18n>repo.notDeployed} : ${view>/repo/deployed} }" class="sapUiTinyMarginTop"/>
+				</VBox>
+			</FlexBox>
+		</uxap:headerContent>
+		<uxap:sections>
+			<uxap:ObjectPageSection id="secModel" title="{i18n>repo.sec.model}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>repo.sub.assigned}" titleUppercase="false" showTitle="false">
+						<form:SimpleForm editable="false" layout="ColumnLayout" columnsM="2" columnsL="2" columnsXL="2">
+							<core:Title text="{i18n>repo.sub.assigned}"/>
+							<Label text="{i18n>repo.model}"/><Link text="{view>/model/name}" press=".onToModel"/>
+							<Label text="{i18n>repo.entity}"/><Text text="{view>/model/entity}"/>
+							<Label text="{i18n>repo.version}"/><Text text="{view>/model/ver}"/>
+							<Label text="{i18n>repo.modelStatus}"/><ObjectStatus text="{view>/model/statusL}" state="{view>/model/statusState}"/>
+							<Label text="{i18n>repo.approvedBy}"/><Text text="{view>/model/approver}"/>
+							<Label text="{i18n>repo.approvedOn}"/><Text text="{view>/model/approved}"/>
+							<core:Title text="{i18n>repo.sub.matching}"/>
+							<Label text="{i18n>repo.matchRule}"/><Text text="{view>/model/match}"/>
+							<Label text="{i18n>repo.blocking}"/><Text text="{view>/model/block}"/>
+							<Label text="{i18n>repo.survivorship}"/><Text text="{view>/model/surv}"/>
+							<Label text="{i18n>repo.priority}"/>
+							<Text text="{view>/model/priorityText}"/>
+						</form:SimpleForm>
+					</uxap:ObjectPageSubSection>
+					<uxap:ObjectPageSubSection title="{i18n>repo.sub.attributes}" titleUppercase="false">
+						<Table items="{view>/model/attrs}" popinLayout="GridSmall" mode="MultiSelect">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="{i18n>repo.sub.attributes} ({view>/model/attrs/length})" level="H3"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>repo.openModel}" type="Transparent" press=".onToModel"/>
+									<Button text="{i18n>repo.requestChange}" type="Transparent" press=".onRequestChange"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="22%"><Text text="{i18n>repo.attr}"/></Column>
+								<Column><Text text="{i18n>repo.type}"/></Column>
+								<Column><Text text="{i18n>repo.required}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.matchRole}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.mappedSources}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.survivorship}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<ObjectIdentifier title="{view>name}" text="{view>term}"/>
+									<GenericTag text="{view>type}" design="StatusIconHidden"/>
+									<ObjectStatus text="{= ${view>required} ? ${i18n>repo.required} : ${i18n>common.no} }" state="{= ${view>required} ? 'Information' : 'None' }"/>
+									<Text text="{view>role}"/>
+									<Text text="{path: 'view>sources', formatter: '.fmt.joinNames'}"/>
+									<Text text="{view>survivorship}"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<uxap:ObjectPageSection id="secGolden" title="{i18n>repo.sec.golden}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>repo.sec.golden}" titleUppercase="false" showTitle="false">
+						<VBox>
+							<Table id="goldenTable" items="{view>/repo/goldenRecords}" popinLayout="GridSmall" mode="MultiSelect"
+								noDataText="{view>/repo/goldenEmpty}" updateFinished=".onGoldenUpdated">
+								<headerToolbar>
+									<OverflowToolbar>
+										<Title text="{i18n>repo.sec.golden} ({path: 'view>/repo/golden', formatter: '.fmt.num'})" level="H3"/>
+										<ToolbarSpacer/>
+										<SegmentedButton selectionChange=".onGoldenFilter" selectedKey="all">
+											<items>
+												<SegmentedButtonItem key="all" text="{i18n>common.all}"/>
+												<SegmentedButtonItem key="pos" text="{i18n>golden.pos}"/>
+												<SegmentedButtonItem key="crit" text="{i18n>golden.crit}"/>
+												<SegmentedButtonItem key="neg" text="{i18n>golden.neg}"/>
+											</items>
+										</SegmentedButton>
+										<SearchField width="14rem" liveChange=".onGoldenSearch" placeholder="{i18n>repo.goldenSearch}"/>
+										<Button text="{i18n>common.export}" type="Transparent"/>
+									</OverflowToolbar>
+								</headerToolbar>
+								<columns>
+									<Column width="28%"><Text text="{i18n>repo.goldenRecord}"/></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.contributing}"/></Column>
+									<Column hAlign="End" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.sourceRecords}"/></Column>
+									<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.matchProb}"/></Column>
+									<Column hAlign="End"><Text text="{i18n>domains.col.quality}"/></Column>
+									<Column><Text text="{i18n>domains.col.status}"/></Column>
+									<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.lastMerge}"/></Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Navigation" press=".onGoldenPress">
+										<ObjectIdentifier title="{view>name}" text="{view>id} · {view>sub}"/>
+										<Text text="{path: 'view>sources', formatter: '.fmt.joinNames'}"/>
+										<ObjectNumber number="{view>sourceRecords}"/>
+										<ObjectNumber number="{path: 'view>prob', formatter: '.fmt.dec'}" state="{view>probState}"/>
+										<ObjectNumber number="{path: 'view>quality', formatter: '.fmt.pct'}" state="{view>qualityState}"/>
+										<ObjectStatus text="{path: 'view>stateKey', formatter: '.goldenStateText'}" state="{view>state}"/>
+										<Text text="{view>lastMerge}"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+							<Toolbar style="Clear" visible="{= !!${view>/repo/goldenRecords} &amp;&amp; ${view>/repo/goldenRecords}.length > 0 }">
+								<Text text="{view>/repo/goldenFooter}" class="repoioMuted"/>
+								<Link text="{i18n>repo.openExplore}" press=".onExplore"/>
+							</Toolbar>
+						</VBox>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<uxap:ObjectPageSection id="secSources" title="{i18n>repo.sec.sources}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>repo.sec.sources}" titleUppercase="false" showTitle="false">
+						<Table items="{view>/repo/sourceRows}" popinLayout="GridSmall" mode="MultiSelect">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="{i18n>repo.sec.sources} ({view>/repo/sourceRows/length})" level="H3"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>repo.addSource}" type="Transparent"/>
+									<Button text="{i18n>repo.syncAll}" type="Transparent"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="24%"><Text text="{i18n>repo.source}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.connector}"/></Column>
+								<Column hAlign="End"><Text text="{i18n>repo.priority}"/></Column>
+								<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.tables}"/></Column>
+								<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.rows}"/></Column>
+								<Column hAlign="End"><Text text="{i18n>domains.col.quality}"/></Column>
+								<Column hAlign="End" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.contributes}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.lastSync}"/></Column>
+								<Column><Text text="{i18n>domains.col.status}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem type="Navigation" press=".onSourcePress">
+									<ObjectIdentifier title="{view>name}" text="{view>host}"/>
+									<Text text="{view>type}"/>
+									<Text text="{= ${view>priority} ? ${view>priority} : '—' }"/>
+									<ObjectNumber number="{view>tables}"/>
+									<ObjectNumber number="{path: 'view>rows', formatter: '.fmt.num'}"/>
+									<ObjectNumber number="{path: 'view>quality', formatter: '.fmt.pct'}" state="{view>qualityState}"/>
+									<Text text="{= ${view>goldenCount} > 0 ? ${view>contributes} + ' / ' + ${view>goldenCount} : '—' }"/>
+									<Text text="{view>sync}"/>
+									<ObjectStatus text="{view>stateText}" state="{view>state}"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+		</uxap:sections>
+	</uxap:ObjectPageLayout>
+</mvc:View>

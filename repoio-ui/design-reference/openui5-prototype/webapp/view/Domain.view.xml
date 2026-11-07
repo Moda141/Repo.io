@@ -1,0 +1,129 @@
+<mvc:View controllerName="repoio.proto.controller.Domain"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:card="sap.f.cards" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="true">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:breadcrumbs>
+					<Breadcrumbs currentLocationText="{view>/domain/name}">
+						<Link text="{i18n>nav.domains}" press=".onToDomains"/>
+					</Breadcrumbs>
+				</f:breadcrumbs>
+				<f:heading><Title text="{view>/domain/name}" level="H1"/></f:heading>
+				<f:expandedContent><Text text="{i18n>domain.entity}: {view>/domain/nameEn}"/></f:expandedContent>
+				<f:snappedContent><Text text="{view>/domain/repoText}"/></f:snappedContent>
+				<f:actions>
+					<Button text="{i18n>domain.addRepo}" type="Emphasized" press=".onAddRepo"/>
+					<Button text="{i18n>common.edit}" type="Transparent"/>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader pinnable="true">
+				<FlexBox wrap="Wrap" alignItems="Start">
+					<Avatar src="sap-icon://database" displaySize="M" backgroundColor="Accent6" class="sapUiSmallMarginEnd"/>
+					<VBox class="sapUiMediumMarginEnd" width="22rem">
+						<Text text="{view>/domain/desc}" class="sapUiTinyMarginBottom"/>
+						<ObjectAttribute title="{i18n>domain.owner}" text="{view>/domain/owner}"/>
+						<ObjectAttribute title="{i18n>domains.col.team}" text="{view>/domain/teamText}"/>
+						<ObjectAttribute title="{i18n>domains.col.updated}" text="{view>/domain/updated}"/>
+					</VBox>
+					<VBox class="sapUiMediumMarginEnd">
+						<Label text="{i18n>domains.col.repos}"/>
+						<ObjectNumber number="{view>/domain/repoCount}" class="sapMObjectNumberLarge"/>
+					</VBox>
+					<VBox class="sapUiMediumMarginEnd">
+						<Label text="{i18n>domains.col.golden}"/>
+						<ObjectNumber number="{path: 'view>/domain/golden', formatter: '.fmt.num'}" class="sapMObjectNumberLarge"/>
+					</VBox>
+					<VBox class="sapUiMediumMarginEnd">
+						<Label text="{i18n>domains.col.sources}"/>
+						<ObjectNumber number="{view>/domain/sourceCount}" class="sapMObjectNumberLarge"/>
+					</VBox>
+					<VBox class="sapUiMediumMarginEnd">
+						<Label text="{i18n>domains.col.quality}"/>
+						<ObjectNumber number="{path: 'view>/domain/quality', formatter: '.fmt.pct'}" state="{view>/domain/qualityState}" class="sapMObjectNumberLarge"/>
+					</VBox>
+					<VBox visible="{= ${view>/domain/repoCount} > 0 }" width="20rem">
+						<Label text="{i18n>domain.statusChart}"/>
+						<rc:EChart id="statusChart" height="6rem" ariaLabel="{i18n>domain.statusChart}"/>
+					</VBox>
+				</FlexBox>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<VBox>
+				<OverflowToolbar style="Clear" class="sapUiSmallMarginBottom">
+					<Title text="{view>/domain/repoText}" level="H2"/>
+					<ToolbarSpacer/>
+					<SearchField width="16rem" liveChange=".onSearch" placeholder="{i18n>common.search}"/>
+					<SegmentedButton selectedKey="{view>/domain/mode}">
+						<items>
+							<SegmentedButtonItem key="cards" icon="sap-icon://grid" tooltip="{i18n>domain.cards}"/>
+							<SegmentedButtonItem key="table" icon="sap-icon://list" tooltip="{i18n>domain.table}"/>
+						</items>
+					</SegmentedButton>
+				</OverflowToolbar>
+
+				<IllustratedMessage visible="{= ${view>/domain/repoCount} === 0 }" illustrationType="sapIllus-NoData"
+					title="{i18n>domain.emptyTitle}" description="{i18n>domain.emptyText}">
+					<additionalContent><Button text="{i18n>domain.addRepo}" type="Emphasized" press=".onAddRepo"/></additionalContent>
+				</IllustratedMessage>
+
+				<f:GridContainer id="repoCards" items="{view>/domain/repos}" visible="{= ${view>/domain/mode} === 'cards' &amp;&amp; ${view>/domain/repoCount} > 0 }">
+					<f:layout><f:GridContainerSettings rowSize="5rem" columnSize="4.5rem" gap="1rem"/></f:layout>
+					<f:items>
+						<f:Card class="repoioCard">
+							<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="4"/></f:layoutData>
+							<f:header>
+								<card:Header title="{view>name}" subtitle="{view>code}" iconSrc="sap-icon://badge" statusText="{path: 'view>statusKey', formatter: '.statusText'}" press=".onRepoPress"/>
+							</f:header>
+							<f:content>
+								<VBox class="repoioCardBody" width="100%">
+									<HBox justifyContent="SpaceBetween" class="sapUiTinyMarginBottom">
+										<VBox><Label text="{i18n>repo.model}"/><Link text="{view>model}" press=".onRepoPress"/></VBox>
+										<VBox alignItems="End"><Label text="{i18n>repo.golden}"/><ObjectNumber number="{path: 'view>golden', formatter: '.fmt.num'}" emphasized="true"/></VBox>
+									</HBox>
+									<Label text="{i18n>domains.col.quality}"/>
+									<ProgressIndicator percentValue="{view>quality}" displayValue="{path: 'view>quality', formatter: '.fmt.pct'}" state="{view>qualityState}" displayOnly="true" height="0.75rem"/>
+									<HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop">
+										<ObjectStatus text="{path: 'view>healthKey', formatter: '.healthText'}" state="{view>healthState}" icon="sap-icon://status-positive"/>
+										<f:AvatarGroup items="{path: 'view>owners', templateShareable: false}" groupType="Group" avatarDisplaySize="XS">
+											<f:AvatarGroupItem initials="{view>initials}" tooltip="{view>name}"/>
+										</f:AvatarGroup>
+									</HBox>
+									<Text text="{i18n>repo.sources}: {view>sourceNames}" class="repoioMuted sapUiTinyMarginTop" wrapping="true"/>
+									<HBox items="{path: 'view>tags', templateShareable: false}" wrap="Wrap" class="sapUiTinyMarginTop">
+										<GenericTag text="{view>}" design="StatusIconHidden" status="Information" class="sapUiTinyMarginEnd"/>
+									</HBox>
+								</VBox>
+							</f:content>
+						</f:Card>
+					</f:items>
+				</f:GridContainer>
+
+				<Table id="repoTable" items="{view>/domain/repos}" mode="MultiSelect" visible="{= ${view>/domain/mode} === 'table' &amp;&amp; ${view>/domain/repoCount} > 0 }" popinLayout="GridSmall">
+					<columns>
+						<Column width="24%"><Text text="{i18n>repo.repository}"/></Column>
+						<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.model}"/></Column>
+						<Column><Text text="{i18n>domains.col.status}"/></Column>
+						<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.golden}"/></Column>
+						<Column hAlign="End"><Text text="{i18n>domains.col.quality}"/></Column>
+						<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.sources}"/></Column>
+						<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.owners}"/></Column>
+					</columns>
+					<items>
+						<ColumnListItem type="Navigation" press=".onRepoPress">
+							<ObjectIdentifier title="{view>name}" text="{view>code}"/>
+							<Text text="{view>model}"/>
+							<ObjectStatus text="{path: 'view>healthKey', formatter: '.healthText'}" state="{view>healthState}"/>
+							<ObjectNumber number="{path: 'view>golden', formatter: '.fmt.num'}"/>
+							<ObjectNumber number="{path: 'view>quality', formatter: '.fmt.pct'}" state="{view>qualityState}"/>
+							<Text text="{view>sourceNames}"/>
+							<Text text="{view>ownerNames}"/>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</VBox>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>
