@@ -22,3 +22,11 @@
 .repoioSpaceFoot { border-top: 1px solid var(--sapGroup_TitleBorderColor); padding-top: 0.5rem; margin-top: 0.5rem; }
 .repoioSpaceFoot .sapUiIcon { color: var(--sapContent_IconColor); }
 .repoioSpacesBar { background: var(--sapObjectHeader_Background); }
+/* Datasphere-style "create new" tiles */
+.repoioNewTile.sapMBtn { height: auto; padding: 0; }
+.repoioNewTile .sapMBtnInner { height: 4.75rem; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--sapTile_Background); border: 1px solid var(--sapTile_BorderColor); box-shadow: var(--sapContent_Shadow0); }
+.repoioNewTile .sapMBtnInner:hover { background: var(--sapTile_Hover_Background); }
+.repoioNewTile .sapMBtnIcon { font-size: 1.5rem; color: var(--sapContent_IconColor); margin: 0 !important; }
+.repoioNewTile .sapMBtnContent { margin: 0 !important; color: var(--sapTile_TitleTextColor); font-weight: normal; line-height: 1.25rem; white-space: normal; text-align: start; }
+.repoioNewTile .sapMBtnIcon { float: none !important; align-self: flex-start; order: -1; }
+.repoioWelcome { padding-block: 0.25rem; }

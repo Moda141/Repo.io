@@ -32,7 +32,7 @@ sap.ui.define([
 			this.data().dataLoaded().then(function () {
 				that.viewModel().setProperty("/home/domainOptions", [{ key: "", text: that.text("common.all") }].concat(
 					that.data().getProperty("/domains").map(function (d) { return { key: d.id, text: that.domainName(d) }; })));
-				that.byId("fDomain").setSelectedKey("");
+				if (that.byId("fDomain")) { that.byId("fDomain").setSelectedKey(""); }
 			});
 			this._updateCounts();
 			var aPipes = oHome.getProperty("/pipelines"),
@@ -116,6 +116,9 @@ sap.ui.define([
 		},
 
 		/* ---------- Card content helpers ---------- */
+		recentType: function (k) { return k ? this.text("home.recent." + k) : ""; },
+		recentDomain: function (k) { var d = this.data().getProperty("/domains").filter(function (x) { return x.id === k; })[0]; return this.domainName(d); },
+		onRecentPress: function (e) { var r = e.getSource().getBindingContext("home").getObject(); this.router().navTo(r.route, r.args); },
 		crStateText: function (k) { return k ? this.text("home.cr." + k) : ""; },
 		crKindText: function (k) { return k ? this.text("home.kind." + k) : ""; },
 		stageText: function (k) { return k ? this.text("home.stage." + k) : ""; },

@@ -22,7 +22,10 @@
 									<uxap:expandedContent><Text text="{i18n>src.dataSource} · {view>host}"/></uxap:expandedContent>
 									<uxap:actions>
 										<Button text="{i18n>common.edit}" type="Emphasized"/>
+										<Button text="{i18n>dsp.validate}"/>
 										<Button text="{i18n>src.syncNow}"/>
+										<Button text="{i18n>dsp.pause}" type="Transparent"/>
+										<Button text="{i18n>common.delete}" type="Transparent"/>
 									</uxap:actions>
 								</uxap:ObjectPageDynamicHeaderTitle>
 							</uxap:headerTitle>
@@ -57,7 +60,7 @@
 								</FlexBox>
 							</uxap:headerContent>
 							<uxap:sections>
-								<uxap:ObjectPageSection title="{i18n>src.sec.general}" titleUppercase="false">
+								<uxap:ObjectPageSection title="{i18n>dsp.conn.details}" titleUppercase="false">
 									<uxap:subSections>
 										<uxap:ObjectPageSubSection title="{i18n>src.sec.general}" titleUppercase="false" showTitle="false">
 											<form:SimpleForm editable="false" layout="ColumnLayout" columnsM="2" columnsL="2" columnsXL="2">
@@ -71,6 +74,10 @@
 												<Label text="{i18n>src.schemas}"/><Text text="{view>schemas}"/>
 												<Label text="{i18n>src.reposUsing}"/><Text text="{path: 'view>repos', formatter: '.fmt.joinNames'}"/>
 												<Label text="{i18n>src.secret}"/><Text text="{i18n>src.secretText}"/>
+												<core:Title text="{i18n>dsp.conn.features}"/>
+												<Label text="{i18n>dsp.conn.remote}"/><ObjectStatus text="{i18n>dsp.enabled}" state="Success" icon="sap-icon://sys-enter-2"/>
+												<Label text="{i18n>dsp.conn.flows}"/><ObjectStatus text="{i18n>dsp.enabled}" state="Success" icon="sap-icon://sys-enter-2"/>
+												<Label text="{i18n>dsp.conn.replication}"/><ObjectStatus text="{= ${view>id} === 'csv' ? ${i18n>dsp.notAvailable} : ${i18n>dsp.enabled} }" state="{= ${view>id} === 'csv' ? 'None' : 'Success' }"/>
 											</form:SimpleForm>
 										</uxap:ObjectPageSubSection>
 									</uxap:subSections>
@@ -110,7 +117,7 @@
 										</uxap:ObjectPageSubSection>
 									</uxap:subSections>
 								</uxap:ObjectPageSection>
-								<uxap:ObjectPageSection title="{i18n>src.sec.tables}" titleUppercase="false">
+								<uxap:ObjectPageSection title="{i18n>dsp.conn.remoteTables}" titleUppercase="false">
 									<uxap:subSections>
 										<uxap:ObjectPageSubSection title="{i18n>src.sec.tables}" titleUppercase="false" showTitle="false">
 											<Table items="{path: 'view>tables', templateShareable: false, sorter: {path: 'schema', group: true}}" popinLayout="GridSmall" mode="MultiSelect">
@@ -123,6 +130,7 @@
 												</headerToolbar>
 												<columns>
 													<Column width="26%"><Text text="{i18n>src.table}"/></Column>
+													<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>dsp.dataAccess}"/></Column>
 													<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>src.usedIn}"/></Column>
 													<Column hAlign="End"><Text text="{i18n>repo.rows}"/></Column>
 													<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>src.columns}"/></Column>
@@ -132,6 +140,7 @@
 												<items>
 													<ColumnListItem type="Navigation" press=".onTablePress">
 														<ObjectIdentifier title="{view>name}" text="Schema: {view>schema}"/>
+														<ObjectStatus text="{= ${view>usedIn}.length ? ${i18n>dsp.replicated} : ${i18n>dsp.remote} }" state="{= ${view>usedIn}.length ? 'Success' : 'None' }" icon="{= ${view>usedIn}.length ? 'sap-icon://database' : 'sap-icon://cloud' }"/>
 														<Text text="{= ${view>usedIn}.length ? ${path: 'view>usedIn', formatter: '.fmt.joinNames'} : ${i18n>src.notUsed} }"/>
 														<ObjectNumber number="{path: 'view>rows', formatter: '.fmt.num'}"/>
 														<ObjectNumber number="{view>cols}"/>
@@ -143,7 +152,7 @@
 										</uxap:ObjectPageSubSection>
 									</uxap:subSections>
 								</uxap:ObjectPageSection>
-								<uxap:ObjectPageSection title="{i18n>src.sec.sync}" titleUppercase="false">
+								<uxap:ObjectPageSection title="{i18n>dsp.conn.monitor}" titleUppercase="false">
 									<uxap:subSections>
 										<uxap:ObjectPageSubSection title="{i18n>src.sec.sync}" titleUppercase="false" showTitle="false">
 											<Table items="{path: 'view>runs', templateShareable: false}" popinLayout="GridSmall">

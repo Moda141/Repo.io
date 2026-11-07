@@ -9,56 +9,63 @@
 						<Link text="{view>/repo/domainName}" press=".onToDomain"/>
 					</Breadcrumbs>
 				</uxap:breadcrumbs>
-				<uxap:expandedHeading><Title text="{view>/repo/name}" level="H1" wrapping="true"/></uxap:expandedHeading>
-				<uxap:snappedHeading><Title text="{view>/repo/name}" level="H1"/></uxap:snappedHeading>
-				<uxap:expandedContent><Text text="{i18n>repo.repository} · {view>/repo/code}"/></uxap:expandedContent>
+				<uxap:expandedHeading><Title text="{view>/repo/code}" level="H1" wrapping="true"/></uxap:expandedHeading>
+				<uxap:snappedHeading><Title text="{view>/repo/code}" level="H1"/></uxap:snappedHeading>
+				<uxap:expandedContent><Text text="{view>/repo/name}"/></uxap:expandedContent>
 				<uxap:snappedContent><Text text="{view>/repo/code} · {view>/repo/model}"/></uxap:snappedContent>
 				<uxap:actions>
-					<Button text="{i18n>common.edit}" type="Emphasized"/>
+					<Button text="{i18n>common.save}" type="Emphasized"/>
 					<Button text="{i18n>repo.publish}"/>
 					<Button text="{i18n>repo.runMatch}"/>
+					<Button text="{i18n>dsp.lock}" type="Transparent"/>
+					<Button text="{i18n>common.delete}" type="Transparent"/>
+					<Button text="{i18n>space.monitor}" type="Transparent" press=".onMonitor"/>
 				</uxap:actions>
 			</uxap:ObjectPageDynamicHeaderTitle>
 		</uxap:headerTitle>
 		<uxap:headerContent>
-			<FlexBox wrap="Wrap" alignItems="Start">
-				<Avatar src="sap-icon://badge" displaySize="M" backgroundColor="Accent5" class="sapUiSmallMarginEnd"/>
-				<VBox class="sapUiMediumMarginEnd" width="20rem">
-					<ObjectAttribute title="{i18n>domains.col.domain}" text="{view>/repo/domainName}" active="true" press=".onToDomain"/>
-					<ObjectAttribute title="{i18n>repo.model}" text="{view>/repo/model}" active="true" press=".onToModel"/>
-					<HBox alignItems="Center" class="sapUiTinyMarginTop">
-						<Label text="{i18n>repo.owners}:" class="sapUiTinyMarginEnd"/>
-						<f:AvatarGroup items="{view>/repo/owners}" groupType="Individual" avatarDisplaySize="XS">
-							<f:AvatarGroupItem initials="{view>initials}" tooltip="{view>name}"/>
-						</f:AvatarGroup>
-					</HBox>
-					<HBox items="{view>/repo/tags}" wrap="Wrap" class="sapUiTinyMarginTop">
-						<GenericTag text="{view>}" design="StatusIconHidden" status="Information" class="sapUiTinyMarginEnd"/>
-					</HBox>
-				</VBox>
-				<VBox class="sapUiMediumMarginEnd">
-					<Label text="{i18n>domains.col.status}"/>
-					<ObjectStatus text="{path: 'view>/repo/healthKey', formatter: '.healthText'}" state="{view>/repo/healthState}" class="sapMObjectStatusLarge"/>
-				</VBox>
-				<VBox class="sapUiMediumMarginEnd">
-					<Label text="{i18n>repo.golden}"/>
-					<ObjectNumber number="{path: 'view>/repo/golden', formatter: '.fmt.num'}" class="sapMObjectNumberLarge"/>
-				</VBox>
-				<VBox class="sapUiMediumMarginEnd">
-					<Label text="{i18n>domains.col.sources}"/>
-					<ObjectNumber number="{view>/repo/sourceRows/length}" class="sapMObjectNumberLarge"/>
-				</VBox>
-				<VBox class="sapUiMediumMarginEnd">
-					<Label text="{i18n>domains.col.quality}"/>
-					<ObjectNumber number="{path: 'view>/repo/quality', formatter: '.fmt.pct'}" state="{view>/repo/qualityState}" class="sapMObjectNumberLarge"/>
-				</VBox>
-				<VBox>
-					<Label text="{i18n>repo.deployed}"/>
-					<Text text="{= ${view>/repo/deployed} === '—' ? ${i18n>repo.notDeployed} : ${view>/repo/deployed} }" class="sapUiTinyMarginTop"/>
-				</VBox>
+			<FlexBox wrap="Wrap" alignItems="Center">
+				<ObjectStatus text="{path: 'view>/repo/healthKey', formatter: '.healthText'}" state="{view>/repo/healthState}" class="sapUiMediumMarginEnd"/>
+				<ObjectAttribute title="{i18n>dsp.deployStatus}" text="{path: 'view>/repo/statusKey', formatter: '.statusText'}" class="sapUiMediumMarginEnd"/>
+				<ObjectAttribute title="{i18n>repo.deployed}" text="{= ${view>/repo/deployed} === '—' ? ${i18n>repo.notDeployed} : ${view>/repo/deployed} }" class="sapUiMediumMarginEnd"/>
+				<ObjectAttribute title="{i18n>domains.col.domain}" text="{view>/repo/domainName}" active="true" press=".onToDomain"/>
 			</FlexBox>
 		</uxap:headerContent>
 		<uxap:sections>
+			<uxap:ObjectPageSection id="secOverview" title="{i18n>dsp.overview}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>dsp.general}" titleUppercase="false">
+						<form:SimpleForm editable="true" layout="ColumnLayout" columnsM="2" columnsL="2" columnsXL="2">
+							<Label text="{i18n>dsp.repoId}"/><Input value="{view>/repo/code}" editable="false"/>
+							<Label text="{i18n>dsp.businessName}" required="true"/><Input value="{view>/repo/name}"/>
+							<Label text="{i18n>domains.col.domain}"/><Input value="{view>/repo/domainName}" editable="false"/>
+							<Label text="{i18n>repo.model}"/><Input value="{view>/repo/model}" editable="false"/>
+							<Label text="{i18n>dsp.deployStatus}"/><ObjectStatus text="{path: 'view>/repo/statusKey', formatter: '.statusText'}" state="{= ${view>/repo/status} === 'Deployed' ? 'Success' : 'Information' }"/>
+							<Label text="{i18n>repo.deployed}"/><Text text="{= ${view>/repo/deployed} === '—' ? ${i18n>repo.notDeployed} : ${view>/repo/deployed} }"/>
+							<Label text="{i18n>tbl.tags}"/><Input value="{view>/repo/tagsText}"/>
+						</form:SimpleForm>
+					</uxap:ObjectPageSubSection>
+					<uxap:ObjectPageSubSection title="{i18n>dsp.capacity}" titleUppercase="false">
+						<FlexBox wrap="Wrap">
+							<VBox width="18rem" class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+								<Label text="{i18n>space.goldenUsed}"/>
+								<ProgressIndicator percentValue="{view>/repo/capPct}" displayValue="{view>/repo/capText}" state="Information" displayOnly="true" height="1rem"/>
+								<Slider value="{view>/repo/cap}" min="0" max="2000000" step="50000" enableTickmarks="false" width="100%"/>
+								<Text text="{i18n>dsp.capHint}" class="repoioMuted"/>
+							</VBox>
+							<VBox width="18rem" class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+								<Label text="{i18n>domains.col.quality}"/>
+								<ProgressIndicator percentValue="{view>/repo/quality}" displayValue="{path: 'view>/repo/quality', formatter: '.fmt.pct'}" state="{view>/repo/qualityState}" displayOnly="true" height="1rem"/>
+								<Text text="{i18n>dsp.qualityHint}" class="repoioMuted"/>
+							</VBox>
+							<VBox width="18rem" class="sapUiSmallMarginBottom">
+								<Label text="{i18n>space.pipes}"/>
+								<ObjectNumber number="{view>/repo/pipes}" class="sapMObjectNumberLarge"/>
+							</VBox>
+						</FlexBox>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
 			<uxap:ObjectPageSection id="secModel" title="{i18n>repo.sec.model}" titleUppercase="false">
 				<uxap:subSections>
 					<uxap:ObjectPageSubSection title="{i18n>repo.sub.assigned}" titleUppercase="false" showTitle="false">
@@ -159,6 +166,35 @@
 								<Link text="{i18n>repo.openExplore}" press=".onExplore"/>
 							</Toolbar>
 						</VBox>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<uxap:ObjectPageSection id="secMembers" title="{i18n>dsp.members}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>dsp.members}" titleUppercase="false" showTitle="false">
+						<Table items="{view>/repo/members}" mode="MultiSelect" popinLayout="GridSmall">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="{i18n>dsp.members} ({view>/repo/members/length})" level="H3"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>dsp.addMember}" type="Transparent"/>
+									<Button text="{i18n>dsp.removeMember}" type="Transparent"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>dsp.user}"/></Column>
+								<Column><Text text="{i18n>dsp.role}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>dsp.scope}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<HBox alignItems="Center"><Avatar initials="{view>initials}" displaySize="XS" class="sapUiSmallMarginEnd"/><Text text="{view>name}"/></HBox>
+									<Text text="{view>role}"/>
+									<Text text="{view>scope}"/>
+								</ColumnListItem>
+							</items>
+						</Table>
 					</uxap:ObjectPageSubSection>
 				</uxap:subSections>
 			</uxap:ObjectPageSection>

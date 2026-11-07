@@ -31,7 +31,7 @@ sap.ui.define([
 				I = oData.getProperty("/table"), isCustomer = a.sourceId === "c4c" && a.tableId === "customer",
 				trend = oData.getProperty("/trend"), target = oData.getProperty("/target");
 			this.viewModel().setProperty("/table", {
-				name: T.name, schema: T.schema, rows: T.rows, cols: T.cols, quality: T.quality, qualityState: T.qualityState, profiled: T.profiled,
+				name: T.name, techName: T.name.split(" ")[0].toUpperCase(), schema: T.schema, rows: T.rows, cols: T.cols, quality: T.quality, qualityState: T.qualityState, profiled: T.profiled,
 				usedInText: T.usedIn.length ? this.fmt.joinNames(T.usedIn) : this.text("src.notUsed"),
 				domainName: this.domainName(d), repoName: R.name, sourceName: S.name
 			});
@@ -45,12 +45,13 @@ sap.ui.define([
 				columns: I.columns.map(function (c) {
 					var use = isCustomer ? c.usage : [];
 					return Object.assign({}, c, {
+						dataType: { string: "String(100)", code: "String(10)", date: "Date" }[c.type] || c.type,
 						reposText: isCustomer ? (use.map(function (u) { return u.repo; }).join(" · ") || that.text("src.notUsed")) : that.fmt.joinNames(T.usedIn),
 						attrsText: use.length ? use.map(function (u) { return u.model + " › " + u.attr; }).join("\n") : "—"
 					});
 				})
 			}));
-			this.byId("page").setSelectedSection(this.byId("secSample"));
+			this.byId("page").setSelectedSection(this.byId("secDesc"));
 			this._drawTrend(trend, target);
 			this._drawLineage(I.lineage, I.edges);
 		},
@@ -108,6 +109,7 @@ sap.ui.define([
 			});
 		},
 
+		onGoSection: function (e) { this.byId("page").setSelectedSection(this.byId(e.getSource().data("sec"))); },
 		onEditDesc: function () { this.byId("page").setSelectedSection(this.byId("secDesc")); },
 		onRequestChange: function () { MessageToast.show(this.text("tbl.requestToast")); },
 		onToDomains: function () { this.router().navTo("domains"); },

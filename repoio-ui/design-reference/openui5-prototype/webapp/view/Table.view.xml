@@ -16,7 +16,13 @@
 				<uxap:snappedHeading><Title text="{view>/table/name}" level="H1"/></uxap:snappedHeading>
 				<uxap:expandedContent><Text text="{i18n>src.table} · {view>/table/sourceName} / {view>/table/schema}"/></uxap:expandedContent>
 				<uxap:actions>
-					<Button text="{i18n>tbl.editDesc}" type="Emphasized" press=".onEditDesc"/>
+					<Button icon="sap-icon://save" type="Transparent" tooltip="{i18n>common.save}"/>
+					<Button icon="sap-icon://upload-to-cloud" type="Transparent" tooltip="{i18n>dsp.deploy}"/>
+					<Button icon="sap-icon://undo" type="Transparent" tooltip="{i18n>dsp.undo}"/>
+					<Button icon="sap-icon://redo" type="Transparent" tooltip="{i18n>dsp.redo}"/>
+					<ToolbarSeparator/>
+					<Button icon="sap-icon://table-view" type="Transparent" tooltip="{i18n>dsp.dataPreview}" press=".onGoSection" app:sec="secSample" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
+					<Button icon="sap-icon://org-chart" type="Transparent" tooltip="{i18n>dsp.impact}" press=".onGoSection" app:sec="secLineage" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
 					<Button text="{i18n>tbl.runDq}"/>
 					<Button text="{i18n>repo.requestChange}" press=".onRequestChange"/>
 				</uxap:actions>
@@ -52,10 +58,71 @@
 			</FlexBox>
 		</uxap:headerContent>
 		<uxap:sections>
-			<!-- Sample data: Grid Table -->
-			<uxap:ObjectPageSection id="secSample" title="{i18n>tbl.sec.sample}" titleUppercase="false">
+			<!-- Description -->
+			<uxap:ObjectPageSection id="secDesc" title="{i18n>dsp.tableTab}" titleUppercase="false">
 				<uxap:subSections>
-					<uxap:ObjectPageSubSection title="{i18n>tbl.sec.sample}" titleUppercase="false" showTitle="false">
+					<uxap:ObjectPageSubSection title="{i18n>dsp.general}" titleUppercase="false">
+						<form:SimpleForm editable="true" layout="ColumnLayout" columnsM="2" columnsL="2" columnsXL="2">
+							<core:Title text="{i18n>dsp.general}"/>
+							<Label text="{i18n>dsp.businessName}" required="true"/><Input value="{view>/table/name}"/>
+							<Label text="{i18n>dsp.technicalName}"/><Input value="{view>/table/techName}" editable="false"/>
+							<Label text="{i18n>dsp.semantic}"/><Select selectedKey="dimension"><core:Item key="dimension" text="{i18n>dsp.sem.dimension}"/><core:Item key="fact" text="{i18n>dsp.sem.fact}"/><core:Item key="relational" text="{i18n>dsp.sem.relational}"/></Select>
+							<Label text="{i18n>dsp.deployStatus}"/><ObjectStatus text="{i18n>status.deployed}" state="Success" icon="sap-icon://sys-enter-2"/>
+							<Label text="{i18n>tbl.sec.desc}"/><TextArea value="{view>/info/desc}" rows="3" growing="true"/>
+							<core:Title text="{i18n>tbl.ownership}"/>
+							<Label text="{i18n>domain.owner}"/><Text text="{view>/info/owner}"/>
+							<Label text="{i18n>tbl.steward}"/><Text text="{view>/info/steward}"/>
+							<Label text="{i18n>domains.col.domain}"/><Link text="{view>/table/domainName}" press=".onToDomain"/>
+							<Label text="{i18n>repo.repository}"/><Link text="{view>/table/repoName}" press=".onToRepo"/>
+							<Label text="{i18n>src.dataSource}"/><Link text="{view>/table/sourceName}" press=".onToSource"/>
+							<Label text="Schema"/><Text text="{view>/table/schema}"/>
+							<core:Title text="{i18n>tbl.classification}"/>
+							<Label text="{i18n>tbl.terms}"/><Text text="{view>/info/termsText}"/>
+							<Label text="{i18n>tbl.tags}"/><Text text="{view>/info/tagsText}"/>
+							<Label text="{i18n>tbl.sensitivity}"/><ObjectStatus text="{view>/info/sensitivity}" state="Warning" icon="sap-icon://locked"/>
+							<Label text="{i18n>tbl.retention}"/><Text text="{view>/info/retention}"/>
+						</form:SimpleForm>
+					</uxap:ObjectPageSubSection>
+					<uxap:ObjectPageSubSection title="{i18n>src.columns}" titleUppercase="false">
+						<Table items="{view>/info/columns}" popinLayout="GridSmall" mode="MultiSelect">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="{i18n>src.columns} ({view>/info/columns/length})" level="H3"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>tbl.linkTerm}" type="Transparent"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="4.5rem" hAlign="Center"><Text text="{i18n>dsp.key}"/></Column>
+								<Column width="20%"><Text text="{i18n>tbl.column}"/></Column>
+								<Column><Text text="{i18n>dsp.dataType}"/></Column>
+								<Column hAlign="Center"><Text text="{i18n>dsp.notNull}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tbl.term}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>domains.col.repos}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true" width="24%"><Text text="{i18n>tbl.modelAttrs}"/></Column>
+								<Column hAlign="End"><Text text="{i18n>tbl.empty}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<core:Icon src="{= ${view>name} === 'CustomerID' ? 'sap-icon://key' : '' }" color="#e9730c"/>
+									<ObjectIdentifier title="{view>name}" text="{view>desc}"/>
+									<Text text="{view>dataType}"/>
+									<CheckBox selected="{view>required}" editable="false"/>
+									<Text text="{= ${view>term} || ${i18n>tbl.notLinked} }"/>
+									<Text text="{view>reposText}"/>
+									<Text text="{view>attrsText}"/>
+									<ObjectNumber number="{path: 'view>nullPct', formatter: '.fmt.pct'}" state="{view>nullState}"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Sample data: Grid Table -->
+			<uxap:ObjectPageSection id="secSample" title="{i18n>dsp.dataPreview}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>dsp.dataPreview}" titleUppercase="false" showTitle="false">
 						<t:Table id="sampleTable" rows="{view>/info/sample}" selectionMode="MultiToggle" visibleRowCount="8" enableColumnReordering="true"
 							columns="{path: 'view>/info/columns', factory: '.columnFactory'}" ariaLabelledBy="sampleTitle">
 							<t:extension>
@@ -184,67 +251,10 @@
 				</uxap:subSections>
 			</uxap:ObjectPageSection>
 
-			<!-- Description -->
-			<uxap:ObjectPageSection id="secDesc" title="{i18n>tbl.sec.desc}" titleUppercase="false">
-				<uxap:subSections>
-					<uxap:ObjectPageSubSection title="{i18n>tbl.sec.desc}" titleUppercase="false">
-						<VBox>
-							<Text text="{view>/info/desc}"/>
-							<Label text="{i18n>tbl.descUpdated} {view>/info/updatedDesc} · {view>/info/steward}" class="sapUiTinyMarginTop"/>
-						</VBox>
-					</uxap:ObjectPageSubSection>
-					<uxap:ObjectPageSubSection title="{i18n>src.sec.general}" titleUppercase="false">
-						<form:SimpleForm editable="false" layout="ColumnLayout" columnsM="2" columnsL="2" columnsXL="2">
-							<core:Title text="{i18n>tbl.ownership}"/>
-							<Label text="{i18n>domain.owner}"/><Text text="{view>/info/owner}"/>
-							<Label text="{i18n>tbl.steward}"/><Text text="{view>/info/steward}"/>
-							<Label text="{i18n>domains.col.domain}"/><Link text="{view>/table/domainName}" press=".onToDomain"/>
-							<Label text="{i18n>repo.repository}"/><Link text="{view>/table/repoName}" press=".onToRepo"/>
-							<Label text="{i18n>src.dataSource}"/><Link text="{view>/table/sourceName}" press=".onToSource"/>
-							<Label text="Schema"/><Text text="{view>/table/schema}"/>
-							<core:Title text="{i18n>tbl.classification}"/>
-							<Label text="{i18n>tbl.terms}"/><Text text="{view>/info/termsText}"/>
-							<Label text="{i18n>tbl.tags}"/><Text text="{view>/info/tagsText}"/>
-							<Label text="{i18n>tbl.sensitivity}"/><ObjectStatus text="{view>/info/sensitivity}" state="Warning" icon="sap-icon://locked"/>
-							<Label text="{i18n>tbl.retention}"/><Text text="{view>/info/retention}"/>
-						</form:SimpleForm>
-					</uxap:ObjectPageSubSection>
-					<uxap:ObjectPageSubSection title="{i18n>src.columns}" titleUppercase="false">
-						<Table items="{view>/info/columns}" popinLayout="GridSmall" mode="MultiSelect">
-							<headerToolbar>
-								<OverflowToolbar>
-									<Title text="{i18n>src.columns} ({view>/info/columns/length})" level="H3"/>
-									<ToolbarSpacer/>
-									<Button text="{i18n>tbl.linkTerm}" type="Transparent"/>
-								</OverflowToolbar>
-							</headerToolbar>
-							<columns>
-								<Column width="20%"><Text text="{i18n>tbl.column}"/></Column>
-								<Column><Text text="{i18n>repo.type}"/></Column>
-								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tbl.term}"/></Column>
-								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>domains.col.repos}"/></Column>
-								<Column minScreenWidth="Desktop" demandPopin="true" width="24%"><Text text="{i18n>tbl.modelAttrs}"/></Column>
-								<Column hAlign="End"><Text text="{i18n>tbl.empty}"/></Column>
-							</columns>
-							<items>
-								<ColumnListItem>
-									<ObjectIdentifier title="{view>name}" text="{view>desc}"/>
-									<GenericTag text="{view>type}" design="StatusIconHidden"/>
-									<Text text="{= ${view>term} || ${i18n>tbl.notLinked} }"/>
-									<Text text="{view>reposText}"/>
-									<Text text="{view>attrsText}"/>
-									<ObjectNumber number="{path: 'view>nullPct', formatter: '.fmt.pct'}" state="{view>nullState}"/>
-								</ColumnListItem>
-							</items>
-						</Table>
-					</uxap:ObjectPageSubSection>
-				</uxap:subSections>
-			</uxap:ObjectPageSection>
-
 			<!-- Lineage -->
-			<uxap:ObjectPageSection id="secLineage" title="{i18n>tbl.sec.lineage}" titleUppercase="false">
+			<uxap:ObjectPageSection id="secLineage" title="{i18n>dsp.impact}" titleUppercase="false">
 				<uxap:subSections>
-					<uxap:ObjectPageSubSection title="{i18n>tbl.sec.lineage}" titleUppercase="false">
+					<uxap:ObjectPageSubSection title="{i18n>dsp.impact}" titleUppercase="false">
 						<VBox>
 							<rc:EChart id="lineageChart" height="26rem" ariaLabel="{i18n>tbl.sec.lineage}"/>
 							<Text text="{i18n>tbl.lineageNote}" class="repoioMuted"/>

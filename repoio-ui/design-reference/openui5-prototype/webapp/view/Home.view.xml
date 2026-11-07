@@ -6,8 +6,6 @@
 		<f:title>
 			<f:DynamicPageTitle>
 				<f:heading><Title text="{i18n>home.title}" level="H1" wrapping="true"/></f:heading>
-				<f:expandedContent><Text text="{i18n>home.subtitle}"/></f:expandedContent>
-				<f:snappedContent><Text text="{view>/home/filterText}"/></f:snappedContent>
 				<f:actions>
 					<ObjectStatus text="{i18n>common.sample}" state="Warning" inverted="true"/>
 					<Button text="{i18n>home.manageCards}" icon="sap-icon://action-settings" type="Transparent" press=".onManageCards"/>
@@ -15,55 +13,19 @@
 			</f:DynamicPageTitle>
 		</f:title>
 		<f:header>
-			<f:DynamicPageHeader pinnable="true">
-				<VBox>
+			<f:DynamicPageHeader pinnable="false">
+				<VBox class="repoioWelcome">
+					<Title text="{i18n>home.welcome}" level="H2" wrapping="true"/>
+					<Text text="{i18n>home.welcomeText}" class="sapUiTinyMarginTop sapUiSmallMarginBottom"/>
+					<HBox wrap="Wrap">
+						<Button text="{i18n>home.qa.request}" type="Emphasized" press=".onNavKey" app:key="templatesCatalog" class="sapUiSmallMarginEnd sapUiTinyMarginBottom" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
+						<Button text="{i18n>home.qa.domains}" press=".onNavKey" app:key="domains" class="sapUiSmallMarginEnd sapUiTinyMarginBottom" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
+						<Button text="{i18n>home.qa.explore}" type="Transparent" press=".onNavKey" app:key="explore" class="sapUiTinyMarginBottom" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
+					</HBox>
 					<MessageStrip text="{= ${view>/lang} === 'ar' ? ${home>/announcement/text_ar} : ${home>/announcement/text_en} }"
-						type="Information" showIcon="true" customIcon="sap-icon://marketing-campaign"
-						showCloseButton="true" class="sapUiSmallMarginBottom">
+						type="Information" showIcon="true" customIcon="sap-icon://marketing-campaign" showCloseButton="true" class="sapUiSmallMarginTop">
 						<link><Link text="{i18n>home.allAnnouncements}" press=".onNavKey" app:key="feeds" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/></link>
 					</MessageStrip>
-					<FlexBox wrap="Wrap" alignItems="End" class="repoioFilterBar">
-						<VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
-							<Label text="{i18n>home.filter.domain}" labelFor="fDomain"/>
-							<Select id="fDomain" width="12rem" selectedKey="{view>/home/f/domain}"
-								items="{path: 'view>/home/domainOptions', templateShareable: false}" forceSelection="true">
-								<core:Item key="{view>key}" text="{view>text}"/>
-							</Select>
-						</VBox>
-						<VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
-							<Label text="{i18n>home.filter.source}" labelFor="fSource"/>
-							<Select id="fSource" width="10rem" selectedKey="{view>/home/f/source}" forceSelection="true">
-								<core:Item key="" text="{i18n>common.all}"/>
-								<core:Item key="C4C" text="SAP C4C"/>
-								<core:Item key="ERP" text="SAP ERP"/>
-								<core:Item key="CSV" text="CSV"/>
-								<core:Item key="manual" text="{i18n>home.source.manual}"/>
-							</Select>
-						</VBox>
-						<VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
-							<Label text="{i18n>home.filter.status}" labelFor="fStatus"/>
-							<Select id="fStatus" width="10rem" selectedKey="{view>/home/f/status}" forceSelection="true">
-								<core:Item key="" text="{i18n>common.all}"/>
-								<core:Item key="missing_data" text="{i18n>home.cr.missing_data}"/>
-								<core:Item key="needs_review" text="{i18n>home.cr.needs_review}"/>
-								<core:Item key="ready" text="{i18n>home.cr.ready}"/>
-							</Select>
-						</VBox>
-						<VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
-							<Label text="{i18n>home.filter.period}" labelFor="fPeriod"/>
-							<Select id="fPeriod" width="10rem" selectedKey="{view>/home/f/period}" forceSelection="true">
-								<core:Item key="" text="{i18n>common.all}"/>
-								<core:Item key="7" text="{i18n>home.period.7}"/>
-								<core:Item key="30" text="{i18n>home.period.30}"/>
-							</Select>
-						</VBox>
-						<VBox class="sapUiTinyMarginBottom">
-							<HBox>
-								<Button text="{i18n>common.go}" type="Emphasized" press=".onApplyFilters" class="sapUiTinyMarginEnd"/>
-								<Button text="{i18n>home.clear}" type="Transparent" press=".onClearFilters"/>
-							</HBox>
-						</VBox>
-					</FlexBox>
 				</VBox>
 			</f:DynamicPageHeader>
 		</f:header>
@@ -76,6 +38,41 @@
 					<fdnd:GridDropInfo targetAggregation="items" dropPosition="Between" dropLayout="Horizontal" drop=".onCardDrop"/>
 				</f:dragDropConfig>
 				<f:items>
+					<!-- Datasphere Home: recent files -->
+					<f:Card id="card_recent" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="8" minRows="4"/></f:layoutData>
+						<f:header><card:Header title="{i18n>home.card.recent}" subtitle="{i18n>home.card.recentSub}" iconSrc="sap-icon://history"/></f:header>
+						<f:content>
+							<Table items="{home>/recent}" popinLayout="GridSmall">
+								<columns>
+									<Column><Text text="{i18n>dsp.businessName}"/></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.type}"/></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>home.filter.domain}"/></Column>
+									<Column><Text text="{i18n>dsp.changedOn}"/></Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Navigation" press=".onRecentPress">
+										<HBox alignItems="Center"><core:Icon src="{home>icon}" color="#0a6ed1" class="sapUiSmallMarginEnd"/><Text text="{home>name}"/></HBox>
+										<Text text="{path: 'home>type', formatter: '.recentType'}"/>
+										<Text text="{path: 'home>domain', formatter: '.recentDomain'}"/>
+										<Text text="{home>changed}"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</f:content>
+					</f:Card>
+
+					<!-- Datasphere Home: quick actions -->
+					<f:Card id="card_actions" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="4"/></f:layoutData>
+						<f:header><card:Header title="{i18n>home.card.actions}" iconSrc="sap-icon://action"/></f:header>
+						<f:content>
+							<List items="{home>/actions}" showSeparators="Inner">
+								<StandardListItem title="{path: 'home>key', formatter: '.navText'}" icon="{home>icon}" type="Navigation" press=".onNavKey"
+									app:key="{home>key}" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
+							</List>
+						</f:content>
+					</f:Card>
 					<!-- J1: golden-record counts per domain -->
 					<f:Card id="card_golden" class="repoioCard">
 						<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="5"/></f:layoutData>

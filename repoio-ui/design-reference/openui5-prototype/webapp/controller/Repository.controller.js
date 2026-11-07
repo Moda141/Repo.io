@@ -24,14 +24,19 @@ sap.ui.define([
 			var d = oData.getProperty("/domains").filter(function (x) { return x.id === R.domainId; })[0];
 			var oRepo = Object.assign({}, R, {
 				domainName: this.domainName(d),
-				goldenEmpty: R.status === "Draft" ? this.text("repo.goldenEmptyDraft") : this.text("repo.goldenEmpty")
+				goldenEmpty: R.status === "Draft" ? this.text("repo.goldenEmptyDraft") : this.text("repo.goldenEmpty"),
+				tagsText: R.tags.join(", "),
+				capPct: Math.min(100, R.golden / R.cap * 100), capText: this.text("space.ofCap", [this.fmt.num(R.golden), this.fmt.num(R.cap)]),
+				members: R.owners.map(function (o, i) {
+					return { name: o.name, initials: o.initials, role: this.text(i === 0 ? "dsp.roleOwner" : "dsp.roleSteward"), scope: this.text("dsp.scopeRepo") };
+				}, this)
 			});
 			this.viewModel().setProperty("/repo", oRepo);
 			var M = Object.assign({}, oData.getProperty("/models/" + R.model));
 			M.priorityText = M.priority.map(function (x) { return x.rank + ". " + x.name; }).join("  ›  ");
 			this.viewModel().setProperty("/model", M);
 			this._gFilter = "all"; this._gQuery = "";
-			this.byId("page").setSelectedSection(this.byId("secModel"));
+			this.byId("page").setSelectedSection(this.byId("secOverview"));
 			this._applyGolden();
 		},
 
@@ -59,6 +64,7 @@ sap.ui.define([
 		onExplore: function () { this.navKey("explore"); },
 		onToModel: function () { this.navKey("modelsRules"); },
 		onRequestChange: function () { MessageToast.show(this.text("repo.requestChangeToast")); },
+		onMonitor: function () { this.navKey("dataJobs"); },
 		onToDomains: function () { this.router().navTo("domains"); },
 		onToDomain: function () { this.router().navTo("domain", { domainId: this._args.domainId }); }
 	});
