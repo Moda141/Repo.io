@@ -7,3 +7,18 @@
 .repoioMuted { color: var(--sapContent_LabelColor); }
 .repoioChart { width: 100%; direction: ltr; } /* ECharts lays out SVG text itself; RTL is handled in each option */
 .repoioNoWrap { white-space: nowrap; }
+.repoioKpiStrip { gap: 0; }
+.repoioMetric .sapMObjectNumberText { font-size: 1.25rem; }
+.repoioMiniList .sapMLIB { min-height: 2rem; }
+.repoioMiniRow { width: 100%; padding: 0.25rem 0; }
+.repoioEmptyCard { padding: 1rem 0 0.5rem; }
+.repoioDomainCard .sapFCardHeader { padding-bottom: 0.5rem; }
+.repoioAlpChart { background: var(--sapGroup_ContentBackground); border: 1px solid var(--sapGroup_TitleBorderColor); border-radius: 0.25rem; padding-bottom: 0.5rem; }
+.repoioIdLink { font-weight: bold; }
+.repoioPopin { padding-block: 0.25rem; }
+.repoioSpaceCard { padding: 0.75rem 1rem; }
+.repoioSpaceCard .repoioSpaceCode { font-weight: bold; text-transform: uppercase; }
+.repoioSpaceDivider { border-top: 1px solid var(--sapGroup_TitleBorderColor); margin-block: 0.5rem; }
+.repoioSpaceFoot { border-top: 1px solid var(--sapGroup_TitleBorderColor); padding-top: 0.5rem; margin-top: 0.5rem; }
+.repoioSpaceFoot .sapUiIcon { color: var(--sapContent_IconColor); }
+.repoioSpacesBar { background: var(--sapObjectHeader_Background); }

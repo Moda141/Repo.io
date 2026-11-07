@@ -22,8 +22,8 @@ copy that data into `repoio-ui`.
 | Route | Page | Floorplan / controls |
 |-------|------|----------------------|
 | `#/` | Home (J1) | `sap.f.DynamicPage` + `sap.f.GridContainer` of `sap.f.Card` (drag & drop, show/hide), filter bar, announcements `MessageStrip` |
-| `#/domains` | Domain management | Analytical-list pattern: ECharts visual filters (wrapped) + responsive `sap.m.Table` + `Tokenizer` |
-| `#/domains/{domain}` | Domain → repositories | Cards (`GridContainer`) or table, empty state with `IllustratedMessage` (ADR-0001: one or more repositories per domain) |
+| `#/domains` | Domain management | Analytical List Page, following `sap-s4hana/patterns/analytical-list-page.png` and `responsive-table.png`: three visual filters, a column chart, and a responsive table with pop-in details and row actions |
+| `#/domains/{domain}` | Domain → repositories | Spaces page, following `sap-s4hana/patterns/spaces-page.png`: a count bar with status icons, usage bars, a status chart, and repository cards (or a table). Empty state uses `IllustratedMessage` (ADR-0001) |
 | `#/domains/{d}/repositories/{repo}` | Repository | `sap.uxap.ObjectPageLayout`: model, golden records, data sources |
 | `…/sources/{source}` | Data sources | Multi instance: `sap.m.TabContainer` of Object Pages; participating repositories, schemas & tables, sync log |
 | `…/tables/{schema}/{table}` | Table | Object Page with icon tab bar: sample data (`sap.ui.table.Table`), data quality review, description (fields → repositories and model attributes), lineage |

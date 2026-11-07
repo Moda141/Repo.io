@@ -1,33 +1,51 @@
 <mvc:View controllerName="repoio.proto.controller.Domains"
 	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- Analytical List Page (reference: sap-s4hana/patterns/analytical-list-page.png + responsive-table.png) -->
 	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="true">
 		<f:title>
 			<f:DynamicPageTitle>
-				<f:heading><Title text="{i18n>nav.domains}" level="H1"/></f:heading>
-				<f:expandedContent><Text text="{i18n>domains.subtitle}"/></f:expandedContent>
+				<f:heading>
+					<HBox alignItems="Center">
+						<Title text="{i18n>alp.standard}" level="H1"/>
+						<Button icon="sap-icon://slim-arrow-down" type="Transparent" tooltip="{i18n>alp.variants}"/>
+					</HBox>
+				</f:heading>
 				<f:snappedContent><Text text="{view>/domains/filterText}"/></f:snappedContent>
 				<f:actions>
-					<ObjectStatus text="{i18n>common.sample}" state="Warning" inverted="true"/>
+					<SearchField width="14rem" liveChange=".onSearch" placeholder="{i18n>common.search}"/>
+					<Button text="{i18n>alp.adapt}" type="Transparent"/>
 				</f:actions>
 			</f:DynamicPageTitle>
 		</f:title>
 		<f:header>
 			<f:DynamicPageHeader pinnable="true">
 				<VBox>
-					<FlexBox wrap="Wrap" alignItems="Start">
-						<Panel headerText="{i18n>domains.vf.golden}" width="22rem" class="sapUiSmallMarginEnd repoioVfPanel">
-							<rc:EChart id="vfGolden" height="10rem" select=".onVfGolden" ariaLabel="{i18n>domains.vf.golden}"/>
-						</Panel>
-						<Panel headerText="{i18n>domains.vf.status}" width="22rem" class="sapUiSmallMarginEnd repoioVfPanel">
-							<rc:EChart id="vfStatus" height="10rem" select=".onVfStatus" ariaLabel="{i18n>domains.vf.status}"/>
-						</Panel>
-						<Panel headerText="{i18n>domains.vf.quality}" width="22rem" class="repoioVfPanel">
-							<rc:EChart id="vfQuality" height="10rem" select=".onVfQuality" ariaLabel="{i18n>domains.vf.quality}"/>
-						</Panel>
+					<FlexBox wrap="Wrap" alignItems="Start" class="repoioVfRow">
+						<VBox width="20rem" class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
+							<HBox alignItems="Center" justifyContent="SpaceBetween">
+								<Title text="{i18n>alp.vf.golden}" level="H5" wrapping="true"/>
+								<Button icon="sap-icon://horizontal-bar-chart" type="Transparent" tooltip="{i18n>alp.chartType}"/>
+							</HBox>
+							<rc:EChart id="vfGolden" height="8.5rem" select=".onVfGolden" ariaLabel="{i18n>alp.vf.golden}"/>
+						</VBox>
+						<VBox width="20rem" class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
+							<HBox alignItems="Center" justifyContent="SpaceBetween">
+								<Title text="{i18n>alp.vf.trend}" level="H5" wrapping="true"/>
+								<Button icon="sap-icon://line-chart" type="Transparent" tooltip="{i18n>alp.chartType}"/>
+							</HBox>
+							<rc:EChart id="vfTrend" height="8.5rem" ariaLabel="{i18n>alp.vf.trend}"/>
+						</VBox>
+						<VBox width="20rem" class="sapUiSmallMarginBottom">
+							<HBox alignItems="Center" justifyContent="SpaceBetween">
+								<Title text="{i18n>alp.vf.status}" level="H5" wrapping="true"/>
+								<Button icon="sap-icon://donut-chart" type="Transparent" tooltip="{i18n>alp.chartType}"/>
+							</HBox>
+							<rc:EChart id="vfStatus" height="8.5rem" select=".onVfStatus" ariaLabel="{i18n>alp.vf.status}"/>
+						</VBox>
 					</FlexBox>
-					<HBox alignItems="Center" visible="{= ${view>/domains/tokens}.length > 0 }" class="sapUiTinyMarginTop">
+					<HBox alignItems="Center" visible="{= ${view>/domains/tokens}.length > 0 }">
 						<Label text="{i18n>domains.filteredBy}" class="sapUiTinyMarginEnd"/>
-						<Tokenizer tokens="{view>/domains/tokens}" tokenDelete=".onTokenDelete" width="40rem">
+						<Tokenizer tokens="{view>/domains/tokens}" tokenDelete=".onTokenDelete" width="36rem">
 							<Token key="{view>key}" text="{view>text}"/>
 						</Tokenizer>
 					</HBox>
@@ -35,37 +53,75 @@
 			</f:DynamicPageHeader>
 		</f:header>
 		<f:content>
-			<Table id="domainsTable" items="{data>/domains}" mode="MultiSelect" growing="true" sticky="ColumnHeaders,HeaderToolbar"
-				noDataText="{i18n>home.noMatch}" popinLayout="GridSmall" updateFinished=".onTableUpdated">
-				<headerToolbar>
-					<OverflowToolbar>
-						<Title text="{view>/domains/title}" level="H2"/>
+			<VBox>
+				<!-- Main chart -->
+				<VBox class="repoioAlpChart sapUiSmallMarginBottom">
+					<OverflowToolbar style="Clear">
+						<Title text="{i18n>alp.chartTitle}" level="H3"/>
 						<ToolbarSpacer/>
-						<SearchField width="16rem" liveChange=".onSearch" placeholder="{i18n>common.search}"/>
-						<Button text="{i18n>common.export}" type="Transparent" icon="sap-icon://excel-attachment"/>
+						<Button text="{i18n>alp.details}" type="Transparent"/>
+						<Button text="{i18n>alp.drill}" type="Transparent"/>
+						<Button icon="sap-icon://legend" type="Transparent" tooltip="{i18n>alp.legend}"/>
+						<Button icon="sap-icon://vertical-bar-chart" type="Transparent" tooltip="{i18n>alp.chartType}"/>
+						<Button icon="sap-icon://full-screen" type="Transparent" tooltip="{i18n>alp.fullScreen}"/>
 					</OverflowToolbar>
-				</headerToolbar>
-				<columns>
-					<Column width="30%"><Text text="{i18n>domains.col.domain}"/></Column>
-					<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>domains.col.team}"/></Column>
-					<Column hAlign="End"><Text text="{i18n>domains.col.repos}"/></Column>
-					<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>domains.col.golden}"/></Column>
-					<Column hAlign="End" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>domains.col.sources}"/></Column>
-					<Column hAlign="End"><Text text="{i18n>domains.col.quality}"/></Column>
-					<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>domains.col.updated}"/></Column>
-				</columns>
-				<items>
-					<ColumnListItem type="Navigation" press=".onDomainPress">
-						<ObjectIdentifier title="{= ${view>/lang} === 'ar' ? ${data>name} : ${data>nameEn} }" text="{data>desc}" titleActive="false"/>
-						<VBox><Text text="{= ${view>/lang} === 'ar' ? ${data>teamAr} : ${data>team} }"/><Label text="{data>owner}"/></VBox>
-						<ObjectNumber number="{data>repoCount}"/>
-						<ObjectNumber number="{path: 'data>golden', formatter: '.fmt.num'}"/>
-						<ObjectNumber number="{data>sourceCount}"/>
-						<ObjectNumber number="{path: 'data>quality', formatter: '.fmt.pct'}" state="{data>qualityState}"/>
-						<Text text="{data>updated}"/>
-					</ColumnListItem>
-				</items>
-			</Table>
+					<Text text="{i18n>alp.chartSub}" class="repoioMuted sapUiSmallMarginBegin"/>
+					<rc:EChart id="mainChart" height="15rem" select=".onMainChart" ariaLabel="{i18n>alp.chartTitle}"/>
+				</VBox>
+
+				<!-- Responsive table with pop-in details and row actions -->
+				<Table id="domainsTable" items="{view>/domains/items}" mode="MultiSelect" sticky="ColumnHeaders,HeaderToolbar" popinLayout="GridSmall"
+					selectionChange=".onSelectionChange" noDataText="{i18n>home.noMatch}">
+					<headerToolbar>
+						<OverflowToolbar>
+							<Title text="{view>/domains/title}" level="H2"/>
+							<ToolbarSpacer/>
+							<SearchField width="14rem" liveChange=".onSearch" placeholder="{i18n>common.search}"/>
+							<Button text="{i18n>common.create}" type="Transparent" press=".onCreate"/>
+							<Button text="{i18n>common.delete}" type="Transparent" enabled="{= ${view>/domains/selected} > 0 }" press=".onDelete"/>
+							<ToolbarSeparator/>
+							<Button icon="sap-icon://sort" type="Transparent" tooltip="{i18n>alp.sort}"/>
+							<Button icon="sap-icon://action-settings" type="Transparent" tooltip="{i18n>alp.settings}"/>
+							<Button icon="sap-icon://excel-attachment" type="Transparent" tooltip="{i18n>common.export}"/>
+							<Button icon="sap-icon://full-screen" type="Transparent" tooltip="{i18n>alp.fullScreen}"/>
+						</OverflowToolbar>
+					</headerToolbar>
+					<columns>
+						<Column width="26%"><Text text="{i18n>domains.col.domain}"/></Column>
+						<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>domains.col.team}"/></Column>
+						<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>domain.owner}"/></Column>
+						<Column hAlign="End"><Text text="{i18n>domains.col.repos}"/></Column>
+						<Column hAlign="End" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>domains.col.sources}"/></Column>
+						<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>domains.col.golden}"/></Column>
+						<Column hAlign="End"><Text text="{i18n>domains.col.quality}"/></Column>
+						<Column width="5.5rem" hAlign="Center"><Text text=""/></Column>
+					</columns>
+					<items>
+						<ColumnListItem type="Navigation" press=".onDomainPress" vAlign="Top">
+							<VBox class="repoioPopin">
+								<Link text="{view>title}" press=".onDomainPress" class="repoioIdLink"/>
+								<Text text="{view>desc}" class="repoioMuted" maxLines="2"/>
+								<Label text="{i18n>domains.col.status}:" class="sapUiTinyMarginTop"/>
+								<ObjectStatus text="{view>statusText}" state="{view>statusState}"/>
+								<Label text="{i18n>domain.entity}:" class="sapUiTinyMarginTop"/>
+								<Text text="{view>nameEn}"/>
+								<Label text="{i18n>domains.col.updated}:" class="sapUiTinyMarginTop"/>
+								<Text text="{view>updated}"/>
+							</VBox>
+							<Text text="{view>teamText}"/>
+							<Text text="{view>owner}"/>
+							<Text text="{view>repoCount}"/>
+							<Text text="{view>sourceCount}"/>
+							<Text text="{path: 'view>golden', formatter: '.fmt.num'}"/>
+							<ObjectNumber number="{path: 'view>quality', formatter: '.fmt.pct'}" state="{view>qualityState}"/>
+							<HBox justifyContent="Center">
+								<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>common.edit}" press=".onEdit"/>
+								<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>common.delete}" press=".onDeleteRow"/>
+							</HBox>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</VBox>
 		</f:content>
 	</f:DynamicPage>
 </mvc:View>
