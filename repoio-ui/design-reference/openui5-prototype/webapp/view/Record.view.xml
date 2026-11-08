@@ -6,7 +6,6 @@
 			<uxap:ObjectPageDynamicHeaderTitle>
 				<uxap:breadcrumbs>
 					<Breadcrumbs currentLocationText="{view>/rec/id}">
-						<Link text="{i18n>nav.explore}" press=".onToExplore"/>
 						<Link text="{view>/rec/domainName}" press=".onToDomain"/>
 						<Link text="{view>/rec/repoName}" press=".onToRepo"/>
 					</Breadcrumbs>

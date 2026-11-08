@@ -2,7 +2,6 @@
 	"_comment": "Mirrors docs/ui-pages.md. In the product this tree is served by the role-filtered navigation API; here it is static.",
 	"items": [
 		{ "key": "home", "icon": "sap-icon://home", "route": "home" },
-		{ "key": "explore", "icon": "sap-icon://search" },
 		{ "key": "feeds", "icon": "sap-icon://feed" },
 		{ "key": "businessOperation", "group": true, "items": [
 			{ "key": "favorites", "icon": "sap-icon://favorite", "items": [

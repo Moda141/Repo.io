@@ -100,13 +100,8 @@
 					"target": "home"
 				},
 				{
-					"name": "explore",
-					"pattern": "explore",
-					"target": "explore"
-				},
-				{
 					"name": "record",
-					"pattern": "explore/{recordId}",
+					"pattern": "records/{recordId}",
 					"target": "record"
 				},
 				{
@@ -174,11 +169,6 @@
 				"placeholder": {
 					"id": "placeholder",
 					"name": "Placeholder",
-					"level": 2
-				},
-				"explore": {
-					"id": "explore",
-					"name": "Explore",
 					"level": 2
 				},
 				"record": {

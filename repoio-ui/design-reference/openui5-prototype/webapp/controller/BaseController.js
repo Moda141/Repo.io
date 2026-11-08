@@ -17,7 +17,7 @@ sap.ui.define([
 
 		/* Navigate by a navigation-tree key (Home, Domains, or a planned page). */
 		navKey: function (sKey) {
-			if (sKey === "home" || sKey === "domains" || sKey === "explore") { this.router().navTo(sKey); }
+			if (sKey === "home" || sKey === "domains") { this.router().navTo(sKey); }
 			else { this.router().navTo("page", { key: sKey }); }
 		},
 		onNavKey: function (oEvent) {

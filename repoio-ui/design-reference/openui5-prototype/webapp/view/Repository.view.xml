@@ -161,7 +161,6 @@
 							</Table>
 							<Toolbar style="Clear" visible="{= !!${view>/repo/goldenRecords} &amp;&amp; ${view>/repo/goldenRecords}.length > 0 }">
 								<Text text="{view>/repo/goldenFooter}" class="repoioMuted"/>
-								<Link text="{i18n>repo.openExplore}" press=".onExplore"/>
 							</Toolbar>
 						</VBox>
 					</uxap:ObjectPageSubSection>

@@ -19,7 +19,6 @@
 					<HBox wrap="Wrap">
 						<Button text="{i18n>home.qa.request}" type="Emphasized" press=".onNavKey" app:key="templatesCatalog" class="sapUiSmallMarginEnd sapUiTinyMarginBottom" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
 						<Button text="{i18n>home.qa.domains}" press=".onNavKey" app:key="domains" class="sapUiSmallMarginEnd sapUiTinyMarginBottom" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
-						<Button text="{i18n>home.qa.explore}" type="Transparent" press=".onNavKey" app:key="explore" class="sapUiTinyMarginBottom" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
 					</HBox>
 					<MessageStrip text="{= ${view>/lang} === 'ar' ? ${home>/announcement/text_ar} : ${home>/announcement/text_en} }"
 						type="Information" showIcon="true" customIcon="sap-icon://marketing-campaign" showCloseButton="true" class="sapUiSmallMarginTop">

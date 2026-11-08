@@ -31,8 +31,8 @@ Datasphere.
 | `#/domains/{d}/repositories/{repo}` | Repository | Edit Space: overview (general settings, capacity and quality), model, golden records, members, data sources |
 | `…/sources/{source}` | Data source | Connections, kept as multi-instance tabs: connection details and features, participating repositories, remote tables (replicated or remote), data integration monitor |
 | `…/tables/{schema}/{table}` | Table | Table editor: general settings and columns (key, data type, not null, repositories, model attributes), data preview, data quality, impact and lineage |
-| `#/explore` | Explore (J2) | Datasphere Catalog search: big search field, facet filters with counts (domain, repository, source system, status, quality), sortable result list |
-| `#/explore/{recordId}` | Golden record (J2) | Object Page: header KPIs (quality, match confidence, source records, last merge), attributes with winning source and survivorship rule, contributing source records, relationships, change history, lineage. No inline editing — "Request a change" opens the templates catalog |
+| `#/records/{recordId}` | Golden record (J2), opened from a repository's golden records | Object Page: header KPIs (quality, match confidence, source records, last merge), attributes with winning source and survivorship rule, contributing source records, relationships, change history, lineage. No inline editing — "Request a change" opens the templates catalog |
+| — | Explore (search page) | Removed from the prototype for now at the owner's request; it stays in `docs/ui-pages.md` |
 | `#/page/{key}` | Every other page in `docs/ui-pages.md` | Planned-page placeholder with the page scope and journey |
 
 ## Entry points

@@ -50,7 +50,6 @@ sap.ui.define([
 		onAddRelationship: function () { this.navKey("relationshipBuilder"); },
 		onUnmerge: function () { MessageToast.show(this.text("rec.unmergeToast")); },
 		onNav: function (e) { this.navKey(e.getSource().data("key")); },
-		onToExplore: function () { this.router().navTo("explore"); },
 		onToDomain: function () { this.router().navTo("domain", { domainId: this._rec.domainId }); },
 		onToRepo: function () { this.router().navTo("repository", { domainId: this._rec.domainId, repoId: this._rec.repoId }); }
 	});
