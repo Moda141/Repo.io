@@ -133,3 +133,7 @@
 @media (min-width: 1024px) {
 	.sapTntToolHeader .repoioNavSearch { position: absolute; left: 50%; transform: translateX(-50%); margin: 0; }
 }
+
+/* Shell header (navigation bar): black. */
+.sapUiBody .sapTntToolPage .sapTntToolHeader, .sapUiBody .sapTntToolPageHeader, .sapUiBody .sapTntToolPageHeaderWrapper { background: #0d0d0d !important; border-bottom-color: #000 !important; }
+.sapTntToolHeader .sapMSF:not(.sapMFocus) .sapMSFF { background-color: #1f1f1f; border-color: #5a5a5a; }
