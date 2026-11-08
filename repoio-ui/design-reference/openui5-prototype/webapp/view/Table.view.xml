@@ -32,8 +32,8 @@
 			<FlexBox wrap="Wrap" alignItems="Start">
 				<Avatar src="sap-icon://table-view" displaySize="M" backgroundColor="Accent6" class="sapUiSmallMarginEnd"/>
 				<VBox class="sapUiMediumMarginEnd" width="22rem">
-					<ObjectAttribute title="{i18n>domain.owner}" text="{view>/info/owner}"/>
-					<ObjectAttribute title="{i18n>tbl.steward}" text="{view>/info/steward}"/>
+					<HBox alignItems="Center" class="sapUiTinyMarginBottom"><Label text="{i18n>domain.owner}:" class="sapUiTinyMarginEnd"/><rc:PersonLink name="{view>/info/owner}"/></HBox>
+					<HBox alignItems="Center"><Label text="{i18n>tbl.steward}:" class="sapUiTinyMarginEnd"/><rc:PersonLink name="{view>/info/steward}"/></HBox>
 					<HBox items="{view>/info/tags}" class="sapUiTinyMarginTop">
 						<GenericTag text="{view>}" design="StatusIconHidden" status="Information" class="sapUiTinyMarginEnd"/>
 					</HBox>
@@ -70,8 +70,8 @@
 							<Label text="{i18n>dsp.deployStatus}"/><ObjectStatus text="{i18n>status.deployed}" state="Success" icon="sap-icon://sys-enter-2"/>
 							<Label text="{i18n>tbl.sec.desc}"/><TextArea value="{view>/info/desc}" rows="3" growing="true"/>
 							<core:Title text="{i18n>tbl.ownership}"/>
-							<Label text="{i18n>domain.owner}"/><Text text="{view>/info/owner}"/>
-							<Label text="{i18n>tbl.steward}"/><Text text="{view>/info/steward}"/>
+							<Label text="{i18n>domain.owner}"/><rc:PersonLink name="{view>/info/owner}"/>
+							<Label text="{i18n>tbl.steward}"/><rc:PersonLink name="{view>/info/steward}"/>
 							<Label text="{i18n>domains.col.domain}"/><Link text="{view>/table/domainName}" press=".onToDomain"/>
 							<Label text="{i18n>repo.repository}"/><Link text="{view>/table/repoName}" press=".onToRepo"/>
 							<Label text="{i18n>src.dataSource}"/><Link text="{view>/table/sourceName}" press=".onToSource"/>

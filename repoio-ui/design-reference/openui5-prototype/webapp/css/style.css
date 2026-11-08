@@ -72,3 +72,4 @@
 .rlgFocus .rlgNode { opacity: .45; }
 .rlgFocus .rlgNode.rlgOn { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .rlgNode, .rlgEdge { transition: none; } }
+.repoioPerson { display: inline-flex; align-items: center; vertical-align: middle; }

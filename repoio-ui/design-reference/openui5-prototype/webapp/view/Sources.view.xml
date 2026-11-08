@@ -1,5 +1,5 @@
 <mvc:View controllerName="repoio.proto.controller.Sources"
-	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core">
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:rc="repoio.proto.control" xmlns:uxap="sap.uxap" xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core">
 	<!-- Multi Instance floorplan: one tab per open data source, each an Object Page. -->
 	<Page id="page" showHeader="false" enableScrolling="false">
 		<TabContainer id="tabs" items="{view>/sources/open}" showAddNewButton="true" addNewButtonPress=".onAddTab"
@@ -70,7 +70,7 @@
 												<Label text="{i18n>src.schedule}"/><Text text="{view>schedule}"/>
 												<Label text="{i18n>repo.lastSync}"/><Text text="{view>sync}"/>
 												<core:Title text="{i18n>src.setup}"/>
-												<Label text="{i18n>domain.owner}"/><Text text="{view>owner}"/>
+												<Label text="{i18n>domain.owner}"/><rc:PersonLink name="{view>owner}"/>
 												<Label text="{i18n>src.schemas}"/><Text text="{view>schemas}"/>
 												<Label text="{i18n>src.reposUsing}"/><Text text="{path: 'view>repos', formatter: '.fmt.joinNames'}"/>
 												<Label text="{i18n>src.secret}"/><Text text="{i18n>src.secretText}"/>

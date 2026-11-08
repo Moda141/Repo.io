@@ -1,5 +1,5 @@
 <mvc:View controllerName="repoio.proto.controller.Repository"
-	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns:f="sap.f" xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core">
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:rc="repoio.proto.control" xmlns:uxap="sap.uxap" xmlns:f="sap.f" xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core">
 	<uxap:ObjectPageLayout id="page" showTitleInHeaderContent="true" upperCaseAnchorBar="false" headerContentPinnable="true">
 		<uxap:headerTitle>
 			<uxap:ObjectPageDynamicHeaderTitle>
@@ -73,7 +73,7 @@
 							<Label text="{i18n>repo.entity}"/><Text text="{view>/model/entity}"/>
 							<Label text="{i18n>repo.version}"/><Text text="{view>/model/ver}"/>
 							<Label text="{i18n>repo.modelStatus}"/><ObjectStatus text="{view>/model/statusL}" state="{view>/model/statusState}"/>
-							<Label text="{i18n>repo.approvedBy}"/><Text text="{view>/model/approver}"/>
+							<Label text="{i18n>repo.approvedBy}"/><rc:PersonLink name="{view>/model/approver}"/>
 							<Label text="{i18n>repo.approvedOn}"/><Text text="{view>/model/approved}"/>
 							<core:Title text="{i18n>repo.sub.matching}"/>
 							<Label text="{i18n>repo.matchRule}"/><Text text="{view>/model/match}"/>
@@ -187,7 +187,7 @@
 							</columns>
 							<items>
 								<ColumnListItem>
-									<HBox alignItems="Center"><Avatar initials="{view>initials}" displaySize="XS" class="sapUiSmallMarginEnd"/><Text text="{view>name}"/></HBox>
+									<rc:PersonLink name="{view>name}"/>
 									<Text text="{view>role}"/>
 									<Text text="{view>scope}"/>
 								</ColumnListItem>
