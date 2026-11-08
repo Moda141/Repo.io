@@ -1,5 +1,5 @@
 /*
- * PersonLink — a person shown as Avatar + name. Hovering (or focusing) opens a
+ * PersonLink — a person shown as an Avatar only (the name is in the tooltip and the quick view). Hovering (or focusing) opens a
  * sap.m.QuickView business card with role, team and contact details; clicking
  * pins it open. Usable inside forms (IFormContent).
  */
@@ -32,14 +32,15 @@ sap.ui.define([
 		},
 
 		init: function () {
-			this.setAggregation("_avatar", new Avatar({ displaySize: "Custom", customDisplaySize: "1.5rem", customFontSize: "0.625rem", showBorder: false }).addStyleClass("sapUiTinyMarginEnd"));
+			this.setAggregation("_avatar", new Avatar({ displaySize: "Custom", customDisplaySize: "1.5rem", customFontSize: "0.625rem", showBorder: false, press: this._open.bind(this, true) }));
 			this.setAggregation("_link", new Link({ press: this._open.bind(this, true) }));
 		},
 
 		onBeforeRendering: function () {
 			var n = this.getName(), p = people.get(n);
-			this.getAggregation("_avatar").setInitials(p ? p.initials : "").setVisible(!!p);
-			this.getAggregation("_link").setText(n && p && !isAr() ? p.en : n).setEnabled(!!p);
+			var label = n && p && !isAr() ? p.en : n;
+			this.getAggregation("_avatar").setInitials(p ? p.initials : "").setVisible(!!p).setTooltip(label);
+			this.getAggregation("_link").setText(label).setEnabled(false).setVisible(!p);
 		},
 
 		renderer: {

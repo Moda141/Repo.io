@@ -156,7 +156,7 @@ sap.ui.define([
 			o.facts.forEach(function (f) { oBox.addItem(new ObjectAttribute({ title: that.text(f[0]), text: String(f[1]) })); });
 			if (o.people.length) {
 				oBox.addItem(new Label({ text: that.text(o.people.length > 1 ? "repo.owners" : "domain.owner") }).addStyleClass("sapUiSmallMarginTop sapUiTinyMarginBottom"));
-				o.people.forEach(function (n) { oBox.addItem(new HBox({ items: [new PersonLink({ name: n })] }).addStyleClass("sapUiTinyMarginBottom")); });
+				oBox.addItem(new HBox({ items: o.people.map(function (n) { return new PersonLink({ name: n }).addStyleClass("sapUiTinyMarginEnd"); }) }));
 			}
 			var oPop = new ResponsivePopover({ title: o.title, contentWidth: "22rem", placement: "Auto", content: [oBox],
 				afterClose: function () { oPop.destroy(); } });
