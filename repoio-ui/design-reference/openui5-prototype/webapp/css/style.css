@@ -73,3 +73,19 @@
 .rlgFocus .rlgNode.rlgOn { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .rlgNode, .rlgEdge { transition: none; } }
 .repoioPerson { display: inline-flex; align-items: center; vertical-align: middle; }
+
+/* Home hero banner (Datasphere Home): image on top, brief and action below. */
+.repoioHero { background: #fff; border-radius: 0.75rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.06); overflow: hidden; margin-block: 1rem 0.75rem; }
+.repoioHeroImg img, img.repoioHeroImg { display: block; width: 100%; height: 18rem; object-fit: cover; object-position: center 38%; }
+.repoioHeroBody { padding: 1rem 1.25rem 1.25rem; gap: 0.5rem 2rem; }
+.repoioHeroText { max-width: 52rem; }
+.repoioHeroText .sapMText { line-height: 1.5; }
+.repoioHeroStrip { margin-bottom: 0.25rem; }
+@media (max-width: 600px) { .repoioHeroImg img, img.repoioHeroImg { height: 11rem; } }
+
+/* Welcome card with numbered getting-started steps. */
+.repoioWelcomeCard { padding: 1.25rem 1.5rem; }
+.repoioStep { margin-bottom: 0.875rem; }
+.repoioStep .repoioStepNo { flex: none; width: 1.75rem; height: 1.75rem; line-height: 1.75rem; border-radius: 50%; text-align: center;
+	background: #eaf2fb; color: #0a6ed1; font-weight: bold; margin-inline-end: 0.75rem; }
+.repoioRecent .sapMSLIIcon, .repoioRecent .sapMSLIImgIcon { font-size: 1.375rem !important; width: 2rem !important; height: 2rem !important; line-height: 2rem !important; min-width: 2rem !important; }

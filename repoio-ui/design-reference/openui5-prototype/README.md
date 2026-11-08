@@ -23,16 +23,15 @@ Layouts follow SAP Datasphere, drawn with OpenUI5 controls on the locked
 Quartz Light theme. The kit's theme is unchanged; only the page layouts follow
 Datasphere.
 
+Scope is deliberately narrow for now: only Home and Domain management are
+designed. The domain detail, repository, data source, table, golden record
+and Explore pages were removed at the owner's request; their code is in git
+history. Every other navigation item opens the planned-page placeholder.
+
 | Route | Page | Datasphere layout it follows |
 |-------|------|------------------------------|
-| `#/` | Home (J1) | Datasphere Home: welcome banner, recent files, quick actions, plus the J1 cards (golden records per domain, awaiting approval, open items, pipeline health) |
+| `#/` | Home (J1) | Datasphere Home: hero banner with the Repo.io image and a short brief ("Learn more" opens a summary of what the tool does), announcement strip, welcome card with three getting-started steps, recent files, then the J1 cards (quick actions, golden records per domain, awaiting approval, open items, pipeline health, completeness, merge candidates, stewards, owner, run schedule) — drag to reorder, show or hide |
 | `#/domains` | Domain management | Space Management: summary bar with status icons and usage bars, one card per domain (or a table), create / edit / delete / lock / monitor |
-| `#/domains/{domain}` | Domain → repositories | Data Builder: domain selector, "create new" tiles, "All repositories" table with business and technical names, status, changed on/by (ADR-0001) |
-| `#/domains/{d}/repositories/{repo}` | Repository | Edit Space: overview (general settings, capacity and quality), model, golden records, members, data sources |
-| `…/sources/{source}` | Data source | Connections, kept as multi-instance tabs: connection details and features, participating repositories, remote tables (replicated or remote), data integration monitor |
-| `…/tables/{schema}/{table}` | Table | Table editor: general settings and columns (key, data type, not null, repositories, model attributes), data preview, data quality, impact and lineage |
-| `#/records/{recordId}` | Golden record (J2), opened from a repository's golden records | Object Page: header KPIs (quality, match confidence, source records, last merge), attributes with winning source and survivorship rule, contributing source records, relationships, change history, lineage. No inline editing — "Request a change" opens the templates catalog |
-| — | Explore (search page) | Removed from the prototype for now at the owner's request; it stays in `docs/ui-pages.md` |
 | `#/page/{key}` | Every other page in `docs/ui-pages.md` | Planned-page placeholder with the page scope and journey |
 
 ## Entry points
@@ -43,7 +42,6 @@ Datasphere.
 | `webapp/manifest.json` | Routes, models, i18n (`supportedLocales`: en, ar) |
 | `webapp/controller/App.controller.js` | Shell: navigation tree from `model/navigation.json`, header search filter, language switch |
 | `webapp/control/EChart.js` | Apache ECharts wrapper control (README §7.2) |
-| `webapp/control/LineageGraph.js` | Impact and lineage view: cards per object, curved connectors, hover traces the up- and downstream path (HTML + SVG, RTL aware) |
 | `publish/repoio-console.html` | Page used for the published artifact |
 
 ## Build

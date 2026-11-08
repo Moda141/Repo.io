@@ -76,7 +76,7 @@ sap.ui.define([
 		_onRouteMatched: function (oEvent) {
 			var sRoute = oEvent.getParameter("name"),
 				sKey = sRoute === "page" ? oEvent.getParameter("arguments").key :
-					sRoute === "home" ? "home" : sRoute === "record" ? "goldenRecords" : "domains";
+					sRoute === "home" ? "home" : "domains";
 			this._sSelectedKey = sKey;
 			if (this.byId("navList").getItems().length) { this.byId("sideNavigation").setSelectedKey(sKey); }
 		},

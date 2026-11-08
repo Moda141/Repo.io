@@ -65,15 +65,15 @@
 				</OverflowToolbar>
 
 				<f:GridContainer items="{view>/domains/items}" visible="{= ${view>/domains/mode} === 'cards' }">
-					<f:layout><f:GridContainerSettings rowSize="5rem" columnSize="3.75rem" gap="0.75rem"/></f:layout>
+					<f:layout><f:GridContainerSettings rowSize="1rem" columnSize="3.75rem" gap="0.75rem"/></f:layout>
 					<f:items>
 						<f:Card>
-							<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="4"/></f:layoutData>
+							<f:layoutData><f:GridContainerItemLayoutData columns="4"/></f:layoutData>
 							<f:content>
 								<VBox class="repoioSpaceCard" width="100%">
 									<HBox justifyContent="SpaceBetween" alignItems="Start">
 										<VBox>
-											<Link text="{view>techName}" press=".onDomainPress" class="repoioSpaceCode"/>
+											<Text text="{view>techName}" class="repoioSpaceCode"/>
 											<Label text="{view>title}"/>
 										</VBox>
 										<CheckBox selected="{view>selected}" select=".onCardSelect"/>
@@ -92,7 +92,7 @@
 											<core:Icon src="sap-icon://connected" class="sapUiTinyMarginEnd" tooltip="{i18n>domains.col.sources}"/><Text text="{view>sourceCount}" class="sapUiSmallMarginEnd"/>
 											<core:Icon src="sap-icon://group" class="sapUiTinyMarginEnd" tooltip="{i18n>repo.owners}"/><Text text="{view>ownerCount}"/>
 										</HBox>
-										<Button text="{i18n>common.edit}" press=".onDomainPress"/>
+										<Button text="{i18n>common.edit}" press=".onEdit"/>
 									</HBox>
 								</VBox>
 							</f:content>
@@ -113,8 +113,8 @@
 						<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>domains.col.updated}"/></Column>
 					</columns>
 					<items>
-						<ColumnListItem type="Navigation" press=".onDomainPress">
-							<Link text="{view>techName}" press=".onDomainPress" class="repoioIdLink"/>
+						<ColumnListItem>
+							<Text text="{view>techName}" class="repoioIdLink"/>
 							<Text text="{view>title}"/>
 							<ObjectStatus text="{view>healthText}" state="{view>healthState}" icon="{view>healthIcon}"/>
 							<Text text="{view>repoCount}"/>

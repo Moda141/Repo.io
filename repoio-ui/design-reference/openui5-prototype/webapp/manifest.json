@@ -100,34 +100,9 @@
 					"target": "home"
 				},
 				{
-					"name": "record",
-					"pattern": "records/{recordId}",
-					"target": "record"
-				},
-				{
 					"name": "domains",
 					"pattern": "domains",
 					"target": "domains"
-				},
-				{
-					"name": "domain",
-					"pattern": "domains/{domainId}",
-					"target": "domain"
-				},
-				{
-					"name": "repository",
-					"pattern": "domains/{domainId}/repositories/{repoId}",
-					"target": "repository"
-				},
-				{
-					"name": "sources",
-					"pattern": "domains/{domainId}/repositories/{repoId}/sources/{sourceId}",
-					"target": "sources"
-				},
-				{
-					"name": "table",
-					"pattern": "domains/{domainId}/repositories/{repoId}/sources/{sourceId}/tables/{schema}/{tableId}",
-					"target": "table"
 				},
 				{
 					"name": "page",
@@ -146,35 +121,10 @@
 					"name": "Domains",
 					"level": 2
 				},
-				"domain": {
-					"id": "domain",
-					"name": "Domain",
-					"level": 3
-				},
-				"repository": {
-					"id": "repository",
-					"name": "Repository",
-					"level": 4
-				},
-				"sources": {
-					"id": "sources",
-					"name": "Sources",
-					"level": 5
-				},
-				"table": {
-					"id": "table",
-					"name": "Table",
-					"level": 6
-				},
 				"placeholder": {
 					"id": "placeholder",
 					"name": "Placeholder",
 					"level": 2
-				},
-				"record": {
-					"id": "record",
-					"name": "Record",
-					"level": 3
 				}
 			}
 		}

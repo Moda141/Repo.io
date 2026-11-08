@@ -14,7 +14,7 @@ sap.ui.define([
 ], function (BaseController, Filter, FilterOperator, MessageToast, Dialog, Button, TextArea, Label, List, StandardListItem, DateTypeRange, coreLibrary) {
 	"use strict";
 
-	var LAYOUT_KEY = "repoio-proto-home-cards",
+	var LAYOUT_KEY = "repoio-proto-home-cards-v2",
 		TODAY = new Date("2026-11-03T00:00:00");
 
 	return BaseController.extend("repoio.proto.controller.Home", {
@@ -118,17 +118,31 @@ sap.ui.define([
 		/* ---------- Card content helpers ---------- */
 		recentType: function (k) { return k ? this.text("home.recent." + k) : ""; },
 		recentDomain: function (k) { var d = this.data().getProperty("/domains").filter(function (x) { return x.id === k; })[0]; return this.domainName(d); },
-		onRecentPress: function (e) { var r = e.getSource().getBindingContext("home").getObject(); this.router().navTo(r.route, r.args); },
+		stepText: function (k) { return k ? this.text("home.step." + k) : ""; },
+		stepHint: function (k) { return k ? this.text("home.step." + k + ".hint") : ""; },
 		crStateText: function (k) { return k ? this.text("home.cr." + k) : ""; },
 		crKindText: function (k) { return k ? this.text("home.kind." + k) : ""; },
 		stageText: function (k) { return k ? this.text("home.stage." + k) : ""; },
 		runText: function (k) { return k ? this.text("home.run." + k) : ""; },
 
-		onDomainPress: function (oEvent) {
-			this.router().navTo("domain", { domainId: oEvent.getSource().getBindingContext("data").getProperty("id") });
+		onOwnerDomain: function () { this.navKey("domains"); },
+
+		/* Hero "Learn more": a short brief of what the tool does. */
+		onLearnMore: function () {
+			var that = this, oList = new List({ showSeparators: "Inner" }), oDialog;
+			["unify", "match", "govern", "serve"].forEach(function (k) {
+				oList.addItem(new StandardListItem({ icon: that._aboutIcons[k], iconInset: false, wrapping: true,
+					title: that.text("home.about." + k), description: that.text("home.about." + k + ".text") }));
+			});
+			oDialog = new Dialog({
+				title: this.text("home.about.title"), contentWidth: "34rem", content: [oList],
+				endButton: new Button({ text: this.text("common.close"), press: function () { oDialog.close(); } }),
+				afterClose: function () { oDialog.destroy(); }
+			});
+			this.getView().addDependent(oDialog);
+			oDialog.open();
 		},
-		onOwnerDomain: function () { this.router().navTo("domain", { domainId: "customers" }); },
-		onOwnerRepo: function () { this.router().navTo("repository", { domainId: "customers", repoId: "customer-master" }); },
+		_aboutIcons: { unify: "sap-icon://connected", match: "sap-icon://compare", govern: "sap-icon://approvals", serve: "sap-icon://share-2" },
 
 		/* J4: approval needs no comment; rejection needs one. */
 		onApprove: function (oEvent) {
