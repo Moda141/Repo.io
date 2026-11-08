@@ -6,7 +6,6 @@ sap.ui.define([
 
 	var NEW_TILES = [
 		{ key: "repository", icon: "sap-icon://badge", color: "#0a6ed1" },
-		{ key: "model", icon: "sap-icon://database", color: "#5d36ff" },
 		{ key: "connection", icon: "sap-icon://connected", color: "#0f828f" },
 		{ key: "rule", icon: "sap-icon://quality-issue", color: "#c35500" },
 		{ key: "matching", icon: "sap-icon://compare", color: "#8e44ad" },
