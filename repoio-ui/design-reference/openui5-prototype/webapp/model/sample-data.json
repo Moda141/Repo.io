@@ -84,7 +84,8 @@
      "healthKey": "draft",
      "golden": 0
     }
-   ]
+   ],
+   "descEn": "Customers, distributors, schools and bookshops that deal with the group."
   },
   {
    "id": "products",
@@ -127,7 +128,8 @@
      "healthKey": "draft",
      "golden": 0
     }
-   ]
+   ],
+   "descEn": "Books, printed and digital products, with ISBN and pricing data."
   },
   {
    "id": "vendors",
@@ -162,7 +164,8 @@
      "healthKey": "attention",
      "golden": 612
     }
-   ]
+   ],
+   "descEn": "Printing presses, paper suppliers and service vendors."
   },
   {
    "id": "authors",
@@ -197,7 +200,8 @@
      "healthKey": "archived",
      "golden": 4210
     }
-   ]
+   ],
+   "descEn": "Authors, translators, rights contracts and royalties."
   },
   {
    "id": "employees",
@@ -221,7 +225,8 @@
     "archived": 0
    },
    "icon": "sap-icon://employee",
-   "repoNames": []
+   "repoNames": [],
+   "descEn": "Employee data coming from SAP SuccessFactors."
   },
   {
    "id": "stores",
@@ -245,7 +250,8 @@
     "archived": 0
    },
    "icon": "sap-icon://retail-store",
-   "repoNames": []
+   "repoNames": [],
+   "descEn": "Retail stores, outlets and points of sale (POS)."
   }
  ],
  "repos": {

@@ -16,7 +16,7 @@
 			<!-- Datasphere Home: hero banner with a short brief about the tool -->
 			<VBox class="repoioHero">
 				<Image src="img/welcome.jpg" alt="{i18n>home.hero.alt}" width="100%" class="repoioHeroImg" decorative="false"/>
-				<FlexBox wrap="Wrap" justifyContent="SpaceBetween" alignItems="End" class="repoioHeroBody">
+				<FlexBox direction="Column" justifyContent="Center" alignItems="Start" class="repoioHeroBody">
 					<VBox class="repoioHeroText">
 						<Title text="{i18n>home.hero.title}" level="H2" titleStyle="H3" wrapping="true"/>
 						<Text text="{i18n>home.hero.text}" class="sapUiTinyMarginTop"/>

@@ -30,8 +30,8 @@ history. Every other navigation item opens the planned-page placeholder.
 
 | Route | Page | Datasphere layout it follows |
 |-------|------|------------------------------|
-| `#/` | Home (J1) | Datasphere Home: hero banner with the Repo.io image and a short brief ("Learn more" opens a summary of what the tool does), announcement strip, welcome card with three getting-started steps, recent files, then the J1 cards (quick actions, golden records per domain, awaiting approval, open items, pipeline health, completeness, merge candidates, stewards, owner, run schedule) — drag to reorder, show or hide |
-| `#/domains` | Domain management | Space Management: summary bar with status icons and usage bars, one card per domain (or a table), create / edit / delete / lock / monitor |
+| `#/` | Home (J1) | Datasphere Home: hero banner with the whole Repo.io image beside and a short brief ("Learn more" opens a summary of what the tool does), announcement strip, welcome card with three getting-started steps, recent files, then the J1 cards (quick actions, golden records per domain, awaiting approval, open items, pipeline health, completeness, merge candidates, stewards, owner, run schedule) — drag to reorder, show or hide |
+| `#/domains` | Domain management | Catalog: dark search header (scope select + search), type tabs (all, domains, repositories, data sources, tables, favorites, recent), filter panel (domain, status), asset cards or list; quick view, copy link (`#/domains/{item}`), favorites |
 | `#/page/{key}` | Every other page in `docs/ui-pages.md` | Planned-page placeholder with the page scope and journey |
 
 ## Entry points

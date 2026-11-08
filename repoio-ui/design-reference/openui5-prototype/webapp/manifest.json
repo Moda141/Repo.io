@@ -101,7 +101,7 @@
 				},
 				{
 					"name": "domains",
-					"pattern": "domains",
+					"pattern": "domains/:item:",
 					"target": "domains"
 				},
 				{
