@@ -50,8 +50,6 @@
 							<VBox width="18rem" class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
 								<Label text="{i18n>space.goldenUsed}"/>
 								<ProgressIndicator percentValue="{view>/repo/capPct}" displayValue="{view>/repo/capText}" state="Information" displayOnly="true" height="1rem"/>
-								<Slider value="{view>/repo/cap}" min="0" max="2000000" step="50000" enableTickmarks="false" width="100%"/>
-								<Text text="{i18n>dsp.capHint}" class="repoioMuted"/>
 							</VBox>
 							<VBox width="18rem" class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
 								<Label text="{i18n>domains.col.quality}"/>
