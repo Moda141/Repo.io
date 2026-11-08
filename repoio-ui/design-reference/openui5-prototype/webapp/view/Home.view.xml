@@ -7,7 +7,6 @@
 			<f:DynamicPageTitle>
 				<f:heading><Title text="{i18n>home.title}" level="H1" wrapping="true"/></f:heading>
 				<f:actions>
-					<ObjectStatus text="{i18n>common.sample}" state="Warning" inverted="true"/>
 					<Button text="{i18n>home.manageCards}" icon="sap-icon://action-settings" type="Transparent" press=".onManageCards"/>
 				</f:actions>
 			</f:DynamicPageTitle>
@@ -52,7 +51,7 @@
 								</columns>
 								<items>
 									<ColumnListItem type="Navigation" press=".onRecentPress">
-										<HBox alignItems="Center"><core:Icon src="{home>icon}" color="#0a6ed1" class="sapUiSmallMarginEnd"/><Text text="{home>name}"/></HBox>
+										<HBox alignItems="Center"><core:Icon src="{home>icon}" color="Default" class="sapUiSmallMarginEnd"/><Text text="{home>name}"/></HBox>
 										<Text text="{path: 'home>type', formatter: '.recentType'}"/>
 										<Text text="{path: 'home>domain', formatter: '.recentDomain'}"/>
 										<Text text="{home>changed}"/>

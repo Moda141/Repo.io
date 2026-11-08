@@ -30,3 +30,45 @@
 .repoioNewTile .sapMBtnContent { margin: 0 !important; color: var(--sapTile_TitleTextColor); font-weight: normal; line-height: 1.25rem; white-space: normal; text-align: start; }
 .repoioNewTile .sapMBtnIcon { float: none !important; align-self: flex-start; order: -1; }
 .repoioWelcome { padding-block: 0.25rem; }
+
+/* Softer status colors: SAP semantic chart palette, light variants (no saturated bars). */
+.sapUiBody .sapMPI { border-color: transparent; background: #f2f3f4; border-radius: 0.25rem; }
+.sapUiBody .sapMPI .sapMPIBar { border-radius: 0.25rem; }
+.sapUiBody .sapMPI .sapMPIBarPositive { background-color: #9fd0b0; }
+.sapUiBody .sapMPI .sapMPIBarCritical { background-color: #f1c48f; }
+.sapUiBody .sapMPI .sapMPIBarNegative { background-color: #eda3a3; }
+.sapUiBody .sapMPI .sapMPIBarInformation { background-color: #a9c8ec; }
+.sapUiBody .sapMPI .sapMPIBarNeutral { background-color: #c8ced3; }
+.sapUiBody .sapMPI .sapMPIText { color: #32363a !important; font-weight: normal; }
+.sapUiBody .sapMPI .sapMPIBarRemaining { background: transparent; }
+
+/* Lineage (LineageGraph control) — Datasphere "Impact and Lineage" style */
+.rlg { position: relative; overflow-x: auto; padding: 0.5rem 0 1rem; }
+.rlgSvg { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.rlgCols { position: relative; display: flex; gap: 2.25rem; align-items: center; min-width: max-content; padding-inline: 0.25rem; }
+.rlgCol { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 1.25rem; width: 11.75rem; }
+.rlgHead { font-size: 0.75rem; color: var(--sapContent_LabelColor); text-transform: none; letter-spacing: 0.02em; padding-bottom: 0.25rem; border-bottom: 1px solid var(--sapGroup_TitleBorderColor); margin-bottom: 0.25rem; }
+.rlgNode { position: relative; display: flex; gap: 0.625rem; align-items: flex-start; background: var(--sapTile_Background); border: 1px solid #d5dadd; border-radius: 0.5rem; padding: 0.625rem 0.75rem; box-shadow: 0 1px 2px rgba(34,54,73,.06); cursor: pointer; transition: border-color .15s, box-shadow .15s, opacity .15s; }
+.rlgNode:hover, .rlgNode:focus-visible { border-color: #89b4e3; box-shadow: 0 2px 8px rgba(34,54,73,.12); outline: none; }
+.rlgNode:focus-visible { outline: 2px solid var(--sapContent_FocusColor); outline-offset: 1px; }
+.rlgCurrent { border: 2px solid #5899da; background: #f5f9fe; }
+.rlgIcon { flex: none; width: 2rem; height: 2rem; border-radius: 0.375rem; display: grid; place-items: center; font-size: 1rem; background: #eef2f6; color: #5b738b; speak: none; }
+.rlgIcon-db { background: #e8f1fb; color: #3f7ec4; }
+.rlgIcon-pipe { background: #f1ecfa; color: #7a5bb5; }
+.rlgIcon-table { background: #e8f4f3; color: #2e8a83; }
+.rlgIcon-gold { background: #fbf3e4; color: #b57b1f; }
+.rlgIcon-chart { background: #fcecef; color: #b5506c; }
+.rlgBody { min-width: 0; flex: 1; }
+.rlgTitle { font-weight: bold; font-size: 0.875rem; color: var(--sapTextColor); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rlgType { font-size: 0.75rem; color: var(--sapContent_LabelColor); margin-bottom: 0.25rem; }
+.rlgKv { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.75rem; line-height: 1.125rem; }
+.rlgK { color: var(--sapContent_LabelColor); }
+.rlgV { color: var(--sapTextColor); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rlgDot { position: absolute; top: 0.5rem; inset-inline-end: 0.5rem; width: 0.5rem; height: 0.5rem; border-radius: 50%; }
+.rlgDot-pos { background: #5fae7c; } .rlgDot-crit { background: #e3a256; } .rlgDot-neg { background: #df7a7a; }
+.rlgEdge { fill: none; stroke: #c3cbd2; stroke-width: 1.5; transition: stroke .15s, opacity .15s; }
+.rlgFocus .rlgEdge { opacity: .25; }
+.rlgFocus .rlgEdge.rlgOn { opacity: 1; stroke: #5899da; stroke-width: 2; }
+.rlgFocus .rlgNode { opacity: .45; }
+.rlgFocus .rlgNode.rlgOn { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .rlgNode, .rlgEdge { transition: none; } }

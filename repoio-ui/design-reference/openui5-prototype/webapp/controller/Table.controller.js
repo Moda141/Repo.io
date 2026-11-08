@@ -40,6 +40,7 @@ sap.ui.define([
 				target: target, scoreState: this.fmt.qualityState(I.score),
 				deviation: (I.score - target).toFixed(1), delta: "+" + (I.score - trend[trend.length - 2].v).toFixed(1),
 				failed: aFailed.length,
+				lineageTypes: { db: this.text("lin.db"), pipe: this.text("lin.pipe"), table: this.text("lin.table"), gold: this.text("lin.gold"), chart: this.text("lin.chart") },
 				termsText: I.terms.join(" · "), tagsText: I.tags.join(" · "),
 				tests: I.tests.map(function (t) { return Object.assign({}, t, { failedPct: t.failed ? (t.failed / T.rows * 100).toFixed(1) + "%" : "—" }); }),
 				columns: I.columns.map(function (c) {
@@ -53,7 +54,6 @@ sap.ui.define([
 			}));
 			this.byId("page").setSelectedSection(this.byId("secDesc"));
 			this._drawTrend(trend, target);
-			this._drawLineage(I.lineage, I.edges);
 		},
 
 		columnFactory: function (sId, oContext) {
@@ -81,32 +81,9 @@ sap.ui.define([
 			});
 		},
 
-		_drawLineage: function (cols, edges) {
-			var c = this.colors, rtl = this.isRtl(), nodes = [], links = [], n = cols.length;
-			cols.forEach(function (col, i) {
-				var x = rtl ? n - 1 - i : i;
-				col.nodes.forEach(function (node, j) {
-					var y = (j - (col.nodes.length - 1) / 2) * 1.3;
-					var st = node.st === "pos" ? c.pos : node.st === "crit" ? c.crit : node.st === "neg" ? c.neg : "#89919a";
-					nodes.push({ name: i + "-" + j, value: [x, y],
-						label: { formatter: "{t|" + node.t + "}\n{k|" + node.kv.map(function (kv) { return kv[0] + ": " + kv[1]; }).join("\n") + "}",
-							rich: { t: { fontWeight: "bold", fontSize: 12, color: c.text, lineHeight: 18 }, k: { fontSize: 10, color: c.label, lineHeight: 14 } } },
-						itemStyle: { color: node.current ? "#e5f0fa" : "#ffffff", borderColor: node.current ? c.brand : st, borderWidth: node.current ? 2 : 1 },
-						tooltip: { formatter: col.h + ": " + node.t } });
-				});
-			});
-			edges.forEach(function (e) { links.push({ source: e[0] + "-" + e[1], target: e[2] + "-" + e[3] }); });
-			this.byId("lineageChart").setOption({
-				tooltip: {},
-				grid: { left: 90, right: 90, top: 60, bottom: 50 },
-				xAxis: { type: "value", min: 0, max: n - 1, show: false },
-				yAxis: { type: "value", min: -1.4, max: 1.4, show: false, inverse: true },
-				series: [{ type: "graph", coordinateSystem: "cartesian2d", symbol: "roundRect", symbolSize: [170, 66],
-					edgeSymbol: ["none", "arrow"], edgeSymbolSize: 8, lineStyle: { color: "#89919a", width: 1.2, curveness: 0.1 },
-					label: { show: true, position: "inside" }, data: nodes, links: links },
-					{ type: "scatter", symbolSize: 0, silent: true, data: cols.map(function (col, i) { return { value: [rtl ? n - 1 - i : i, -1.38], name: col.h }; }),
-						label: { show: true, position: "inside", formatter: "{b}", color: c.label, fontWeight: "bold", fontSize: 12 } }]
-			});
+		onLineageNode: function (e) {
+			var c = e.getParameter("column");
+			if (c === 0) { this.onToSource(); } else if (c === 4) { this.onToRepo(); }
 		},
 
 		onGoSection: function (e) { this.byId("page").setSelectedSection(this.byId(e.getSource().data("sec"))); },

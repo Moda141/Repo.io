@@ -7,7 +7,6 @@
 				<f:heading><Title text="{i18n>nav.domains}" level="H1"/></f:heading>
 				<f:snappedContent><Text text="{view>/domains/summary}"/></f:snappedContent>
 				<f:actions>
-					<ObjectStatus text="{i18n>common.sample}" state="Warning" inverted="true"/>
 				</f:actions>
 			</f:DynamicPageTitle>
 		</f:title>
@@ -17,13 +16,13 @@
 					<HBox alignItems="Center" class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
 						<Label text="{i18n>domains.kpi.domains}" class="sapUiTinyMarginEnd"/>
 						<Title text="{view>/domains/count}" level="H3" class="sapUiSmallMarginEnd"/>
-						<core:Icon src="sap-icon://group" color="#0a6ed1" class="sapUiTinyMarginEnd" tooltip="{i18n>domain.owner}"/>
+						<core:Icon src="sap-icon://group" color="Default" class="sapUiTinyMarginEnd" tooltip="{i18n>domain.owner}"/>
 						<Text text="{view>/domains/owners}" class="sapUiSmallMarginEnd"/>
-						<core:Icon src="sap-icon://sys-enter-2" color="#107e3e" class="sapUiTinyMarginEnd" tooltip="{i18n>health.healthy}"/>
+						<core:Icon src="sap-icon://sys-enter-2" color="Positive" class="sapUiTinyMarginEnd" tooltip="{i18n>health.healthy}"/>
 						<Text text="{view>/domains/healthy}" class="sapUiSmallMarginEnd"/>
-						<core:Icon src="sap-icon://alert" color="#e9730c" class="sapUiTinyMarginEnd" tooltip="{i18n>health.attention}"/>
+						<core:Icon src="sap-icon://alert" color="Critical" class="sapUiTinyMarginEnd" tooltip="{i18n>health.attention}"/>
 						<Text text="{view>/domains/attention}" class="sapUiSmallMarginEnd"/>
-						<core:Icon src="sap-icon://border" color="#6a6d70" class="sapUiTinyMarginEnd" tooltip="{i18n>domains.noRepo}"/>
+						<core:Icon src="sap-icon://border" color="Neutral" class="sapUiTinyMarginEnd" tooltip="{i18n>domains.noRepo}"/>
 						<Text text="{view>/domains/empty}"/>
 					</HBox>
 					<VBox width="10.5rem" class="sapUiMediumMarginEnd sapUiSmallMarginBottom">

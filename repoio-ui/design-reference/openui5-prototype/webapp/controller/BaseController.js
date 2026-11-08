@@ -41,6 +41,6 @@ sap.ui.define([
 		},
 
 		/* Shared ECharts palette from Quartz Light semantic colors. */
-		colors: { brand: "#0a6ed1", pos: "#107e3e", crit: "#e9730c", neg: "#bb0000", info: "#0a6ed1", neutral: "#6a6d70", grid: "#e5e5e5", text: "#32363a", label: "#6a6d70" }
+		colors: { brand: "#5899da", pos: "#5fae7c", crit: "#e3a256", neg: "#df7a7a", info: "#89b4e3", neutral: "#b4bac0", grid: "#eeeeee", text: "#32363a", label: "#6a6d70" }
 	});
 });

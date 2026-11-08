@@ -41,6 +41,7 @@ Datasphere.
 | `webapp/manifest.json` | Routes, models, i18n (`supportedLocales`: en, ar) |
 | `webapp/controller/App.controller.js` | Shell: navigation tree from `model/navigation.json`, header search filter, language switch |
 | `webapp/control/EChart.js` | Apache ECharts wrapper control (README §7.2) |
+| `webapp/control/LineageGraph.js` | Impact and lineage view: cards per object, curved connectors, hover traces the up- and downstream path (HTML + SVG, RTL aware) |
 | `publish/repoio-console.html` | Page used for the published artifact |
 
 ## Build
@@ -90,6 +91,12 @@ None. No hosts, ports or credentials.
 - `@ui5/cli` 4.0.33 (dev).
 - Apache ECharts 5.5.1, vendored in `webapp/thirdparty/` (Apache-2.0, licence
   file alongside).
+
+## Colors
+
+Charts use the SAP Quartz chart palette in its softer tints (`BaseController.colors`).
+Progress bars use light semantic fills (`css/style.css`), so status stays readable
+without saturated blocks of color.
 
 ## Findings for M4
 

@@ -104,7 +104,7 @@
 							</columns>
 							<items>
 								<ColumnListItem>
-									<core:Icon src="{= ${view>name} === 'CustomerID' ? 'sap-icon://key' : '' }" color="#e9730c"/>
+									<core:Icon src="{= ${view>name} === 'CustomerID' ? 'sap-icon://key' : '' }" color="Critical"/>
 									<ObjectIdentifier title="{view>name}" text="{view>desc}"/>
 									<Text text="{view>dataType}"/>
 									<CheckBox selected="{view>required}" editable="false"/>
@@ -256,7 +256,7 @@
 				<uxap:subSections>
 					<uxap:ObjectPageSubSection title="{i18n>dsp.impact}" titleUppercase="false">
 						<VBox>
-							<rc:EChart id="lineageChart" height="26rem" ariaLabel="{i18n>tbl.sec.lineage}"/>
+							<rc:LineageGraph id="lineage" columns="{view>/info/lineage}" edges="{view>/info/edges}" typeLabels="{view>/info/lineageTypes}" nodeSelect=".onLineageNode"/>
 							<Text text="{i18n>tbl.lineageNote}" class="repoioMuted"/>
 						</VBox>
 					</uxap:ObjectPageSubSection>
