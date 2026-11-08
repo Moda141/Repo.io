@@ -157,3 +157,11 @@
 .repoioConnFacet .sapMPanelHdr { font-size: 0.875rem; font-weight: bold; }
 .repoioConnFacet .sapMPanelContent { padding: 0 0.25rem 0.5rem; }
 .repoioTypeTile .sapMTitle { font-weight: bold; }
+/* Type tiles: fixed Datasphere tile size (no stretching when the filter leaves few types). */
+.repoioTypeGrid .sapUiLayoutCSSGridBoxLayoutContainer { grid-template-columns: repeat(auto-fill, 10.5rem) !important; gap: 1rem !important; padding: 0.25rem 0.125rem 1rem; }
+.repoioTypeGrid.sapMList { background: transparent; }
+.repoioTypeGrid .sapFGLI { width: 10.5rem; height: 10rem; border: none; box-shadow: 0 0 0.125rem rgba(0,0,0,0.12), 0 0.125rem 0.5rem rgba(0,0,0,0.08); background: #fff; }
+.repoioTypeGrid .sapFGLI:hover { box-shadow: 0 0 0.125rem rgba(0,0,0,0.15), 0 0.375rem 1rem rgba(0,0,0,0.12); }
+.repoioTypeGrid .sapFGLI.sapMLIBSelected { background: #fff; box-shadow: 0 0 0 0.125rem #0a6ed1; }
+.repoioTypeTile .sapMTitle { font-size: 0.875rem; line-height: 1.25rem; }
+.repoioConnTypes .sapMTB { padding-inline: 0; }

@@ -14,7 +14,7 @@
 									<Button icon="sap-icon://clear-filter" type="Transparent" tooltip="{i18n>cat.clearAll}" press=".onClearTypeFilters"
 										enabled="{= ${view>/wiz/activeFilters} > 0 }"/>
 								</HBox>
-								<ScrollContainer vertical="true" height="31rem">
+								<ScrollContainer vertical="true" horizontal="false" height="29.5rem">
 									<Panel expandable="true" expanded="true" headerText="{i18n>conn.f.features}" class="repoioConnFacet">
 										<List items="{view>/wiz/facets/features}" mode="MultiSelect" includeItemNavigation="false" showSeparators="None"
 											selectionChange=".onTypeFacet" backgroundDesign="Transparent" app:facet="features" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
@@ -45,12 +45,12 @@
 									<Button icon="{= ${view>/wiz/sortDesc} ? 'sap-icon://sort-descending' : 'sap-icon://sort-ascending' }" type="Transparent"
 										tooltip="{i18n>exp.sort}" press=".onTypeSort"/>
 								</OverflowToolbar>
-								<ScrollContainer vertical="true" height="29rem">
+								<ScrollContainer vertical="true" horizontal="false" height="29.5rem">
 									<f:GridList id="typeGrid" items="{view>/wiz/types}" mode="SingleSelectMaster" selectionChange=".onTypePick"
 										noDataText="{i18n>cat.noResults}" class="repoioTypeGrid">
 										<f:customLayout><cssgrid:GridBoxLayout boxMinWidth="10.5rem"/></f:customLayout>
 										<f:GridListItem selected="{= ${view>key} === ${view>/wiz/type} }">
-											<VBox class="repoioTypeTile" height="9.5rem" justifyContent="SpaceBetween">
+											<VBox class="repoioTypeTile" height="10rem" justifyContent="SpaceBetween">
 												<Title text="{view>name}" level="H4" titleStyle="H6" wrapping="true"/>
 												<HBox justifyContent="Center" alignItems="Center" height="4.5rem">
 													<Image src="{view>logo}" height="{view>logoH}" densityAware="false" decorative="true"/>
