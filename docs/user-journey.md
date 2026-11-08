@@ -212,8 +212,10 @@ current entity schema → blocked at save with the schema rule cited.
 
 1. The designer opens the **Workflow Designer** (bpmn-js canvas inside
    OpenUI5).
-2. Compose: approval steps with named roles as approvers, conditions,
-   parallel branches, timers, retries.
+2. Compose: approval steps whose approvers are named people (one or
+   more) or a team — any one or all of them must approve, with an
+   optional due date and escalation to a team — conditions, parallel
+   branches, timers, retries.
 3. Optional nodes: **Write-back Task** (target system, field mapping,
    conflict policy — execution ships with M9), **Python Script Task**
    (M8).

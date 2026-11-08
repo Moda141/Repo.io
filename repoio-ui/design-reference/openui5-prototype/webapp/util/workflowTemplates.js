@@ -42,7 +42,7 @@ sap.ui.define([], function () {
 			if (key === "single") {
 				return head(T("wf.tpl.single"), "Customer", TECH.single) +
 					"<bpmn:startEvent id=\"Start_1\" name=\"" + n("submitted") + "\" />\n" +
-					"<bpmn:userTask id=\"Review_1\" name=\"" + n("stewardReview") + "\" repoio:taskType=\"approval\" repoio:approverRole=\"customer_steward\" repoio:approvalRule=\"any\" repoio:dueIn=\"P2D\" />\n" +
+					"<bpmn:userTask id=\"Review_1\" name=\"" + n("stewardReview") + "\" repoio:taskType=\"approval\" repoio:approverType=\"team\" repoio:approverTeam=\"customer_stewards\" repoio:approvalRule=\"any\" repoio:dueIn=\"P2D\" />\n" +
 					"<bpmn:endEvent id=\"End_done\" name=\"" + n("completed") + "\" repoio:outcome=\"completed\" />\n" +
 					flow("Flow_1", "Start_1", "Review_1") + flow("Flow_2", "Review_1", "End_done") +
 					tail(shape("Start_1", 152, 182, 36, 36) + shape("Review_1", 250, 160, 120, 80) + shape("End_done", 432, 182, 36, 36) +
@@ -51,9 +51,9 @@ sap.ui.define([], function () {
 			if (key === "twoLevel") {
 				return head(T("wf.tpl.twoLevel"), "Customer", TECH.twoLevel) +
 					"<bpmn:startEvent id=\"Start_1\" name=\"" + n("submitted") + "\" />\n" +
-					"<bpmn:userTask id=\"Review_1\" name=\"" + n("stewardReview") + "\" repoio:taskType=\"approval\" repoio:approverRole=\"customer_steward\" repoio:approvalRule=\"any\" repoio:dueIn=\"P2D\" />\n" +
+					"<bpmn:userTask id=\"Review_1\" name=\"" + n("stewardReview") + "\" repoio:taskType=\"approval\" repoio:approverType=\"team\" repoio:approverTeam=\"customer_stewards\" repoio:approvalRule=\"any\" repoio:dueIn=\"P2D\" />\n" +
 					"<bpmn:exclusiveGateway id=\"Gw_ok\" name=\"" + n("approved") + "\" />\n" +
-					"<bpmn:userTask id=\"Review_2\" name=\"" + n("financeApproval") + "\" repoio:taskType=\"approval\" repoio:approverRole=\"finance_approver\" repoio:approvalRule=\"any\" repoio:dueIn=\"P3D\" repoio:escalateTo=\"domain_owner\" />\n" +
+					"<bpmn:userTask id=\"Review_2\" name=\"" + n("financeApproval") + "\" repoio:taskType=\"approval\" repoio:approverType=\"users\" repoio:approvers=\"محمد,منى حسن\" repoio:approvalRule=\"all\" repoio:dueIn=\"P3D\" repoio:escalateTo=\"governance_board\" />\n" +
 					"<bpmn:endEvent id=\"End_done\" name=\"" + n("completed") + "\" repoio:outcome=\"completed\" />\n" +
 					"<bpmn:endEvent id=\"End_rej\" name=\"" + n("rejected") + "\" repoio:outcome=\"rejected\" />\n" +
 					flow("Flow_1", "Start_1", "Review_1") + flow("Flow_2", "Review_1", "Gw_ok") +
@@ -67,7 +67,7 @@ sap.ui.define([], function () {
 			// approvalWriteBack (default)
 			return head(T("wf.tpl.approvalWriteBack"), "Customer", TECH.approvalWriteBack) +
 				"<bpmn:startEvent id=\"Start_1\" name=\"" + n("submitted") + "\" />\n" +
-				"<bpmn:userTask id=\"Review_1\" name=\"" + n("stewardReview") + "\" repoio:taskType=\"approval\" repoio:approverRole=\"customer_steward\" repoio:approvalRule=\"any\" repoio:dueIn=\"P2D\" repoio:escalateTo=\"domain_owner\" />\n" +
+				"<bpmn:userTask id=\"Review_1\" name=\"" + n("stewardReview") + "\" repoio:taskType=\"approval\" repoio:approverType=\"team\" repoio:approverTeam=\"customer_stewards\" repoio:approvalRule=\"any\" repoio:dueIn=\"P2D\" repoio:escalateTo=\"governance_board\" />\n" +
 				"<bpmn:exclusiveGateway id=\"Gw_ok\" name=\"" + n("approved") + "\" />\n" +
 				"<bpmn:endEvent id=\"End_rej\" name=\"" + n("rejected") + "\" repoio:outcome=\"rejected\" />\n" +
 				"<bpmn:parallelGateway id=\"Gw_fork\" name=\"" + n("all") + "\" />\n" +

@@ -34,7 +34,7 @@ sap.ui.define([
 			name: "RepoioProps", isAbstract: true,
 			"extends": ["bpmn:Process", "bpmn:Task", "bpmn:Gateway", "bpmn:Event", "bpmn:SequenceFlow"],
 			properties: [
-				"taskType", "domain", "owner", "techName", "approverRole", "approvalRule", "dueIn", "escalateTo",
+				"taskType", "domain", "owner", "techName", "approverType", "approvers", "approverTeam", "approvalRule", "dueIn", "escalateTo",
 				"scriptId", "scriptVersion", "timeoutMin", "connection", "targetSystem", "entity", "fieldMapping",
 				"conflictPolicy", "backoff", "outcome"
 			].map(function (n) { return { name: n, isAttr: true, type: "String" }; }).concat([

@@ -137,8 +137,9 @@
 6. **Workflows**
    - **Workflows list** — published and draft workflows, versions, running
      instances. [J7]
-   - **New workflows** — the BPMN designer: approval steps with named
-     roles, conditions, parallel branches, timers; Write-back Task and
+   - **New workflows** — the BPMN designer: approval steps assigned to
+     named people or a team (any one / all approve, due date, escalation
+     to a team), conditions, parallel branches, timers; Write-back Task and
      Python Script Task properties; validate, version, publish. [J7]
 
 7. **System & Administration**

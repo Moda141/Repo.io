@@ -1,6 +1,7 @@
 sap.ui.define([
 	"repoio/proto/controller/BaseController",
 	"repoio/proto/util/workflowTemplates",
+	"repoio/proto/util/people",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/m/Dialog",
@@ -11,19 +12,19 @@ sap.ui.define([
 	"sap/m/ResponsivePopover",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/core/CustomData"
-], function (BaseController, Templates, MessageToast, MessageBox, Dialog, Button, TextArea, List, StandardListItem, ResponsivePopover,
+], function (BaseController, Templates, People, MessageToast, MessageBox, Dialog, Button, TextArea, List, StandardListItem, ResponsivePopover,
 	GroupHeaderListItem, CustomData) {
 	"use strict";
 
 	var DOMAINS = ["Customer", "Vendor", "Product", "Author", "Employee", "Store"];
 	/* Sample reference data for the prototype (real values come from RBAC config, the script registry and the connections registry). */
-	var ROLES = [
-		{ key: "customer_steward", en: "Customer data steward", ar: "أمين بيانات العملاء" },
-		{ key: "vendor_steward", en: "Vendor data steward", ar: "أمين بيانات الموردين" },
-		{ key: "product_steward", en: "Product data steward", ar: "أمين بيانات المنتجات" },
-		{ key: "domain_owner", en: "Domain owner", ar: "مالك المجال" },
-		{ key: "finance_approver", en: "Finance approver", ar: "معتمد مالي" },
-		{ key: "sales_ops", en: "Sales operations", ar: "عمليات المبيعات" }
+	/* Approvers are people or a team (sample directory; in the product: the user and team APIs, Entra ID groups). */
+	var TEAMS = [
+		{ key: "customer_stewards", en: "Customer data stewards", ar: "أمناء بيانات العملاء", members: ["سارة عادل"] },
+		{ key: "vendor_stewards", en: "Vendor data stewards", ar: "أمناء بيانات الموردين", members: ["هالة سمير", "عمر طارق"] },
+		{ key: "product_stewards", en: "Product data stewards", ar: "أمناء بيانات المنتجات", members: ["كريم فوزي", "نور الدين"] },
+		{ key: "data_management", en: "Data management", ar: "إدارة البيانات", members: ["محمد", "أحمد ناصر"] },
+		{ key: "governance_board", en: "Data governance board", ar: "مجلس حوكمة البيانات", members: ["محمد", "سارة عادل", "هالة سمير", "كريم فوزي"] }
 	];
 	var SCRIPTS = [
 		{ key: "segment_customers", file: "segment_customers.py", versions: ["3", "2", "1"] },
@@ -65,8 +66,14 @@ sap.ui.define([
 				showProps: true, q: "", sel: {}, steps: [], stepCount: 0, version: 1,
 				versions: [{ v: 1, state: "draft", stateText: this.text("onto.state.draft"), date: this.text("wf.notSaved") }],
 				domains: DOMAINS.map(function (d) { return { key: d, text: that._domainText(d) }; }),
-				roles: ROLES.map(function (r) { return { key: r.key, text: ar ? r.ar : r.en }; }),
-				rolesOpt: [{ key: "", text: this.text("wf.none") }].concat(ROLES.map(function (r) { return { key: r.key, text: ar ? r.ar : r.en }; })),
+				people: People.names().map(function (n) {
+					var p = People.get(n);
+					return { key: n, text: ar ? n : p.en, role: ar ? p.role_ar : p.role_en };
+				}),
+				teams: TEAMS.map(function (t) { return { key: t.key, text: ar ? t.ar : t.en, count: that.text("wf.members", [t.members.length]) }; }),
+				teamsOpt: [{ key: "", text: this.text("wf.none"), count: "" }].concat(TEAMS.map(function (t) {
+					return { key: t.key, text: ar ? t.ar : t.en, count: that.text("wf.members", [t.members.length]) };
+				})),
 				scripts: SCRIPTS,
 				wbConnections: conns.map(function (c) {
 					return { key: c.id, sys: c.type === "c4c" ? "c4c" : "erp", text: that.text(c.type === "c4c" ? "wf.sys.c4c" : "wf.sys.erp") + " · " + c.id };
@@ -85,7 +92,16 @@ sap.ui.define([
 			var c = (this.data().getProperty("/ontology/concepts") || []).filter(function (x) { return x.id === d; })[0];
 			return c ? (this.lang() === "ar" ? c.nameAr : c.nameEn) : d;
 		},
-		_roleText: function (k) { var r = ROLES.filter(function (x) { return x.key === k; })[0]; return r ? (this.lang() === "ar" ? r.ar : r.en) : ""; },
+		_team: function (k) { return TEAMS.filter(function (x) { return x.key === k; })[0]; },
+		_teamText: function (k) { var t = this._team(k); return t ? (this.lang() === "ar" ? t.ar : t.en) : ""; },
+		_personText: function (n) { var p = People.get(n); return p ? (this.lang() === "ar" ? n : p.en) : n; },
+		_list: function (s) { return String(s || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean); },
+		/* Who approves this step: a list of people, or one team. */
+		_approverText: function (bo) {
+			if (bo.get("repoio:approverType") === "team") { return this._teamText(bo.get("repoio:approverTeam")); }
+			var a = this._list(bo.get("repoio:approvers"));
+			return a.length ? this._personText(a[0]) + (a.length > 1 ? " +" + (a.length - 1) : "") : "";
+		},
 
 		/* ---------- left: building blocks ---------- */
 
@@ -212,7 +228,9 @@ sap.ui.define([
 				m.setProperty("/wf/proc/name", bo.name || this.text("wf.untitled"));
 			}
 			if (k === "approval") {
-				sel.approverRole = g("approverRole") || ""; sel.approvalRule = g("approvalRule") || "any"; sel.dueIn = g("dueIn") || ""; sel.escalateTo = g("escalateTo") || "";
+				sel.approverType = g("approverType") || "users"; sel.approvers = this._list(g("approvers")); sel.hasApprovers = sel.approvers.length > 0; sel.approverTeam = g("approverTeam") || "";
+				sel.teamMembers = ((this._team(sel.approverTeam) || {}).members || []).map(function (n) { return { name: n }; });
+				sel.approvalRule = g("approvalRule") || "any"; sel.dueIn = g("dueIn") || ""; sel.escalateTo = g("escalateTo") || "";
 			}
 			if (k === "python") {
 				sel.scriptId = g("scriptId") || ""; sel.scriptVersion = g("scriptVersion") || ""; sel.retries = bo.get("repoio:retries") || 0; sel.timeoutMin = parseInt(g("timeoutMin") || "15", 10);
@@ -286,6 +304,8 @@ sap.ui.define([
 			this._upd(p);
 		},
 		onProcAttr: function (e) { var p = {}; p["repoio:" + e.getSource().data("attr")] = e.getSource().getSelectedKey(); this.byId("designer").update("", p); },
+		onApproverType: function (e) { this._upd({ "repoio:approverType": e.getParameter("item").getKey() }); },
+		onApprovers: function (e) { this._upd({ "repoio:approvers": e.getSource().getSelectedKeys().join(",") }); },
 		onRule: function (e) { this._upd({ "repoio:approvalRule": e.getParameter("item").getKey() }); },
 		onScript: function (e) {
 			var k = e.getSource().getSelectedKey(), s = SCRIPTS.filter(function (x) { return x.key === k; })[0];
@@ -353,7 +373,7 @@ sap.ui.define([
 			var that = this, d = this.byId("designer"), out = [];
 			d.elements().forEach(function (e) {
 				var k = that._kind(e), bo = e.businessObject;
-				if (k === "approval") { out.push({ id: e.id, kind: k, text: that._roleText(bo.get("repoio:approverRole")) || that.text("wf.v.noApproverShort") }); }
+				if (k === "approval") { out.push({ id: e.id, kind: k, text: that._approverText(bo) || that.text("wf.v.noApproverShort") }); }
 				if (k === "python") { var s = bo.get("repoio:scriptId"); out.push({ id: e.id, kind: k, text: s ? "Python · " + s + " v" + (bo.get("repoio:scriptVersion") || "?") : "Python" }); }
 				if (k === "writeBack") { var sys = bo.get("repoio:targetSystem"); out.push({ id: e.id, kind: k, text: that.text("wf.k.writeBack") + (sys ? " · " + that.text("wf.sys." + sys) : "") }); }
 				if (k === "parallel") { out.push({ id: e.id, kind: k, text: "ALL" }); }
@@ -385,7 +405,7 @@ sap.ui.define([
 				if (k !== "start" && !inn) { add(e, "wf.v.noIncoming"); }
 				else if (k !== "end" && !out) { add(e, "wf.v.noOutgoing"); }
 				else if (starts.length && !seen[e.id]) { add(e, k === "end" ? "wf.v.unreachableEnd" : "wf.v.unreachable"); }
-				if (k === "approval" && !bo.get("repoio:approverRole")) { add(e, "wf.v.noApprover"); }
+				if (k === "approval" && !that._approverText(bo)) { add(e, "wf.v.noApprover"); }
 				if (k === "python" && !bo.get("repoio:scriptId")) { add(e, "wf.v.noScript"); }
 				if (k === "writeBack") {
 					if (!bo.get("repoio:connection")) { add(e, "wf.v.noTarget"); }

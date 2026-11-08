@@ -138,17 +138,36 @@
 							<!-- Approval step -->
 							<Panel expandable="true" expanded="true" headerText="{i18n>wf.approval}" visible="{= ${view>/wf/sel/kind} === 'approval' }" class="repoioWfPanel">
 								<VBox renderType="Bare">
-									<Label text="{i18n>wf.approverRole}" required="true" labelFor="wfRole"/>
-									<Select id="wfRole" selectedKey="{view>/wf/sel/approverRole}" items="{view>/wf/roles}" width="100%" forceSelection="false"
-										change=".onAttr" app:attr="approverRole" enabled="{= !${view>/wf/readOnly} }"
-										valueState="{= ${view>/wf/sel/approverRole} ? 'None' : 'Warning' }" valueStateText="{i18n>wf.v.noApprover}">
-										<core:Item key="{view>key}" text="{view>text}"/>
-									</Select>
+									<Label text="{i18n>wf.approvers}" required="true"/>
+									<SegmentedButton selectedKey="{path: 'view>/wf/sel/approverType', mode: 'OneWay'}" selectionChange=".onApproverType" width="100%"
+										enabled="{= !${view>/wf/readOnly} }">
+										<items>
+											<SegmentedButtonItem key="users" text="{i18n>wf.ap.users}" icon="sap-icon://person-placeholder"/>
+											<SegmentedButtonItem key="team" text="{i18n>wf.ap.team}" icon="sap-icon://group"/>
+										</items>
+									</SegmentedButton>
+									<MultiComboBox selectedKeys="{view>/wf/sel/approvers}" items="{view>/wf/people}" width="100%" class="sapUiTinyMarginTop"
+										visible="{= ${view>/wf/sel/approverType} !== 'team' }" selectionFinish=".onApprovers" showSecondaryValues="true"
+										editable="{= !${view>/wf/readOnly} }" placeholder="{i18n>wf.ap.usersPh}"
+										valueState="{= ${view>/wf/sel/hasApprovers} ? 'None' : 'Warning' }" valueStateText="{i18n>wf.v.noApproverShort}">
+										<core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>role}"/>
+									</MultiComboBox>
+									<VBox renderType="Bare" visible="{= ${view>/wf/sel/approverType} === 'team' }" class="sapUiTinyMarginTop">
+										<Select selectedKey="{view>/wf/sel/approverTeam}" items="{view>/wf/teams}" width="100%" forceSelection="false" showSecondaryValues="true"
+											change=".onAttr" app:attr="approverTeam" enabled="{= !${view>/wf/readOnly} }"
+											valueState="{= ${view>/wf/sel/approverTeam} ? 'None' : 'Warning' }" valueStateText="{i18n>wf.v.noApproverShort}">
+											<core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>count}"/>
+										</Select>
+										<HBox items="{view>/wf/sel/teamMembers}" renderType="Bare" wrap="Wrap" class="repoioWfMembers">
+											<rc:PersonLink name="{view>name}"/>
+										</HBox>
+										<Text text="{i18n>wf.ap.teamHint}" class="repoioHint"/>
+									</VBox>
 									<Label text="{i18n>wf.rule}" class="sapUiSmallMarginTop"/>
 									<SegmentedButton selectedKey="{view>/wf/sel/approvalRule}" selectionChange=".onRule" width="100%" enabled="{= !${view>/wf/readOnly} }">
 										<items>
-											<SegmentedButtonItem key="any" text="{i18n>wf.rule.any}"/>
-											<SegmentedButtonItem key="all" text="{i18n>wf.rule.all}"/>
+											<SegmentedButtonItem key="any" text="{= ${view>/wf/sel/approverType} === 'team' ? ${i18n>wf.rule.anyMember} : ${i18n>wf.rule.any} }"/>
+											<SegmentedButtonItem key="all" text="{= ${view>/wf/sel/approverType} === 'team' ? ${i18n>wf.rule.allMembers} : ${i18n>wf.rule.all} }"/>
 										</items>
 									</SegmentedButton>
 									<Label text="{i18n>wf.dueIn}" class="sapUiSmallMarginTop"/>
@@ -160,9 +179,9 @@
 										<core:Item key="P5D" text="{i18n>wf.due.5d}"/>
 									</Select>
 									<Label text="{i18n>wf.escalateTo}" class="sapUiSmallMarginTop"/>
-									<Select selectedKey="{view>/wf/sel/escalateTo}" items="{view>/wf/rolesOpt}" width="100%" change=".onAttr" app:attr="escalateTo"
+									<Select selectedKey="{view>/wf/sel/escalateTo}" items="{view>/wf/teamsOpt}" width="100%" change=".onAttr" app:attr="escalateTo" showSecondaryValues="true"
 										enabled="{= !${view>/wf/readOnly} &amp;&amp; !!${view>/wf/sel/dueIn} }">
-										<core:Item key="{view>key}" text="{view>text}"/>
+										<core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>count}"/>
 									</Select>
 								</VBox>
 							</Panel>
