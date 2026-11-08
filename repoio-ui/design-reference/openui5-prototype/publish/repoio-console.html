@@ -1,0 +1,25 @@
+<title>Repo.io Console</title>
+<style>
+	html, body { height: 100%; }
+	body { margin: 0; background: #f7f7f7; color: #32363a; }
+	#repoio-root { height: 100%; }
+</style>
+<script>
+	// Prototype language switch: ar (RTL, default) or en (LTR), remembered per browser.
+	(function () {
+		var lang = "ar";
+		try { lang = localStorage.getItem("repoio-lang") || "ar"; } catch (e) { /* storage blocked */ }
+		window["sap-ui-config"] = { language: lang };
+		document.body ? document.body.classList.add("sapUiBody", "sapUiSizeCompact")
+			: document.addEventListener("DOMContentLoaded", function () { document.body.classList.add("sapUiBody", "sapUiSizeCompact"); });
+	}());
+</script>
+<script id="sap-ui-bootstrap"
+	src="resources/sap-ui-custom.js"
+	data-sap-ui-theme="sap_fiori_3"
+	data-sap-ui-libs="sap.m,sap.tnt,sap.f,sap.uxap,sap.ui.layout,sap.ui.table"
+	data-sap-ui-resource-roots='{"repoio.proto": "./"}'
+	data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+	data-sap-ui-compat-version="edge"
+	data-sap-ui-async="true"></script>
+<div id="repoio-root" data-sap-ui-component data-name="repoio.proto" data-id="container" data-settings='{"id": "repoio"}'></div>

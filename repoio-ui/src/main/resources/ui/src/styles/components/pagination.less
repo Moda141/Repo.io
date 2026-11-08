@@ -1,36 +1,110 @@
 /*
- *  Copyright 2025 Collate.
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *  http://www.apache.org/licenses/LICENSE-2.0
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ *  Repo.io — SAP Fiori Horizon pagination overrides for Antd 5
+ *  Replaces OpenMetadata / Collate styling.
+ *
+ *  Design system: SAP Fiori Horizon
+ *  Reference:     SAP Fiori Design Guidelines — Pagination
  */
+
 @import (reference) '../variables.less';
 
+// ─── Pagination container ─────────────────────────────────────────────────────
+
 .pagination-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--sapFontFamily);
+
   .ant-btn:disabled {
     background-color: transparent;
-    border: transparent;
-    color: var(--repoio-legacy-color-0-0-0-0-25);
+    border-color: transparent;
+    color: var(--sapContent_DisabledTextColor, rgba(50, 54, 58, 0.4));
   }
 
   .pagination-button {
-    color: @grey-500;
-    font-weight: @font-semibold;
-    font-size: var(--repoio-font-size-sm);
+    color: var(--sapContent_LabelColor, #556B82);
+    font-weight: 600;
+    font-size: 0.8125rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: var(--sapFontFamily);
+
+    &:hover:not(:disabled) {
+      color: var(--sapBrandColor, #0070F2);
+    }
   }
 
   .pagination-indicator {
-    color: @grey-700;
-    font-weight: @font-medium;
-    font-size: var(--repoio-font-size-sm);
+    color: var(--sapContent_ValueColor, #32363A);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    font-family: var(--sapFontFamily);
+  }
+}
+
+// ─── Antd native pagination ───────────────────────────────────────────────────
+
+.ant-pagination {
+  font-family: var(--sapFontFamily);
+
+  .ant-pagination-item {
+    border-color: var(--sapContent_ForegroundBorderColor, #C5C7C8);
+    border-radius: var(--sapContent_BorderRadius, 4px);
+
+    a {
+      color: var(--sapContent_ValueColor, #32363A);
+      font-family: var(--sapFontFamily);
+    }
+
+    &:hover {
+      border-color: var(--sapBrandColor, #0070F2);
+
+      a {
+        color: var(--sapBrandColor, #0070F2);
+      }
+    }
+  }
+
+  .ant-pagination-item-active {
+    background: var(--sapBrandColor, #0070F2);
+    border-color: var(--sapBrandColor, #0070F2);
+
+    a {
+      color: #FFFFFF;
+    }
+
+    &:hover a {
+      color: #FFFFFF;
+    }
+  }
+
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    .ant-pagination-item-link {
+      border-color: var(--sapContent_ForegroundBorderColor, #C5C7C8);
+      border-radius: var(--sapContent_BorderRadius, 4px);
+      color: var(--sapContent_LabelColor, #556B82);
+      font-family: var(--sapFontFamily);
+    }
+
+    &:hover .ant-pagination-item-link {
+      border-color: var(--sapBrandColor, #0070F2);
+      color: var(--sapBrandColor, #0070F2);
+    }
+  }
+
+  .ant-pagination-disabled .ant-pagination-item-link {
+    color: var(--sapContent_DisabledTextColor, rgba(50, 54, 58, 0.4));
+    border-color: var(--sapContent_ForegroundBorderColor, #C5C7C8);
+  }
+
+  .ant-select-selector {
+    border-color: var(--sapContent_ForegroundBorderColor, #C5C7C8) !important;
+    border-radius: var(--sapContent_BorderRadius, 4px) !important;
+    font-family: var(--sapFontFamily);
+    font-size: 0.8125rem;
+    color: var(--sapContent_ValueColor, #32363A);
   }
 }

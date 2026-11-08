@@ -1,0 +1,14 @@
+{
+  "name": "repoio-openui5-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Clickable OpenUI5 prototype of the Repo.io console (design reference, sample data only).",
+  "license": "Apache-2.0",
+  "scripts": {
+    "start": "ui5 serve --open index.html",
+    "build": "ui5 build self-contained --clean-dest --dest dist"
+  },
+  "devDependencies": {
+    "@ui5/cli": "4.0.33"
+  }
+}

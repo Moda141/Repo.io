@@ -1,0 +1,40 @@
+<mvc:View
+	controllerName="repoio.proto.controller.App"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:tnt="sap.tnt"
+	displayBlock="true"
+	height="100%">
+	<tnt:ToolPage id="toolPage">
+		<tnt:header>
+			<tnt:ToolHeader id="toolHeader">
+				<Button id="menuButton" icon="sap-icon://menu2" type="Transparent" press=".onToggleSide"
+					tooltip="{i18n>shell.menu}" ariaLabel="{i18n>shell.menu}">
+					<layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData>
+				</Button>
+				<Image src="img/logo-on-dark.png" height="1.75rem" alt="Repo.io" press=".onHome" class="repoioLogo" decorative="false"/>
+				<SearchField id="navSearch" width="22rem" class="repoioNavSearch" placeholder="{i18n>shell.navSearch}"
+					liveChange=".onNavSearch" search=".onNavSearch" ariaLabel="{i18n>shell.navSearch}">
+					<layoutData><OverflowToolbarLayoutData priority="Low" shrinkable="true" minWidth="10rem"/></layoutData>
+				</SearchField>
+				<ToolbarSpacer/>
+				<Text text="{i18n>shell.prototype}" class="repoioProtoBadge">
+					<layoutData><OverflowToolbarLayoutData priority="Low"/></layoutData>
+				</Text>
+				<Button icon="sap-icon://inbox" text="4" type="Transparent" tooltip="{i18n>shell.inbox}"
+					ariaLabel="{i18n>shell.inbox}" press=".onInbox"/>
+				<Button icon="sap-icon://bell" type="Transparent" tooltip="{i18n>shell.notifications}" ariaLabel="{i18n>shell.notifications}"/>
+				<Button text="{i18n>shell.language}" type="Transparent" press=".onSwitchLanguage"/>
+				<Avatar initials="MM" displaySize="XS" tooltip="{i18n>shell.user}" ariaLabel="{i18n>shell.user}"/>
+			</tnt:ToolHeader>
+		</tnt:header>
+		<tnt:sideContent>
+			<tnt:SideNavigation id="sideNavigation" itemSelect=".onNavSelect" ariaLabel="{i18n>appTitle}">
+				<tnt:NavigationList id="navList"/>
+			</tnt:SideNavigation>
+		</tnt:sideContent>
+		<tnt:mainContents>
+			<NavContainer id="pageContainer"/>
+		</tnt:mainContents>
+	</tnt:ToolPage>
+</mvc:View>

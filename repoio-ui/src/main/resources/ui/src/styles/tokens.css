@@ -1,1041 +1,497 @@
-/*
- *  Copyright 2024 Collate.
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *  http://www.apache.org/licenses/LICENSE-2.0
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+/**
+ * SAP Fiori Horizon Design Tokens — Repo.io
+ * Based on SAP Fiori Design System (Horizon theme)
+ * Reference: SAP S/4HANA Web UI Kit (j9Zj3GwaXJrYe0bimzDxRW)
+ *
+ * Token naming follows SAP Fundamental Styles / UI5 Web Components conventions.
+ * RTL support is built-in for Arabic (ar-EG) via logical CSS properties.
  */
 
-/* =========================================================================
- * OpenMetadata design tokens
- *
- * Two layers, read top to bottom:
- *
- *   Layer 1  globals.css  Upstream primitives (openmetadata-ui-core-
- *                         components/.../globals.css `@theme`) — the single
- *                         source of truth: --color-*, --radius-*, --text-*,
- *                         --shadow-*, and the semantic --color-{text,bg,...}.
- *
- *   Layer 2  --repoio-*       Compatibility aliases only; never add definitions or
- *                         references. Preserve values for remaining consumers.
- *                         Each references the
- *                         matching globals.css token with a raw fallback, e.g.
- *                         --repoio-color-text: var(--color-text-primary, #181d27).
- *                         Migrated styles read the Tailwind bridge
- *                         vars instead (--tw-background-color-*,
- *                         --tw-text-color-*, --tw-border-color-*,
- *                         --tw-color-fg-*, --tw-color-utility-*), which flip
- *                         under .dark-mode; --repoio-color-* aliases stay for
- *                         existing references only. New colour roles belong
- *                         in core globals.css. Off-scale/legacy
- *                         values (spacing, z-index, legacy colors with no
- *                         upstream home) hold the raw value directly here —
- *                         this is the one place raw values may live.
- *                         Light values go on :root, dark values on
- *                         :root.dark-mode — both here, never in another
- *                         stylesheet.
- *                         ADR:2026-10-13-om-tokens-have-one-source-file
- *
- *   Components (the .less / .css files) never hold raw values: colours read
- *   the Tailwind bridge vars (also in canvas token strings), every other value
- *   the Tailwind theme vars (--tw-spacing, --tw-radius-*, ...). Never add
- *   --repoio-* references (ADR:2026-10-20-less-non-colour-values-read-tailwind-theme-vars).
- *
- * Docs: ./specs/tokens/token-reference.md and ./specs/foundations/*.md
- * Lint: node scripts/token-audit.js   (CI: zero errors required)
- * The generated block at the bottom is produced by
- *   node scripts/design-tokens/gen-tokens.js
- * ========================================================================= */
-
 :root {
-  /* -- Spacing -- */
-  --repoio-space-0: 0px;
-  --repoio-space-2: 2px;
-  --repoio-space-4: 4px;
-  --repoio-space-6: 6px;
-  --repoio-space-8: 8px;
-  --repoio-space-10: 10px;
-  --repoio-space-12: 12px;
-  --repoio-space-16: 16px;
-  --repoio-space-20: 20px;
-  --repoio-space-24: 24px;
-  --repoio-space-28: 28px;
-  --repoio-space-32: 32px;
-  --repoio-space-36: 36px;
-  --repoio-space-40: 40px;
-  --repoio-space-44: 44px;
-  --repoio-space-48: 48px;
-  --repoio-space-56: 56px;
-  --repoio-space-64: 64px;
-  --repoio-space-80: 80px;
-  --repoio-space-96: 96px;
+  /* ─────────────────────────────────────────────
+   * Brand & Accent
+   * ───────────────────────────────────────────── */
+  --sapBrandColor: #0070F2;
+  --sapBrandColor_Hover: #0064D9;
+  --sapBrandColor_Active: #0057C2;
+  --sapBrandColor_LightBackground: #EBF4FF;
 
-  /* -- Radius -- */
-  --repoio-radius-none: var(--radius-none, 0px);
-  --repoio-radius-xs: var(--radius-xs, 2px);
-  --repoio-radius-sm: var(--radius-sm, 4px);
-  --repoio-radius-md: var(--radius-md, 6px);
-  --repoio-radius-lg: var(--radius-lg, 8px);
-  --repoio-radius-xl: var(--radius-xl, 12px);
-  --repoio-radius-2xl: var(--radius-2xl, 16px);
-  --repoio-radius-3xl: var(--radius-3xl, 24px);
-  --repoio-radius-full: var(--radius-full, 9999px);
+  --sapHighlightColor: #0070F2;
+  --sapSuccessColor: #256F3A;
+  --sapWarningColor: #E76500;
+  --sapErrorColor: #AA0808;
+  --sapInformationColor: #0070F2;
+  --sapNeutralColor: #788FA6;
 
-  /* -- Typography -- */
-  --repoio-font-sans: 'Inter', 'Poppins', -apple-system, 'Segoe UI', Roboto, Arial,
-    sans-serif;
-  --repoio-font-mono: ui-monospace, 'Roboto Mono', SFMono-Regular, Menlo, Monaco,
-    Consolas, 'Liberation Mono', 'Courier New', monospace;
-  --repoio-font-size-xs: var(--text-xs, 12px);
-  --repoio-font-size-sm: var(--text-sm, 14px);
-  --repoio-font-size-md: var(--text-md, 16px);
-  --repoio-font-size-lg: var(--text-lg, 18px);
-  --repoio-font-size-xl: var(--text-xl, 20px);
-  --repoio-font-size-display-xs: var(--text-display-xs, 24px);
-  --repoio-font-size-display-sm: var(--text-display-sm, 30px);
-  --repoio-font-size-display-md: var(--text-display-md, 36px);
-  --repoio-font-size-display-lg: var(--text-display-lg, 48px);
-  --repoio-font-size-display-xl: var(--text-display-xl, 60px);
-  --repoio-font-size-display-2xl: var(--text-display-2xl, 72px);
-  --repoio-font-weight-thin: 100;
-  --repoio-font-weight-light: 300;
-  --repoio-font-weight-regular: 400;
-  --repoio-font-weight-medium: 500;
-  --repoio-font-weight-semibold: 600;
-  --repoio-font-weight-bold: 700;
-  --repoio-font-weight-extrabold: 800;
-  --repoio-font-weight-black: 900;
-  --repoio-letter-spacing-wide: 0.08em;
-  --repoio-line-height-none: 1;
-  --repoio-line-height-tight: 1.25;
-  --repoio-line-height-snug: 1.375;
-  --repoio-line-height-normal: 1.5;
-  --repoio-line-height-relaxed: 1.625;
+  /* Status Background */
+  --sapSuccessBackground: #F5FAE5;
+  --sapWarningBackground: #FFF8D6;
+  --sapErrorBackground: #FFEAF4;
+  --sapInformationBackground: #E8F3FF;
+  --sapNeutralBackground: #EFF1F2;
 
-  /* -- Layout -- */
-  --repoio-page-height: calc(100vh - var(--navbar-height, 80px));
+  /* ─────────────────────────────────────────────
+   * Shell Bar (SAP Top Navigation)
+   * Horizon light shell (design-reference/sap-s4hana/01-overview-page.svg)
+   * ───────────────────────────────────────────── */
+  --sapShellColor: #FFFFFF;
+  --sapShell_TextColor: #1D2D3E;
+  --sapShell_InteractiveTextColor: #1D2D3E;
+  --sapShell_InteractiveBackground: transparent;
+  --sapShell_Hover_Background: #EAECEE;
+  --sapShell_Active_Background: #DEE2E5;
+  --sapShell_BorderColor: #E5E8EB;
+  --sapShell_Title_TextColor: #0064D9;
+  --sapShell_Search_BorderColor: #A9B4BE;
+  --sapShell_Search_Placeholder: #8396A8;
+  --sapShellBar_Height: 3.25rem; /* 52px */
 
-  /* -- Elevation -- */
-  --repoio-shadow-xs: var(--shadow-xs, 0px 1px 2px rgba(10, 13, 18, 0.05));
-  --repoio-shadow-sm: var(
-    --shadow-sm,
-    0px 1px 3px rgba(10, 13, 18, 0.1),
-    0px 1px 2px -1px rgba(10, 13, 18, 0.1)
-  );
-  --repoio-shadow-md: var(
-    --shadow-md,
-    0px 4px 6px -1px rgba(10, 13, 18, 0.1),
-    0px 2px 4px -2px rgba(10, 13, 18, 0.06)
-  );
-  --repoio-shadow-lg: var(
-    --shadow-lg,
-    0px 12px 16px -4px rgba(10, 13, 18, 0.08),
-    0px 4px 6px -2px rgba(10, 13, 18, 0.03)
-  );
-  --repoio-shadow-xl: var(
-    --shadow-xl,
-    0px 20px 24px -4px rgba(10, 13, 18, 0.08),
-    0px 8px 8px -4px rgba(10, 13, 18, 0.03)
-  );
-  --repoio-shadow-2xl: var(
-    --shadow-2xl,
-    0px 24px 48px -12px rgba(10, 13, 18, 0.18)
-  );
-  --repoio-shadow-3xl: var(
-    --shadow-3xl,
-    0px 32px 64px -12px rgba(10, 13, 18, 0.14)
-  );
-  --repoio-shadow-card: var(--shadow-card, var(--shadow-xs));
-  --repoio-shadow-raised: var(--shadow-raised, var(--shadow-lg));
-  --repoio-shadow-overlay: var(--shadow-overlay, var(--shadow-xl));
+  /* ─────────────────────────────────────────────
+   * Side Navigation
+   * Collapsed: 48px  |  Expanded: 272px
+   * ───────────────────────────────────────────── */
+  --sapSideNav_Width: 272px;
+  --sapSideNav_CollapsedWidth: 48px;
+  --sapSideNav_Background: #FFFFFF;
+  --sapSideNav_BorderColor: #E5E5E5;
+  --sapSideNav_ItemHeight: 44px;
 
-  /* -- z-index (semantic ladder; migration also emits exact --repoio-z-<n>) -- */
-  --repoio-z-base: 0;
-  --repoio-z-raised: 1;
-  --repoio-z-docked: 10;
-  --repoio-z-sticky: 100;
-  --repoio-z-dropdown: 1000;
-  --repoio-z-overlay: 1050;
-  --repoio-z-modal: 1500;
-  --repoio-z-popover: 2000;
-  --repoio-z-toast: 9000;
-  --repoio-z-max: 9999;
+  --sapSideNav_Item_TextColor: #32363A;
+  --sapSideNav_Item_IconColor: #6A6D70;
+  --sapSideNav_Item_Hover_Background: #F5F6F7;
+  --sapSideNav_Item_Active_Background: #EBF4FF;
+  --sapSideNav_Item_Selected_Background: #EBF4FF;
+  --sapSideNav_Item_Selected_TextColor: #0070F2;
+  --sapSideNav_Item_Selected_IconColor: #0070F2;
+  --sapSideNav_Item_Selected_BorderColor: #0070F2;
 
-  /* -- Motion -- */
-  --repoio-duration-instant: 100ms;
-  --repoio-duration-fast: 150ms;
-  --repoio-duration-base: 200ms;
-  --repoio-duration-slow: 300ms;
-  --repoio-duration-slower: 500ms;
-  --repoio-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-  --repoio-ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --repoio-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  /* Section header */
+  --sapSideNav_Section_TextColor: #6A6D70;
+  --sapSideNav_Section_FontSize: 0.6875rem;
 
-  /* -- Semantic colors (the recommended API for new work) -- */
-  --repoio-color-text: var(--color-text-primary, #181d27);
-  --repoio-color-text-primary: var(--color-text-primary, #181d27);
-  --repoio-color-text-secondary: var(--color-text-secondary, #414651);
-  --repoio-color-text-tertiary: var(--color-text-tertiary, #535862);
-  --repoio-color-text-quaternary: var(--color-text-quaternary, #717680);
-  --repoio-color-text-disabled: var(--color-text-disabled, #717680);
-  --repoio-color-text-placeholder: var(--color-text-placeholder, #717680);
-  --repoio-color-text-inverse: var(--color-text-white, #ffffff);
-  --repoio-color-text-error: var(--color-text-error-primary, #d92d20);
-  --repoio-color-text-warning: var(--color-text-warning-primary, #dc6803);
-  --repoio-color-text-success: var(--color-text-success-primary, #079455);
-  --repoio-color-text-brand: var(--color-text-brand-primary, #194185);
+  /* ─────────────────────────────────────────────
+   * Page / Content Area
+   * ───────────────────────────────────────────── */
+  --sapPageFooter_Background: #FFFFFF;
+  --sapPageHeader_Background: #FFFFFF;
+  --sapPageHeader_BorderColor: #E5E5E5;
+  --sapContent_Background: #F5F6F7;
 
-  --repoio-color-bg: var(--color-bg-primary, #ffffff);
-  --repoio-color-bg-primary: var(--color-bg-primary, #ffffff);
-  --repoio-color-bg-primary-hover: var(--color-bg-primary_hover, #fafafa);
-  --repoio-color-bg-secondary: var(--color-bg-secondary, #fafafa);
-  --repoio-color-bg-secondary-hover: var(--color-bg-secondary_hover, #f5f5f5);
-  --repoio-color-bg-tertiary: var(--color-bg-tertiary, #f5f5f5);
-  --repoio-color-bg-quaternary: var(--color-bg-quaternary, #e9eaeb);
-  --repoio-color-bg-disabled: var(--color-bg-disabled, #f5f5f5);
-  --repoio-color-bg-overlay: var(--color-bg-overlay, #0a0d12);
-  --repoio-color-bg-page: var(--color-bg-page, #ffffff);
-  --repoio-color-bg-canvas: var(--color-bg-canvas, #fafafa);
-  --repoio-color-bg-surface: var(--color-bg-surface, #ffffff);
-  --repoio-color-bg-raised: var(--color-bg-raised, #ffffff);
-  --repoio-color-bg-overlay-surface: var(--color-bg-overlay-surface, #ffffff);
-  --repoio-color-bg-error: var(--color-bg-error-primary, #fef3f2);
-  --repoio-color-bg-warning: var(--color-bg-warning-primary, #fffaeb);
-  --repoio-color-bg-success: var(--color-bg-success-primary, #ecfdf3);
-  --repoio-color-bg-brand: var(--color-bg-brand-primary, #eff8ff);
-  --repoio-color-bg-brand-solid: var(--color-bg-brand-solid, #1570ef);
+  --sapContent_Padding: 1rem;
+  --sapContent_PaddingLg: 1.5rem;
+  --sapContent_BorderRadius: 0.25rem;
+  --sapContent_BorderRadius_Large: 0.5rem;
 
-  --repoio-color-border: var(--color-border-primary, #d5d7da);
-  --repoio-color-border-primary: var(--color-border-primary, #d5d7da);
-  --repoio-color-border-secondary: var(--color-border-secondary, #e9eaeb);
-  --repoio-color-border-tertiary: var(--color-border-tertiary, #f5f5f5);
-  --repoio-color-border-subtle: var(--color-border-subtle, rgb(0 0 0 / 0.08));
-  --repoio-color-border-hover: var(--color-border-hover, #a4a7ae);
-  --repoio-color-border-disabled: var(--color-border-disabled, #d5d7da);
-  --repoio-color-border-error: var(--color-border-error, #f04438);
-  --repoio-color-border-brand: var(--color-border-brand, #2e90fa);
-  --repoio-color-border-brand-subtle: var(--color-border-brand-subtle, #84caff);
-  --repoio-color-border-error-subtle: var(--color-border-error-subtle, #fda29b);
-  --repoio-color-border-warning-subtle: var(--color-border-warning-subtle, #fec84b);
-  --repoio-color-border-success-subtle: var(--color-border-success-subtle, #75e0a7);
+  /* ─────────────────────────────────────────────
+   * Typography — SAP 72 Font
+   * ───────────────────────────────────────────── */
+  --sapFontFamily: "72", "72full", Arial, Helvetica, sans-serif;
+  --sapFontLightFamily: "72-Light", "72-Lightfull", "72", Arial, Helvetica, sans-serif;
+  --sapFontBoldFamily: "72-Bold", "72-Boldfull", "72", Arial, Helvetica, sans-serif;
 
-  --repoio-color-fg-brand: var(--color-fg-brand-primary, #1570ef);
-  --repoio-color-fg-error: var(--color-fg-error-primary, #d92d20);
-  --repoio-color-fg-warning: var(--color-fg-warning-primary, #dc6803);
-  --repoio-color-fg-success: var(--color-fg-success-primary, #079455);
+  --sapFontSize: 0.875rem;        /* 14px base */
+  --sapFontLargeSize: 1rem;       /* 16px */
+  --sapFontSmallSize: 0.75rem;    /* 12px */
+  --sapFontHeader1Size: 1.5rem;   /* 24px */
+  --sapFontHeader2Size: 1.25rem;  /* 20px */
+  --sapFontHeader3Size: 1rem;     /* 16px */
+  --sapFontHeader4Size: 0.875rem; /* 14px */
+  --sapFontHeader5Size: 0.875rem;
+  --sapFontHeader6Size: 0.75rem;
 
-  /* Categorical utility pairs preserve distinct status hues while their
-     lightness follows the active theme. */
-  --repoio-color-utility-blue-light-100: var(
-    --color-utility-blue-light-100,
-    #e0f2fe
-  );
-  --repoio-color-utility-blue-light-700: var(
-    --color-utility-blue-light-700,
-    #026aa2
-  );
-  --repoio-color-utility-error-100: var(--color-utility-error-100, #fee4e2);
-  --repoio-color-utility-error-700: var(--color-utility-error-700, #b42318);
-  --repoio-color-utility-gray-100: var(--color-utility-gray-100, #f5f5f5);
-  --repoio-color-utility-gray-700: var(--color-utility-gray-700, #414651);
-  --repoio-color-utility-green-100: var(--color-utility-green-100, #d3f8df);
-  --repoio-color-utility-green-700: var(--color-utility-green-700, #087443);
-  --repoio-color-utility-orange-100: var(--color-utility-orange-100, #ffead5);
-  --repoio-color-utility-orange-700: var(--color-utility-orange-700, #c4320a);
-  --repoio-color-utility-purple-100: var(--color-utility-purple-100, #ebe9fe);
-  --repoio-color-utility-purple-700: var(--color-utility-purple-700, #5925dc);
-  --repoio-color-utility-success-100: var(--color-utility-success-100, #dcfae6);
-  --repoio-color-utility-success-700: var(--color-utility-success-700, #067647);
-  --repoio-color-utility-warning-100: var(--color-utility-warning-100, #fef0c7);
-  --repoio-color-utility-warning-700: var(--color-utility-warning-700, #b54708);
-  --repoio-color-utility-yellow-100: var(--color-utility-yellow-100, #fef7c3);
-  --repoio-color-utility-yellow-700: var(--color-utility-yellow-700, #a15c07);
+  --sapContent_LineHeight: 1.4;
+  --sapContent_LabelColor: #556B82;
+  --sapContent_ValueColor: #131E29;
+  --sapContent_DisabledTextColor: #8396A8;
+  --sapContent_PlaceholderTextColor: #556B82;
+  --sapContent_ContrastTextColor: #FFFFFF;
 
-  /* Legacy LESS aliases keep their original light values here; their dark
-     values are in the :root.dark-mode block below. */
-  --repoio-green-9: #ecfdf3;
-  --repoio-green-10: #027a48;
-  --repoio-green-12: #d1fadf;
-  --repoio-green-100: #dcfae6;
-  --repoio-yellow-10: #fffaeb;
-  --repoio-red-9: #fef3f2;
-  --repoio-red-10: #b42318;
-  --repoio-red-22: #f04438;
-  --repoio-purple-1: #f2edfd;
-  --repoio-blue-13: #e0f2fe;
-  --repoio-blue-22: #f0f9ff;
-  --repoio-blue-29: #eff4fa;
-  --repoio-blue-30: #d2dbeb;
-  --repoio-grey-1: #f8f8f8;
-  --repoio-grey-2: #f2f2f2;
-  --repoio-grey-5: #fbfbfb;
-  --repoio-grey-6: #f9f9f9;
-  --repoio-grey-7: #9ca3af;
-  --repoio-grey-9: #f8f9fc;
-  --repoio-grey-15: #eaecf5;
-  --repoio-grey-25: #fdfdfd;
-  --repoio-grey-26: #fcfcfd;
-  --repoio-grey-38: #f2f3f9;
-  --repoio-alert-warning-icon: #dc6803;
-  --repoio-alert-warning-icon-bg-1: #fef0c7;
-  --repoio-alert-error-icon-bg-1: #fee4e2;
-  --repoio-grey-50: #fafafa;
-  --repoio-blue-500: #0ba5ec;
-  --repoio-green-500: #17b26a;
-  --repoio-warning-100: #fef0c7;
-  --repoio-warning-400: #fdb022;
-  --repoio-heading-color: rgba(0, 0, 0, 0.85);
-  --repoio-border-color-base: #d9d9d9;
+  /* ─────────────────────────────────────────────
+   * Tile (Fiori Launchpad)
+   * ───────────────────────────────────────────── */
+  --sapTile_Background: #FFFFFF;
+  --sapTile_Hover_Background: #F5F6F7;
+  --sapTile_Active_Background: #EBF4FF;
+  --sapTile_BorderColor: #E5E5E5;
+  --sapTile_BorderRadius: 0.5rem;
+  --sapTile_Shadow: 0 0 0.25rem rgba(0, 0, 0, 0.15), 0 0.125rem 0.5rem rgba(0, 0, 0, 0.06);
+  --sapTile_Hover_Shadow: 0 0 0 1px #0070F2, 0 0.125rem 0.5rem rgba(0, 0, 0, 0.08);
+  --sapTile_Width: 11rem;
+  --sapTile_Height: 11rem;
+  --sapTile_TitleTextColor: #32363A;
+  --sapTile_TextColor: #6A6D70;
+  --sapTile_IconColor: #0070F2;
+  --sapTile_SeparatorColor: #E5E5E5;
 
-  /* Legacy antd @orange-7 / @orange-50 / @orange-200 — no upstream palette
-     step matches.
-     Referenced from TSX (tw arbitrary values), so gen-tokens cannot see
-     them; they live here rather than in the generated block. */
-  --repoio-legacy-color-b93815: #b93815;
-  --repoio-legacy-color-fef6ee: #fef6ee;
-  --repoio-legacy-color-f9dbaf: #f9dbaf;
+  /* ─────────────────────────────────────────────
+   * Object Header (Object Page)
+   * ───────────────────────────────────────────── */
+  --sapObjectHeader_Background: #FFFFFF;
+  --sapObjectHeader_BorderColor: #E5E5E5;
+  --sapObjectHeader_Padding: 1rem 1.5rem;
 
-  /* Fixed visualization hues are tokenized without changing their existing
-     categorical identity across themes. */
-  --repoio-color-visualization-test-success: var(
-    --color-visualization-test-success,
-    #12b76a
-  );
-  --repoio-color-visualization-green-3: var(--color-visualization-green-3, #48ca9e);
-  --repoio-color-visualization-green-4: var(--color-visualization-green-4, #039855);
-  --repoio-color-visualization-green-3-translucent: var(
-    --color-visualization-green-3-translucent,
-    #48ca9e30
-  );
-  --repoio-color-visualization-yellow-2: var(
-    --color-visualization-yellow-2,
-    #ffbe0e
-  );
-  --repoio-color-visualization-red-3: var(--color-visualization-red-3, #f24822);
-  --repoio-color-visualization-red-3-translucent: var(
-    --color-visualization-red-3-translucent,
-    #ff7c501a
-  );
-  --repoio-color-visualization-purple-2: var(
-    --color-visualization-purple-2,
-    #7147e8
-  );
-  --repoio-color-visualization-gray-1: var(--color-visualization-gray-1, #a1a1aa);
-  --repoio-color-visualization-blue-2: var(--color-visualization-blue-2, #3ca2f4);
-  --repoio-color-visualization-chart-blue-1: var(
-    --color-visualization-chart-blue-1,
-    #4689ff
-  );
-  --repoio-color-visualization-blue-600: var(
-    --color-visualization-blue-600,
-    #1677ff
-  );
-  --repoio-color-visualization-riptide: var(--color-visualization-riptide, #76e9c6);
-  --repoio-color-visualization-my-sin: var(--color-visualization-my-sin, #feb019);
-  --repoio-color-visualization-san-marino: var(
-    --color-visualization-san-marino,
-    #416bb3
-  );
-  --repoio-color-visualization-silver-tree: var(
-    --color-visualization-silver-tree,
-    #5cae95
-  );
-  --repoio-color-visualization-desert: var(--color-visualization-desert, #b56727);
-  --repoio-color-visualization-pink-salmon: var(
-    --color-visualization-pink-salmon,
-    #ff92ae
-  );
-  --repoio-color-visualization-electric-violet: var(
-    --color-visualization-electric-violet,
-    #9747ff
-  );
-  --repoio-color-visualization-lemon-zest: var(
-    --color-visualization-lemon-zest,
-    #ffd700
-  );
-  --repoio-color-visualization-gray-400: var(
-    --color-visualization-gray-400,
-    #98a2b3
-  );
-  --repoio-color-visualization-gray-300: var(
-    --color-visualization-gray-300,
-    #d0d5dd
-  );
-  --repoio-color-visualization-dq-failed: var(
-    --color-visualization-dq-failed,
-    #cb5a50
-  );
+  /* ─────────────────────────────────────────────
+   * Button
+   * ───────────────────────────────────────────── */
+  --sapButton_Height: 1.625rem; /* 26px — Compact density (desktop default) */
+  --sapButton_FontSize: 0.875rem;
+  --sapButton_BorderRadius: 0.5rem; /* 8px — Horizon */
+  --sapButton_BorderWidth: 0.0625rem;
 
-  /* Interactive states */
-  --repoio-color-interactive-hover: var(--color-bg-secondary, #fafafa);
-  --repoio-color-interactive-active: var(--color-bg-tertiary, #f5f5f5);
-  --repoio-color-interactive-selected: var(--color-bg-brand-primary, #eff8ff);
-  --repoio-color-focus-ring: var(--color-focus-ring, #2e90fa);
+  /* Emphasized (primary) */
+  --sapButton_Emphasized_Background: #0070F2;
+  --sapButton_Emphasized_Hover_Background: #0064D9;
+  --sapButton_Emphasized_Active_Background: #0064D9;
+  --sapButton_Emphasized_TextColor: #FFFFFF;
+  --sapButton_Emphasized_BorderColor: #0070F2;
 
-  /* Absolutes */
-  --repoio-color-white: var(--color-white, #ffffff);
-  --repoio-color-black: var(--color-black, #000000);
-  --repoio-color-transparent: transparent;
+  /* Standard (default) */
+  --sapButton_Background: #FFFFFF;
+  --sapButton_Hover_Background: #EAECEE;
+  --sapButton_Active_Background: #DEE2E5;
+  --sapButton_TextColor: #0064D9;
+  --sapButton_BorderColor: #BCC3CA;
+
+  /* Transparent */
+  --sapButton_Transparent_Background: transparent;
+  --sapButton_Transparent_TextColor: #0064D9;
+  --sapButton_Transparent_Hover_Background: #EAECEE;
+
+  /* Negative */
+  --sapButton_Negative_Background: #F53232;
+  --sapButton_Negative_TextColor: #FFFFFF;
+  --sapButton_Negative_BorderColor: #F53232;
+
+  /* ─────────────────────────────────────────────
+   * Input / Form
+   * ───────────────────────────────────────────── */
+  --sapField_Background: #FFFFFF;
+  --sapField_Hover_Background: #FFFFFF;
+  --sapField_Focus_Background: #FFFFFF;
+  --sapField_ReadOnly_Background: #F5F6F7;
+  --sapField_Disabled_Background: #F5F6F7;
+
+  --sapField_BorderColor: #556B81;
+  --sapField_Hover_BorderColor: #0064D9;
+  --sapField_Focus_BorderColor: #0032A5;
+  --sapField_ReadOnly_BorderColor: transparent;
+  --sapField_InvalidColor: #F53232;
+  --sapField_WarningColor: #E76500;
+  --sapField_SuccessColor: #30914C;
+
+  --sapField_BorderWidth: 0.0625rem;
+  --sapField_BorderRadius: 0.25rem;
+  --sapField_Height: 1.625rem; /* 26px — Compact density (desktop default) */
+  --sapField_TextColor: #131E29;
+  --sapField_FontSize: 0.875rem;
+  --sapField_Padding: 0 0.75rem;
+
+  /* ─────────────────────────────────────────────
+   * Table
+   * ───────────────────────────────────────────── */
+  --sapList_Background: #FFFFFF;
+  --sapList_Hover_Background: #EAECEE;
+  --sapList_Active_Background: #DEE2E5;
+  --sapList_SelectColor: #EBF8FF;
+  --sapList_HeaderBackground: #FFFFFF;
+  --sapList_HeaderBorderColor: #E5E5E5;
+  --sapList_BorderColor: #E5E5E5;
+  --sapList_SeparatorColor: #E5E5E5;
+
+  --sapList_TextColor: #131E29;
+  --sapList_HeaderTextColor: #131E29;
+  --sapList_GroupHeaderTextColor: #131E29;
+  --sapList_FooterTextColor: #131E29;
+  --sapList_FontSize: 0.875rem;
+  --sapList_HeaderFontSize: 0.75rem;
+  --sapList_RowHeight: 2rem; /* 32px — Compact; Cozy is 2.75rem */
+
+  /* ─────────────────────────────────────────────
+   * Card (Generic)
+   * ───────────────────────────────────────────── */
+  --sapCard_Background: #FFFFFF;
+  --sapCard_BorderColor: #E5E5E5;
+  --sapCard_BorderRadius: 1rem;
+  --sapCard_Shadow: 0 0 0.125rem 0 rgba(34, 53, 72, 0.15), 0 0.125rem 0.5rem 0 rgba(34, 53, 72, 0.15);
+  --sapCard_Gap: 1rem;
+  --sapCard_ColumnWidth: 18.75rem; /* 300px — Overview Page masonry column */
+  --sapCard_Subtitle_TextColor: #556B82;
+  --sapCard_Counter_TextColor: #556B82;
+
+  /* Dynamic page header (variant management) */
+  --sapVariant_TextColor: #0064D9;
+  --sapVariant_FontSize: 1.25rem;
+
+  /* Charts — ordered colors used in the SAP reference */
+  --sapChart_OrderedColor_1: #0070F2;
+  --sapChart_OrderedColor_2: #C87B00;
+  --sapChart_GridColor: #E5E8EB;
+
+  /* Object status — Horizon text + solid + soft button backgrounds */
+  --sapPositiveTextColor: #256F3A;
+  --sapPositiveElementColor: #30914C;
+  --sapCriticalElementColor: #E76500;
+  --sapNegativeElementColor: #F53232;
+  --sapNegativeTextColor: #AA0808;
+  --sapButton_Accept_Background: #F5FAE5;
+  --sapButton_Accept_BorderColor: #BDE986;
+  --sapButton_Accept_TextColor: #256F3A;
+  --sapButton_Reject_Background: #FFEAF4;
+  --sapButton_Reject_BorderColor: #FFD0E7;
+  --sapButton_Reject_TextColor: #AA0808;
+  --sapCalendar_Today_BorderColor: #7858FF;
+  --sapCalendar_Weekend_Background: #EAECEE;
+  --sapCard_Header_Background: #FFFFFF;
+  --sapCard_Header_BorderColor: #E5E5E5;
+  --sapCard_Header_Height: 3rem;
+  --sapCard_Padding: 1rem;
+
+  /* ─────────────────────────────────────────────
+   * Tab Bar
+   * ───────────────────────────────────────────── */
+  --sapObjectHeader_Tab_Active_BorderBottomColor: #0070F2;
+  --sapObjectHeader_Tab_TextColor: #6A6D70;
+  --sapObjectHeader_Tab_Active_TextColor: #0070F2;
+  --sapObjectHeader_Tab_FontSize: 0.875rem;
+  --sapObjectHeader_Tab_Height: 2.75rem;
+
+  /* ─────────────────────────────────────────────
+   * Notification / MessageStrip
+   * ───────────────────────────────────────────── */
+  --sapInfobar_Background: #EBF4FF;
+  --sapInfobar_Hover_Background: #D1E8FF;
+  --sapInfobar_TextColor: #0070F2;
+
+  /* ─────────────────────────────────────────────
+   * Status Indicators (Object Status)
+   * ───────────────────────────────────────────── */
+  --sapPositive_Color: #188918;
+  --sapNegative_Color: #B00;
+  --sapCritical_Color: #E76500;
+  --sapNeutral_Color: #6A6D70;
+  --sapIndication1_Color: #800080;
+  --sapIndication2_Color: #0070F2;
+  --sapIndication3_Color: #045C0F;
+  --sapIndication4_Color: #E76500;
+  --sapIndication5_Color: #B00;
+
+  /* ─────────────────────────────────────────────
+   * Focus Ring
+   * ───────────────────────────────────────────── */
+  --sapContent_FocusColor: #0032A5;
+  --sapContent_FocusWidth: 0.125rem;
+  --sapContent_FocusStyle: solid;
+  --sapContent_ContrastFocusColor: #FFFFFF;
+
+  /* ─────────────────────────────────────────────
+   * Overlay / Dialog / Popover
+   * ───────────────────────────────────────────── */
+  --sapGroup_TitleBackground: #FFFFFF;
+  --sapGroup_TitleBorderColor: #E5E5E5;
+  --sapGroup_TitleTextColor: #32363A;
+  --sapGroup_ContentBackground: #FFFFFF;
+  --sapGroup_ContentBorderColor: #E5E5E5;
+
+  --sapBlockLayer_Background: rgba(0, 0, 0, 0.6);
+  --sapOverlay_Background: #FFFFFF;
+  --sapOverlay_Shadow: 0 0.625rem 1.875rem 0 rgba(0, 0, 0, 0.15);
+  --sapOverlay_BorderRadius: 0.5rem;
+
+  /* ─────────────────────────────────────────────
+   * Scrollbar
+   * ───────────────────────────────────────────── */
+  --sapScrollBar_Dimension: 0.75rem;
+  --sapScrollBar_TrackColor: #F5F6F7;
+  --sapScrollBar_ThumbColor: #7B91A8;
+  --sapScrollBar_SymbolColor: #6A6D70;
+  --sapScrollBar_Corner_Color: #F5F6F7;
+
+  /* ─────────────────────────────────────────────
+   * Separator / Divider
+   * ───────────────────────────────────────────── */
+  --sapContent_ForegroundBorderColor: #E5E5E5;
+  --sapContent_ForegroundSeparatorColor: #BFCDD3;
+  --sapSeparator_Color: #E5E5E5;
+
+  /* ─────────────────────────────────────────────
+   * Icon
+   * ───────────────────────────────────────────── */
+  --sapContent_IconColor: #0064D9;
+  --sapContent_MarkerIconColor: #5B738B;
+  --sapContent_NonInteractiveIconColor: #758CA4;
+
+  /* ─────────────────────────────────────────────
+   * Avatar / Image
+   * ───────────────────────────────────────────── */
+  --sapAvatar_Background: #354A5E;
+  --sapAvatar_TextColor: #FFFFFF;
+  --sapAvatar_BorderRadius_Circle: 50%;
+  --sapAvatar_BorderRadius_Square: 0.25rem;
+
+
+  /* ─────────────────────────────────────────────
+   * Density — SAP references show Compact (desktop) and Cozy (touch).
+   * Repo.io is desktop-first: Compact is the default everywhere.
+   * Source: design-reference/sap-s4hana/components/*.svg
+   * ───────────────────────────────────────────── */
+  --sapElement_Compact_Height: 1.625rem;  /* 26px buttons, inputs */
+  --sapElement_Height: 2.25rem;           /* 36px Cozy */
+  --sapElement_Compact_LineHeight: 2rem;  /* 32px list / menu rows */
+  --sapElement_LineHeight: 2.75rem;       /* 44px Cozy rows, info bar */
+
+  /* Message button / semantic hover + down */
+  --sapButton_Reject_Hover_Background: #E90B0B;
+  --sapButton_Critical_Background: #E76500;
+  --sapButton_Critical_Hover_Background: #DD6100;
+  --sapButton_Success_Background: #30914C;
+  --sapButton_Success_Hover_Background: #2D8646;
+  --sapButton_Information_Background: #E8F3FF;
+  --sapButton_Information_Hover_Background: #D3E8FF;
+
+  /* Table (analytical / grid) */
+  --sapList_TableGroupHeaderBackground: #EFF1F2;
+  --sapList_TableGroupHeaderBorderColor: #A8B3BD;
+  --sapList_SelectionBorderColor: #0064D9;
+  --sapList_BorderWidth: 1px;
+
+  /* Message strip */
+  --sapErrorBorderColor: #FF8EC4;
+  --sapWarningBorderColor: #FFC847;
+  --sapSuccessBorderColor: #BDE986;
+  --sapInformationBorderColor: #89D1FF;
+
+  /* Info bar (List / Table toolbar) */
+  --sapInfobar_NonInteractive_Background: #F5F6F7;
+  --sapInfobar_Active_Background: #C2FCEE;
+  --sapInfobar_Active_TextColor: #046C7A;
+
+  /* Menu */
+  --sapMenu_ItemHeight: 2rem;
+  --sapMenu_IconColor: #758CA4;
+  --sapMenu_BorderRadius: 0.5rem;
+
+  /* Busy indicator — three growing dots */
+  --sapBusyIndicator_Color: #0064D9;
+
+  /* Dialog / Message box */
+  --sapDialog_Header_BorderColor: #D9D9D9;
+  --sapDialog_Footer_BorderColor: #D9D9D9;
+  --sapDialog_BorderRadius: 0.75rem;
+
+  /* Avatar accent pairs (background / text) */
+  --sapAvatar_1_Background: #FFDBE7; --sapAvatar_1_TextColor: #BA066C;
+  --sapAvatar_2_Background: #FFF3B8; --sapAvatar_2_TextColor: #A45D00;
+  --sapAvatar_3_Background: #C2FCEE; --sapAvatar_3_TextColor: #046C7A;
+  --sapAvatar_4_Background: #DDCCF0; --sapAvatar_4_TextColor: #6C32A9;
+  --sapAvatar_5_Background: #D1EFFF; --sapAvatar_5_TextColor: #0057D2;
+  --sapAvatar_6_Background: #FFDCF3; --sapAvatar_6_TextColor: #A100C2;
+
+  /* Micro process flow */
+  --sapProcessFlow_Neutral_Color: #788FA6;
+  --sapProcessFlow_Background: #EFF1F2;
+
+
+  /* Object Status — text vs icon colors (object-status.svg, tags.svg) */
+  --sapCriticalTextColor: #B44F00;
+  --sapInformativeTextColor: #0064D9;
+  --sapInformativeElementColor: #0070F2;
+  --sapNeutralTextColor: #556B82;
+  --sapNeutralElementColor: #788FA6;
+  --sapIndicationColor_1: #840606;
+  --sapIndicationColor_2: #AA0808;
+  --sapIndicationColor_3: #B95100;
+  --sapIndicationColor_4: #256F3A;
+  --sapIndicationColor_5: #0070F2;
+  --sapIndicationColor_6: #046C7A;
+  --sapIndicationColor_7: #5D36FF;
+  --sapIndicationColor_8: #A100C2;
+
+  /* Generic Tag — 6px state bar at the start edge + tinted background */
+  --sapGenericTag_BarWidth: 0.375rem;
+  --sapGenericTag_Height: 1.5rem;
+  --sapGenericTag_BorderRadius: 0.5rem;
+  --sapGenericTag_Neutral_Background: #EFF1F2;
+  --sapGenericTag_Information_Background: #E1F4FF;
+  --sapGenericTag_Hover_Background: #EAECEE;
+  --sapGenericTag_Active_BorderColor: #0032A5;
+
+  /* Segmented button */
+  --sapSegmentedButton_BorderRadius: 0.5rem;
+  --sapSegmentedButton_Selected_BorderColor: #0064D9;
+  --sapSegmentedButton_Selected_Background: #EBF8FF;
+
+  /* Notification list item */
+  --sapNotification_BorderRadius: 0.75rem;
+  --sapNotification_BorderColor: #D9D9D9;
+
+  /* ─────────────────────────────────────────────
+   * Z-Index Scale
+   * ───────────────────────────────────────────── */
+  --sapZIndex_ShellBar: 100;
+  --sapZIndex_SideNav: 90;
+  --sapZIndex_Overlay: 200;
+  --sapZIndex_Dialog: 300;
+  --sapZIndex_Popover: 250;
+  --sapZIndex_Toast: 400;
+
+  /* ─────────────────────────────────────────────
+   * Transition / Animation
+   * ───────────────────────────────────────────── */
+  --sapContent_Transition_Duration: 0.1s;
+  --sapContent_Transition_Easing: ease-in-out;
+
+  /* ─────────────────────────────────────────────
+   * Backward-compat aliases (used in existing pages)
+   * Maps old --repoio-* names → Fiori equivalents
+   * ───────────────────────────────────────────── */
+  --repoio-brand: var(--sapBrandColor);
+  --repoio-brand-hover: var(--sapBrandColor_Hover);
+  --repoio-brand-bg: var(--sapBrandColor_LightBackground);
+  --repoio-sidebar-bg: var(--sapSideNav_Background);
+  --repoio-navbar-bg: var(--sapShellColor);
+  --repoio-page-bg: var(--sapContent_Background);
+  --repoio-card-bg: var(--sapCard_Background);
+  --repoio-card-border: var(--sapCard_BorderColor);
+  --repoio-text-primary: var(--sapContent_ValueColor);
+  --repoio-text-secondary: var(--sapContent_LabelColor);
+  --repoio-text-disabled: var(--sapContent_DisabledTextColor);
+  --repoio-border-color: var(--sapContent_ForegroundBorderColor);
+  --repoio-success: var(--sapSuccessColor);
+  --repoio-warning: var(--sapWarningColor);
+  --repoio-error: var(--sapErrorColor);
+  --repoio-info: var(--sapInformationColor);
+  --repoio-font-family: var(--sapFontFamily);
+  --repoio-font-size: var(--sapFontSize);
+  --repoio-border-radius: var(--sapContent_BorderRadius);
 }
 
-/* Dark values for the legacy LESS aliases above. Kept in this file so light
-   and dark for every --repoio-* token sit in one place, with no cross-file import
-   order to get wrong. `:root.dark-mode` out-ranks `:root` whatever the order.
-   Each var in variables.less points at its --repoio-* alias, so light mode keeps
-   the original hex while dark picks the semantic/utility token below; utility
-   tokens auto-invert under .dark-mode. Categorical ramps (severity, heatmap
-   gradients) are excluded and belong to the token foundation.
-   ADR:2026-10-13-om-tokens-have-one-source-file */
-:root.dark-mode {
-  /* Neutral surfaces / borders / muted text */
-  --repoio-grey-26: var(--color-bg-secondary_subtle);
-  --repoio-grey-25: var(--color-bg-secondary_subtle);
-  --repoio-grey-9: var(--color-bg-secondary_subtle);
-  --repoio-grey-1: var(--color-bg-secondary);
-  --repoio-grey-2: var(--color-bg-secondary);
-  --repoio-grey-5: var(--color-bg-secondary);
-  --repoio-grey-6: var(--color-bg-secondary);
-  --repoio-grey-50: var(--color-bg-secondary);
-  /* @grey-15 (= @border-color / @global-border) is the primary neutral border
-     across antd + legacy components (cards, tabs, tables, panels, dividers).
-     In dark, map it to the subtle white-alpha border (rgba(255,255,255,0.08))
-     so every antd surface reads consistently instead of a solid gray edge —
-     one change themes all @border-color borders app-wide (OSS + Collate via
-     submodule). Light keeps the frozen #eaecf5 fallback. */
-  --repoio-grey-15: var(--color-border-subtle);
-  --repoio-grey-38: var(--color-border-subtle);
-  --repoio-grey-7: var(--color-text-quaternary);
-  --repoio-heading-color: var(--color-text-primary);
-  --repoio-border-color-base: var(--color-border-primary);
-  /* @blue-29/@blue-30 are the fill/edge of legacy neutral chips (column data
-     type, tag/glossary chips, async-select tags) — dark uses the core gray Badge pair. */
-  --repoio-blue-29: var(--tw-color-utility-gray-50);
-  --repoio-purple-1: var(--tw-color-utility-purple-50);
-  --repoio-blue-30: var(--tw-color-utility-gray-200);
-  /* Status — utility tokens auto-invert to readable dark values */
-  --repoio-blue-13: var(--tw-color-utility-blue-light-100);
-  --repoio-blue-22: var(--tw-color-utility-blue-light-50);
-  --repoio-blue-500: var(--tw-color-utility-blue-light-500);
-  --repoio-green-9: var(--tw-color-utility-success-50);
-  --repoio-green-10: var(--tw-color-utility-success-700);
-  --repoio-green-12: var(--tw-color-utility-success-100);
-  --repoio-green-100: var(--tw-color-utility-success-100);
-  --repoio-green-500: var(--tw-color-utility-success-500);
-  --repoio-red-9: var(--tw-color-utility-error-50);
-  --repoio-red-10: var(--tw-color-utility-error-700);
-  --repoio-red-22: var(--tw-color-utility-error-500);
-  --repoio-yellow-10: var(--tw-color-utility-warning-50);
-  --repoio-alert-error-icon-bg-1: var(--tw-color-utility-error-100);
-  --repoio-alert-warning-icon: var(--tw-color-utility-warning-600);
-  --repoio-alert-warning-icon-bg-1: var(--tw-color-utility-warning-100);
-  --repoio-warning-100: var(--tw-color-utility-warning-100);
-  --repoio-warning-400: var(--tw-color-utility-warning-400);
+/* Light Horizon only — see design-reference/README.md (Theme). */
+
+/* ─────────────────────────────────────────────
+ * SAP 72 Font Face
+ * Loaded from @sap-theming/theming-base-content
+ * or fallback to system fonts if not installed
+ * ───────────────────────────────────────────── */
+@font-face {
+  font-family: "72";
+  src: local("72"), url("/fonts/72-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
-/* @tokens:generated-begin — DO NOT EDIT BY HAND.
-   Regenerate: node scripts/design-tokens/gen-tokens.js
-   Full upstream palette + the project legacy/off-scale/z/motion tokens
-   actually referenced by components. */
-:root {
-  /* Palette passthrough — --repoio-* aliases reference the upstream palette in
-     globals.css with a raw fallback. Components reference these. */
-  --repoio-color-blue-dark-100: var(--color-blue-dark-100, #d1e0ff);
-  --repoio-color-blue-dark-200: var(--color-blue-dark-200, #b2ccff);
-  --repoio-color-blue-dark-25: var(--color-blue-dark-25, #f5f8ff);
-  --repoio-color-blue-dark-300: var(--color-blue-dark-300, #84adff);
-  --repoio-color-blue-dark-400: var(--color-blue-dark-400, #528bff);
-  --repoio-color-blue-dark-50: var(--color-blue-dark-50, #eff4ff);
-  --repoio-color-blue-dark-500: var(--color-blue-dark-500, #2970ff);
-  --repoio-color-blue-dark-600: var(--color-blue-dark-600, #155eef);
-  --repoio-color-blue-dark-700: var(--color-blue-dark-700, #004eeb);
-  --repoio-color-blue-dark-800: var(--color-blue-dark-800, #0040c1);
-  --repoio-color-blue-dark-900: var(--color-blue-dark-900, #00359e);
-  --repoio-color-blue-dark-950: var(--color-blue-dark-950, #002266);
-  --repoio-color-blue-light-100: var(--color-blue-light-100, #e0f2fe);
-  --repoio-color-blue-light-200: var(--color-blue-light-200, #b9e6fe);
-  --repoio-color-blue-light-25: var(--color-blue-light-25, #f5fbff);
-  --repoio-color-blue-light-300: var(--color-blue-light-300, #7cd4fd);
-  --repoio-color-blue-light-400: var(--color-blue-light-400, #36bffa);
-  --repoio-color-blue-light-50: var(--color-blue-light-50, #f0f9ff);
-  --repoio-color-blue-light-500: var(--color-blue-light-500, #0ba5ec);
-  --repoio-color-blue-light-600: var(--color-blue-light-600, #0086c9);
-  --repoio-color-blue-light-700: var(--color-blue-light-700, #026aa2);
-  --repoio-color-blue-light-800: var(--color-blue-light-800, #065986);
-  --repoio-color-blue-light-900: var(--color-blue-light-900, #0b4a6f);
-  --repoio-color-blue-light-950: var(--color-blue-light-950, #062c41);
-  --repoio-color-brand-100: var(--color-brand-100, #d1e9ff);
-  --repoio-color-brand-200: var(--color-brand-200, #b2ddff);
-  --repoio-color-brand-25: var(--color-brand-25, #f5faff);
-  --repoio-color-brand-300: var(--color-brand-300, #84caff);
-  --repoio-color-brand-400: var(--color-brand-400, #53b1fd);
-  --repoio-color-brand-50: var(--color-brand-50, #eff8ff);
-  --repoio-color-brand-500: var(--color-brand-500, #2e90fa);
-  --repoio-color-brand-600: var(--color-brand-600, #1570ef);
-  --repoio-color-brand-700: var(--color-brand-700, #175cd3);
-  --repoio-color-brand-800: var(--color-brand-800, #1849a9);
-  --repoio-color-brand-900: var(--color-brand-900, #194185);
-  --repoio-color-brand-950: var(--color-brand-950, #102a56);
-  --repoio-color-cyan-100: var(--color-cyan-100, #cff9fe);
-  --repoio-color-cyan-200: var(--color-cyan-200, #a5f0fc);
-  --repoio-color-cyan-25: var(--color-cyan-25, #f5feff);
-  --repoio-color-cyan-300: var(--color-cyan-300, #67e3f9);
-  --repoio-color-cyan-400: var(--color-cyan-400, #22ccee);
-  --repoio-color-cyan-50: var(--color-cyan-50, #ecfdff);
-  --repoio-color-cyan-500: var(--color-cyan-500, #06aed4);
-  --repoio-color-cyan-600: var(--color-cyan-600, #088ab2);
-  --repoio-color-cyan-700: var(--color-cyan-700, #0e7090);
-  --repoio-color-cyan-800: var(--color-cyan-800, #155b75);
-  --repoio-color-cyan-900: var(--color-cyan-900, #164c63);
-  --repoio-color-cyan-950: var(--color-cyan-950, #0d2d3a);
-  --repoio-color-error-100: var(--color-error-100, #fee4e2);
-  --repoio-color-error-200: var(--color-error-200, #fecdca);
-  --repoio-color-error-25: var(--color-error-25, #fffbfa);
-  --repoio-color-error-300: var(--color-error-300, #fda29b);
-  --repoio-color-error-400: var(--color-error-400, #f97066);
-  --repoio-color-error-50: var(--color-error-50, #fef3f2);
-  --repoio-color-error-500: var(--color-error-500, #f04438);
-  --repoio-color-error-600: var(--color-error-600, #d92d20);
-  --repoio-color-error-700: var(--color-error-700, #b42318);
-  --repoio-color-error-800: var(--color-error-800, #912018);
-  --repoio-color-error-900: var(--color-error-900, #7a271a);
-  --repoio-color-error-950: var(--color-error-950, #55160c);
-  --repoio-color-fuchsia-100: var(--color-fuchsia-100, #fbe8ff);
-  --repoio-color-fuchsia-200: var(--color-fuchsia-200, #f6d0fe);
-  --repoio-color-fuchsia-25: var(--color-fuchsia-25, #fefaff);
-  --repoio-color-fuchsia-300: var(--color-fuchsia-300, #eeaafd);
-  --repoio-color-fuchsia-400: var(--color-fuchsia-400, #e478fa);
-  --repoio-color-fuchsia-50: var(--color-fuchsia-50, #fdf4ff);
-  --repoio-color-fuchsia-500: var(--color-fuchsia-500, #d444f1);
-  --repoio-color-fuchsia-600: var(--color-fuchsia-600, #ba24d5);
-  --repoio-color-fuchsia-700: var(--color-fuchsia-700, #9f1ab1);
-  --repoio-color-fuchsia-800: var(--color-fuchsia-800, #821890);
-  --repoio-color-fuchsia-900: var(--color-fuchsia-900, #6f1877);
-  --repoio-color-fuchsia-950: var(--color-fuchsia-950, #47104c);
-  --repoio-color-gray-100: var(--color-gray-100, #f5f5f5);
-  --repoio-color-gray-200: var(--color-gray-200, #e9eaeb);
-  --repoio-color-gray-25: var(--color-gray-25, #fdfdfd);
-  --repoio-color-gray-300: var(--color-gray-300, #d5d7da);
-  --repoio-color-gray-400: var(--color-gray-400, #a4a7ae);
-  --repoio-color-gray-50: var(--color-gray-50, #fafafa);
-  --repoio-color-gray-500: var(--color-gray-500, #717680);
-  --repoio-color-gray-600: var(--color-gray-600, #535862);
-  --repoio-color-gray-700: var(--color-gray-700, #414651);
-  --repoio-color-gray-800: var(--color-gray-800, #252b37);
-  --repoio-color-gray-900: var(--color-gray-900, #181d27);
-  --repoio-color-gray-950: var(--color-gray-950, #0a0d12);
-  --repoio-color-gray-blue-100: var(--color-gray-blue-100, #eaecf5);
-  --repoio-color-gray-blue-200: var(--color-gray-blue-200, #d5d9eb);
-  --repoio-color-gray-blue-25: var(--color-gray-blue-25, #fcfcfd);
-  --repoio-color-gray-blue-300: var(--color-gray-blue-300, #b3b8db);
-  --repoio-color-gray-blue-400: var(--color-gray-blue-400, #717bbc);
-  --repoio-color-gray-blue-50: var(--color-gray-blue-50, #f8f9fc);
-  --repoio-color-gray-blue-500: var(--color-gray-blue-500, #4e5ba6);
-  --repoio-color-gray-blue-600: var(--color-gray-blue-600, #3e4784);
-  --repoio-color-gray-blue-700: var(--color-gray-blue-700, #363f72);
-  --repoio-color-gray-blue-800: var(--color-gray-blue-800, #293056);
-  --repoio-color-gray-blue-900: var(--color-gray-blue-900, #101323);
-  --repoio-color-gray-blue-950: var(--color-gray-blue-950, #0d0f1c);
-  --repoio-color-gray-cool-100: var(--color-gray-cool-100, #eff1f5);
-  --repoio-color-gray-cool-200: var(--color-gray-cool-200, #dcdfea);
-  --repoio-color-gray-cool-300: var(--color-gray-cool-300, #b9c0d4);
-  --repoio-color-gray-cool-400: var(--color-gray-cool-400, #7d89b0);
-  --repoio-color-gray-cool-50: var(--color-gray-cool-50, #f9f9fb);
-  --repoio-color-gray-cool-500: var(--color-gray-cool-500, #5d6b98);
-  --repoio-color-gray-cool-600: var(--color-gray-cool-600, #4a5578);
-  --repoio-color-gray-cool-700: var(--color-gray-cool-700, #404968);
-  --repoio-color-gray-cool-800: var(--color-gray-cool-800, #30374f);
-  --repoio-color-gray-cool-900: var(--color-gray-cool-900, #111322);
-  --repoio-color-gray-cool-950: var(--color-gray-cool-950, #0e101b);
-  --repoio-color-gray-iron-100: var(--color-gray-iron-100, #f4f4f5);
-  --repoio-color-gray-iron-200: var(--color-gray-iron-200, #e4e4e7);
-  --repoio-color-gray-iron-25: var(--color-gray-iron-25, #fcfcfc);
-  --repoio-color-gray-iron-300: var(--color-gray-iron-300, #d1d1d6);
-  --repoio-color-gray-iron-400: var(--color-gray-iron-400, #a0a0ab);
-  --repoio-color-gray-iron-500: var(--color-gray-iron-500, #70707b);
-  --repoio-color-gray-iron-600: var(--color-gray-iron-600, #51525c);
-  --repoio-color-gray-iron-700: var(--color-gray-iron-700, #3f3f46);
-  --repoio-color-gray-iron-800: var(--color-gray-iron-800, #26272b);
-  --repoio-color-gray-iron-900: var(--color-gray-iron-900, #1a1a1e);
-  --repoio-color-gray-iron-950: var(--color-gray-iron-950, #131316);
-  --repoio-color-gray-modern-100: var(--color-gray-modern-100, #eef2f6);
-  --repoio-color-gray-modern-200: var(--color-gray-modern-200, #e3e8ef);
-  --repoio-color-gray-modern-300: var(--color-gray-modern-300, #cdd5df);
-  --repoio-color-gray-modern-400: var(--color-gray-modern-400, #9aa4b2);
-  --repoio-color-gray-modern-50: var(--color-gray-modern-50, #f8fafc);
-  --repoio-color-gray-modern-500: var(--color-gray-modern-500, #697586);
-  --repoio-color-gray-modern-600: var(--color-gray-modern-600, #4b5565);
-  --repoio-color-gray-modern-700: var(--color-gray-modern-700, #364152);
-  --repoio-color-gray-modern-800: var(--color-gray-modern-800, #202939);
-  --repoio-color-gray-modern-900: var(--color-gray-modern-900, #121926);
-  --repoio-color-gray-modern-950: var(--color-gray-modern-950, #0d121c);
-  --repoio-color-gray-neutral-100: var(--color-gray-neutral-100, #f3f4f6);
-  --repoio-color-gray-neutral-200: var(--color-gray-neutral-200, #e5e7eb);
-  --repoio-color-gray-neutral-300: var(--color-gray-neutral-300, #d2d6db);
-  --repoio-color-gray-neutral-400: var(--color-gray-neutral-400, #9da4ae);
-  --repoio-color-gray-neutral-50: var(--color-gray-neutral-50, #f9fafb);
-  --repoio-color-gray-neutral-500: var(--color-gray-neutral-500, #6c737f);
-  --repoio-color-gray-neutral-600: var(--color-gray-neutral-600, #4d5761);
-  --repoio-color-gray-neutral-700: var(--color-gray-neutral-700, #384250);
-  --repoio-color-gray-neutral-800: var(--color-gray-neutral-800, #1f2a37);
-  --repoio-color-gray-neutral-900: var(--color-gray-neutral-900, #111927);
-  --repoio-color-gray-true-200: var(--color-gray-true-200, #e5e5e5);
-  --repoio-color-gray-true-300: var(--color-gray-true-300, #d6d6d6);
-  --repoio-color-gray-true-400: var(--color-gray-true-400, #a3a3a3);
-  --repoio-color-gray-true-50: var(--color-gray-true-50, #f7f7f7);
-  --repoio-color-gray-true-500: var(--color-gray-true-500, #737373);
-  --repoio-color-gray-true-600: var(--color-gray-true-600, #525252);
-  --repoio-color-gray-true-700: var(--color-gray-true-700, #424242);
-  --repoio-color-gray-true-800: var(--color-gray-true-800, #292929);
-  --repoio-color-gray-true-900: var(--color-gray-true-900, #141414);
-  --repoio-color-gray-true-950: var(--color-gray-true-950, #0f0f0f);
-  --repoio-color-gray-warm-100: var(--color-gray-warm-100, #f5f5f4);
-  --repoio-color-gray-warm-200: var(--color-gray-warm-200, #e7e5e4);
-  --repoio-color-gray-warm-25: var(--color-gray-warm-25, #fdfdfc);
-  --repoio-color-gray-warm-300: var(--color-gray-warm-300, #d7d3d0);
-  --repoio-color-gray-warm-400: var(--color-gray-warm-400, #a9a29d);
-  --repoio-color-gray-warm-50: var(--color-gray-warm-50, #fafaf9);
-  --repoio-color-gray-warm-500: var(--color-gray-warm-500, #79716b);
-  --repoio-color-gray-warm-600: var(--color-gray-warm-600, #57534e);
-  --repoio-color-gray-warm-700: var(--color-gray-warm-700, #44403c);
-  --repoio-color-gray-warm-800: var(--color-gray-warm-800, #292524);
-  --repoio-color-gray-warm-900: var(--color-gray-warm-900, #1c1917);
-  --repoio-color-gray-warm-950: var(--color-gray-warm-950, #171412);
-  --repoio-color-green-100: var(--color-green-100, #d3f8df);
-  --repoio-color-green-200: var(--color-green-200, #aaf0c4);
-  --repoio-color-green-300: var(--color-green-300, #73e2a3);
-  --repoio-color-green-400: var(--color-green-400, #3ccb7f);
-  --repoio-color-green-50: var(--color-green-50, #edfcf2);
-  --repoio-color-green-500: var(--color-green-500, #16b364);
-  --repoio-color-green-600: var(--color-green-600, #099250);
-  --repoio-color-green-700: var(--color-green-700, #087443);
-  --repoio-color-green-800: var(--color-green-800, #095c37);
-  --repoio-color-green-900: var(--color-green-900, #084c2e);
-  --repoio-color-green-950: var(--color-green-950, #052e1c);
-  --repoio-color-green-light-100: var(--color-green-light-100, #e3fbcc);
-  --repoio-color-green-light-200: var(--color-green-light-200, #d0f8ab);
-  --repoio-color-green-light-25: var(--color-green-light-25, #fafef5);
-  --repoio-color-green-light-300: var(--color-green-light-300, #a6ef67);
-  --repoio-color-green-light-400: var(--color-green-light-400, #85e13a);
-  --repoio-color-green-light-50: var(--color-green-light-50, #f3fee7);
-  --repoio-color-green-light-500: var(--color-green-light-500, #66c61c);
-  --repoio-color-green-light-600: var(--color-green-light-600, #4ca30d);
-  --repoio-color-green-light-700: var(--color-green-light-700, #3b7c0f);
-  --repoio-color-green-light-800: var(--color-green-light-800, #326212);
-  --repoio-color-green-light-900: var(--color-green-light-900, #2b5314);
-  --repoio-color-green-light-950: var(--color-green-light-950, #15290a);
-  --repoio-color-indigo-100: var(--color-indigo-100, #e0eaff);
-  --repoio-color-indigo-200: var(--color-indigo-200, #c7d7fe);
-  --repoio-color-indigo-300: var(--color-indigo-300, #a4bcfd);
-  --repoio-color-indigo-400: var(--color-indigo-400, #8098f9);
-  --repoio-color-indigo-50: var(--color-indigo-50, #eef4ff);
-  --repoio-color-indigo-500: var(--color-indigo-500, #6172f3);
-  --repoio-color-indigo-600: var(--color-indigo-600, #444ce7);
-  --repoio-color-indigo-700: var(--color-indigo-700, #3538cd);
-  --repoio-color-indigo-800: var(--color-indigo-800, #2d31a6);
-  --repoio-color-indigo-900: var(--color-indigo-900, #2d3282);
-  --repoio-color-indigo-950: var(--color-indigo-950, #1f235b);
-  --repoio-color-moss-100: var(--color-moss-100, #e6f4d7);
-  --repoio-color-moss-200: var(--color-moss-200, #ceeab0);
-  --repoio-color-moss-25: var(--color-moss-25, #fafdf7);
-  --repoio-color-moss-300: var(--color-moss-300, #acdc79);
-  --repoio-color-moss-400: var(--color-moss-400, #86cb3c);
-  --repoio-color-moss-50: var(--color-moss-50, #f5fbee);
-  --repoio-color-moss-500: var(--color-moss-500, #669f2a);
-  --repoio-color-moss-600: var(--color-moss-600, #4f7a21);
-  --repoio-color-moss-700: var(--color-moss-700, #3f621a);
-  --repoio-color-moss-800: var(--color-moss-800, #335015);
-  --repoio-color-moss-900: var(--color-moss-900, #2b4212);
-  --repoio-color-moss-950: var(--color-moss-950, #1a280b);
-  --repoio-color-orange-100: var(--color-orange-100, #ffead5);
-  --repoio-color-orange-200: var(--color-orange-200, #fddcab);
-  --repoio-color-orange-25: var(--color-orange-25, #fffaf5);
-  --repoio-color-orange-300: var(--color-orange-300, #feb273);
-  --repoio-color-orange-400: var(--color-orange-400, #fd853a);
-  --repoio-color-orange-50: var(--color-orange-50, #fff6ed);
-  --repoio-color-orange-500: var(--color-orange-500, #fb6514);
-  --repoio-color-orange-600: var(--color-orange-600, #ec4a0a);
-  --repoio-color-orange-700: var(--color-orange-700, #c4320a);
-  --repoio-color-orange-800: var(--color-orange-800, #9c2a10);
-  --repoio-color-orange-900: var(--color-orange-900, #7e2410);
-  --repoio-color-orange-dark-100: var(--color-orange-dark-100, #ffe6d5);
-  --repoio-color-orange-dark-200: var(--color-orange-dark-200, #ffd6ae);
-  --repoio-color-orange-dark-25: var(--color-orange-dark-25, #fff9f5);
-  --repoio-color-orange-dark-300: var(--color-orange-dark-300, #ff9c66);
-  --repoio-color-orange-dark-400: var(--color-orange-dark-400, #ff692e);
-  --repoio-color-orange-dark-50: var(--color-orange-dark-50, #fff4ed);
-  --repoio-color-orange-dark-500: var(--color-orange-dark-500, #ff4405);
-  --repoio-color-orange-dark-600: var(--color-orange-dark-600, #e62e05);
-  --repoio-color-orange-dark-700: var(--color-orange-dark-700, #bc1b06);
-  --repoio-color-orange-dark-800: var(--color-orange-dark-800, #97180c);
-  --repoio-color-orange-dark-900: var(--color-orange-dark-900, #771a0d);
-  --repoio-color-orange-dark-950: var(--color-orange-dark-950, #57130a);
-  --repoio-color-pink-100: var(--color-pink-100, #fce7f6);
-  --repoio-color-pink-200: var(--color-pink-200, #fcceee);
-  --repoio-color-pink-25: var(--color-pink-25, #fef6fb);
-  --repoio-color-pink-300: var(--color-pink-300, #faa7e0);
-  --repoio-color-pink-400: var(--color-pink-400, #f670c7);
-  --repoio-color-pink-50: var(--color-pink-50, #fdf2fa);
-  --repoio-color-pink-500: var(--color-pink-500, #ee46bc);
-  --repoio-color-pink-600: var(--color-pink-600, #dd2590);
-  --repoio-color-pink-700: var(--color-pink-700, #c11574);
-  --repoio-color-pink-800: var(--color-pink-800, #9e165f);
-  --repoio-color-pink-900: var(--color-pink-900, #851651);
-  --repoio-color-purple-100: var(--color-purple-100, #ebe9fe);
-  --repoio-color-purple-200: var(--color-purple-200, #d9d6fe);
-  --repoio-color-purple-25: var(--color-purple-25, #fafaff);
-  --repoio-color-purple-300: var(--color-purple-300, #bdb4fe);
-  --repoio-color-purple-400: var(--color-purple-400, #9b8afb);
-  --repoio-color-purple-50: var(--color-purple-50, #f4f3ff);
-  --repoio-color-purple-500: var(--color-purple-500, #7a5af8);
-  --repoio-color-purple-600: var(--color-purple-600, #6938ef);
-  --repoio-color-purple-700: var(--color-purple-700, #5925dc);
-  --repoio-color-purple-800: var(--color-purple-800, #4a1fb8);
-  --repoio-color-purple-900: var(--color-purple-900, #3e1c96);
-  --repoio-color-purple-950: var(--color-purple-950, #27115f);
-  --repoio-color-rose-100: var(--color-rose-100, #ffe4e8);
-  --repoio-color-rose-200: var(--color-rose-200, #fecdd6);
-  --repoio-color-rose-25: var(--color-rose-25, #fff5f6);
-  --repoio-color-rose-300: var(--color-rose-300, #fea3b4);
-  --repoio-color-rose-400: var(--color-rose-400, #fd6f8e);
-  --repoio-color-rose-50: var(--color-rose-50, #fff1f3);
-  --repoio-color-rose-500: var(--color-rose-500, #f63d68);
-  --repoio-color-rose-600: var(--color-rose-600, #e31b54);
-  --repoio-color-rose-700: var(--color-rose-700, #c01048);
-  --repoio-color-rose-800: var(--color-rose-800, #a11043);
-  --repoio-color-rose-900: var(--color-rose-900, #89123e);
-  --repoio-color-success-100: var(--color-success-100, #dcfae6);
-  --repoio-color-success-200: var(--color-success-200, #abefc6);
-  --repoio-color-success-25: var(--color-success-25, #f6fef9);
-  --repoio-color-success-300: var(--color-success-300, #75e0a7);
-  --repoio-color-success-400: var(--color-success-400, #47cd89);
-  --repoio-color-success-50: var(--color-success-50, #ecfdf3);
-  --repoio-color-success-500: var(--color-success-500, #17b26a);
-  --repoio-color-success-600: var(--color-success-600, #079455);
-  --repoio-color-success-700: var(--color-success-700, #067647);
-  --repoio-color-success-800: var(--color-success-800, #085d3a);
-  --repoio-color-success-900: var(--color-success-900, #074d31);
-  --repoio-color-success-950: var(--color-success-950, #053321);
-  --repoio-color-teal-100: var(--color-teal-100, #ccfbef);
-  --repoio-color-teal-200: var(--color-teal-200, #99f6e0);
-  --repoio-color-teal-25: var(--color-teal-25, #f6fefc);
-  --repoio-color-teal-300: var(--color-teal-300, #5fe9d0);
-  --repoio-color-teal-400: var(--color-teal-400, #2ed3b7);
-  --repoio-color-teal-50: var(--color-teal-50, #f0fdf9);
-  --repoio-color-teal-500: var(--color-teal-500, #15b79e);
-  --repoio-color-teal-600: var(--color-teal-600, #0e9384);
-  --repoio-color-teal-700: var(--color-teal-700, #107569);
-  --repoio-color-teal-800: var(--color-teal-800, #125d56);
-  --repoio-color-teal-900: var(--color-teal-900, #134e48);
-  --repoio-color-teal-950: var(--color-teal-950, #0a2926);
-  --repoio-color-violet-100: var(--color-violet-100, #ece9fe);
-  --repoio-color-violet-200: var(--color-violet-200, #ddd6fe);
-  --repoio-color-violet-25: var(--color-violet-25, #fbfaff);
-  --repoio-color-violet-300: var(--color-violet-300, #c3b5fd);
-  --repoio-color-violet-400: var(--color-violet-400, #a48afb);
-  --repoio-color-violet-50: var(--color-violet-50, #f5f3ff);
-  --repoio-color-violet-500: var(--color-violet-500, #875bf7);
-  --repoio-color-violet-600: var(--color-violet-600, #7839ee);
-  --repoio-color-violet-700: var(--color-violet-700, #6927da);
-  --repoio-color-violet-800: var(--color-violet-800, #5720b7);
-  --repoio-color-violet-900: var(--color-violet-900, #491c96);
-  --repoio-color-violet-950: var(--color-violet-950, #2e125e);
-  --repoio-color-warning-100: var(--color-warning-100, #fef0c7);
-  --repoio-color-warning-200: var(--color-warning-200, #fedf89);
-  --repoio-color-warning-25: var(--color-warning-25, #fffcf5);
-  --repoio-color-warning-300: var(--color-warning-300, #fec84b);
-  --repoio-color-warning-400: var(--color-warning-400, #fdb022);
-  --repoio-color-warning-50: var(--color-warning-50, #fffaeb);
-  --repoio-color-warning-500: var(--color-warning-500, #f79009);
-  --repoio-color-warning-600: var(--color-warning-600, #dc6803);
-  --repoio-color-warning-700: var(--color-warning-700, #b54708);
-  --repoio-color-warning-800: var(--color-warning-800, #93370d);
-  --repoio-color-warning-900: var(--color-warning-900, #7a2e0e);
-  --repoio-color-warning-950: var(--color-warning-950, #4e1d09);
-  --repoio-color-yellow-100: var(--color-yellow-100, #fef7c3);
-  --repoio-color-yellow-200: var(--color-yellow-200, #feee95);
-  --repoio-color-yellow-25: var(--color-yellow-25, #fefdf0);
-  --repoio-color-yellow-300: var(--color-yellow-300, #fde272);
-  --repoio-color-yellow-400: var(--color-yellow-400, #fac515);
-  --repoio-color-yellow-50: var(--color-yellow-50, #fefbe8);
-  --repoio-color-yellow-500: var(--color-yellow-500, #eaaa08);
-  --repoio-color-yellow-600: var(--color-yellow-600, #ca8504);
-  --repoio-color-yellow-700: var(--color-yellow-700, #a15c07);
-  --repoio-color-yellow-800: var(--color-yellow-800, #854a0e);
-  --repoio-color-yellow-900: var(--color-yellow-900, #713b12);
-  --repoio-color-yellow-950: var(--color-yellow-950, #542c0d);
-
-  /* Legacy colors — exact values with no upstream palette home. These are
-     the raw-value bucket (migration debt); consolidate into semantic
-     tokens over time. Components reference these, not the raw hex. */
-  --repoio-legacy-color-0-0-0-0: rgba(0, 0, 0, 0);
-  --repoio-legacy-color-0-0-0-0-04: rgba(0, 0, 0, 0.04);
-  --repoio-legacy-color-0-0-0-0-05: rgba(0, 0, 0, 0.05);
-  --repoio-legacy-color-0-0-0-0-06: rgba(0, 0, 0, 0.06);
-  --repoio-legacy-color-0-0-0-0-1: rgba(0, 0, 0, 0.1);
-  --repoio-legacy-color-0-0-0-0-12: rgba(0, 0, 0, 0.12);
-  --repoio-legacy-color-0-0-0-0-15: rgba(0, 0, 0, 0.15);
-  --repoio-legacy-color-0-0-0-0-2: rgba(0, 0, 0, 0.2);
-  --repoio-legacy-color-0-0-0-0-5: rgba(0, 0, 0, 0.5);
-  --repoio-legacy-color-0-0-0-0-8: rgba(0, 0, 0, 0.8);
-  --repoio-legacy-color-0-0-0-0-9: rgba(0, 0, 0, 0.9);
-  --repoio-legacy-color-0017e4: #0017e4;
-  --repoio-legacy-color-0056b3: #0056b3;
-  --repoio-legacy-color-0066cc: #06c;
-  --repoio-legacy-color-008a00: #008a00;
-  --repoio-legacy-color-027a48: #027a48;
-  --repoio-legacy-color-06a4a4: #06a4a4;
-  --repoio-legacy-color-07152b: #07152b;
-  --repoio-legacy-color-0c5460: #0c5460;
-  --repoio-legacy-color-10-13-18-0-05: rgba(10, 13, 18, 0.05);
-  --repoio-legacy-color-10-13-18-0-08: rgba(10, 13, 18, 0.08);
-  --repoio-legacy-color-102a72: #102a72;
-  --repoio-legacy-color-107-114-128-0-15: rgba(107, 114, 128, 0.15);
-  --repoio-legacy-color-111827: #111827;
-  --repoio-legacy-color-113-71-232-0-102: #7147e81a;
-  --repoio-legacy-color-113-71-232-0-6: #7147e899;
-  --repoio-legacy-color-13c2c2: #13c2c2;
-  --repoio-legacy-color-15-15-15-0-1: rgba(15, 15, 15, 0.1);
-  --repoio-legacy-color-15-23-42-0-06: rgba(15, 23, 42, 0.06);
-  --repoio-legacy-color-155724: #155724;
-  --repoio-legacy-color-16-24-40-0-12: rgba(16, 24, 40, 0.12);
-  --repoio-legacy-color-1890ff: #1890ff;
-  --repoio-legacy-color-1f242f: #1f242f;
-  --repoio-legacy-color-1f67e9: #1f67e9;
-  --repoio-legacy-color-203-36-49-0-059: #cb24310f;
-  --repoio-legacy-color-209-236-241-0-867: #d1ecf1dd;
-  --repoio-legacy-color-212-237-218-0-867: #d4eddadd;
-  --repoio-legacy-color-220-227-236-0-3: rgba(220, 227, 236, 0.3);
-  --repoio-legacy-color-221-227-234-0-2: #dde3ea33;
-  --repoio-legacy-color-239-244-250-0-25: rgba(239, 244, 250, 0.25);
-  --repoio-legacy-color-23aa66: #23aa66;
-  --repoio-legacy-color-24-144-255-0-1: rgba(24, 144, 255, 0.1);
-  --repoio-legacy-color-240-175-44-0-051: #f0af2c0d;
-  --repoio-legacy-color-245-245-245-0-2: rgba(245, 245, 245, 0.2);
-  --repoio-legacy-color-248-215-218-0-867: #f8d7dadd;
-  --repoio-legacy-color-255-190-14-0-149: #ffbe0e26;
-  --repoio-legacy-color-255-193-67-0-15: rgba(255, 193, 67, 0.15);
-  --repoio-legacy-color-255-243-205-0-867: #fff3cddd;
-  --repoio-legacy-color-255-255-255-0: rgba(255, 255, 255, 0);
-  --repoio-legacy-color-255-255-255-0-1: rgba(255, 255, 255, 0.1);
-  --repoio-legacy-color-255-255-255-0-302: #ffffff4d;
-  --repoio-legacy-color-255-255-255-0-4: rgba(255, 255, 255, 0.4);
-  --repoio-legacy-color-255-255-255-0-8: rgba(255, 255, 255, 0.8);
-  --repoio-legacy-color-255-255-255-0-95: rgba(255, 255, 255, 0.95);
-  --repoio-legacy-color-255-76-59-0-102: #ff4c3b1a;
-  --repoio-legacy-color-2563eb: #2563eb;
-  --repoio-legacy-color-28a745: #28a745;
-  --repoio-legacy-color-2eaadc: #2eaadc;
-  --repoio-legacy-color-2f74eb: #2f74eb;
-  --repoio-legacy-color-30-30-30-0-08: rgb(30 30 30 / 8%);
-  --repoio-legacy-color-349dea: #349dea;
-  --repoio-legacy-color-356fe7: rgb(53, 111, 231);
-  --repoio-legacy-color-37-99-235-0-12: rgba(37, 99, 235, 0.12);
-  --repoio-legacy-color-37352f: #37352f;
-  --repoio-legacy-color-373e44: #373e44;
-  --repoio-legacy-color-3793ff: #3793ff;
-  --repoio-legacy-color-38-24-90-0-12: rgba(38, 24, 90, 0.12);
-  --repoio-legacy-color-3b307f: #3b307f;
-  --repoio-legacy-color-3e4456: #3e4456;
-  --repoio-legacy-color-40-167-69-0-059: #28a7450f;
-  --repoio-legacy-color-40-167-69-0-302: #28a7454d;
-  --repoio-legacy-color-41-41-41-0-1: rgba(41, 41, 41, 0.1);
-  --repoio-legacy-color-46-170-220-0-15: rgba(46, 170, 220, 0.15);
-  --repoio-legacy-color-48-98-212-0-15: rgba(48, 98, 212, 0.15);
-  --repoio-legacy-color-4a4a4a: #4a4a4a;
-  --repoio-legacy-color-515151: #515151;
-  --repoio-legacy-color-52525b: #52525b;
-  --repoio-legacy-color-52607a: #52607a;
-  --repoio-legacy-color-52c41a: #52c41a;
-  --repoio-legacy-color-5b8def: #5b8def;
-  --repoio-legacy-color-5e5c58: #5e5c58;
-  --repoio-legacy-color-666666: #666666;
-  --repoio-legacy-color-6b7280: #6b7280;
-  --repoio-legacy-color-6b7a99: #6b7a99;
-  --repoio-legacy-color-721c24: #721c24;
-  --repoio-legacy-color-754ddb: #754ddb;
-  --repoio-legacy-color-7558c1: #7558c1;
-  --repoio-legacy-color-757575: #757575;
-  --repoio-legacy-color-76746f: #76746f;
-  --repoio-legacy-color-777777: #777;
-  --repoio-legacy-color-7f56d9: #7f56d9;
-  --repoio-legacy-color-85-155-238-0-2: rgba(85, 155, 238, 0.2);
-  --repoio-legacy-color-856404: #856404;
-  --repoio-legacy-color-86-54-205-0-38: rgba(86, 54, 205, 0.38);
-  --repoio-legacy-color-8a5cf0: #8a5cf0;
-  --repoio-legacy-color-9-80-197-0-05: rgba(9, 80, 197, 0.05);
-  --repoio-legacy-color-96-167-251-0-2: rgba(96, 167, 251, 0.2);
-  --repoio-legacy-color-9933ff: #93f;
-  --repoio-legacy-color-a9efc5: #a9efc5;
-  --repoio-legacy-color-afafc1: #afafc1;
-  --repoio-legacy-color-b0e7d4: #b0e7d4;
-  --repoio-legacy-color-b1271c: #b1271c;
-  --repoio-legacy-color-b4d5ff: #b4d5ff;
-  --repoio-legacy-color-bee5eb: #bee5eb;
-  --repoio-legacy-color-c3e6cb: #c3e6cb;
-  --repoio-legacy-color-c45296: #c45296;
-  --repoio-legacy-color-c6c6c6: #c6c6c6;
-  --repoio-legacy-color-cb2431: #cb2431;
-  --repoio-legacy-color-cccccc: #cccccc;
-  --repoio-legacy-color-d4d4d8: #d4d4d8;
-  --repoio-legacy-color-d5d6d9: #d5d6d9;
-  --repoio-legacy-color-d93025: #d93025;
-  --repoio-legacy-color-d99600: #d99600;
-  --repoio-legacy-color-d9ceee: #d9ceee;
-  --repoio-legacy-color-dadada: #dadada;
-  --repoio-legacy-color-dbe4ff: #dbe4ff;
-  --repoio-legacy-color-dce3ec: rgb(220, 227, 236);
-  --repoio-legacy-color-dddddd: #ddd;
-  --repoio-legacy-color-e1e4e8: #e1e4e8;
-  --repoio-legacy-color-e2dfd4: #e2dfd4;
-  --repoio-legacy-color-e3d9f8: #e3d9f8;
-  --repoio-legacy-color-e4e4e4: #e4e4e4;
-  --repoio-legacy-color-e5ebff: #e5ebff;
-  --repoio-legacy-color-e60000: #e60000;
-  --repoio-legacy-color-e6f1fe: #e6f1fe;
-  --repoio-legacy-color-e6f7ff: #e6f7ff;
-  --repoio-legacy-color-e6fffb: #e6fffb;
-  --repoio-legacy-color-e8e8e8: #e8e8e8;
-  --repoio-legacy-color-e8e8e9: #e8e8e9;
-  --repoio-legacy-color-e8ecf5: #e8ecf5;
-  --repoio-legacy-color-ebeef1: #ebeef1;
-  --repoio-legacy-color-ece5fb: #ece5fb;
-  --repoio-legacy-color-ecedee: #ecedee;
-  --repoio-legacy-color-eeeeee: #eeeeee;
-  --repoio-legacy-color-ef6820: #ef6820;
-  --repoio-legacy-color-efbdc1: #efbdc1;
-  --repoio-legacy-color-f0f0f0: #f0f0f0;
-  --repoio-legacy-color-f1f1f1: #f1f1f1;
-  --repoio-legacy-color-f1f5ff: #f1f5ff;
-  --repoio-legacy-color-f2f1f5: #f2f1f5;
-  --repoio-legacy-color-f3effc: #f3effc;
-  --repoio-legacy-color-f3f7fd: #f3f7fd;
-  --repoio-legacy-color-f44336: #f44336;
-  --repoio-legacy-color-f4f7f9: #f4f7f9;
-  --repoio-legacy-color-f4f7ff: #f4f7ff;
-  --repoio-legacy-color-f5c6cb: #f5c6cb;
-  --repoio-legacy-color-f5f7fb: #f5f7fb;
-  --repoio-legacy-color-f5f8fa: #f5f8fa;
-  --repoio-legacy-color-f6f6f6: #f6f6f6;
-  --repoio-legacy-color-f6ffed: #f6ffed;
-  --repoio-legacy-color-f7f9fc: #f7f9fc;
-  --repoio-legacy-color-f7fbf9: #f7fbf9;
-  --repoio-legacy-color-f8f7fc: #f8f7fc;
-  --repoio-legacy-color-f8f8f8: #f8f8f8;
-  --repoio-legacy-color-f8faff: #f8faff;
-  --repoio-legacy-color-f9816c: #f9816c;
-  --repoio-legacy-color-fbf8f8: #fbf8f8;
-  --repoio-legacy-color-fbfaf9: #fbfaf9;
-  --repoio-legacy-color-fbfcff: #fbfcff;
-  --repoio-legacy-color-fec0ac: #fec0ac;
-  --repoio-legacy-color-fee39c: #fee39c;
-  --repoio-legacy-color-ff9900: #f90;
-  --repoio-legacy-color-ffab2a: #ffab2a;
-  --repoio-legacy-color-ffe1a6: #ffe1a6;
-  --repoio-legacy-color-ffeeba: #ffeeba;
-  --repoio-legacy-color-fff3dc: #fff3dc;
-  --repoio-legacy-color-ffff00: #ff0;
-
-  /* Extended spacing — off-scale values in use. Prefer the core scale
-     (--repoio-space-4/8/12/16/20/24/32/48/64) for new work. */
-  --repoio-space-1: 1px;
-  --repoio-space-2_4: 2.4px;
-  --repoio-space-3: 3px;
-  --repoio-space-3_2: 3.2px;
-  --repoio-space-4_8: 4.8px;
-  --repoio-space-5: 5px;
-  --repoio-space-7: 7px;
-  --repoio-space-9: 9px;
-  --repoio-space-14: 14px;
-  --repoio-space-15: 15px;
-  --repoio-space-18: 18px;
-  --repoio-space-19: 19px;
-  --repoio-space-22: 22px;
-  --repoio-space-26: 26px;
-  --repoio-space-30: 30px;
-  --repoio-space-42: 42px;
-  --repoio-space-45: 45px;
-  --repoio-space-46: 46px;
-  --repoio-space-50: 50px;
-  --repoio-space-60: 60px;
-  --repoio-space-75: 75px;
-  --repoio-space-84: 84px;
-  --repoio-space-100: 100px;
-  --repoio-space-120: 120px;
-  --repoio-space-144: 144px;
-  --repoio-space-154: 154px;
-  --repoio-space-176: 176px;
-  --repoio-space-192: 192px;
-  --repoio-space-208: 208px;
-  --repoio-space-290: 290px;
-
-  /* Extended radius — off-scale values in use. */
-  --repoio-radius-1: 1px;
-  --repoio-radius-3: 3px;
-  --repoio-radius-3_2: 3.2px;
-  --repoio-radius-5: 5px;
-  --repoio-radius-7: 7px;
-  --repoio-radius-10: 10px;
-  --repoio-radius-13: 13px;
-  --repoio-radius-14: 14px;
-  --repoio-radius-15: 15px;
-  --repoio-radius-18: 18px;
-  --repoio-radius-20: 20px;
-  --repoio-radius-30: 30px;
-  --repoio-radius-200: 200px;
-  --repoio-radius-999: 999px;
-
-  /* Extended font sizes — off-scale values in use. */
-  --repoio-font-size-9: 9px;
-  --repoio-font-size-10: 10px;
-  --repoio-font-size-11: 11px;
-  --repoio-font-size-11_5: 11.5px;
-  --repoio-font-size-12_5: 12.5px;
-  --repoio-font-size-13: 13px;
-  --repoio-font-size-15: 15px;
-  --repoio-font-size-15_2: 15.2px;
-  --repoio-font-size-32: 32px;
-  --repoio-font-size-55: 55px;
-
-  /* z-index — exact values preserved to keep stacking order identical.
-     For new work prefer the semantic ladder documented in specs. */
-  --repoio-z-n1: -1;
-  --repoio-z-0: 0;
-  --repoio-z-1: 1;
-  --repoio-z-2: 2;
-  --repoio-z-5: 5;
-  --repoio-z-6: 6;
-  --repoio-z-9: 9;
-  --repoio-z-10: 10;
-  --repoio-z-20: 20;
-  --repoio-z-50: 50;
-  --repoio-z-400: 400;
-  --repoio-z-999: 999;
-  --repoio-z-1001: 1001;
-  --repoio-z-9001: 9001;
-  --repoio-z-9999: 9999;
-
-  /* Motion durations in use. */
-  --repoio-duration-100: 100ms;
-  --repoio-duration-120: 120ms;
-  --repoio-duration-150: 150ms;
-  --repoio-duration-160: 160ms;
-  --repoio-duration-200: 200ms;
-  --repoio-duration-220: 220ms;
-  --repoio-duration-240: 240ms;
-  --repoio-duration-250: 250ms;
-  --repoio-duration-300: 300ms;
-  --repoio-duration-450: 450ms;
-  --repoio-duration-500: 500ms;
-  --repoio-duration-1000: 1000ms;
-  --repoio-duration-1400: 1400ms;
-  --repoio-duration-1500: 1500ms;
-  --repoio-duration-1600: 1600ms;
-  --repoio-duration-2000: 2000ms;
-  --repoio-duration-3000: 3000ms;
+@font-face {
+  font-family: "72";
+  src: local("72-Bold"), url("/fonts/72-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
 }
-/* @tokens:generated-end */
+
+@font-face {
+  font-family: "72";
+  src: local("72-Light"), url("/fonts/72-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}

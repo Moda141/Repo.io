@@ -1,0 +1,139 @@
+/* Repo.io prototype — only small layout helpers; colors and type come from sap_fiori_3. */
+.repoioLogo { cursor: pointer; }
+.repoioProtoBadge { font-size: 0.75rem; color: var(--sapCriticalTextColor); }
+.repoioCard { width: 100%; }
+.repoioCardBody { padding: 0 1rem 1rem; }
+.repoioKpi .sapMNCValueScr { font-size: 1.75rem; }
+.repoioMuted { color: var(--sapContent_LabelColor); }
+.repoioChart { width: 100%; direction: ltr; } /* ECharts lays out SVG text itself; RTL is handled in each option */
+.repoioNoWrap { white-space: nowrap; }
+.repoioKpiStrip { gap: 0; }
+.repoioMetric .sapMObjectNumberText { font-size: 1.25rem; }
+.repoioMiniList .sapMLIB { min-height: 2rem; }
+.repoioMiniRow { width: 100%; padding: 0.25rem 0; }
+.repoioEmptyCard { padding: 1rem 0 0.5rem; }
+.repoioDomainCard .sapFCardHeader { padding-bottom: 0.5rem; }
+.repoioAlpChart { background: var(--sapGroup_ContentBackground); border: 1px solid var(--sapGroup_TitleBorderColor); border-radius: 0.25rem; padding-bottom: 0.5rem; }
+.repoioIdLink { font-weight: bold; }
+.repoioPopin { padding-block: 0.25rem; }
+.repoioSpaceCard { padding: 0.75rem 1rem; }
+.repoioSpaceCard .repoioSpaceCode { font-weight: bold; text-transform: uppercase; }
+.repoioSpaceDivider { border-top: 1px solid var(--sapGroup_TitleBorderColor); margin-block: 0.5rem; }
+.repoioSpaceFoot { border-top: 1px solid var(--sapGroup_TitleBorderColor); padding-top: 0.5rem; margin-top: 0.5rem; }
+.repoioSpaceFoot .sapUiIcon { color: var(--sapContent_IconColor); }
+.repoioSpacesBar { background: var(--sapObjectHeader_Background); }
+/* Datasphere-style "create new" tiles */
+.repoioNewTile.sapMBtn { height: auto; padding: 0; }
+.repoioNewTile .sapMBtnInner { height: 4.75rem; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--sapTile_Background); border: 1px solid var(--sapTile_BorderColor); box-shadow: var(--sapContent_Shadow0); }
+.repoioNewTile .sapMBtnInner:hover { background: var(--sapTile_Hover_Background); }
+.repoioNewTile .sapMBtnIcon { font-size: 1.5rem; color: var(--sapContent_IconColor); margin: 0 !important; }
+.repoioNewTile .sapMBtnContent { margin: 0 !important; color: var(--sapTile_TitleTextColor); font-weight: normal; line-height: 1.25rem; white-space: normal; text-align: start; }
+.repoioNewTile .sapMBtnIcon { float: none !important; align-self: flex-start; order: -1; }
+.repoioWelcome { padding-block: 0.25rem; }
+
+/* Softer status colors: SAP semantic chart palette, light variants (no saturated bars). */
+.sapUiBody .sapMPI { border-color: transparent; background: #f2f3f4; border-radius: 0.25rem; }
+.sapUiBody .sapMPI .sapMPIBar { border-radius: 0.25rem; }
+.sapUiBody .sapMPI .sapMPIBarPositive { background-color: #9fd0b0; }
+.sapUiBody .sapMPI .sapMPIBarCritical { background-color: #f1c48f; }
+.sapUiBody .sapMPI .sapMPIBarNegative { background-color: #eda3a3; }
+.sapUiBody .sapMPI .sapMPIBarInformation { background-color: #a9c8ec; }
+.sapUiBody .sapMPI .sapMPIBarNeutral { background-color: #c8ced3; }
+.sapUiBody .sapMPI .sapMPIText { color: #32363a !important; font-weight: normal; }
+.sapUiBody .sapMPI .sapMPIBarRemaining { background: transparent; }
+
+/* Lineage (LineageGraph control) — Datasphere "Impact and Lineage" style */
+.rlg { position: relative; overflow-x: auto; padding: 0.5rem 0 1rem; }
+.rlgSvg { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.rlgCols { position: relative; display: flex; gap: 2.25rem; align-items: center; min-width: max-content; padding-inline: 0.25rem; }
+.rlgCol { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 1.25rem; width: 11.75rem; }
+.rlgHead { font-size: 0.75rem; color: var(--sapContent_LabelColor); text-transform: none; letter-spacing: 0.02em; padding-bottom: 0.25rem; border-bottom: 1px solid var(--sapGroup_TitleBorderColor); margin-bottom: 0.25rem; }
+.rlgNode { position: relative; display: flex; gap: 0.625rem; align-items: flex-start; background: var(--sapTile_Background); border: 1px solid #d5dadd; border-radius: 0.5rem; padding: 0.625rem 0.75rem; box-shadow: 0 1px 2px rgba(34,54,73,.06); cursor: pointer; transition: border-color .15s, box-shadow .15s, opacity .15s; }
+.rlgNode:hover, .rlgNode:focus-visible { border-color: #89b4e3; box-shadow: 0 2px 8px rgba(34,54,73,.12); outline: none; }
+.rlgNode:focus-visible { outline: 2px solid var(--sapContent_FocusColor); outline-offset: 1px; }
+.rlgCurrent { border: 2px solid #5899da; background: #f5f9fe; }
+.rlgIcon { flex: none; width: 2rem; height: 2rem; border-radius: 0.375rem; display: grid; place-items: center; font-size: 1rem; background: #eef2f6; color: #5b738b; speak: none; }
+.rlgIcon-db { background: #e8f1fb; color: #3f7ec4; }
+.rlgIcon-pipe { background: #f1ecfa; color: #7a5bb5; }
+.rlgIcon-table { background: #e8f4f3; color: #2e8a83; }
+.rlgIcon-gold { background: #fbf3e4; color: #b57b1f; }
+.rlgIcon-chart { background: #fcecef; color: #b5506c; }
+.rlgBody { min-width: 0; flex: 1; }
+.rlgTitle { font-weight: bold; font-size: 0.875rem; color: var(--sapTextColor); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rlgType { font-size: 0.75rem; color: var(--sapContent_LabelColor); margin-bottom: 0.25rem; }
+.rlgKv { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.75rem; line-height: 1.125rem; }
+.rlgK { color: var(--sapContent_LabelColor); }
+.rlgV { color: var(--sapTextColor); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rlgDot { position: absolute; top: 0.5rem; inset-inline-end: 0.5rem; width: 0.5rem; height: 0.5rem; border-radius: 50%; }
+.rlgDot-pos { background: #5fae7c; } .rlgDot-crit { background: #e3a256; } .rlgDot-neg { background: #df7a7a; }
+.rlgEdge { fill: none; stroke: #c3cbd2; stroke-width: 1.5; transition: stroke .15s, opacity .15s; }
+.rlgFocus .rlgEdge { opacity: .25; }
+.rlgFocus .rlgEdge.rlgOn { opacity: 1; stroke: #5899da; stroke-width: 2; }
+.rlgFocus .rlgNode { opacity: .45; }
+.rlgFocus .rlgNode.rlgOn { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .rlgNode, .rlgEdge { transition: none; } }
+.repoioPerson { display: inline-flex; align-items: center; vertical-align: middle; }
+
+/* Home hero banner (Datasphere Home): image on top, brief and action below. */
+.repoioHero { background: #fff; border-radius: 0.75rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.06); overflow: hidden; margin-block: 1rem 0.75rem; }
+.repoioHeroImg img, img.repoioHeroImg { display: block; width: 100%; height: auto; }
+.repoioHeroBody { padding: 1rem 1.25rem 1.25rem; gap: 0.5rem 2rem; }
+.repoioHeroText { max-width: 52rem; }
+.repoioHeroText .sapMText { line-height: 1.5; }
+.repoioHeroStrip { margin-bottom: 0.25rem; }
+
+
+/* Welcome card with numbered getting-started steps. */
+.repoioWelcomeCard { padding: 1.25rem 1.5rem; }
+.repoioStep { margin-bottom: 0.875rem; }
+.repoioStep .repoioStepNo { flex: none; width: 1.75rem; height: 1.75rem; line-height: 1.75rem; border-radius: 50%; text-align: center;
+	background: #eaf2fb; color: #0a6ed1; font-weight: bold; margin-inline-end: 0.75rem; }
+.repoioRecent .sapMSLIIcon, .repoioRecent .sapMSLIImgIcon { font-size: 1.375rem !important; width: 2rem !important; height: 2rem !important; line-height: 2rem !important; min-width: 2rem !important; }
+
+/* Domains as SAP Datasphere Catalog: dark search header, tabs, asset cards. */
+.repoioCatalog .sapFDynamicPageTitle,
+.repoioCatalog .sapFDynamicPageHeader,
+.repoioCatalog .sapFDynamicPageTitleWrapper,
+.repoioCatalog .sapFDynamicPageHeaderWrapper { background-color: #2c3d4f; }
+.repoioCatalog .sapFDynamicPageTitle .sapMTitle, .repoioCatalog .sapFDynamicPageTitle .sapMText { color: #fff; }
+.repoioCatalog .sapFDynamicPageHeader {
+	background-image: radial-gradient(circle at 12% 120%, rgba(255,255,255,0.06) 0 9rem, transparent 9rem),
+		radial-gradient(circle at 88% -30%, rgba(255,255,255,0.05) 0 12rem, transparent 12rem),
+		radial-gradient(circle at 70% 140%, rgba(255,255,255,0.04) 0 7rem, transparent 7rem);
+}
+.repoioCatHero { padding: 1.25rem 1rem 1.75rem; }
+.repoioCatHero .repoioCatHeroTitle { color: #fff; }
+.repoioCatHero .repoioCatHeroText { color: #fff; opacity: 0.9; margin: 0.5rem 0 1.25rem; }
+.repoioCatSearch { max-width: 40rem; }
+.repoioCatSearch .repoioCatScope { margin-inline-end: 0; }
+.repoioCatTabs .sapMITH { box-shadow: inset 0 -1px 0 #e5e5e5; }
+.repoioCatBar { margin-top: 0.25rem; }
+.repoioCatBody { gap: 1rem; padding-bottom: 1rem; }
+.repoioCatOwner { padding: 0.5rem 1rem 0; }
+.repoioCatCardBody { height: 13rem; overflow: hidden; }
+.repoioCatFacets { background: #fff; border-radius: 0.5rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.06); padding: 0.75rem 0.5rem; flex: none; }
+.repoioCatFacet { padding: 0.25rem 0.5rem 0.5rem; border-bottom: 1px solid #eee; margin-bottom: 0.5rem; }
+.repoioCatFacet:last-child { border-bottom: none; margin-bottom: 0; }
+
+.repoioCatCard .sapFCardContent { height: 100%; }
+.repoioCatCardTop { border-bottom: 1px solid #eee; padding: 0.125rem 0.25rem; }
+.repoioCatCardMain { padding: 0.875rem 1rem 0.25rem; }
+.repoioCatCardMain .repoioCatIcon { margin-inline-end: 0.625rem; margin-top: 0.125rem; flex: none; }
+.repoioCatDesc { padding: 0 1rem; color: #32363a; font-size: 0.8125rem; }
+.repoioCatCardFoot { margin-top: auto; border-top: 1px solid #eee; padding: 0.125rem 0.25rem 0.125rem 1rem; }
+.repoioCatStar .sapMBtnIcon { color: #6a6d70; }
+.repoioCatStar .sapUiIcon[data-sap-ui-icon-content=""] { color: #e9730c; }
+/* Hero: the whole image is shown; brief sits beside it on wide screens, below it on narrow ones. */
+.repoioHero.sapMFlexBox { display: grid; grid-template-columns: minmax(0, 3fr) minmax(16rem, 2fr); align-items: stretch; }
+.repoioHero .repoioHeroBody { padding: 1.5rem 1.75rem; }
+.repoioHero .repoioHeroText .sapMText { line-height: 1.6; }
+@media (max-width: 900px) { .repoioHero.sapMFlexBox { grid-template-columns: 1fr; } .repoioHero .repoioHeroBody { padding: 1rem 1.25rem 1.25rem; } }
+
+/* Shell: navigation search centred in the header (wide screens); falls back to normal flow on narrow ones. */
+@media (min-width: 1024px) {
+	.sapTntToolHeader .repoioNavSearch { position: absolute; left: 50%; transform: translateX(-50%); margin: 0; }
+}
+
+/* Shell header (navigation bar): black. */
+.sapUiBody .sapTntToolPage .sapTntToolHeader, .sapUiBody .sapTntToolPageHeader, .sapUiBody .sapTntToolPageHeaderWrapper { background: #0d0d0d !important; border-bottom-color: #000 !important; }
+.sapTntToolHeader .sapMSF:not(.sapMFocus) .sapMSFF { background-color: #1f1f1f; border-color: #5a5a5a; }

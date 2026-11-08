@@ -1,338 +1,363 @@
-import { Row, Col, Space, Button, Alert, Tag } from 'antd';
-import { PlusOutlined, UserOutlined, ShopOutlined, BookOutlined, EditOutlined, TeamOutlined, HomeOutlined } from '@ant-design/icons';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import PageHeader from '@/components/common/PageHeader';
 import { ENTITY_TYPES, ROUTES } from '@/constants/routes';
-import type { ReactNode } from 'react';
+import styles from './ExplorePage.module.css';
 
 /**
- * ExplorePage (Repositories) — rebuilt to match hub-v34 mockup's `repos` view.
+ * ExplorePage — SAP Fiori Horizon List Report
  *
- * Layout:
- *   Title + "+ New repository" button
- *   g3 grid of repository cards: Customers / Vendors / Products
- *     Each card: name + status pill + "model vN · N sources" subtitle
- *     Three metric columns: Golden · Source · To review
- *   Recent activity table (card)
+ * Floorplan: List Report (Filter Bar + Responsive Table / Card Grid)
+ * Reference: SAP Fiori Design Guidelines — List Report
+ *
+ *  ┌──────────────────────────────────────────────────────────────────┐
+ *  │  Dynamic Page Header: title + 2 action buttons                   │
+ *  ├──────────────────────────────────────────────────────────────────┤
+ *  │  Filter Bar: Status (All/Deployed/Draft) | Search                │
+ *  ├──────────────────────────────────────────────────────────────────┤
+ *  │  Info Strip: "X repositories" + Go (adapt / sort)               │
+ *  ├──────────────────────────────────────────────────────────────────┤
+ *  │  Repository grid: Fiori object cards (3-up)                      │
+ *  │    Each card: header (icon+title+status) / 3 KPI cells           │
+ *  ├──────────────────────────────────────────────────────────────────┤
+ *  │  MessageStrip (information): Schema-change alert                 │
+ *  └──────────────────────────────────────────────────────────────────┘
  */
 
+// ─── Types ────────────────────────────────────────────────────────────────────
 interface RepoCardData {
   key: string;
   name: string;
-  icon: ReactNode;
+  icon: React.ReactNode;
   color: string;
   status: 'deployed' | 'draft';
   modelLabel: string;
+  sourcesLabel: string;
   stats: { golden: string; source: string; review: string };
 }
 
-const iconMap: Record<string, ReactNode> = {
-  user: <UserOutlined />,
-  shop: <ShopOutlined />,
-  book: <BookOutlined />,
-  edit: <EditOutlined />,
-  team: <TeamOutlined />,
-  home: <HomeOutlined />,
-};
-const colorMap: Record<string, string> = {
-  customer: '#1570EF',
-  vendor: '#6938EF',
-  product: '#12B76A',
-  author: '#F79009',
-  employee: '#F04438',
-  store: '#06AED4',
-};
+type StatusFilter = 'all' | 'deployed' | 'draft';
 
-const repos: Record<string, RepoCardData> = {
-  customer: {
+// ─── Icons ────────────────────────────────────────────────────────────────────
+function UserIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <circle cx="10" cy="7" r="4" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M3 18c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+function ShopIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M3 5h14l-1.5 6H4.5L3 5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M3 5L4.5 3h11L17 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <rect x="6" y="13" width="8" height="5" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+    </svg>
+  );
+}
+function BookIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M4 3h12v14H4z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+function PenIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M14 3l3 3L7 16H4v-3L14 3Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+function TeamIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <circle cx="7" cy="7" r="3" stroke="currentColor" strokeWidth="1.5"/>
+      <circle cx="14" cy="7" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M2 17c0-3.314 2.24-6 5-6s5 2.686 5 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M16 17c0-2.071-1.343-3.839-3.2-4.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+function StoreIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M3 9L10 3l7 6v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M8 19v-6h4v6" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+function SearchIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M9.5 9.5L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+function PlusIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+function AlertIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M7 2l5.5 10H1.5L7 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M7 6.5v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="7" cy="10" r="0.75" fill="currentColor"/>
+    </svg>
+  );
+}
+function ChevronRightIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+      <path d="M4 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+const REPOS: RepoCardData[] = [
+  {
     key: 'customer',
     name: 'Customers',
-    icon: iconMap.user,
-    color: colorMap.customer,
+    icon: <UserIcon />,
+    color: '#0070F2',
     status: 'deployed',
-    modelLabel: 'Customer model v4 · 3 sources',
+    modelLabel: 'Customer model v4',
+    sourcesLabel: '3 sources',
     stats: { golden: '948K', source: '2.7M', review: '1,930' },
   },
-  vendor: {
+  {
     key: 'vendor',
     name: 'Vendors',
-    icon: iconMap.shop,
-    color: colorMap.vendor,
+    icon: <ShopIcon />,
+    color: '#6938EF',
     status: 'deployed',
-    modelLabel: 'Vendor model v2 · 2 sources',
+    modelLabel: 'Vendor model v2',
+    sourcesLabel: '2 sources',
     stats: { golden: '4.1K', source: '9.8K', review: '12' },
   },
-  product: {
+  {
     key: 'product',
     name: 'Products',
-    icon: iconMap.book,
-    color: colorMap.product,
+    icon: <BookIcon />,
+    color: '#12B76A',
     status: 'draft',
-    modelLabel: 'Product model v1 · no sources',
+    modelLabel: 'Product model v1',
+    sourcesLabel: 'No sources yet',
     stats: { golden: '—', source: '—', review: '—' },
   },
-  author: {
+  {
     key: 'author',
     name: 'Authors',
-    icon: iconMap.edit,
-    color: colorMap.author,
+    icon: <PenIcon />,
+    color: '#F79009',
     status: 'deployed',
-    modelLabel: 'Author model v1 · 1 source',
+    modelLabel: 'Author model v1',
+    sourcesLabel: '1 source',
     stats: { golden: '2.4K', source: '2.8K', review: '38' },
   },
-  employee: {
+  {
     key: 'employee',
     name: 'Employees',
-    icon: iconMap.team,
-    color: colorMap.employee,
+    icon: <TeamIcon />,
+    color: '#F04438',
     status: 'deployed',
-    modelLabel: 'Employee model v3 · 1 source',
+    modelLabel: 'Employee model v3',
+    sourcesLabel: '1 source',
     stats: { golden: '1.2K', source: '1.2K', review: '0' },
   },
-  store: {
+  {
     key: 'store',
     name: 'Stores',
-    icon: iconMap.home,
-    color: colorMap.store,
+    icon: <StoreIcon />,
+    color: '#06AED4',
     status: 'deployed',
-    modelLabel: 'Store model v1 · 1 source',
+    modelLabel: 'Store model v1',
+    sourcesLabel: '1 source',
     stats: { golden: '186', source: '202', review: '4' },
-  },
-};
-
-interface Activity {
-  event: string;
-  repo: string;
-  source: string;
-  result: { label: string; tone: 'ok' | 'warn' | 'error' };
-  when: string;
-}
-const activity: Activity[] = [
-  {
-    event: 'Incremental load #2041',
-    repo: 'Customers',
-    source: 'Retail POS',
-    result: { label: '409 upserted · 3 quarantined', tone: 'ok' },
-    when: 'Yesterday',
-  },
-  {
-    event: 'Full load #2033',
-    repo: 'Customers',
-    source: 'Pharma ERP',
-    result: { label: '1.2M processed', tone: 'ok' },
-    when: '2 days ago',
-  },
-  {
-    event: 'Load #2029',
-    repo: 'Customers',
-    source: 'Legacy CRM',
-    result: { label: 'Connection failed', tone: 'error' },
-    when: '2 days ago',
   },
 ];
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
 export default function ExplorePage() {
   const { t } = useTranslation();
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filtered = REPOS.filter((r) => {
+    if (statusFilter !== 'all' && r.status !== statusFilter) return false;
+    if (searchQuery && !r.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
+
+  // Satisfy ts-noUnusedLocals for ENTITY_TYPES
+  void ENTITY_TYPES;
 
   return (
-    <>
-      <PageHeader
-        title="Repositories"
-        subtitle="Each repository holds golden records for one entity type."
-        actions={
-          <>
-            <Link to={ROUTES.QUERY}>
-              <Button>Query builder</Button>
+    <div className={styles.page}>
+
+      {/* ── Dynamic Page Header ──────────────────────────────────────────── */}
+      <div className={styles.pageHeader}>
+        <div className={styles.pageHeaderInner}>
+          <div className={styles.headerTitle}>
+            <h1 className={styles.title}>
+              {t('explore.title', 'Repositories')}
+            </h1>
+            <p className={styles.subtitle}>
+              {t('explore.subtitle', 'Each repository holds golden records for one entity type.')}
+            </p>
+          </div>
+          <div className={styles.headerActions}>
+            <Link to={ROUTES.QUERY} className={styles.btnGhost}>
+              {t('explore.query_builder', 'Query Builder')}
             </Link>
-            <Link to={ROUTES.VIEWS}>
-              <Button>Saved views</Button>
-            </Link>
-            <Button type="primary" icon={<PlusOutlined />}>
-              New repository
-            </Button>
-          </>
-        }
-      />
-
-      <Alert
-        type="warning"
-        showIcon
-        style={{ marginBottom: 16 }}
-        message={
-          <>
-            <strong>Retail POS:</strong> 2 schema changes affect the mapping.{' '}
-            <Link to="/pipelines/retail-pos">Review</Link>
-          </>
-        }
-      />
-
-      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-        {ENTITY_TYPES.map((et) => {
-          const r = repos[et.key];
-          if (!r) return null;
-          return (
-            <Col key={r.key} xs={24} md={12} lg={8}>
-              <Link to={`/entity/${r.key}`}>
-                <div style={repoCardStyle}>
-                  <Space
-                    style={{ justifyContent: 'space-between', width: '100%' }}
-                    align="start">
-                    <Space size={12}>
-                      <div
-                        style={{
-                          width: 36,
-                          height: 36,
-                          borderRadius: 8,
-                          background: `${r.color}1A`,
-                          color: r.color,
-                          display: 'grid',
-                          placeItems: 'center',
-                          fontSize: 18,
-                        }}>
-                        {r.icon}
-                      </div>
-                      <div>
-                        <h3 style={{ margin: 0, fontSize: 15, color: '#101828' }}>
-                          {r.name}
-                        </h3>
-                        <small style={{ color: '#667085' }}>{r.modelLabel}</small>
-                      </div>
-                    </Space>
-                    <Tag
-                      bordered={false}
-                      color={r.status === 'deployed' ? 'success' : 'warning'}>
-                      {r.status === 'deployed' ? 'Deployed' : 'Draft'}
-                    </Tag>
-                  </Space>
-
-                  <div style={{ display: 'flex', gap: 24, marginTop: 14 }}>
-                    <Metric label="Golden" value={r.stats.golden} />
-                    <Metric label="Source" value={r.stats.source} />
-                    <Metric label="To review" value={r.stats.review} />
-                  </div>
-                </div>
-              </Link>
-            </Col>
-          );
-        })}
-      </Row>
-
-      {/* Recent activity */}
-      <div style={cardStyle}>
-        <div style={cardHeadStyle}>Recent activity</div>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <Th>Event</Th>
-              <Th>Repository</Th>
-              <Th>Source</Th>
-              <Th>Result</Th>
-              <Th>When</Th>
-            </tr>
-          </thead>
-          <tbody>
-            {activity.map((a, i) => (
-              <tr key={i}>
-                <Td>
-                  <a style={{ color: '#1570EF', fontWeight: 600 }}>{a.event}</a>
-                </Td>
-                <Td>{a.repo}</Td>
-                <Td>{a.source}</Td>
-                <Td>
-                  <Tag
-                    bordered={false}
-                    color={
-                      a.result.tone === 'ok'
-                        ? 'success'
-                        : a.result.tone === 'warn'
-                          ? 'warning'
-                          : 'error'
-                    }>
-                    {a.result.label}
-                  </Tag>
-                </Td>
-                <Td style={{ color: '#667085' }}>{a.when}</Td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            <button className={styles.btnPrimary}>
+              <PlusIcon />
+              {t('explore.new_repo', 'New Repository')}
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Hidden to satisfy ts-noUnusedLocals — translation hook ready for the next pass */}
+      {/* ── Filter Bar ───────────────────────────────────────────────────── */}
+      <div className={styles.filterBar}>
+        <div className={styles.filterBarInner}>
+          {/* Status filter chips */}
+          <div className={styles.filterGroup}>
+            <span className={styles.filterLabel}>
+              {t('explore.filter_status', 'Status')}:
+            </span>
+            {(['all', 'deployed', 'draft'] as StatusFilter[]).map((s) => (
+              <button
+                key={s}
+                className={`${styles.filterChip} ${statusFilter === s ? styles.filterChipActive : ''}`}
+                onClick={() => setStatusFilter(s)}>
+                {s === 'all'
+                  ? t('explore.filter_all', 'All')
+                  : s === 'deployed'
+                  ? t('explore.filter_deployed', 'Deployed')
+                  : t('explore.filter_draft', 'Draft')}
+              </button>
+            ))}
+          </div>
+
+          <div className={styles.filterSpacer} />
+
+          {/* Search */}
+          <div className={styles.searchBox}>
+            <span className={styles.searchIcon} aria-hidden="true">
+              <SearchIcon />
+            </span>
+            <input
+              type="search"
+              className={styles.searchInput}
+              placeholder={t('explore.search_placeholder', 'Search repositories…')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Info strip ───────────────────────────────────────────────────── */}
+      <div className={styles.infoStrip}>
+        <span className={styles.infoStripCount}>
+          {filtered.length} {t('explore.repositories', 'repositories')}
+        </span>
+      </div>
+
+      {/* ── Content ──────────────────────────────────────────────────────── */}
+      <div className={styles.content}>
+
+        {/* Schema-change MessageStrip */}
+        <div className={styles.messageStrip}>
+          <span className={styles.messageStripIcon} aria-hidden="true">
+            <AlertIcon />
+          </span>
+          <span className={styles.messageStripText}>
+            <strong>Retail POS:</strong> 2 schema changes affect the mapping.{' '}
+            <Link to="/pipelines/retail-pos" className={styles.messageStripLink}>
+              Review
+            </Link>
+          </span>
+        </div>
+
+        {/* Repository grid */}
+        {filtered.length === 0 ? (
+          <div className={styles.emptyState}>
+            <p className={styles.emptyStateText}>
+              {t('explore.no_results', 'No repositories match the current filter.')}
+            </p>
+          </div>
+        ) : (
+          <div className={styles.cardGrid}>
+            {filtered.map((r) => (
+              <Link key={r.key} to={`/entity/${r.key}`} className={styles.repoCard}>
+                {/* Card header */}
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardIcon} style={{ background: `${r.color}1A`, color: r.color }}>
+                    {r.icon}
+                  </div>
+                  <div className={styles.cardTitleGroup}>
+                    <div className={styles.cardName}>{r.name}</div>
+                    <div className={styles.cardMeta}>{r.modelLabel} · {r.sourcesLabel}</div>
+                  </div>
+                  <span
+                    className={`${styles.statusBadge} ${
+                      r.status === 'deployed' ? styles.statusDeployed : styles.statusDraft
+                    }`}>
+                    {r.status === 'deployed'
+                      ? t('explore.status_deployed', 'Deployed')
+                      : t('explore.status_draft', 'Draft')}
+                  </span>
+                </div>
+
+                {/* KPI cells */}
+                <div className={styles.cardStats}>
+                  <div className={styles.statCell}>
+                    <span className={styles.statValue}>{r.stats.golden}</span>
+                    <span className={styles.statLabel}>{t('explore.stat_golden', 'Golden')}</span>
+                  </div>
+                  <div className={styles.statDivider} />
+                  <div className={styles.statCell}>
+                    <span className={styles.statValue}>{r.stats.source}</span>
+                    <span className={styles.statLabel}>{t('explore.stat_source', 'Source')}</span>
+                  </div>
+                  <div className={styles.statDivider} />
+                  <div className={styles.statCell}>
+                    <span
+                      className={styles.statValue}
+                      style={r.stats.review !== '0' && r.stats.review !== '—'
+                        ? { color: 'var(--sapCritical, #E76500)' }
+                        : undefined}>
+                      {r.stats.review}
+                    </span>
+                    <span className={styles.statLabel}>{t('explore.stat_review', 'To review')}</span>
+                  </div>
+                </div>
+
+                {/* Card footer link */}
+                <div className={styles.cardFooter}>
+                  <span className={styles.cardFooterLink}>
+                    {t('explore.open', 'Open repository')}
+                    <ChevronRightIcon />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Hidden — satisfies ts-noUnusedLocals */}
       <span style={{ display: 'none' }}>{t('nav.explore')}</span>
-    </>
-  );
-}
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <strong style={{ display: 'block', fontSize: 19, fontWeight: 600, color: '#101828' }}>
-        {value}
-      </strong>
-      <small style={{ color: '#667085', fontSize: 11 }}>{label}</small>
     </div>
-  );
-}
-
-const cardStyle: React.CSSProperties = {
-  border: '1px solid #EAECF0',
-  borderRadius: 10,
-  background: '#ffffff',
-  boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)',
-  overflow: 'hidden',
-};
-
-const cardHeadStyle: React.CSSProperties = {
-  padding: '14px 18px',
-  borderBottom: '1px solid #F2F4F7',
-  fontWeight: 600,
-  fontSize: 14,
-  color: '#101828',
-};
-
-const repoCardStyle: React.CSSProperties = {
-  ...cardStyle,
-  padding: 14,
-  cursor: 'pointer',
-  transition: 'border-color 120ms, box-shadow 120ms',
-  display: 'block',
-};
-
-function Th({ children }: { children: ReactNode }) {
-  return (
-    <th
-      style={{
-        background: '#F9FAFB',
-        color: '#475467',
-        fontSize: 12,
-        fontWeight: 600,
-        padding: '11px 18px',
-        textAlign: 'start',
-        borderBottom: '1px solid #EAECF0',
-      }}>
-      {children}
-    </th>
-  );
-}
-
-function Td({
-  children,
-  style,
-}: {
-  children: ReactNode;
-  style?: React.CSSProperties;
-}) {
-  return (
-    <td
-      style={{
-        padding: '14px 18px',
-        borderBottom: '1px solid #F2F4F7',
-        color: '#101828',
-        ...style,
-      }}>
-      {children}
-    </td>
   );
 }

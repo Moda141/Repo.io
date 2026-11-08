@@ -1,20 +1,71 @@
 /*
- *  Copyright 2025 Collate.
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *  http://www.apache.org/licenses/LICENSE-2.0
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ *  Repo.io — SAP Fiori Horizon tag overrides for Antd 5
+ *  Replaces OpenMetadata / Collate styling.
+ *
+ *  Design system: SAP Fiori Horizon
+ *  Reference:     SAP Fiori Design Guidelines — ObjectStatus / Token
  */
+
 @import (reference) '../variables.less';
 
+// ─── Tier tag (Antd Tag component) ───────────────────────────────────────────
+// Fiori: informative status color — purple/violet accent
+
 .tier-tag {
-  color: @purple-5;
-  background-color: @purple-1;
-  border-color: @purple-5;
-  border-radius: var(--repoio-radius-md);
+  color: #6938EF;
+  background-color: #F5F0FF;
+  border-color: #C4A6F5;
+  border-radius: var(--sapContent_BorderRadius, 4px);
+  font-family: var(--sapFontFamily);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+// ─── General Antd tag resets ───────────────────────────────────────────────
+
+.ant-tag {
+  font-family: var(--sapFontFamily);
+  font-size: 0.75rem;
+  border-radius: var(--sapContent_BorderRadius, 4px);
+}
+
+// ─── Status semantic variants ─────────────────────────────────────────────────
+
+.ant-tag.tag-positive,
+.ant-tag-success {
+  background: #E8F5E9;
+  border-color: #A5D6A7;
+  color: var(--sapPositive, #188918);
+}
+
+.ant-tag.tag-critical,
+.ant-tag-warning {
+  background: #FFF3E0;
+  border-color: #FFCC80;
+  color: var(--sapCritical, #E76500);
+}
+
+.ant-tag.tag-negative,
+.ant-tag-error {
+  background: #FFEBEE;
+  border-color: #FFBDBD;
+  color: var(--sapNegative, #BB0000);
+}
+
+.ant-tag.tag-informative,
+.ant-tag-processing {
+  background: #EBF5FF;
+  border-color: #91C9FF;
+  color: var(--sapInformative, #0070F2);
+}
+
+// ─── Token (multi-select tags) ────────────────────────────────────────────────
+
+.ant-select-selection-item {
+  border-radius: var(--sapContent_BorderRadius, 4px) !important;
+  background: var(--sapGroup_ContentBackground, #F5F6F7) !important;
+  border-color: var(--sapContent_ForegroundBorderColor, #C5C7C8) !important;
+  font-family: var(--sapFontFamily);
+  font-size: 0.8125rem;
+  color: var(--sapContent_ValueColor, #32363A);
 }

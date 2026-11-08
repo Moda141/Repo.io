@@ -1,0 +1,12 @@
+<mvc:View controllerName="repoio.proto.controller.Placeholder"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+	<Page id="page" title="{view>/placeholder/title}" class="sapUiResponsivePadding--header">
+		<IllustratedMessage illustrationType="sapIllus-NoActivities" title="{view>/placeholder/title}"
+			description="{view>/placeholder/text}" enableVerticalResponsiveness="true">
+			<additionalContent>
+				<ObjectStatus title="{i18n>placeholder.journey}" text="{view>/placeholder/journey}"
+					visible="{= !!${view>/placeholder/journey} }" state="Information"/>
+			</additionalContent>
+		</IllustratedMessage>
+	</Page>
+</mvc:View>

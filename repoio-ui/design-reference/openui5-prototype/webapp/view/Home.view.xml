@@ -1,0 +1,264 @@
+<mvc:View controllerName="repoio.proto.controller.Home"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:card="sap.f.cards"
+	xmlns:core="sap.ui.core" xmlns:dnd="sap.ui.core.dnd" xmlns:fdnd="sap.f.dnd"
+	xmlns:u="sap.ui.unified" xmlns:l="sap.ui.layout" xmlns:rc="repoio.proto.control">
+	<f:DynamicPage id="page" showFooter="false">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading><Title text="{i18n>home.title}" level="H1" wrapping="true"/></f:heading>
+				<f:actions>
+					<Button text="{i18n>home.manageCards}" icon="sap-icon://action-settings" type="Transparent" press=".onManageCards"/>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:content>
+			<VBox>
+			<!-- Datasphere Home: hero banner with a short brief about the tool -->
+			<VBox class="repoioHero">
+				<Image src="img/welcome.jpg" alt="{i18n>home.hero.alt}" width="100%" class="repoioHeroImg" decorative="false"/>
+				<FlexBox direction="Column" justifyContent="Center" alignItems="Start" class="repoioHeroBody">
+					<VBox class="repoioHeroText">
+						<Title text="{i18n>home.hero.title}" level="H2" titleStyle="H3" wrapping="true"/>
+						<Text text="{i18n>home.hero.text}" class="sapUiTinyMarginTop"/>
+					</VBox>
+					<Button text="{i18n>home.hero.more}" type="Emphasized" press=".onLearnMore" class="sapUiSmallMarginTop"/>
+				</FlexBox>
+			</VBox>
+			<MessageStrip text="{= ${view>/lang} === 'ar' ? ${home>/announcement/text_ar} : ${home>/announcement/text_en} }"
+				type="Information" showIcon="true" customIcon="sap-icon://marketing-campaign" showCloseButton="true" class="repoioHeroStrip">
+				<link><Link text="{i18n>home.allAnnouncements}" press=".onNavKey" app:key="feeds" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/></link>
+			</MessageStrip>
+			<f:GridContainer id="cards" containerQuery="true" snapToRow="true" class="sapUiSmallMarginTop">
+				<f:layout><f:GridContainerSettings rowSize="5rem" columnSize="4.5rem" gap="1rem"/></f:layout>
+				<f:layoutS><f:GridContainerSettings rowSize="5rem" columnSize="5rem" gap="0.5rem"/></f:layoutS>
+				<f:dragDropConfig>
+					<dnd:DragInfo sourceAggregation="items"/>
+					<fdnd:GridDropInfo targetAggregation="items" dropPosition="Between" dropLayout="Horizontal" drop=".onCardDrop"/>
+				</f:dragDropConfig>
+				<f:items>
+					<!-- Datasphere Home: welcome and getting started -->
+					<f:Card id="card_welcome" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="8" minRows="4"/></f:layoutData>
+						<f:content>
+							<VBox class="repoioWelcomeCard" width="100%">
+								<Title text="{i18n>home.wc.title}" level="H2" titleStyle="H3" wrapping="true"/>
+								<Text text="{i18n>home.wc.text}" class="sapUiSmallMarginTop sapUiMediumMarginBottom"/>
+								<Label text="{i18n>home.wc.start}" design="Bold" class="sapUiSmallMarginBottom"/>
+								<VBox items="{home>/steps}">
+									<HBox alignItems="Center" class="repoioStep">
+										<Text text="{home>n}" class="repoioStepNo"/>
+										<VBox>
+											<Link text="{path: 'home>key', formatter: '.stepText'}" press=".onNavKey" app:key="{home>nav}" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
+											<Label text="{path: 'home>key', formatter: '.stepHint'}" wrapping="true"/>
+										</VBox>
+									</HBox>
+								</VBox>
+							</VBox>
+						</f:content>
+					</f:Card>
+
+					<!-- Datasphere Home: recent files -->
+					<f:Card id="card_recent" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="4"/></f:layoutData>
+						<f:header><card:Header title="{i18n>home.card.recent}" subtitle="{i18n>home.card.recentSub}" iconSrc="sap-icon://history"/></f:header>
+						<f:content>
+							<List items="{home>/recent}" showSeparators="Inner" class="repoioRecent">
+								<StandardListItem icon="{home>icon}" title="{home>name}" iconInset="false"
+									description="{path: 'home>type', formatter: '.recentType'} · {home>changed}"/>
+							</List>
+						</f:content>
+					</f:Card>
+
+					<!-- Datasphere Home: quick actions -->
+					<f:Card id="card_actions" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="4"/></f:layoutData>
+						<f:header><card:Header title="{i18n>home.card.actions}" iconSrc="sap-icon://action"/></f:header>
+						<f:content>
+							<List items="{home>/actions}" showSeparators="Inner">
+								<StandardListItem title="{path: 'home>key', formatter: '.navText'}" icon="{home>icon}" type="Navigation" press=".onNavKey"
+									app:key="{home>key}" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
+							</List>
+						</f:content>
+					</f:Card>
+					<!-- J1: golden-record counts per domain -->
+					<f:Card id="card_golden" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="5"/></f:layoutData>
+						<f:header><card:Header title="{i18n>home.card.golden}" subtitle="{i18n>home.card.goldenSub}" iconSrc="sap-icon://database"
+							press=".onNavKey" app:key="domains" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/></f:header>
+						<f:content>
+							<List items="{data>/domains}" showSeparators="Inner" class="sapUiSmallMarginBottom">
+								<CustomListItem type="Navigation" press=".onNavKey" app:key="domains" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+									<HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBeginEnd sapUiTinyMarginTopBottom">
+										<VBox>
+											<Text text="{= ${view>/lang} === 'ar' ? ${data>name} : ${data>nameEn} }" class="sapUiTinyMarginBottom"/>
+											<Label text="{= ${data>repoCount} > 0 ? ${data>repoCount} + ' ' + ${i18n>home.repos} : ${i18n>home.noRepos} }"/>
+										</VBox>
+										<ObjectNumber number="{path: 'data>golden', formatter: '.fmt.num'}" emphasized="false"/>
+									</HBox>
+								</CustomListItem>
+							</List>
+						</f:content>
+					</f:Card>
+
+					<!-- J4: awaiting my approval -->
+					<f:Card id="card_requests" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="6"/></f:layoutData>
+						<f:header><card:Header title="{i18n>home.card.requests}" subtitle="{i18n>home.card.requestsSub}"
+							statusText="{view>/home/crCount}" iconSrc="sap-icon://inbox" press=".onNavKey" app:key="awaitingApproval"
+							xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/></f:header>
+						<f:content>
+							<List id="crList" items="{home>/changeRequests}" noDataText="{i18n>home.noMatch}" showSeparators="Inner">
+								<CustomListItem>
+									<VBox class="sapUiSmallMargin">
+										<HBox justifyContent="SpaceBetween">
+											<Title text="{home>customer}" level="H4" wrapping="true"/>
+											<ObjectStatus text="{path: 'home>stateKey', formatter: '.crStateText'}" state="{home>state}"/>
+										</HBox>
+										<Text text="{home>id} · {path: 'home>kind', formatter: '.crKindText'} · {home>fields} {i18n>home.fields}" class="repoioMuted"/>
+										<ProgressIndicator percentValue="{home>completeness}" displayValue="{home>completeness}%" state="{home>state}" height="0.5rem" class="sapUiTinyMarginTopBottom" displayOnly="true"/>
+										<HBox>
+											<Button text="{i18n>home.approve}" type="Accept" press=".onApprove" class="sapUiTinyMarginEnd"/>
+											<Button text="{i18n>home.reject}" type="Reject" press=".onReject"/>
+										</HBox>
+									</VBox>
+								</CustomListItem>
+							</List>
+						</f:content>
+					</f:Card>
+
+					<!-- J1: my open items -->
+					<f:Card id="card_open" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="4"/></f:layoutData>
+						<f:header><card:NumericHeader title="{i18n>home.card.open}" subtitle="{i18n>home.card.openSub}"
+							number="{home>/openItems/open}" unitOfMeasurement="{i18n>common.of} {home>/openItems/total}" state="Critical"/></f:header>
+						<f:content>
+							<List items="{home>/openItems/rows}" showSeparators="Inner">
+								<StandardListItem title="{path: 'home>key', formatter: '.navText'}" counter="{home>count}" type="Navigation" press=".onNavKey"
+									app:key="{home>key}" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
+							</List>
+						</f:content>
+					</f:Card>
+
+					<!-- J1/J10: pipeline health -->
+					<f:Card id="card_pipelines" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="5"/></f:layoutData>
+						<f:header><card:Header title="{i18n>home.card.pipelines}" subtitle="{i18n>home.card.pipelinesSub}" iconSrc="sap-icon://process"
+							statusText="{view>/home/pipeStatus}" press=".onNavKey" app:key="dataJobs" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/></f:header>
+						<f:content>
+							<List items="{home>/pipelines}" showSeparators="Inner">
+								<CustomListItem>
+									<HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBeginEnd sapUiTinyMarginTopBottom">
+										<VBox>
+											<Text text="{home>name}"/>
+											<Label text="{path: 'home>stage', formatter: '.stageText'} · {home>last}"/>
+										</VBox>
+										<ObjectStatus text="{path: 'home>stateKey', formatter: '.resultText'}" state="{home>state}" icon="{= ${home>state} === 'Success' ? 'sap-icon://sys-enter-2' : 'sap-icon://alert' }"/>
+									</HBox>
+								</CustomListItem>
+							</List>
+						</f:content>
+					</f:Card>
+
+					<!-- Analytical card: completeness -->
+					<f:Card id="card_completeness" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="5"/></f:layoutData>
+						<f:header><card:NumericHeader title="{i18n>home.card.completeness}" subtitle="{i18n>home.card.completenessSub}"
+							number="{home>/completeness/value}" scale="%" trend="Up" state="Critical"
+							details="{i18n>home.target} {home>/completeness/target}% · {i18n>home.deviation} {home>/completeness/deviation}"/></f:header>
+						<f:content>
+							<rc:EChart id="completenessChart" height="13rem" ariaLabel="{i18n>home.card.completeness}" class="sapUiSmallMarginBeginEnd"/>
+						</f:content>
+					</f:Card>
+
+					<!-- Table card: merge candidates -->
+					<f:Card id="card_merge" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="8" minRows="5"/></f:layoutData>
+						<f:header><card:Header title="{i18n>home.card.merge}" subtitle="{i18n>home.card.mergeSub}" iconSrc="sap-icon://compare"
+							statusText="{view>/home/mergeCount}" press=".onNavKey" app:key="matchDetection" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/></f:header>
+						<f:content>
+							<VBox width="100%">
+								<SearchField id="mergeSearch" liveChange=".onMergeSearch" placeholder="{i18n>common.search}" class="sapUiSmallMarginBeginEnd" width="auto"/>
+								<Table id="mergeTable" items="{home>/mergeCandidates}" noDataText="{i18n>home.noMatch}" popinLayout="GridSmall">
+									<columns>
+										<Column><Text text="{i18n>home.col.customer}"/></Column>
+										<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>home.col.source}"/></Column>
+										<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>home.col.detected}"/></Column>
+										<Column hAlign="End"><Text text="{i18n>home.col.score}"/></Column>
+									</columns>
+									<items>
+										<ColumnListItem type="Navigation" press=".onNavKey" app:key="matchDetection" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+											<Text text="{home>customer}"/>
+											<Text text="{home>source}"/>
+											<Text text="{home>detected}"/>
+											<ObjectNumber number="{home>score}" unit="%" state="{= ${home>score} >= 90 ? 'Success' : ${home>score} >= 75 ? 'Warning' : 'Error' }"/>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</VBox>
+						</f:content>
+					</f:Card>
+
+					<!-- Quick links -->
+					<f:Card id="card_links" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="5"/></f:layoutData>
+						<f:header><card:Header title="{i18n>home.card.links}" iconSrc="sap-icon://chain-link"/></f:header>
+						<f:content>
+							<List items="{home>/links}" showSeparators="None">
+								<StandardListItem title="{path: 'home>key', formatter: '.navText'}" icon="{home>icon}" type="Active" press=".onNavKey"
+									app:key="{home>key}" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
+							</List>
+						</f:content>
+					</f:Card>
+
+					<!-- Data stewards -->
+					<f:Card id="card_stewards" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="6"/></f:layoutData>
+						<f:header><card:Header title="{i18n>home.card.stewards}" subtitle="{i18n>home.card.stewardsSub}" iconSrc="sap-icon://group"/></f:header>
+						<f:content>
+							<List items="{home>/stewardNotes}" showSeparators="Inner">
+								<FeedListItem sender="{= ${view>/lang} === 'ar' ? ${home>name_ar} : ${home>name_en} }"
+									info="{= ${view>/lang} === 'ar' ? ${home>role_ar} : ${home>role_en} }" timestamp="{home>at}"
+									text="{= ${view>/lang} === 'ar' ? ${home>text_ar} : ${home>text_en} }" iconInitials="{home>initials}" showIcon="true" senderActive="false" iconActive="false"/>
+							</List>
+						</f:content>
+					</f:Card>
+
+					<!-- Domain owner -->
+					<f:Card id="card_owner" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="5"/></f:layoutData>
+						<f:header><card:Header title="{= ${view>/lang} === 'ar' ? ${home>/owner/name_ar} : ${home>/owner/name_en} }"
+							subtitle="{= ${view>/lang} === 'ar' ? ${home>/owner/title_ar} : ${home>/owner/title_en} }" iconInitials="{home>/owner/initials}"/></f:header>
+						<f:content>
+							<VBox class="sapUiSmallMarginBeginEnd sapUiSmallMarginBottom">
+								<Title text="{i18n>home.owner.title}" level="H5" class="sapUiTinyMarginBottom"/>
+								<Label text="{i18n>home.owner.domain}"/>
+								<Link text="{= ${view>/lang} === 'ar' ? ${data>/domains/0/name} : ${data>/domains/0/nameEn} }" press=".onOwnerDomain" class="sapUiTinyMarginBottom"/>
+								<Label text="{i18n>home.owner.email}"/>
+								<Link text="{home>/owner/email}" href="mailto:{home>/owner/email}" class="sapUiTinyMarginBottom"/>
+								<Label text="{i18n>home.owner.source}"/>
+								<Text text="SAP C4C — Customer Master" class="sapUiTinyMarginBottom"/>
+								<Label text="{i18n>home.owner.review}"/>
+								<Text text="{home>/owner/lastReview}"/>
+							</VBox>
+						</f:content>
+					</f:Card>
+
+					<!-- Run schedule -->
+					<f:Card id="card_calendar" class="repoioCard">
+						<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="6"/></f:layoutData>
+						<f:header><card:Header title="{i18n>home.card.calendar}" subtitle="{i18n>home.card.calendarSub}" iconSrc="sap-icon://calendar"/></f:header>
+						<f:content>
+							<VBox width="100%">
+								<u:Calendar id="runCalendar" width="100%" select=".onCalendarSelect"/>
+								<List id="todayRuns" items="{home>/todayRuns}" headerText="{i18n>home.today}" showSeparators="None">
+									<StandardListItem title="{path: 'home>key', formatter: '.runText'}" info="{home>time}"/>
+								</List>
+							</VBox>
+						</f:content>
+					</f:Card>
+				</f:items>
+			</f:GridContainer>
+			</VBox>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

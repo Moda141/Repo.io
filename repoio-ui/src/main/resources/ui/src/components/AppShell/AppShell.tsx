@@ -1,52 +1,35 @@
 import { Outlet } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import Sidebar from './Sidebar';
-import TopBar from './TopBar';
+import { useCallback, useRef, useState } from 'react';
+import FioriShellBar from './FioriShellBar';
+import NavigationMenu from './NavigationMenu';
 import styles from './AppShell.module.css';
 
-const STORAGE_KEY = 'repoio-sidebar-collapsed';
-
 /**
- * AppShell — the three-region layout OpenMetadata uses:
- *   <aside class="app-sidebar">   (72px collapsed / 228px expanded)
- *   <header class="app-navbar-header">   (80px, 20/24 padding)
- *   <main class="page-container">        (24px top, 24px side, 16px bottom)
- * The collapsed state persists per browser (OpenMetadata persists it via
- * user preferences; we keep it local for now until the /me endpoint
- * lands). Side spacing and header padding come from
- * variables.less @sidebar-width, @layout-header-height,
- * @layout-header-padding.
+ * AppShell — SAP Fiori Horizon layout
+ *
+ * References:
+ *   design-reference/sap-s4hana/01-overview-page.svg            (shell bar)
+ *   design-reference/sap-s4hana/components/navigation-menu.svg  (☰ menu)
+ *
+ *   Shell Bar (52px, white) — always visible
+ *   Navigation Menu — popover under the ☰ button; overlays the page
+ *   Content — full width, scrollable
  */
 export default function AppShell() {
-  // Default to EXPANDED to match OpenMetadata (228 px wide with labels).
-  // User can collapse via the toggle; preference persists.
-  const [collapsed, setCollapsed] = useState<boolean>(() => {
-    try {
-      const v = localStorage.getItem(STORAGE_KEY);
-      return v === '1';
-    } catch {
-      return false;
-    }
-  });
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, collapsed ? '1' : '0');
-    } catch {
-      /* ignore */
-    }
-  }, [collapsed]);
+  const [navOpen, setNavOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const closeNav = useCallback(() => setNavOpen(false), []);
 
   return (
     <div className={styles.shell}>
-      <Sidebar
-        collapsed={collapsed}
-        onToggleCollapse={() => setCollapsed((c) => !c)}
+      <FioriShellBar
+        navOpen={navOpen}
+        onMenuToggle={() => setNavOpen((o) => !o)}
+        menuButtonRef={menuButtonRef}
       />
-      <div className={styles.main}>
-        <header className={styles.header}>
-          <TopBar />
-        </header>
+      <NavigationMenu open={navOpen} onClose={closeNav} anchorRef={menuButtonRef} />
+
+      <div className={styles.body}>
         <main className={styles.content}>
           <Outlet />
         </main>

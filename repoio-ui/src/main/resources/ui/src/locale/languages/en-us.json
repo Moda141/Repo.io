@@ -13,7 +13,54 @@
     "workflows": "Workflows",
     "alerts": "Alerts",
     "integrations": "Integrations",
-    "settings": "Settings"
+    "settings": "Settings",
+    "search_placeholder": "Search records",
+    "search": "Search",
+    "notifications": "Notifications",
+    "help": "Help",
+    "section_govern": "Govern",
+    "glossary": "Glossary",
+    "menu": {
+      "home": "Home",
+      "favorites": "Favorite Apps",
+      "entities": "Entities",
+      "customers": "Customers",
+      "products": "Products",
+      "vendors": "Vendors",
+      "books": "Books",
+      "authors": "Authors",
+      "change_requests": "Change Requests",
+      "matching": "Record Matching",
+      "my_spaces": "My Spaces",
+      "space_mdm": "Master Data",
+      "space_gov": "Governance",
+      "space_int": "Integration",
+      "space_wf": "Workflows",
+      "space_adm": "Administration",
+      "self_service": "Self Service",
+      "all_spaces": "All Spaces",
+      "back": "Back to main menu",
+      "search": "Search",
+      "search_spaces": "Search spaces",
+      "pinned_spaces": "Pinned Spaces",
+      "unpin_all": "Unpin All",
+      "pin": "Pin",
+      "unpin": "Unpin",
+      "no_pinned": "No pinned spaces",
+      "no_results": "No results for \"{{q}}\"",
+      "overview": "Overview",
+      "duplicates": "Duplicate Records",
+      "quality": "Data Quality",
+      "rules": "Quality Rules",
+      "glossary": "Glossary",
+      "sources": "Data Sources",
+      "pipelines": "Import Pipelines",
+      "workflows": "Workflows",
+      "alerts": "Alerts",
+      "users": "Users",
+      "roles": "Roles",
+      "audit": "Audit Log"
+    }
   },
   "search": {
     "placeholder": "Search customers, vendors, products, authors…"
@@ -44,7 +91,8 @@
     "password_disabled_prod": "Password sign-in is only for break-glass access. Prefer SSO.",
     "remember": "Keep me signed in",
     "forgot": "Forgot password?",
-    "need_help": "Need help?"
+    "need_help": "Need help?",
+    "sign_out": "Sign out"
   },
   "entity": {
     "customer": "Customer",
@@ -67,7 +115,97 @@
   "page": {
     "home": {
       "title": "Welcome to Repo.io",
-      "subtitle": "Your enterprise master data at a glance"
+      "subtitle": "Your enterprise master data at a glance",
+      "ovp": {
+        "variant": "Standard",
+        "no_filters": "No filters active",
+        "sample_data": "Sample data",
+        "share": "Share",
+        "completeness": {
+          "title": "Customer data completeness",
+          "subtitle": "Domain: Customers | SAP C4C",
+          "below_target": "Below target",
+          "target": "Target",
+          "deviation": "Deviation",
+          "chart_title": "Incoming records by week",
+          "valid": "Valid",
+          "issues": "With issues",
+          "week": "W{{n}}",
+          "chart_label": "Valid and issue records per week"
+        },
+        "reviews": {
+          "title": "Open review requests",
+          "subtitle": "Data stewards team"
+        },
+        "merge": {
+          "title": "Merge candidates",
+          "subtitle": "Possible duplicate records",
+          "customer": "Customer",
+          "source": "Source",
+          "date": "Detected",
+          "score": "Match"
+        },
+        "links": {
+          "title": "Quick links",
+          "new_customer": "Create customer",
+          "duplicates": "Match duplicate records",
+          "quality_report": "Data quality report",
+          "sources": "Data sources",
+          "rules": "Quality rules",
+          "audit": "Audit log"
+        },
+        "requests": {
+          "title": "Urgent change requests",
+          "subtitle": "By priority and completeness",
+          "fields": "{{count}} fields",
+          "domain": "Domain: {{domain}}",
+          "kind": {
+            "tax_id": "Update tax ID — {{name}}",
+            "new_customer": "Add customer — {{name}}",
+            "merge": "Merge two records — {{name}}",
+            "reclassify": "Reclassify — {{name}}"
+          },
+          "state": {
+            "missing_data": "Missing data",
+            "needs_review": "Needs review",
+            "ready": "Ready to approve"
+          },
+          "source_manual": "Manual form"
+        },
+        "domains": {
+          "customers": "Customers"
+        },
+        "owner": {
+          "title": "Domain owner",
+          "name": "Mohamed",
+          "role": "Data Management & Analytics Manager",
+          "domain_label": "Domain:",
+          "domain_value": "Customers — Commercial sales",
+          "email": "Email:",
+          "source": "Authoritative source:",
+          "governance": "Governance",
+          "last_review": "Last definitions review:"
+        },
+        "stewards": {
+          "title": "Data stewards",
+          "sara": {
+            "name": "Sara Adel",
+            "role": "Customer data steward",
+            "note": "Reviewed 214 duplicate records in commercial distribution and merged 187. The rest need tax ID confirmation from Sales."
+          },
+          "karim": {
+            "name": "Karim Fawzy",
+            "role": "Product data steward",
+            "note": "Added an ISBN-13 format rule and applied it to 38,500 products. Pass rate: 96.2%."
+          }
+        },
+        "schedule": {
+          "title": "Run schedule",
+          "subtitle": "Source syncs and pipelines",
+          "sync_c4c": "C4C sync — Customers",
+          "nightly_quality": "Nightly data quality check"
+        }
+      }
     },
     "explore": {
       "title": "Explore",
@@ -88,6 +226,72 @@
       "title": "Page not found",
       "subtitle": "The page you are looking for does not exist.",
       "action": "Back to home"
+    }
+  },
+  "shell": {
+    "menu": "Menu",
+    "back": "Back",
+    "go_home": "repo.io — Home",
+    "app_title": "Master Data Overview",
+    "account": "Account",
+    "about": "About"
+  },
+  "fiori": {
+    "more_options": "More options",
+    "collapse_header": "Collapse header",
+    "expand_header": "Expand header",
+    "of": "{{shown}} of {{total}}",
+    "view_all": "View all",
+    "search": "Search",
+    "no_matches": "No records match \"{{q}}\"",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "prev_month": "Previous month",
+    "next_month": "Next month",
+    "today": "Today",
+    "of_word": "of",
+    "filters": {
+      "label": "Filters",
+      "go": "Go",
+      "adapt": "Adapt Filters ({{count}})",
+      "adapt_title": "Adapt Filters",
+      "adapt_hint": "Choose the fields shown in the filter bar.",
+      "none_active": "No filters active",
+      "active_one": "1 filter active: {{names}}",
+      "active_other": "{{count}} filters active: {{names}}",
+      "all": "All",
+      "q": "Search",
+      "q_placeholder": "Customer name or ID",
+      "domain": "Domain",
+      "source": "Source",
+      "status": "Request status",
+      "period": "Period",
+      "last_3": "Last 3 days",
+      "last_7": "Last 7 days",
+      "no_match": "No records match the filters",
+      "sep": ", "
+    },
+    "cards": {
+      "manage": "Manage Cards",
+      "manage_hint": "Choose which cards to show and their order. You can also drag a card by its header.",
+      "hide": "Hide card",
+      "move_up": "Move earlier",
+      "move_down": "Move later",
+      "hidden_toast": "\"{{title}}\" hidden",
+      "undo": "Undo",
+      "empty_title": "No cards shown",
+      "empty_text": "Add cards from Manage Cards.",
+      "card_options": "Card options: {{title}}",
+      "drag_hint": "Drag to move"
+    },
+    "dialog": {
+      "ok": "OK",
+      "cancel": "Cancel",
+      "reset": "Reset",
+      "move_up_item": "Move {{name}} up",
+      "move_down_item": "Move {{name}} down"
     }
   }
 }

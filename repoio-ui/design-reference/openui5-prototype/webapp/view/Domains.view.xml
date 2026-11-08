@@ -1,0 +1,147 @@
+<mvc:View controllerName="repoio.proto.controller.Domains"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- SAP Datasphere "Catalog" layout: dark search header, type tabs, result cards (or list) -->
+	<f:DynamicPage id="page" headerExpanded="true" stickySubheaderProvider="tabs" class="repoioCatalog">
+		<f:header>
+			<f:DynamicPageHeader pinnable="false">
+				<VBox alignItems="Center" class="repoioCatHero">
+					<Title text="{i18n>nav.domains}" level="H1" titleStyle="H3" class="repoioCatHeroTitle"/>
+					<Text text="{i18n>cat.subtitle}" textAlign="Center" class="repoioCatHeroText"/>
+					<HBox class="repoioCatSearch" width="100%">
+						<Select selectedKey="{view>/cat/tab}" change=".onScope" width="9.5rem" class="repoioCatScope">
+							<core:Item key="all" text="{i18n>common.all}"/>
+							<core:Item key="domain" text="{i18n>cat.tab.domain}"/>
+							<core:Item key="repository" text="{i18n>cat.tab.repository}"/>
+							<core:Item key="source" text="{i18n>cat.tab.source}"/>
+							<core:Item key="table" text="{i18n>cat.tab.table}"/>
+						</Select>
+						<SearchField value="{view>/cat/q}" liveChange=".onSearch" search=".onSearch" placeholder="{i18n>common.search}" width="100%">
+							<layoutData><FlexItemData growFactor="1"/></layoutData>
+						</SearchField>
+					</HBox>
+				</VBox>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<VBox>
+				<IconTabBar id="tabs" selectedKey="{view>/cat/tab}" select=".onTab" expandable="false" applyContentPadding="false" headerMode="Inline"
+					headerBackgroundDesign="Solid" backgroundDesign="Transparent" class="repoioCatTabs">
+					<items>
+						<IconTabFilter key="all" text="{i18n>common.all}" count="{view>/cat/counts/all}"/>
+						<IconTabFilter key="domain" text="{i18n>cat.tab.domain}" count="{view>/cat/counts/domain}"/>
+						<IconTabFilter key="repository" text="{i18n>cat.tab.repository}" count="{view>/cat/counts/repository}"/>
+						<IconTabFilter key="source" text="{i18n>cat.tab.source}" count="{view>/cat/counts/source}"/>
+						<IconTabFilter key="table" text="{i18n>cat.tab.table}" count="{view>/cat/counts/table}"/>
+						<IconTabSeparator/>
+						<IconTabFilter key="fav" text="{i18n>cat.tab.fav}" count="{view>/cat/counts/fav}"/>
+						<IconTabFilter key="recent" text="{i18n>cat.tab.recent}"/>
+					</items>
+				</IconTabBar>
+				<OverflowToolbar style="Clear" class="repoioCatBar">
+					<ToggleButton icon="sap-icon://filter" type="Transparent" pressed="{view>/cat/showFilters}" tooltip="{i18n>cat.filters}"/>
+					<Title text="{view>/cat/resultText}" level="H2" titleStyle="H6"/>
+					<Link text="{i18n>cat.clearAll}" visible="{= ${view>/cat/active} > 0 }" press=".onClearFacets"/>
+					<ToolbarSpacer/>
+					<Button icon="sap-icon://refresh" type="Transparent" tooltip="{i18n>cat.refresh}" press=".onRefresh"/>
+					<SegmentedButton selectedKey="{view>/cat/mode}">
+						<items>
+							<SegmentedButtonItem key="cards" icon="sap-icon://grid" tooltip="{i18n>domain.cards}"/>
+							<SegmentedButtonItem key="list" icon="sap-icon://list" tooltip="{i18n>domain.table}"/>
+						</items>
+					</SegmentedButton>
+				</OverflowToolbar>
+
+				<FlexBox alignItems="Start" class="repoioCatBody">
+					<!-- Filter panel (Datasphere: the filter icon opens facets beside the results) -->
+					<VBox visible="{view>/cat/showFilters}" width="15rem" class="repoioCatFacets">
+						<VBox class="repoioCatFacet">
+							<Title text="{view>/cat/facets/0/title}" level="H3" titleStyle="H6" class="sapUiTinyMarginBottom"/>
+							<List items="{view>/cat/facets/0/values}" mode="MultiSelect" includeItemNavigation="false" selectionChange=".onFacetChange"
+								showSeparators="None" backgroundDesign="Transparent" app:facet="domain" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+								<StandardListItem title="{view>text}" counter="{view>count}" selected="{view>selected}"/>
+							</List>
+						</VBox>
+						<VBox class="repoioCatFacet">
+							<Title text="{view>/cat/facets/1/title}" level="H3" titleStyle="H6" class="sapUiTinyMarginBottom"/>
+							<List items="{view>/cat/facets/1/values}" mode="MultiSelect" includeItemNavigation="false" selectionChange=".onFacetChange"
+								showSeparators="None" backgroundDesign="Transparent" app:facet="status" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+								<StandardListItem title="{view>text}" counter="{view>count}" selected="{view>selected}"/>
+							</List>
+						</VBox>
+					</VBox>
+
+					<VBox width="100%">
+						<layoutData><FlexItemData growFactor="1" shrinkFactor="1" minWidth="0"/></layoutData>
+						<IllustratedMessage visible="{= ${view>/cat/items}.length === 0 }" illustrationType="sapIllus-NoSearchResults" illustrationSize="Dialog"
+							title="{i18n>cat.noResults}" description="{i18n>cat.noResultsHint}"/>
+
+						<f:GridContainer items="{view>/cat/items}" visible="{= ${view>/cat/mode} === 'cards' &amp;&amp; ${view>/cat/items}.length > 0 }" containerQuery="true">
+							<f:layout><f:GridContainerSettings rowSize="13rem" columnSize="3.5rem" gap="0.75rem"/></f:layout>
+							<f:layoutS><f:GridContainerSettings rowSize="13rem" columnSize="3.5rem" gap="0.5rem"/></f:layoutS>
+							<f:items>
+								<f:Card class="repoioCatCard">
+									<f:layoutData><f:GridContainerItemLayoutData columns="4" rows="1"/></f:layoutData>
+									<f:content>
+										<VBox width="100%" class="repoioCatCardBody">
+											<HBox justifyContent="End" class="repoioCatCardTop">
+												<Button icon="sap-icon://chain-link" type="Transparent" tooltip="{i18n>cat.copyLink}" press=".onCopyLink"/>
+											</HBox>
+											<HBox alignItems="Start" class="repoioCatCardMain">
+												<core:Icon src="{view>icon}" size="1.25rem" color="Default" class="repoioCatIcon"/>
+												<VBox>
+													<Link text="{view>title}" press=".onOpen" wrapping="true"/>
+													<Label text="{view>typeText} | {view>context}" wrapping="true"/>
+												</VBox>
+											</HBox>
+											<Text text="{view>desc}" maxLines="2" class="repoioCatDesc"/>
+											<HBox visible="{= !!${view>owner} }" alignItems="Center" class="repoioCatOwner">
+												<rc:PersonLink name="{view>owner}"/>
+												<Label text="{view>moreOwners}" visible="{= !!${view>moreOwners} }" class="sapUiTinyMarginBegin"/>
+											</HBox>
+											<HBox justifyContent="SpaceBetween" alignItems="Center" class="repoioCatCardFoot">
+												<ObjectStatus text="{view>statusText}" state="{view>state}"/>
+												<Button icon="{= ${view>fav} ? 'sap-icon://favorite' : 'sap-icon://unfavorite' }" type="Transparent"
+													tooltip="{= ${view>fav} ? ${i18n>cat.unfav} : ${i18n>cat.fav} }" press=".onFav" class="repoioCatStar"/>
+											</HBox>
+										</VBox>
+									</f:content>
+								</f:Card>
+							</f:items>
+						</f:GridContainer>
+
+						<Table items="{view>/cat/items}" visible="{= ${view>/cat/mode} === 'list' &amp;&amp; ${view>/cat/items}.length > 0 }" popinLayout="GridSmall"
+							sticky="ColumnHeaders">
+							<columns>
+								<Column width="30%"><Text text="{i18n>dsp.businessName}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.type}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>cat.context}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>domain.owner}"/></Column>
+								<Column><Text text="{i18n>domains.col.status}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>domains.col.updated}"/></Column>
+								<Column hAlign="End" width="6rem"><Text text="{i18n>cat.tab.fav}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<HBox alignItems="Center">
+										<core:Icon src="{view>icon}" color="Default" class="sapUiSmallMarginEnd"/>
+										<Link text="{view>title}" press=".onOpen"/>
+									</HBox>
+									<Text text="{view>typeText}"/>
+									<Text text="{view>context}"/>
+									<rc:PersonLink name="{view>owner}"/>
+									<ObjectStatus text="{view>statusText}" state="{view>state}"/>
+									<Text text="{view>updated}"/>
+									<HBox justifyContent="End">
+										<Button icon="sap-icon://chain-link" type="Transparent" tooltip="{i18n>cat.copyLink}" press=".onCopyLink"/>
+										<Button icon="{= ${view>fav} ? 'sap-icon://favorite' : 'sap-icon://unfavorite' }" type="Transparent"
+											tooltip="{= ${view>fav} ? ${i18n>cat.unfav} : ${i18n>cat.fav} }" press=".onFav" class="repoioCatStar"/>
+									</HBox>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</VBox>
+				</FlexBox>
+			</VBox>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>
