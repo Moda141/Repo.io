@@ -32,7 +32,7 @@ sap.ui.define([
 		},
 
 		init: function () {
-			this.setAggregation("_avatar", new Avatar({ displaySize: "XS", showBorder: false }).addStyleClass("sapUiTinyMarginEnd"));
+			this.setAggregation("_avatar", new Avatar({ displaySize: "Custom", customDisplaySize: "1.5rem", customFontSize: "0.625rem", showBorder: false }).addStyleClass("sapUiTinyMarginEnd"));
 			this.setAggregation("_link", new Link({ press: this._open.bind(this, true) }));
 		},
 
