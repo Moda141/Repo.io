@@ -1,0 +1,60 @@
+<mvc:View controllerName="repoio.proto.controller.Connections"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- SAP Datasphere "Connections" app: one registry entry per external system (J9). -->
+	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="false">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading><Title text="{i18n>nav.connections}" level="H1"/></f:heading>
+				<f:expandedContent><Text text="{i18n>conn.subtitle}"/></f:expandedContent>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:content>
+			<Table id="connTable" items="{path: 'view>/conn/items', sorter: {path: 'changed', descending: true}}" mode="MultiSelect"
+				selectionChange=".onSelect" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" growing="true" growingThreshold="20"
+				noDataText="{i18n>conn.noData}">
+				<headerToolbar>
+					<OverflowToolbar>
+						<Title text="{i18n>nav.connections} ({view>/conn/count})" level="H2"/>
+						<ToolbarSpacer/>
+						<SearchField width="14rem" liveChange=".onSearch" placeholder="{i18n>common.search}"/>
+						<ToolbarSeparator/>
+						<Button text="{i18n>common.create}" icon="sap-icon://add" type="Transparent" press=".onCreate"/>
+						<Button text="{i18n>common.edit}" type="Transparent" enabled="{= ${view>/conn/selected} === 1 }" press=".onEditSelected"/>
+						<Button text="{i18n>common.delete}" type="Transparent" enabled="{= ${view>/conn/selected} > 0 }" press=".onDelete"/>
+						<ToolbarSeparator/>
+						<Button text="{i18n>dsp.validate}" type="Transparent" enabled="{= ${view>/conn/selected} === 1 }" press=".onValidate"/>
+						<Button text="{i18n>dsp.pause}" type="Transparent" enabled="{view>/conn/canPause}" press=".onPause"/>
+						<Button text="{i18n>conn.resume}" type="Transparent" enabled="{view>/conn/canResume}" press=".onResume"/>
+					</OverflowToolbar>
+				</headerToolbar>
+				<columns>
+					<Column width="24%"><Text text="{i18n>dsp.businessName}"/></Column>
+					<Column minScreenWidth="Tablet" demandPopin="true" width="11rem"><Text text="{i18n>dsp.technicalName}"/></Column>
+					<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>conn.type}"/></Column>
+					<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>conn.category}"/></Column>
+					<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>conn.features}"/></Column>
+					<Column><Text text="{i18n>domains.col.status}"/></Column>
+					<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.lastSync}"/></Column>
+					<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center" width="5rem"><Text text="{i18n>domain.owner}"/></Column>
+					<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>dsp.changedOn}"/></Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<HBox alignItems="Center">
+							<Image src="{view>logo}" height="1.25rem" width="2.25rem" densityAware="false" class="repoioConnLogo" decorative="true"/>
+							<Link text="{view>title}" press=".onOpen" wrapping="true"/>
+						</HBox>
+						<Text text="{view>id}" wrapping="false"/>
+						<Text text="{view>typeText}"/>
+						<Text text="{view>categoryText}"/>
+						<Text text="{view>featureText}"/>
+						<ObjectStatus text="{view>stateText}" state="{view>stateState}" icon="{view>stateIcon}"/>
+						<ObjectStatus text="{view>lastSync}" state="{view>syncState}"/>
+						<rc:PersonLink name="{view>owner}"/>
+						<Text text="{view>changed}"/>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

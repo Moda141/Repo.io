@@ -105,6 +105,11 @@
 					"target": "domains"
 				},
 				{
+					"name": "connections",
+					"pattern": "connections",
+					"target": "connections"
+				},
+				{
 					"name": "page",
 					"pattern": "page/{key}",
 					"target": "placeholder"
@@ -125,6 +130,11 @@
 					"id": "placeholder",
 					"name": "Placeholder",
 					"level": 2
+				},
+				"connections": {
+					"id": "connections",
+					"name": "Connections",
+					"level": 1
 				}
 			}
 		}

@@ -1748,5 +1748,102 @@
     }
    ]
   }
- }
+ },
+ "connections": [
+  {
+   "id": "C4C_PROD",
+   "name": "SAP C4C — الإنتاج",
+   "nameEn": "SAP C4C — Production",
+   "type": "c4c",
+   "owner": "محمد",
+   "changed": "2026-10-28 11:20",
+   "state": "active",
+   "lastSync": "2026-11-04 02:00",
+   "syncState": "Success",
+   "props": {
+    "url": "https://my345678.crm.ondemand.com",
+    "service": "c4codataapi",
+    "auth": "oauth",
+    "user": "MDM_COMM_USER",
+    "mode": "push_pull",
+    "schedule": "daily_0200",
+    "writeback": true
+   },
+   "desc": "Customers and contacts from the production C4C tenant.",
+   "descAr": "العملاء وجهات الاتصال من بيئة C4C الإنتاجية."
+  },
+  {
+   "id": "S4_HANA",
+   "name": "SAP S/4HANA (HANA)",
+   "nameEn": "SAP S/4HANA (HANA)",
+   "type": "hana",
+   "owner": "كريم فوزي",
+   "changed": "2026-10-21 09:05",
+   "state": "active",
+   "lastSync": "2026-11-04 01:30",
+   "syncState": "Warning",
+   "props": {
+    "category": "onprem",
+    "host": "s4prd.nahdetmisr.local",
+    "port": "30015",
+    "tenant": "S4P",
+    "ssl": true,
+    "verify": true,
+    "auth": "basic",
+    "user": "MDM_READER",
+    "mode": "pull",
+    "schedule": "daily_0130",
+    "writeback": true
+   },
+   "desc": "Business partners, materials and vendors from S/4HANA CDS views.",
+   "descAr": "شركاء الأعمال والمواد والموردون من CDS views في S/4HANA."
+  },
+  {
+   "id": "SQL_LEGACY_SALES",
+   "name": "قاعدة المبيعات القديمة",
+   "nameEn": "Legacy sales database",
+   "type": "mssql",
+   "owner": "عمر طارق",
+   "changed": "2026-11-02 16:40",
+   "state": "paused",
+   "lastSync": "2026-10-30 03:00",
+   "syncState": "None",
+   "props": {
+    "server": "sql-sales01.nahdetmisr.local",
+    "port": "1433",
+    "database": "SalesLegacy",
+    "version": "2016",
+    "ssl": true,
+    "verify": false,
+    "auth": "sql",
+    "user": "mdm_read",
+    "mode": "pull",
+    "cdc": "timestamp",
+    "schedule": "weekly"
+   },
+   "desc": "Historic customer orders before the C4C go-live.",
+   "descAr": "طلبات العملاء التاريخية قبل تشغيل C4C."
+  },
+  {
+   "id": "FILE_UPLOADS",
+   "name": "رفع ملفات CSV / Excel",
+   "nameEn": "CSV / Excel uploads",
+   "type": "file",
+   "owner": "سارة عادل",
+   "changed": "2026-11-02 14:12",
+   "state": "active",
+   "lastSync": "2026-11-02 14:12",
+   "syncState": "Success",
+   "props": {
+    "format": "csv",
+    "delimiter": "comma",
+    "encoding": "utf8",
+    "header": true,
+    "method": "console",
+    "maxSize": "50"
+   },
+   "desc": "Steward uploads: school lists, new customers, book lists.",
+   "descAr": "ملفات أمناء البيانات: قوائم المدارس والعملاء الجدد والكتب."
+  }
+ ]
 }

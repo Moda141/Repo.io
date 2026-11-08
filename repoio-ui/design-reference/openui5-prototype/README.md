@@ -23,8 +23,8 @@ Layouts follow SAP Datasphere, drawn with OpenUI5 controls on the locked
 Quartz Light theme. The kit's theme is unchanged; only the page layouts follow
 Datasphere.
 
-Scope is deliberately narrow for now: only Home and Domain management are
-designed. The domain detail, repository, data source, table, golden record
+Scope is deliberately narrow for now: only Home, Domain management and
+Connections are designed. The domain detail, repository, data source, table, golden record
 and Explore pages were removed at the owner's request; their code is in git
 history. Every other navigation item opens the planned-page placeholder.
 
@@ -32,6 +32,7 @@ history. Every other navigation item opens the planned-page placeholder.
 |-------|------|------------------------------|
 | `#/` | Home (J1) | Datasphere Home: hero banner with the whole Repo.io image beside and a short brief ("Learn more" opens a summary of what the tool does), announcement strip, welcome card with three getting-started steps, recent files, then the J1 cards (quick actions, golden records per domain, awaiting approval, open items, pipeline health, completeness, merge candidates, stewards, owner, run schedule) — drag to reorder, show or hide |
 | `#/domains` | Domain management | Catalog: dark search header (scope select + search), type tabs (all, domains, repositories, data sources, tables, favorites, recent), filter panel (domain, status), asset cards or list; quick view, copy link (`#/domains/{item}`), favorites |
+| `#/connections` | Connections (J9) | Datasphere Connections: registry table (logo, technical name, type, category, features, status, last sync, owner) with create / edit / delete / validate / pause / resume. "Create Connection" dialog in three steps like Datasphere: 1 choose type (filters by feature, category, source + type tiles for SAP HANA, SAP Cloud for Customer, Microsoft SQL Server, CSV / Excel), 2 configure properties (per-type form; secrets go to Key Vault, only a reference is kept), 3 business and technical name, owner, description |
 | `#/page/{key}` | Every other page in `docs/ui-pages.md` | Planned-page placeholder with the page scope and journey |
 
 ## Entry points

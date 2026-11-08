@@ -1,0 +1,106 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.f" xmlns:cssgrid="sap.ui.layout.cssgrid">
+	<!-- SAP Datasphere "Create Connection": 1 Choose Connection Type · 2 Configure Connection Properties · 3 Enter Name and Description -->
+	<Dialog id="connDialog" title="{= ${view>/wiz/edit} ? ${i18n>conn.editTitle} : ${i18n>conn.createTitle} }" contentWidth="64rem" contentHeight="38rem"
+		resizable="true" draggable="true" verticalScrolling="false" class="repoioConnDialog" afterClose=".onDialogClosed">
+		<content>
+			<Wizard id="connWizard" renderMode="Page" showNextButton="false" enableBranching="false" class="repoioConnWizard">
+				<steps>
+					<WizardStep id="stepType" title="{i18n>conn.step1}" validated="{= !!${view>/wiz/type} }">
+						<FlexBox class="repoioConnStep1" alignItems="Stretch">
+							<!-- Filters -->
+							<VBox width="16rem" class="repoioConnFilters">
+								<HBox justifyContent="SpaceBetween" alignItems="Center" class="repoioConnFiltersHead">
+									<Title text="{i18n>cat.filters}" level="H3" titleStyle="H6"/>
+									<Button icon="sap-icon://clear-filter" type="Transparent" tooltip="{i18n>cat.clearAll}" press=".onClearTypeFilters"
+										enabled="{= ${view>/wiz/activeFilters} > 0 }"/>
+								</HBox>
+								<ScrollContainer vertical="true" height="31rem">
+									<Panel expandable="true" expanded="true" headerText="{i18n>conn.f.features}" class="repoioConnFacet">
+										<List items="{view>/wiz/facets/features}" mode="MultiSelect" includeItemNavigation="false" showSeparators="None"
+											selectionChange=".onTypeFacet" backgroundDesign="Transparent" app:facet="features" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+											<StandardListItem title="{view>text}" counter="{view>count}" selected="{view>selected}"/>
+										</List>
+									</Panel>
+									<Panel expandable="true" expanded="true" headerText="{i18n>conn.f.categories}" class="repoioConnFacet">
+										<List items="{view>/wiz/facets/categories}" mode="MultiSelect" includeItemNavigation="false" showSeparators="None"
+											selectionChange=".onTypeFacet" backgroundDesign="Transparent" app:facet="categories" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+											<StandardListItem title="{view>text}" counter="{view>count}" selected="{view>selected}"/>
+										</List>
+									</Panel>
+									<Panel expandable="true" expanded="true" headerText="{i18n>conn.f.sources}" class="repoioConnFacet">
+										<List items="{view>/wiz/facets/sources}" mode="MultiSelect" includeItemNavigation="false" showSeparators="None"
+											selectionChange=".onTypeFacet" backgroundDesign="Transparent" app:facet="sources" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+											<StandardListItem title="{view>text}" counter="{view>count}" selected="{view>selected}"/>
+										</List>
+									</Panel>
+								</ScrollContainer>
+							</VBox>
+							<!-- Connection types -->
+							<VBox class="repoioConnTypes">
+								<layoutData><FlexItemData growFactor="1" minWidth="0"/></layoutData>
+								<OverflowToolbar style="Clear">
+									<Title text="{i18n>conn.types} ({view>/wiz/types/length})" level="H3" titleStyle="H6"/>
+									<ToolbarSpacer/>
+									<SearchField width="14rem" value="{view>/wiz/q}" liveChange=".onTypeSearch" placeholder="{i18n>common.search}"/>
+									<Button icon="{= ${view>/wiz/sortDesc} ? 'sap-icon://sort-descending' : 'sap-icon://sort-ascending' }" type="Transparent"
+										tooltip="{i18n>exp.sort}" press=".onTypeSort"/>
+								</OverflowToolbar>
+								<ScrollContainer vertical="true" height="29rem">
+									<f:GridList id="typeGrid" items="{view>/wiz/types}" mode="SingleSelectMaster" selectionChange=".onTypePick"
+										noDataText="{i18n>cat.noResults}" class="repoioTypeGrid">
+										<f:customLayout><cssgrid:GridBoxLayout boxMinWidth="10.5rem"/></f:customLayout>
+										<f:GridListItem selected="{= ${view>key} === ${view>/wiz/type} }">
+											<VBox class="repoioTypeTile" height="9.5rem" justifyContent="SpaceBetween">
+												<Title text="{view>name}" level="H4" titleStyle="H6" wrapping="true"/>
+												<HBox justifyContent="Center" alignItems="Center" height="4.5rem">
+													<Image src="{view>logo}" height="{view>logoH}" densityAware="false" decorative="true"/>
+												</HBox>
+											</VBox>
+										</f:GridListItem>
+									</f:GridList>
+								</ScrollContainer>
+							</VBox>
+						</FlexBox>
+					</WizardStep>
+					<WizardStep id="stepProps" title="{i18n>conn.step2}" validated="{view>/wiz/propsValid}">
+						<ScrollContainer vertical="true" height="33rem">
+							<VBox id="propsBox" class="repoioConnProps"/>
+						</ScrollContainer>
+					</WizardStep>
+					<WizardStep id="stepName" title="{i18n>conn.step3}" validated="{view>/wiz/nameValid}">
+						<ScrollContainer vertical="true" height="33rem">
+							<VBox class="repoioConnProps" width="40rem">
+								<HBox alignItems="Center" class="sapUiSmallMarginBottom">
+									<Image src="{view>/wiz/typeObj/logo}" height="1.75rem" densityAware="false" decorative="true" class="sapUiSmallMarginEnd"/>
+									<Title text="{view>/wiz/typeObj/name}" level="H3" titleStyle="H5"/>
+								</HBox>
+								<Label text="{i18n>dsp.businessName}" required="true" labelFor="fBizName"/>
+								<Input id="fBizName" value="{view>/wiz/bizName}" valueLiveUpdate="true" liveChange=".onNameChange" maxLength="80"
+									valueState="{= ${view>/wiz/bizNameErr} ? 'Error' : 'None' }" valueStateText="{i18n>conn.err.required}"/>
+								<Label text="{i18n>dsp.technicalName}" required="true" labelFor="fTechName" class="sapUiSmallMarginTop"/>
+								<Input id="fTechName" value="{view>/wiz/techName}" valueLiveUpdate="true" liveChange=".onTechChange" maxLength="40" editable="{= !${view>/wiz/edit} }"
+									valueState="{view>/wiz/techState}" valueStateText="{view>/wiz/techStateText}"/>
+								<Label text="{i18n>conn.techHint}" wrapping="true" class="repoioMuted sapUiTinyMarginTop"/>
+								<Label text="{i18n>domain.owner}" labelFor="fOwner" class="sapUiSmallMarginTop"/>
+								<Select id="fOwner" selectedKey="{view>/wiz/owner}" items="{view>/wiz/people}" width="100%">
+									<core:Item key="{view>key}" text="{view>text}"/>
+								</Select>
+								<Label text="{i18n>common.description}" labelFor="fDesc" class="sapUiSmallMarginTop"/>
+								<TextArea id="fDesc" value="{view>/wiz/desc}" rows="4" width="100%" maxLength="400" showExceededText="true"/>
+								<MessageStrip text="{i18n>conn.governanceNote}" type="Information" showIcon="true" class="sapUiSmallMarginTop"/>
+							</VBox>
+						</ScrollContainer>
+					</WizardStep>
+				</steps>
+			</Wizard>
+		</content>
+		<buttons>
+			<Button text="{i18n>conn.previous}" visible="{= ${view>/wiz/step} > 1 &amp;&amp; !(${view>/wiz/edit} &amp;&amp; ${view>/wiz/step} === 2) }" press=".onPrev"/>
+			<Button text="{i18n>conn.next}" type="Emphasized" visible="{= ${view>/wiz/step} &lt; 3 }"
+				enabled="{= ${view>/wiz/step} === 1 ? !!${view>/wiz/type} : ${view>/wiz/propsValid} }" press=".onNext"/>
+			<Button text="{= ${view>/wiz/edit} ? ${i18n>common.save} : ${i18n>conn.create} }" type="Emphasized" visible="{= ${view>/wiz/step} === 3 }"
+				enabled="{view>/wiz/nameValid}" press=".onFinish"/>
+			<Button text="{i18n>common.cancel}" press=".onCancel"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

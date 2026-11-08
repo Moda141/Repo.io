@@ -12,5 +12,5 @@ sap.ui.define([], function () {
 		"منى حسن": { initials: "MH", en: "Mona Hassan", role_ar: "مالكة بيانات الموظفين", role_en: "Employee data owner", team_ar: "الموارد البشرية", team_en: "HR", email: "mona.hassan@example.com", phone: "+20 2 0000 0108" },
 		"ياسر جمال": { initials: "YG", en: "Yasser Gamal", role_ar: "مالك بيانات المتاجر", role_en: "Store data owner", team_ar: "التجزئة", team_en: "Retail", email: "yasser.gamal@example.com", phone: "+20 2 0000 0109" }
 	};
-	return { get: function (name) { return P[name]; } };
+	return { get: function (name) { return P[name]; }, names: function () { return Object.keys(P); } };
 });

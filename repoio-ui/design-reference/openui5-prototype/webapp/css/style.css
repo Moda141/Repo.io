@@ -137,3 +137,23 @@
 /* Shell header (navigation bar): black. */
 .sapUiBody .sapTntToolPage .sapTntToolHeader, .sapUiBody .sapTntToolPageHeader, .sapUiBody .sapTntToolPageHeaderWrapper { background: #0d0d0d !important; border-bottom-color: #000 !important; }
 .sapTntToolHeader .sapMSF:not(.sapMFocus) .sapMSFF { background-color: #1f1f1f; border-color: #5a5a5a; }
+
+/* Connections (Datasphere): logo in the table, create dialog with filters + type tiles. */
+.repoioConnLogo { margin-inline-end: 0.5rem; object-fit: contain; }
+.repoioConnDialog .sapMDialogSection { padding: 0; }
+.repoioConnWizard .sapMWizardStep { padding: 0; }
+.repoioConnStep1 { height: 100%; }
+.repoioConnFilters { background: #fff; border-inline-end: 1px solid #e5e5e5; flex: none; }
+.repoioConnFiltersHead { padding: 0.25rem 0.75rem; border-bottom: 1px solid #e5e5e5; }
+.repoioConnFacet.sapMPanel { margin: 0.5rem; border-radius: 0.5rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.05); }
+.repoioConnTypes { padding: 0 1rem; background: #f7f7f7; }
+.repoioTypeGrid .sapFGLI { border-radius: 0.75rem; }
+.repoioTypeTile { padding: 0.75rem 0.875rem; }
+.repoioTypeGrid .sapFGLI.sapMLIBSelected { box-shadow: 0 0 0 2px #0a6ed1; }
+.repoioConnProps { padding: 1rem 1.5rem; }
+.repoioFieldHint.sapMText { font-size: 0.75rem; color: #6a6d70; }
+.repoioConnWizard .sapMWizardStepTitle { display: none; }
+.repoioConnProps .sapUiForm { max-width: 46rem; }
+.repoioConnFacet .sapMPanelHdr { font-size: 0.875rem; font-weight: bold; }
+.repoioConnFacet .sapMPanelContent { padding: 0 0.25rem 0.5rem; }
+.repoioTypeTile .sapMTitle { font-weight: bold; }
