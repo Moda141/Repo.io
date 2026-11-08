@@ -5,8 +5,11 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/m/Text",
 	"sap/m/ObjectAttribute",
-	"sap/m/ObjectStatus"
-], function (BaseController, MessageToast, ResponsivePopover, VBox, Text, ObjectAttribute, ObjectStatus) {
+	"sap/m/ObjectStatus",
+	"sap/m/Label",
+	"sap/m/HBox",
+	"repoio/proto/control/PersonLink"
+], function (BaseController, MessageToast, ResponsivePopover, VBox, Text, ObjectAttribute, ObjectStatus, Label, HBox, PersonLink) {
 	"use strict";
 
 	var FAV_KEY = "repoio-proto-catalog-favs",
@@ -37,9 +40,10 @@ sap.ui.define([
 				domains = D.getProperty("/domains"), favs = this.store(FAV_KEY) || {}, ar = this.lang() === "ar", n = this.fmt.num, all = [];
 			var domName = function (id) { return that.domainName(domains.filter(function (d) { return d.id === id; })[0]); };
 			var item = function (o) {
+				o.people = o.people || []; o.owner = o.people[0] || ""; o.moreOwners = o.people.length > 1 ? "+" + (o.people.length - 1) : "";
 				o.fav = !!favs[o.id]; o.typeText = that.text("cat.type." + o.type);
 				o.statusText = that.text(o.statusKey === "empty" ? "domains.noRepo" : "health." + o.statusKey);
-				o.search = [o.id, o.title, o.context, o.desc].join(" ").toLowerCase();
+				o.search = [o.id, o.title, o.context, o.desc].concat(o.people).join(" ").toLowerCase();
 				all.push(o);
 			};
 			domains.forEach(function (d) {
@@ -48,7 +52,7 @@ sap.ui.define([
 					desc: ar ? d.desc : d.descEn, domains: [d.id], updated: d.updated,
 					statusKey: !d.repoCount ? "empty" : attention ? "attention" : "healthy", state: !d.repoCount ? "None" : attention ? "Warning" : "Success",
 					facts: [["home.filter.domain", d.nameEn], ["domains.col.repos", d.repoCount], ["domains.col.golden", n(d.golden)],
-						["domains.col.quality", d.quality === null ? "—" : that.fmt.pct(d.quality)], ["domains.col.team", ar ? d.teamAr : d.team], ["domain.owner", d.owner]] });
+						["domains.col.quality", d.quality === null ? "—" : that.fmt.pct(d.quality)], ["domains.col.team", ar ? d.teamAr : d.team]], people: [d.owner] });
 			});
 			Object.keys(repos).forEach(function (k) {
 				var r = repos[k];
@@ -56,7 +60,7 @@ sap.ui.define([
 					desc: that.text("cat.repoDesc", [r.model, n(r.golden), r.sourceIds.length]), domains: [r.domainId], updated: r.deployed,
 					statusKey: r.healthKey === "archived" ? "archived" : r.healthKey, state: r.healthState,
 					facts: [["dsp.technicalName", r.code], ["repo.model", r.model], ["repo.golden", n(r.golden)], ["domains.col.quality", that.fmt.pct(r.quality)],
-						["repo.owners", r.owners.map(function (o) { return o.name; }).join("، ")], ["cat.tags", r.tags.join(" · ")]] });
+						["cat.tags", r.tags.join(" · ")]], people: r.owners.map(function (o) { return o.name; }) });
 			});
 			Object.keys(sources).forEach(function (k) {
 				var s = sources[k], used = Object.keys(repos).filter(function (r) { return repos[r].sourceIds.indexOf(k) > -1; }),
@@ -65,14 +69,14 @@ sap.ui.define([
 					desc: that.text("cat.sourceDesc", [used.length, s.tables.length, s.sync]), domains: doms, updated: s.sync,
 					statusKey: HEALTH[s.state] === "draft" ? "healthy" : HEALTH[s.state], state: s.state === "None" ? "Success" : s.state,
 					facts: [["repo.connector", s.type], ["src.host", s.host], ["src.auth", s.auth], ["src.schedule", s.schedule], ["repo.lastSync", s.sync],
-						["src.reposUsing", used.map(function (r) { return repos[r].name; }).join("، ")]] });
+						["src.reposUsing", used.map(function (r) { return repos[r].name; }).join("، ")]], people: [s.owner] });
 				s.tables.forEach(function (t) {
 					var tdoms = t.usedIn.map(function (u) { return repos[u.id] && repos[u.id].domainId; }).filter(function (v, i, a) { return v && a.indexOf(v) === i; });
 					item({ id: "table:" + k + "." + t.schema + "." + t.id, type: "table", icon: "sap-icon://table-view", title: t.name, context: s.name,
 						desc: that.text("cat.tableDesc", [n(t.rows), t.cols, that.fmt.pct(t.quality)]), domains: tdoms, updated: t.profiled,
 						statusKey: t.usedIn.length ? HEALTH[t.qualityState] : "draft", state: t.usedIn.length ? t.qualityState : "None",
 						facts: [["src.schemaName", t.schema], ["repo.rows", n(t.rows)], ["src.columns", t.cols], ["domains.col.quality", that.fmt.pct(t.quality)],
-							["src.profiled", t.profiled], ["src.usedIn", t.usedIn.length ? t.usedIn.map(function (u) { return u.name; }).join("، ") : that.text("src.notUsed")]] });
+							["src.profiled", t.profiled], ["src.usedIn", t.usedIn.length ? t.usedIn.map(function (u) { return u.name; }).join("، ") : that.text("src.notUsed")]], people: [s.owner] });
 				});
 			});
 			this._all = all;
@@ -150,6 +154,10 @@ sap.ui.define([
 			oBox.addItem(new ObjectStatus({ text: o.typeText + " · " + o.statusText, state: o.state }).addStyleClass("sapUiTinyMarginBottom"));
 			oBox.addItem(new Text({ text: o.desc }).addStyleClass("sapUiSmallMarginBottom"));
 			o.facts.forEach(function (f) { oBox.addItem(new ObjectAttribute({ title: that.text(f[0]), text: String(f[1]) })); });
+			if (o.people.length) {
+				oBox.addItem(new Label({ text: that.text(o.people.length > 1 ? "repo.owners" : "domain.owner") }).addStyleClass("sapUiSmallMarginTop sapUiTinyMarginBottom"));
+				o.people.forEach(function (n) { oBox.addItem(new HBox({ items: [new PersonLink({ name: n })] }).addStyleClass("sapUiTinyMarginBottom")); });
+			}
 			var oPop = new ResponsivePopover({ title: o.title, contentWidth: "22rem", placement: "Auto", content: [oBox],
 				afterClose: function () { oPop.destroy(); } });
 			this.getView().addDependent(oPop);
