@@ -22,6 +22,7 @@
 						<Button text="{i18n>common.edit}" type="Transparent" enabled="{= ${view>/conn/selected} === 1 }" press=".onEditSelected"/>
 						<Button text="{i18n>common.delete}" type="Transparent" enabled="{= ${view>/conn/selected} > 0 }" press=".onDelete"/>
 						<ToolbarSeparator/>
+						<Button text="{i18n>imp.upload}" icon="sap-icon://upload" type="Transparent" enabled="{view>/conn/canUpload}" press=".onUpload"/>
 						<Button text="{i18n>dsp.validate}" type="Transparent" enabled="{= ${view>/conn/selected} === 1 }" press=".onValidate"/>
 						<Button text="{i18n>dsp.pause}" type="Transparent" enabled="{view>/conn/canPause}" press=".onPause"/>
 						<Button text="{i18n>conn.resume}" type="Transparent" enabled="{view>/conn/canResume}" press=".onResume"/>

@@ -155,8 +155,22 @@ sap.ui.define([
 			V.setProperty("/conn/selected", s.length);
 			V.setProperty("/conn/canPause", s.length > 0 && s.some(function (c) { return c.state === "active" && c.type !== "file"; }));
 			V.setProperty("/conn/canResume", s.length > 0 && s.some(function (c) { return c.state === "paused"; }));
+			V.setProperty("/conn/canUpload", s.length === 1 && s[0].type === "file" && s[0].state === "active");
 		},
 		_entry: function (id) { return this._all.filter(function (c) { return c.id === id; })[0]; },
+
+		/* CSV / Excel connection: upload a file with a Datasphere-style data preview and column mapping. */
+		onUpload: function () {
+			var that = this, c = this._entry(this._selected()[0].id);
+			sap.ui.require(["repoio/proto/util/ImportDialog"], function (ImportDialog) {
+				ImportDialog.open(that, c, function () {
+					var now = new Date(), pad = function (n) { return (n < 10 ? "0" : "") + n; };
+					c.lastSync = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate()) + " " + pad(now.getHours()) + ":" + pad(now.getMinutes());
+					c.syncState = "Success";
+					that._refresh();
+				});
+			});
+		},
 
 		onPause: function () { this._setState("active", "paused", "conn.paused"); },
 		onResume: function () { this._setState("paused", "active", "conn.resumed"); },

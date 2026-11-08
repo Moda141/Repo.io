@@ -24,7 +24,8 @@ Quartz Light theme. The kit's theme is unchanged; only the page layouts follow
 Datasphere.
 
 Scope is deliberately narrow for now: only Home, Domain management,
-Connections and the Ontology Explorer are designed. The domain detail, repository, data source, table, golden record
+Connections (with CSV / Excel import), the Ontology Explorer and New
+workflow are designed. The domain detail, repository, data source, table, golden record
 and Explore pages were removed at the owner's request; their code is in git
 history. Every other navigation item opens the planned-page placeholder.
 
@@ -32,8 +33,9 @@ history. Every other navigation item opens the planned-page placeholder.
 |-------|------|------------------------------|
 | `#/` | Home (J1) | Datasphere Home: hero banner with the whole Repo.io image beside and a short brief ("Learn more" opens a summary of what the tool does), announcement strip, welcome card with three getting-started steps, recent files, then the J1 cards (quick actions, golden records per domain, awaiting approval, open items, pipeline health, completeness, merge candidates, stewards, owner, run schedule) — drag to reorder, show or hide |
 | `#/domains` | Domain management | Catalog: dark search header (scope select + search), type tabs (all, domains, repositories, data sources, tables, favorites, recent), filter panel (domain, status), asset cards or list; quick view, copy link (`#/domains/{item}`), favorites |
-| `#/connections` | Connections (J9) | Datasphere Connections: registry table (logo, technical name, type, category, features, status, last sync, owner) with create / edit / delete / validate / pause / resume. "Create Connection" dialog in three steps like Datasphere: 1 choose type (filters by feature, category, source + type tiles for SAP HANA, SAP Cloud for Customer, Microsoft SQL Server, CSV / Excel), 2 configure properties (per-type form; secrets go to Key Vault, only a reference is kept), 3 business and technical name, owner, description |
+| `#/connections` | Connections (J9) | Datasphere Connections: registry table (logo, technical name, type, category, features, status, last sync, owner) with create / edit / delete / validate / pause / resume. "Create Connection" dialog in three steps like Datasphere: 1 choose type (filters by feature, category, source + type tiles for SAP HANA, SAP Cloud for Customer, Microsoft SQL Server, CSV / Excel), 2 configure properties (per-type form; secrets go to Key Vault, only a reference is kept), 3 business and technical name, owner, description. **Upload file** on a CSV / Excel connection opens the Datasphere "Import CSV File" dialog: file (.csv / .txt / .xlsx), first row as header, missing value as NULL or empty, delimiter (auto-detect) and encoding (UTF-8 / Windows-1256) or sheet, target entity (→ `raw.<entity>`), data preview with a source → target field mapping per column (auto-mapped, required fields and duplicates checked); import sends a batch to push ingest, never to golden records. Parsing runs in the browser (`util/tabular.js`, no third-party parser); the server re-validates every row |
 | `#/ontology` | Ontology Explorer (J11, J12) | Datasphere Graph Builder: left tabs (concept tree with relationships and data properties; relationship type catalog grouped by from → to pair), Cytoscape.js graph in the centre (show/hide relationship types, semantic properties and is-a; network, hierarchy or rings layout; zoom, fit, focus mode), details panel on the right (concept: business name, URI local name, description, parent concepts, owner, links to canonical entity / glossary / KPI / catalog asset, data properties, relationships; relationship: from → to, inverse, cardinality, attributes, governance note). Concepts / Records switch: from a concept or a relationship type, "View record links" drills down to the governed links between golden-record codes (e.g. C-10001 parent of C-10002) as a graph or a table, filtered by domain, type and code; a link shows its attributes, status (active / pending approval) and provenance (change request or match confirmation). Versions (draft / in review / published / retired): new concept and new relationship type go into the draft, which is submitted for review; validate (SHACL-style checks), preset SPARQL queries on the secured endpoint, Turtle export |
+| `#/workflows/new` | New workflow (J7) | Datasphere Task Chain layout around a bpmn-js canvas: building blocks on the left (approval step, Python script task, write-back task, condition, parallel, timer, end; templates), standard BPMN palette on the canvas, OpenUI5 properties on the right (workflow: name, technical name, status, domain tag, owner, steps, versions; approval: approver role, any / all, due date, escalation; Python: published script and version, retries, timeout, isolated worker; write-back: C4C / ERP connection, entity, field mapping from the allowlist, conflict → review, retries and backoff; condition paths and default path; timer). Validate (dangling nodes, missing approver, unreachable ends, missing conditions), save version, publish (immutable; new version from a published one), BPMN 2.0 XML export with `repoio:*` attributes. Python and write-back are BPMN service tasks: the engine never runs scripts or calls source systems |
 | `#/page/{key}` | Every other page in `docs/ui-pages.md` | Planned-page placeholder with the page scope and journey |
 
 ## Entry points
@@ -45,6 +47,8 @@ history. Every other navigation item opens the planned-page placeholder.
 | `webapp/controller/App.controller.js` | Shell: navigation tree from `model/navigation.json`, header search filter, language switch |
 | `webapp/control/EChart.js` | Apache ECharts wrapper control (README §7.2) |
 | `webapp/control/OntologyGraph.js` | Cytoscape.js wrapper control for the ontology graph (README §2.3, §7.2) |
+| `webapp/control/BpmnDesigner.js` | bpmn-js Modeler wrapper control: designer only, read-only when published (README §7.3) |
+| `webapp/util/ImportDialog.js`, `webapp/util/tabular.js` | CSV / XLSX import dialog and the in-browser CSV and XLSX readers |
 | `publish/repoio-console.html` | Page used for the published artifact |
 
 ## Build
@@ -96,6 +100,9 @@ None. No hosts, ports or credentials.
   file alongside).
 - Cytoscape.js 3.30.4, vendored in `webapp/thirdparty/` (MIT, licence file
   alongside). Used only inside `control/OntologyGraph.js`.
+- bpmn-js 17.11.1, vendored in `webapp/thirdparty/bpmn-js/` (bpmn.io licence:
+  MIT-style; the bpmn.io watermark in the canvas must stay visible). Used only
+  inside `control/BpmnDesigner.js`.
 
 ## Colors
 

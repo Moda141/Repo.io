@@ -19,6 +19,7 @@ sap.ui.define([
 		navKey: function (sKey) {
 			if (sKey === "home" || sKey === "domains" || sKey === "connections") { this.router().navTo(sKey); }
 			else if (sKey === "ontologyExplorer") { this.router().navTo("ontology"); }
+			else if (sKey === "newWorkflow") { this.router().navTo("workflow"); }
 			else { this.router().navTo("page", { key: sKey }); }
 		},
 		onNavKey: function (oEvent) {

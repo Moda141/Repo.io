@@ -115,6 +115,11 @@
 					"target": "ontology"
 				},
 				{
+					"name": "workflow",
+					"pattern": "workflows/new",
+					"target": "workflow"
+				},
+				{
 					"name": "page",
 					"pattern": "page/{key}",
 					"target": "placeholder"
@@ -134,6 +139,11 @@
 				"placeholder": {
 					"id": "placeholder",
 					"name": "Placeholder",
+					"level": 2
+				},
+				"workflow": {
+					"id": "workflow",
+					"name": "WorkflowDesigner",
 					"level": 2
 				},
 				"ontology": {
