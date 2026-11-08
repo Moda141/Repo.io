@@ -110,6 +110,11 @@
 					"target": "connections"
 				},
 				{
+					"name": "ontology",
+					"pattern": "ontology",
+					"target": "ontology"
+				},
+				{
 					"name": "page",
 					"pattern": "page/{key}",
 					"target": "placeholder"
@@ -129,6 +134,11 @@
 				"placeholder": {
 					"id": "placeholder",
 					"name": "Placeholder",
+					"level": 2
+				},
+				"ontology": {
+					"id": "ontology",
+					"name": "Ontology",
 					"level": 2
 				},
 				"connections": {

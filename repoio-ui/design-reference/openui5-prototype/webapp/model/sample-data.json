@@ -1845,5 +1845,959 @@
    "desc": "Steward uploads: school lists, new customers, book lists.",
    "descAr": "ملفات أمناء البيانات: قوائم المدارس والعملاء الجدد والكتب."
   }
- ]
+ ],
+ "ontology": {
+  "nameEn": "Repo.io business ontology",
+  "nameAr": "أنطولوجيا أعمال Repo.io",
+  "prefix": "rio",
+  "ns": "urn:repoio:ontology:mdm#",
+  "versions": [
+   {
+    "key": "1.5",
+    "state": "draft",
+    "date": "2026-11-08",
+    "by": "محمد"
+   },
+   {
+    "key": "1.4",
+    "state": "published",
+    "date": "2026-10-21",
+    "by": "سارة عادل"
+   },
+   {
+    "key": "1.3",
+    "state": "retired",
+    "date": "2026-09-02",
+    "by": "سارة عادل"
+   }
+  ],
+  "concepts": [
+   {
+    "id": "MasterEntity",
+    "nameEn": "Master entity",
+    "nameAr": "كيان رئيسي",
+    "cat": "abstract",
+    "parent": [],
+    "descEn": "Abstract root of every mastered business entity; each master entity has one golden record per real-world thing.",
+    "descAr": "الأصل المجرد لكل كيان أعمال تتم إدارته؛ لكل شيء حقيقي سجل ذهبي واحد.",
+    "props": [
+     {
+      "name": "master_id",
+      "type": "xsd:string",
+      "req": true
+     },
+     {
+      "name": "business_name",
+      "type": "xsd:string",
+      "req": true
+     }
+    ],
+    "links": {
+     "glossary": [
+      "Master data"
+     ]
+    },
+    "owner": "محمد"
+   },
+   {
+    "id": "Customer",
+    "nameEn": "Customer",
+    "nameAr": "عميل",
+    "cat": "master",
+    "parent": [
+     "MasterEntity"
+    ],
+    "descEn": "A party that buys from Nahdet Misr: schools, bookstores and distributors.",
+    "descAr": "جهة تشتري من نهضة مصر: مدارس ومكتبات وموزعون.",
+    "props": [
+     {
+      "name": "customer_id",
+      "type": "xsd:string",
+      "req": true
+     },
+     {
+      "name": "tax_number",
+      "type": "xsd:string",
+      "req": false
+     },
+     {
+      "name": "customer_group",
+      "type": "rio:CodeList",
+      "req": false
+     },
+     {
+      "name": "country",
+      "type": "xsd:string",
+      "req": true
+     }
+    ],
+    "links": {
+     "entity": "customer",
+     "glossary": [
+      "Customer",
+      "Bill-to party"
+     ],
+     "kpi": [
+      "Active customers",
+      "Duplicate rate"
+     ],
+     "assets": [
+      "golden.customer"
+     ]
+    },
+    "owner": "سارة عادل"
+   },
+   {
+    "id": "School",
+    "nameEn": "School",
+    "nameAr": "مدرسة",
+    "cat": "master",
+    "parent": [
+     "Customer"
+    ],
+    "descEn": "A school or school group buying curricula and supplementary books.",
+    "descAr": "مدرسة أو مجموعة مدارس تشتري المناهج والكتب الخارجية.",
+    "props": [
+     {
+      "name": "education_stage",
+      "type": "rio:CodeList",
+      "req": false
+     },
+     {
+      "name": "student_count",
+      "type": "xsd:integer",
+      "req": false
+     }
+    ],
+    "links": {
+     "entity": "customer",
+     "glossary": [
+      "School account"
+     ]
+    },
+    "owner": "سارة عادل"
+   },
+   {
+    "id": "Bookstore",
+    "nameEn": "Bookstore",
+    "nameAr": "مكتبة",
+    "cat": "master",
+    "parent": [
+     "Customer"
+    ],
+    "descEn": "A retail bookstore or bookstore chain.",
+    "descAr": "مكتبة بيع بالتجزئة أو سلسلة مكتبات.",
+    "props": [
+     {
+      "name": "branch_count",
+      "type": "xsd:integer",
+      "req": false
+     }
+    ],
+    "links": {
+     "entity": "customer"
+    },
+    "owner": "سارة عادل"
+   },
+   {
+    "id": "Distributor",
+    "nameEn": "Distributor",
+    "nameAr": "موزع",
+    "cat": "master",
+    "parent": [
+     "Customer"
+    ],
+    "descEn": "A wholesale distributor reselling to bookstores.",
+    "descAr": "موزع جملة يعيد البيع للمكتبات.",
+    "props": [
+     {
+      "name": "territory",
+      "type": "rio:CodeList",
+      "req": false
+     }
+    ],
+    "links": {
+     "entity": "customer"
+    },
+    "owner": "سارة عادل"
+   },
+   {
+    "id": "Vendor",
+    "nameEn": "Vendor",
+    "nameAr": "مورد",
+    "cat": "master",
+    "parent": [
+     "MasterEntity"
+    ],
+    "descEn": "A supplier of goods or services: printers, paper and logistics.",
+    "descAr": "مورد سلع أو خدمات: مطابع وورق ونقل.",
+    "props": [
+     {
+      "name": "vendor_id",
+      "type": "xsd:string",
+      "req": true
+     },
+     {
+      "name": "tax_number",
+      "type": "xsd:string",
+      "req": false
+     },
+     {
+      "name": "payment_terms",
+      "type": "rio:CodeList",
+      "req": false
+     }
+    ],
+    "links": {
+     "entity": "vendor",
+     "glossary": [
+      "Vendor"
+     ],
+     "assets": [
+      "golden.vendor"
+     ]
+    },
+    "owner": "هالة سمير"
+   },
+   {
+    "id": "Product",
+    "nameEn": "Product",
+    "nameAr": "منتج",
+    "cat": "master",
+    "parent": [
+     "MasterEntity"
+    ],
+    "descEn": "A sellable item; in Phase 1 mostly books.",
+    "descAr": "صنف قابل للبيع؛ في المرحلة الأولى غالبًا كتب.",
+    "props": [
+     {
+      "name": "product_id",
+      "type": "xsd:string",
+      "req": true
+     },
+     {
+      "name": "isbn",
+      "type": "xsd:string",
+      "req": false
+     },
+     {
+      "name": "price",
+      "type": "xsd:decimal",
+      "req": false
+     },
+     {
+      "name": "language",
+      "type": "rio:CodeList",
+      "req": false
+     }
+    ],
+    "links": {
+     "entity": "product",
+     "glossary": [
+      "Product",
+      "ISBN"
+     ],
+     "kpi": [
+      "Catalog completeness"
+     ],
+     "assets": [
+      "golden.product"
+     ]
+    },
+    "owner": "كريم فوزي"
+   },
+   {
+    "id": "Book",
+    "nameEn": "Book",
+    "nameAr": "كتاب",
+    "cat": "master",
+    "parent": [
+     "Product"
+    ],
+    "descEn": "A published title in a specific edition and format.",
+    "descAr": "عنوان منشور بطبعة وشكل محددين.",
+    "props": [
+     {
+      "name": "isbn",
+      "type": "xsd:string",
+      "req": true
+     },
+     {
+      "name": "page_count",
+      "type": "xsd:integer",
+      "req": false
+     },
+     {
+      "name": "grade",
+      "type": "rio:CodeList",
+      "req": false
+     }
+    ],
+    "links": {
+     "entity": "product"
+    },
+    "owner": "كريم فوزي"
+   },
+   {
+    "id": "Series",
+    "nameEn": "Series",
+    "nameAr": "سلسلة",
+    "cat": "master",
+    "parent": [
+     "Product"
+    ],
+    "descEn": "An ordered set of books sold as a series.",
+    "descAr": "مجموعة كتب مرتبة تباع كسلسلة.",
+    "props": [
+     {
+      "name": "series_code",
+      "type": "xsd:string",
+      "req": true
+     }
+    ],
+    "links": {
+     "entity": "product"
+    },
+    "owner": "كريم فوزي"
+   },
+   {
+    "id": "Author",
+    "nameEn": "Author",
+    "nameAr": "مؤلف",
+    "cat": "master",
+    "parent": [
+     "MasterEntity"
+    ],
+    "descEn": "A person credited as author, editor or illustrator.",
+    "descAr": "شخص منسوب إليه التأليف أو التحرير أو الرسم.",
+    "props": [
+     {
+      "name": "author_id",
+      "type": "xsd:string",
+      "req": true
+     },
+     {
+      "name": "pen_name",
+      "type": "xsd:string",
+      "req": false
+     }
+    ],
+    "links": {
+     "entity": "author",
+     "assets": [
+      "golden.author"
+     ]
+    },
+    "owner": "كريم فوزي"
+   },
+   {
+    "id": "Employee",
+    "nameEn": "Employee",
+    "nameAr": "موظف",
+    "cat": "master",
+    "parent": [
+     "MasterEntity"
+    ],
+    "descEn": "A person employed by the group.",
+    "descAr": "شخص يعمل لدى المجموعة.",
+    "props": [
+     {
+      "name": "employee_id",
+      "type": "xsd:string",
+      "req": true
+     },
+     {
+      "name": "department",
+      "type": "rio:CodeList",
+      "req": false
+     }
+    ],
+    "links": {
+     "entity": "employee",
+     "assets": [
+      "golden.employee"
+     ]
+    },
+    "owner": "منى حسن"
+   },
+   {
+    "id": "Store",
+    "nameEn": "Store / outlet",
+    "nameAr": "متجر / منفذ",
+    "cat": "master",
+    "parent": [
+     "MasterEntity"
+    ],
+    "descEn": "A physical or online point of sale run by the group.",
+    "descAr": "نقطة بيع فعلية أو إلكترونية تديرها المجموعة.",
+    "props": [
+     {
+      "name": "store_code",
+      "type": "xsd:string",
+      "req": true
+     },
+     {
+      "name": "city",
+      "type": "xsd:string",
+      "req": false
+     }
+    ],
+    "links": {
+     "entity": "store",
+     "assets": [
+      "golden.store"
+     ]
+    },
+    "owner": "ياسر جمال"
+   },
+   {
+    "id": "BusinessUnit",
+    "nameEn": "Business unit",
+    "nameAr": "وحدة أعمال",
+    "cat": "business",
+    "parent": [],
+    "descEn": "An organisational unit that owns customers, stores and staff.",
+    "descAr": "وحدة تنظيمية تملك العملاء والمتاجر والموظفين.",
+    "props": [
+     {
+      "name": "unit_code",
+      "type": "xsd:string",
+      "req": true
+     }
+    ],
+    "links": {
+     "glossary": [
+      "Business unit"
+     ]
+    },
+    "owner": "محمد"
+   },
+   {
+    "id": "GoldenRecord",
+    "nameEn": "Golden record",
+    "nameAr": "سجل ذهبي",
+    "cat": "governance",
+    "parent": [],
+    "descEn": "The single trusted version of a master entity, built by matching and survivorship.",
+    "descAr": "النسخة الموثوقة الوحيدة من الكيان الرئيسي، تُبنى بالمطابقة وقواعد البقاء.",
+    "props": [
+     {
+      "name": "master_id",
+      "type": "xsd:string",
+      "req": true
+     },
+     {
+      "name": "version",
+      "type": "xsd:integer",
+      "req": true
+     },
+     {
+      "name": "valid_from",
+      "type": "xsd:dateTime",
+      "req": true
+     }
+    ],
+    "links": {
+     "glossary": [
+      "Golden record"
+     ],
+     "kpi": [
+      "Duplicate rate"
+     ],
+     "assets": [
+      "golden.*"
+     ]
+    },
+    "owner": "محمد"
+   },
+   {
+    "id": "SourceRecord",
+    "nameEn": "Source record",
+    "nameAr": "سجل مصدر",
+    "cat": "governance",
+    "parent": [],
+    "descEn": "A record as received from a source system before matching.",
+    "descAr": "سجل كما ورد من نظام المصدر قبل المطابقة.",
+    "props": [
+     {
+      "name": "source_key",
+      "type": "xsd:string",
+      "req": true
+     },
+     {
+      "name": "received_at",
+      "type": "xsd:dateTime",
+      "req": true
+     }
+    ],
+    "links": {
+     "assets": [
+      "raw.*",
+      "staged.*"
+     ]
+    },
+    "owner": "محمد"
+   },
+   {
+    "id": "SourceSystem",
+    "nameEn": "Source system",
+    "nameAr": "نظام مصدر",
+    "cat": "asset",
+    "parent": [],
+    "descEn": "An external system registered as a connection, such as SAP C4C or SQL Server.",
+    "descAr": "نظام خارجي مسجل كاتصال مثل SAP C4C أو SQL Server.",
+    "props": [
+     {
+      "name": "connection_id",
+      "type": "xsd:string",
+      "req": true
+     }
+    ],
+    "links": {
+     "glossary": [
+      "System of record"
+     ]
+    },
+    "owner": "أحمد ناصر"
+   },
+   {
+    "id": "Domain",
+    "nameEn": "Domain",
+    "nameAr": "مجال",
+    "cat": "governance",
+    "parent": [],
+    "descEn": "A governed master data domain: Customer, Vendor, Product, Author, Employee or Store.",
+    "descAr": "مجال بيانات رئيسية محكوم: عميل أو مورد أو منتج أو مؤلف أو موظف أو متجر.",
+    "props": [
+     {
+      "name": "domain_key",
+      "type": "xsd:string",
+      "req": true
+     }
+    ],
+    "links": {
+     "glossary": [
+      "Data domain"
+     ]
+    },
+    "owner": "محمد"
+   },
+   {
+    "id": "Repository",
+    "nameEn": "Repository",
+    "nameAr": "مستودع",
+    "cat": "governance",
+    "parent": [],
+    "descEn": "A repository inside a domain with one assigned model version.",
+    "descAr": "مستودع داخل مجال له نسخة نموذج واحدة.",
+    "props": [
+     {
+      "name": "model_version",
+      "type": "xsd:string",
+      "req": true
+     }
+    ],
+    "links": {},
+    "owner": "محمد"
+   },
+   {
+    "id": "DataAsset",
+    "nameEn": "Data asset",
+    "nameAr": "أصل بيانات",
+    "cat": "asset",
+    "parent": [],
+    "descEn": "A catalogued table or view; the catalog says where it lives.",
+    "descAr": "جدول أو عرض مسجل في الكتالوج؛ الكتالوج يحدد مكانه.",
+    "props": [
+     {
+      "name": "asset_fqn",
+      "type": "xsd:string",
+      "req": true
+     }
+    ],
+    "links": {
+     "assets": [
+      "repoio-catalog"
+     ]
+    },
+    "owner": "أحمد ناصر"
+   },
+   {
+    "id": "DataProduct",
+    "nameEn": "Data product",
+    "nameAr": "منتج بيانات",
+    "cat": "asset",
+    "parent": [],
+    "descEn": "A published, owned set of golden data served to BI and agents.",
+    "descAr": "مجموعة بيانات ذهبية منشورة ولها مالك تخدم التقارير والوكلاء.",
+    "props": [
+     {
+      "name": "sla",
+      "type": "xsd:string",
+      "req": false
+     }
+    ],
+    "links": {},
+    "owner": "محمد"
+   },
+   {
+    "id": "KPI",
+    "nameEn": "KPI",
+    "nameAr": "مؤشر أداء",
+    "cat": "business",
+    "parent": [],
+    "descEn": "A governed metric with an approved formula.",
+    "descAr": "مقياس محكوم بمعادلة معتمدة.",
+    "props": [
+     {
+      "name": "formula",
+      "type": "xsd:string",
+      "req": true
+     },
+     {
+      "name": "unit",
+      "type": "xsd:string",
+      "req": false
+     }
+    ],
+    "links": {
+     "kpi": [
+      "Active customers",
+      "Duplicate rate",
+      "Catalog completeness"
+     ]
+    },
+    "owner": "نور الدين"
+   },
+   {
+    "id": "GlossaryTerm",
+    "nameEn": "Glossary term",
+    "nameAr": "مصطلح أعمال",
+    "cat": "business",
+    "parent": [],
+    "descEn": "An approved business definition; linked to the catalog glossary, never copied.",
+    "descAr": "تعريف أعمال معتمد؛ يرتبط بقاموس الكتالوج ولا يُنسخ.",
+    "props": [
+     {
+      "name": "term",
+      "type": "xsd:string",
+      "req": true
+     },
+     {
+      "name": "status",
+      "type": "rio:CodeList",
+      "req": false
+     }
+    ],
+    "links": {
+     "glossary": [
+      "Business glossary"
+     ]
+    },
+    "owner": "محمد"
+   }
+  ],
+  "relations": [
+   {
+    "id": "parent_of",
+    "to": "Customer",
+    "labelEn": "parent of",
+    "labelAr": "أصل لـ",
+    "kind": "type",
+    "inverse": "subsidiary_of",
+    "card": "1:N",
+    "attrs": [
+     "effective_from",
+     "effective_to"
+    ],
+    "status": "active",
+    "from": "Customer"
+   },
+   {
+    "id": "member_of",
+    "to": "Customer",
+    "labelEn": "member of",
+    "labelAr": "عضو في",
+    "kind": "type",
+    "inverse": "has_member",
+    "card": "N:M",
+    "attrs": [
+     "role",
+     "effective_from"
+    ],
+    "status": "active",
+    "from": "Customer"
+   },
+   {
+    "id": "customer_same_as",
+    "to": "Customer",
+    "labelEn": "same as",
+    "labelAr": "هو نفسه",
+    "kind": "system",
+    "inverse": "same_as",
+    "card": "N:M",
+    "attrs": [
+     "match_score",
+     "confirmed_by"
+    ],
+    "status": "active",
+    "from": "Customer"
+   },
+   {
+    "id": "part_of_series",
+    "to": "Product",
+    "labelEn": "part of series",
+    "labelAr": "جزء من سلسلة",
+    "kind": "type",
+    "inverse": "has_part",
+    "card": "N:1",
+    "attrs": [
+     "sequence_no"
+    ],
+    "status": "active",
+    "from": "Product"
+   },
+   {
+    "id": "edition_of",
+    "to": "Product",
+    "labelEn": "edition of",
+    "labelAr": "طبعة من",
+    "kind": "type",
+    "inverse": "has_edition",
+    "card": "N:1",
+    "attrs": [
+     "edition_no",
+     "language"
+    ],
+    "status": "active",
+    "from": "Product"
+   },
+   {
+    "id": "bundle_component",
+    "to": "Product",
+    "labelEn": "bundle component",
+    "labelAr": "مكوّن في حزمة",
+    "kind": "type",
+    "inverse": "bundle_of",
+    "card": "N:M",
+    "attrs": [
+     "quantity"
+    ],
+    "status": "active",
+    "from": "Product"
+   },
+   {
+    "id": "alternative_to",
+    "to": "Product",
+    "labelEn": "alternative to",
+    "labelAr": "بديل لـ",
+    "kind": "type",
+    "inverse": "alternative_to",
+    "card": "N:M",
+    "attrs": [],
+    "status": "active",
+    "from": "Product"
+   },
+   {
+    "id": "product_same_as",
+    "to": "Product",
+    "labelEn": "same as",
+    "labelAr": "هو نفسه",
+    "kind": "system",
+    "inverse": "same_as",
+    "card": "N:M",
+    "attrs": [
+     "match_score",
+     "confirmed_by"
+    ],
+    "status": "active",
+    "from": "Product"
+   },
+   {
+    "id": "same_party",
+    "to": "Vendor",
+    "labelEn": "same party",
+    "labelAr": "نفس الجهة",
+    "kind": "type",
+    "inverse": "same_party",
+    "card": "1:1",
+    "attrs": [],
+    "status": "active",
+    "from": "Customer"
+   },
+   {
+    "id": "supplies",
+    "to": "Product",
+    "labelEn": "supplies",
+    "labelAr": "يورّد",
+    "kind": "type",
+    "inverse": "supplied_by",
+    "card": "N:M",
+    "attrs": [
+     "effective_from",
+     "is_primary"
+    ],
+    "status": "active",
+    "from": "Vendor"
+   },
+   {
+    "id": "represents",
+    "to": "MasterEntity",
+    "labelEn": "represents",
+    "labelAr": "يمثّل",
+    "kind": "semantic",
+    "inverse": "represented_by",
+    "card": "1:1",
+    "attrs": [],
+    "status": "active",
+    "from": "GoldenRecord"
+   },
+   {
+    "id": "merged_into",
+    "to": "GoldenRecord",
+    "labelEn": "merged into",
+    "labelAr": "مدمج في",
+    "kind": "semantic",
+    "inverse": "merged_from",
+    "card": "N:1",
+    "attrs": [],
+    "status": "active",
+    "from": "SourceRecord"
+   },
+   {
+    "id": "originates_from",
+    "to": "SourceSystem",
+    "labelEn": "originates from",
+    "labelAr": "وارد من",
+    "kind": "semantic",
+    "inverse": "feeds",
+    "card": "N:1",
+    "attrs": [],
+    "status": "active",
+    "from": "SourceRecord"
+   },
+   {
+    "id": "governed_in",
+    "to": "Domain",
+    "labelEn": "governed in",
+    "labelAr": "محكوم في",
+    "kind": "semantic",
+    "inverse": "governs",
+    "card": "N:1",
+    "attrs": [],
+    "status": "active",
+    "from": "MasterEntity"
+   },
+   {
+    "id": "has_repository",
+    "to": "Repository",
+    "labelEn": "has repository",
+    "labelAr": "له مستودع",
+    "kind": "semantic",
+    "inverse": "repository_of",
+    "card": "1:N",
+    "attrs": [],
+    "status": "active",
+    "from": "Domain"
+   },
+   {
+    "id": "stored_as",
+    "to": "DataAsset",
+    "labelEn": "stored as",
+    "labelAr": "مخزّن كـ",
+    "kind": "semantic",
+    "inverse": "stores",
+    "card": "1:N",
+    "attrs": [],
+    "status": "active",
+    "from": "Repository"
+   },
+   {
+    "id": "exposes",
+    "to": "GoldenRecord",
+    "labelEn": "exposes",
+    "labelAr": "يعرض",
+    "kind": "semantic",
+    "inverse": "exposed_by",
+    "card": "N:M",
+    "attrs": [],
+    "status": "active",
+    "from": "DataProduct"
+   },
+   {
+    "id": "measured_on",
+    "to": "DataProduct",
+    "labelEn": "measured on",
+    "labelAr": "يُقاس على",
+    "kind": "semantic",
+    "inverse": "measures",
+    "card": "N:M",
+    "attrs": [],
+    "status": "active",
+    "from": "KPI"
+   },
+   {
+    "id": "defines",
+    "to": "MasterEntity",
+    "labelEn": "defines",
+    "labelAr": "يعرّف",
+    "kind": "semantic",
+    "inverse": "defined_by",
+    "card": "N:M",
+    "attrs": [],
+    "status": "active",
+    "from": "GlossaryTerm"
+   },
+   {
+    "id": "served_by",
+    "to": "BusinessUnit",
+    "labelEn": "served by",
+    "labelAr": "تخدمه",
+    "kind": "semantic",
+    "inverse": "serves",
+    "card": "N:1",
+    "attrs": [],
+    "status": "active",
+    "from": "Customer"
+   },
+   {
+    "id": "works_in",
+    "to": "BusinessUnit",
+    "labelEn": "works in",
+    "labelAr": "يعمل في",
+    "kind": "semantic",
+    "inverse": "employs",
+    "card": "N:1",
+    "attrs": [],
+    "status": "active",
+    "from": "Employee"
+   },
+   {
+    "id": "operated_by",
+    "to": "BusinessUnit",
+    "labelEn": "operated by",
+    "labelAr": "تديره",
+    "kind": "semantic",
+    "inverse": "operates",
+    "card": "N:1",
+    "attrs": [],
+    "status": "active",
+    "from": "Store"
+   },
+   {
+    "id": "contributes_to",
+    "to": "Product",
+    "labelEn": "contributes to",
+    "labelAr": "يساهم في",
+    "kind": "semantic",
+    "inverse": "has_contributor",
+    "card": "N:M",
+    "attrs": [
+     "role"
+    ],
+    "status": "active",
+    "from": "Author"
+   }
+  ]
+ }
 }

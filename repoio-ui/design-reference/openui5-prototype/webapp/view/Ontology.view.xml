@@ -1,0 +1,182 @@
+<mvc:View controllerName="repoio.proto.controller.Ontology"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+	<!-- Ontology Explorer (J11, J12): SAP Datasphere "Graph Builder" layout —
+	     concept tree | graph canvas | details panel. Sample data only. -->
+	<Page id="page" showHeader="false" enableScrolling="false" class="repoioOntoPage">
+		<VBox class="repoioOnto" renderType="Bare" height="100%">
+			<!-- Ontology header: name, version and governed actions -->
+			<OverflowToolbar class="repoioOntoHeader" design="Transparent" height="3.25rem">
+				<core:Icon src="sap-icon://tree" class="repoioOntoHeaderIcon" decorative="true"/>
+				<Title text="{view>/onto/name}" level="H1" titleStyle="H4"/>
+				<Select id="versionSelect" selectedKey="{view>/onto/version}" change=".onVersion" width="11rem"
+					items="{view>/onto/versions}" ariaLabelledBy="versionLabel">
+					<core:Item key="{view>key}" text="v{view>key} &#183; {path: 'view>state', formatter: '.versionStateText'}"/>
+				</Select>
+				<ObjectStatus text="{path: 'view>/onto/state', formatter: '.versionStateText'}" state="{path: 'view>/onto/state', formatter: '.versionState'}" inverted="true"/>
+				<ObjectStatus visible="{= ${view>/onto/changes} > 0 }" text="{i18n>onto.changes} {view>/onto/changes}" icon="sap-icon://edit" state="Warning"/>
+				<core:InvisibleText id="versionLabel" text="{i18n>onto.version}"/>
+				<ToolbarSpacer/>
+				<Button text="{i18n>onto.sparql}" icon="sap-icon://search" type="Transparent" press=".onSparql"/>
+				<Button text="{i18n>onto.validate}" icon="sap-icon://validate" type="Transparent" press=".onValidate"/>
+				<Button text="{i18n>onto.export}" icon="sap-icon://download" type="Transparent" press=".onExport"/>
+				<Button text="{i18n>onto.submit}" type="Emphasized" enabled="{= ${view>/onto/editable} &amp;&amp; ${view>/onto/changes} > 0 }" press=".onSubmit"/>
+			</OverflowToolbar>
+			<MessageStrip visible="{= !${view>/onto/editable} }" type="Information" showIcon="true" class="repoioOntoStrip"
+				text="{= ${view>/onto/state} === 'review' ? ${i18n>onto.inReviewNote} : ${i18n>onto.readOnlyNote} }"/>
+
+			<HBox class="repoioOntoBody" renderType="Bare">
+				<!-- Left: concepts tree and the relationship type catalog -->
+				<VBox class="repoioOntoSide" renderType="Bare" visible="{= !${view>/onto/full} }">
+					<IconTabHeader id="sideTabs" selectedKey="{view>/onto/tab}" mode="Inline" backgroundDesign="Transparent" select=".onSideTab">
+						<items>
+							<IconTabFilter key="concepts" text="{i18n>onto.tab.concepts}"/>
+							<IconTabFilter key="types" text="{i18n>onto.tab.types}"/>
+						</items>
+					</IconTabHeader>
+					<SearchField value="{view>/onto/query}" liveChange=".onSearch" placeholder="{i18n>common.search}" class="repoioOntoSearch"/>
+					<ScrollContainer vertical="true" horizontal="false" class="repoioOntoSideScroll" visible="{= ${view>/onto/tab} === 'concepts' }">
+						<Tree id="conceptTree" items="{path: 'view>/onto/tree', parameters: {arrayNames: ['nodes']}}" mode="SingleSelectMaster"
+							selectionChange=".onTreeSelect" noDataText="{i18n>onto.noMatch}" class="repoioOntoTree">
+							<StandardTreeItem title="{view>title}" icon="{view>icon}" tooltip="{view>tip}" app:kind="{view>kind}" app:ref="{view>ref}"
+								highlight="{= ${view>draft} ? 'Warning' : 'None' }"/>
+						</Tree>
+					</ScrollContainer>
+					<ScrollContainer vertical="true" horizontal="false" class="repoioOntoSideScroll" visible="{= ${view>/onto/tab} === 'types' }">
+						<List id="typeList" items="{path: 'view>/onto/types', sorter: {path: 'pair', group: true}}" mode="SingleSelectMaster"
+							selectionChange=".onTypeSelect" noDataText="{i18n>onto.noMatch}" class="repoioOntoTypes">
+							<StandardListItem title="{view>label}" description="{view>tech} · {view>card}" icon="sap-icon://chain-link"
+								info="{= ${view>kind} === 'system' ? ${i18n>onto.kind.system} : '' }" infoState="Information"
+								highlight="{= ${view>draft} ? 'Warning' : 'None' }" app:ref="{view>id}"/>
+						</List>
+					</ScrollContainer>
+				</VBox>
+
+				<!-- Centre: the graph -->
+				<VBox class="repoioOntoCanvas" renderType="Bare">
+					<OverflowToolbar class="repoioOntoGraphBar" design="Transparent">
+						<Button text="{i18n>onto.newConcept}" icon="sap-icon://add" type="Transparent" enabled="{view>/onto/editable}" press=".onNewConcept"/>
+						<Button text="{i18n>onto.newType}" icon="sap-icon://chain-link" type="Transparent" enabled="{view>/onto/editable}" press=".onNewType"/>
+						<ToolbarSpacer/>
+						<ToggleButton icon="sap-icon://chain-link" text="{i18n>onto.show.type}" pressed="{view>/onto/show/type}" press=".onShow" type="Transparent" class="repoioOntoLegType"/>
+						<ToggleButton icon="sap-icon://share-2" text="{i18n>onto.show.semantic}" pressed="{view>/onto/show/semantic}" press=".onShow" type="Transparent"/>
+						<ToggleButton icon="sap-icon://org-chart" text="{i18n>onto.show.subclass}" pressed="{view>/onto/show/subclass}" press=".onShow" type="Transparent"/>
+						<ToolbarSeparator/>
+						<Select selectedKey="{view>/onto/layout}" change=".onLayout" width="8rem" tooltip="{i18n>onto.layout}">
+							<core:Item key="force" text="{i18n>onto.layout.force}"/>
+							<core:Item key="hierarchy" text="{i18n>onto.layout.hierarchy}"/>
+							<core:Item key="circle" text="{i18n>onto.layout.circle}"/>
+						</Select>
+						<ToggleButton icon="sap-icon://text" pressed="{view>/onto/edgeLabels}" tooltip="{i18n>onto.edgeLabels}" type="Transparent"/>
+						<Button icon="sap-icon://zoom-in" type="Transparent" tooltip="{i18n>onto.zoomIn}" press=".onZoomIn"><layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData></Button>
+						<Button icon="sap-icon://zoom-out" type="Transparent" tooltip="{i18n>onto.zoomOut}" press=".onZoomOut"><layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData></Button>
+						<Button icon="sap-icon://popup-window" type="Transparent" tooltip="{i18n>onto.fit}" press=".onFit"><layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData></Button>
+						<ToggleButton icon="{= ${view>/onto/full} ? 'sap-icon://exit-full-screen' : 'sap-icon://full-screen' }" pressed="{view>/onto/full}"
+							tooltip="{i18n>onto.focus}" type="Transparent"/>
+					</OverflowToolbar>
+					<rc:OntologyGraph id="graph" elements="{view>/onto/graph}" layout="{view>/onto/layout}" edgeLabels="{view>/onto/edgeLabels}"
+						select=".onGraphSelect" ariaLabel="{i18n>onto.graphAria}" class="repoioOntoGraph"/>
+					<HBox class="repoioOntoLegend" renderType="Bare" wrap="Wrap">
+						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioDot repoioDotMaster"/><Text text="{i18n>onto.cat.master}"/></HBox>
+						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioDot repoioDotAbstract"/><Text text="{i18n>onto.cat.abstract}"/></HBox>
+						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioDot repoioDotGov"/><Text text="{i18n>onto.cat.governance}"/></HBox>
+						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioDot repoioDotAsset"/><Text text="{i18n>onto.cat.asset}"/></HBox>
+						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioDot repoioDotBiz"/><Text text="{i18n>onto.cat.business}"/></HBox>
+						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioLine repoioLineType"/><Text text="{i18n>onto.kind.type}"/></HBox>
+						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioLine repoioLineSys"/><Text text="{i18n>onto.kind.system}"/></HBox>
+						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioLine repoioLineSub"/><Text text="{i18n>onto.kind.subclass}"/></HBox>
+						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioDot repoioDotDraft"/><Text text="{i18n>onto.draftItem}"/></HBox>
+					</HBox>
+				</VBox>
+
+				<!-- Right: details of the selected concept or relationship -->
+				<VBox class="repoioOntoDetail" renderType="Bare" visible="{= !!${view>/onto/sel/kind} }">
+					<HBox class="repoioOntoDetailHead" renderType="Bare" alignItems="Center">
+						<core:Icon src="{= ${view>/onto/sel/kind} === 'node' ? 'sap-icon://circle-task' : 'sap-icon://chain-link' }" color="#ffffff" decorative="true"/>
+						<Text text="{= ${view>/onto/sel/kind} === 'node' ? ${i18n>onto.concept} : ${i18n>onto.relationship} }" class="repoioOntoDetailKind"/>
+						<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>common.close}" press=".onCloseDetail" class="repoioOntoDetailClose"/>
+					</HBox>
+					<ScrollContainer vertical="true" horizontal="false" class="repoioOntoDetailScroll">
+						<VBox class="sapUiSmallMargin" renderType="Bare">
+							<Link text="{view>/onto/name} /" press=".onFit" class="repoioOntoCrumb"/>
+							<Title text="{view>/onto/sel/title}" level="H2" titleStyle="H3" wrapping="true" class="sapUiTinyMarginBottom"/>
+							<ObjectStatus text="{view>/onto/sel/kindText}" state="{view>/onto/sel/kindState}" class="sapUiSmallMarginBottom"/>
+
+							<!-- Concept -->
+							<VBox visible="{= ${view>/onto/sel/kind} === 'node' }" renderType="Bare">
+								<Label text="{i18n>dsp.businessName}" required="true" labelFor="selName"/>
+								<Input id="selName" value="{view>/onto/sel/name}" editable="{view>/onto/editable}" valueLiveUpdate="true" change=".onEditConcept"/>
+								<Label text="{i18n>onto.uri}" class="sapUiSmallMarginTop"/>
+								<HBox alignItems="Center" renderType="Bare" class="repoioOntoUri">
+									<Text text="{view>/onto/prefix}:{view>/onto/sel/id}" class="repoioMono"/>
+									<Button icon="sap-icon://copy" type="Transparent" tooltip="{i18n>onto.copyUri}" press=".onCopyUri"/>
+								</HBox>
+								<Label text="{i18n>onto.description}" labelFor="selDesc" class="sapUiSmallMarginTop"/>
+								<TextArea id="selDesc" value="{view>/onto/sel/desc}" rows="3" width="100%" growing="true" editable="{view>/onto/editable}" change=".onEditConcept"/>
+								<Label text="{i18n>onto.parents}" labelFor="selParents" class="sapUiSmallMarginTop"/>
+								<MultiComboBox id="selParents" selectedKeys="{view>/onto/sel/parents}" items="{view>/onto/conceptOptions}" width="100%"
+									editable="{view>/onto/editable}" selectionFinish=".onEditParents" placeholder="{i18n>onto.parentsPh}">
+									<core:Item key="{view>id}" text="{view>name}"/>
+								</MultiComboBox>
+								<Label text="{i18n>domain.owner}" class="sapUiSmallMarginTop"/>
+								<rc:PersonLink name="{view>/onto/sel/owner}"/>
+
+								<Title text="{i18n>onto.links}" level="H3" titleStyle="H6" class="sapUiMediumMarginTop sapUiTinyMarginBottom"/>
+								<Text text="{i18n>onto.linksHint}" class="repoioHint sapUiTinyMarginBottom"/>
+								<List items="{view>/onto/sel/links}" showSeparators="Inner" noDataText="{i18n>onto.noLinks}" class="repoioOntoLinks">
+									<CustomListItem>
+										<HBox alignItems="Center" renderType="Bare" class="repoioOntoLinkRow">
+											<core:Icon src="{view>icon}" class="repoioOntoLinkIcon" tooltip="{view>typeText}"/>
+											<VBox renderType="Bare">
+												<Link text="{view>text}" press=".onLink" app:type="{view>type}" app:ref="{view>ref}"/>
+												<Text text="{view>typeText}" class="repoioHint"/>
+											</VBox>
+										</HBox>
+									</CustomListItem>
+								</List>
+
+								<Title text="{i18n>onto.props} ({view>/onto/sel/propsCount})" level="H3" titleStyle="H6" class="sapUiMediumMarginTop sapUiTinyMarginBottom"/>
+								<List items="{view>/onto/sel/props}" showSeparators="Inner" noDataText="{i18n>onto.noProps}">
+									<StandardListItem title="{view>name}" description="{view>type}" icon="sap-icon://text"
+										info="{= ${view>req} ? ${i18n>onto.required} : '' }" infoState="Information"/>
+								</List>
+
+								<Title text="{i18n>onto.relations} ({view>/onto/sel/relsCount})" level="H3" titleStyle="H6" class="sapUiMediumMarginTop sapUiTinyMarginBottom"/>
+								<List items="{view>/onto/sel/rels}" showSeparators="Inner" noDataText="{i18n>onto.noRels}" itemPress=".onRelPress">
+									<StandardListItem type="Active" title="{view>label}" description="{view>other}" icon="{view>icon}" app:ref="{view>id}"
+										info="{view>kindText}" highlight="{= ${view>draft} ? 'Warning' : 'None' }"/>
+								</List>
+							</VBox>
+
+							<!-- Relationship -->
+							<VBox visible="{= ${view>/onto/sel/kind} === 'edge' }" renderType="Bare">
+								<Label text="{i18n>dsp.businessName}"/>
+								<Text text="{view>/onto/sel/name}"/>
+								<Label text="{i18n>onto.uri}" class="sapUiSmallMarginTop"/>
+								<HBox alignItems="Center" renderType="Bare" class="repoioOntoUri">
+									<Text text="{view>/onto/prefix}:{view>/onto/sel/tech}" class="repoioMono"/>
+									<Button icon="sap-icon://copy" type="Transparent" tooltip="{i18n>onto.copyUri}" press=".onCopyUri"/>
+								</HBox>
+								<Label text="{i18n>onto.fromTo}" class="sapUiSmallMarginTop"/>
+								<HBox alignItems="Center" renderType="Bare" wrap="Wrap" class="repoioOntoPair">
+									<Link text="{view>/onto/sel/fromName}" press=".onSelectConcept" app:ref="{view>/onto/sel/from}"/>
+									<core:Icon src="sap-icon://arrow-right" class="sapUiTinyMarginBeginEnd" decorative="true"/>
+									<Link text="{view>/onto/sel/toName}" press=".onSelectConcept" app:ref="{view>/onto/sel/to}"/>
+								</HBox>
+								<VBox visible="{= ${view>/onto/sel/rkind} !== 'subclass' }" renderType="Bare">
+									<Label text="{i18n>onto.inverse}" class="sapUiSmallMarginTop"/>
+									<Text text="{view>/onto/sel/inverseText}" class="repoioMono"/>
+									<Label text="{i18n>onto.card}" class="sapUiSmallMarginTop"/>
+									<Text text="{view>/onto/sel/card}"/>
+									<Label text="{i18n>onto.attrs}" class="sapUiSmallMarginTop"/>
+									<Text text="{view>/onto/sel/attrsText}" class="repoioMono"/>
+								</VBox>
+								<MessageStrip text="{view>/onto/sel/note}" visible="{= !!${view>/onto/sel/note} }" showIcon="true" type="Information" class="sapUiSmallMarginTop"/>
+							</VBox>
+						</VBox>
+					</ScrollContainer>
+				</VBox>
+			</HBox>
+		</VBox>
+	</Page>
+</mvc:View>
