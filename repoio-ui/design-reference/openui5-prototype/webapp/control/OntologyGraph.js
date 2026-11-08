@@ -15,7 +15,7 @@ sap.ui.define([
 
 	var cytoscapeLib = window.cytoscape;
 	var FONT = "Arial, Helvetica, sans-serif";
-	var MIN_READABLE = 0.85;
+	var MIN_READABLE = 0.7, MAX_FIT = 1.15;
 
 	/* Quiet Quartz Light tints: light fills, one blue for selection, governed links in muted blue. */
 	var STYLE = [
@@ -29,6 +29,13 @@ sap.ui.define([
 		{ selector: "node[cat = 'governance']", style: { "background-color": "#dfe6ee", "border-color": "#a9b6c4" } },
 		{ selector: "node[cat = 'asset']", style: { "background-color": "#e3efe8", "border-color": "#a8c8b4" } },
 		{ selector: "node[cat = 'business']", style: { "background-color": "#f3ece0", "border-color": "#d2bf9c" } },
+		/* Golden records (instance level): rounded squares with code and name. */
+		{ selector: "node[cat ^= 'rec-']", style: { "shape": "round-rectangle", "width": 28, "height": 22, "text-max-width": 130, "font-size": 10 } },
+		{ selector: "node[cat = 'rec-customer']", style: { "background-color": "#d6e9f8", "border-color": "#7fa7d4" } },
+		{ selector: "node[cat = 'rec-vendor']", style: { "background-color": "#f3ece0", "border-color": "#c9b48d" } },
+		{ selector: "node[cat = 'rec-product']", style: { "background-color": "#e3efe8", "border-color": "#93bba2" } },
+		{ selector: "node[?hit]", style: { "border-width": 2.5, "border-color": "#0a6ed1" } },
+		{ selector: "edge[?draft][kind != 'subclass']", style: { "line-style": "dashed" } },
 		{ selector: "node[?draft]", style: { "border-style": "dashed", "border-color": "#e9730c", "border-width": 1.5 } },
 		{ selector: "node:selected", style: { "border-width": 3, "border-color": "#0a6ed1", "font-weight": "bold" } },
 		{ selector: "edge", style: {
@@ -47,7 +54,7 @@ sap.ui.define([
 
 	var LAYOUTS = {
 		force: { name: "cose", animate: false, randomize: false, nodeRepulsion: function () { return 160000; }, idealEdgeLength: function () { return 90; },
-			edgeElasticity: function () { return 100; }, nodeOverlap: 30, gravity: 20, nestingFactor: 1.2, numIter: 2500, padding: 30, componentSpacing: 120 },
+			edgeElasticity: function () { return 100; }, nodeOverlap: 30, gravity: 20, nestingFactor: 1.2, numIter: 2500, padding: 30, componentSpacing: 50 },
 		hierarchy: { name: "breadthfirst", directed: true, spacingFactor: 1.05, padding: 30, animate: false },
 		circle: { name: "concentric", padding: 30, animate: false, minNodeSpacing: 34,
 			concentric: function (n) { return n.degree(); }, levelWidth: function () { return 3; } }
@@ -118,10 +125,26 @@ sap.ui.define([
 			cy.zoom({ level: cy.zoom() * f, renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } });
 		},
 		/* Fit the whole graph, but never below a zoom where labels stay legible; centre instead. */
-		fit: function () {
-			var cy = this._cy; if (!cy) { return; }
-			cy.fit(undefined, 30);
-			if (cy.zoom() < MIN_READABLE) { cy.zoom(MIN_READABLE); cy.center(); }
+		/* Lay the current elements out again (used when the record filter changes the node set). */
+		relayout: function (bRun) {
+			var cy = this._cy; if (!cy || !bRun) { return; }
+			cy.layout(LAYOUTS[this.getLayout()] || LAYOUTS.force).run();
+			this.fit(0.5); // record views show every group at once
+			var that = this;
+			cy.nodes().forEach(function (n) { that._positions[n.id()] = Object.assign({}, n.position()); });
+		},
+		fit: function (fMin) {
+			var that = this;
+			this._fitMin = typeof fMin === "number" ? fMin : MIN_READABLE;
+			// Deferred: the container often changes size in the same tick (crumb bar, side panels).
+			clearTimeout(this._fitTimer);
+			this._fitTimer = setTimeout(function () {
+				var cy = that._cy; if (!cy) { return; }
+				cy.resize();
+				cy.fit(undefined, 30);
+				if (cy.zoom() < that._fitMin) { cy.zoom(that._fitMin); cy.center(); }
+				if (cy.zoom() > MAX_FIT) { cy.zoom(MAX_FIT); cy.center(); }
+			}, 30);
 		},
 
 		onBeforeRendering: function () { this._dispose(); },
@@ -168,7 +191,7 @@ sap.ui.define([
 					n.position({ x: p.x + 70, y: p.y + 50 });
 				});
 			}
-			if (bFit) { this.fit(); }
+			if (bFit) { this.fit(this._fitMin); }
 			if (this._pendingSelect !== undefined) { this.selectElement(this._pendingSelect, false); this._pendingSelect = undefined; }
 		},
 
@@ -195,6 +218,6 @@ sap.ui.define([
 			}
 		},
 
-		exit: function () { this._dispose(); this._positions = null; }
+		exit: function () { clearTimeout(this._fitTimer); this._dispose(); this._positions = null; }
 	});
 });

@@ -228,3 +228,15 @@
 .repoioOntoGraphBar .sapMBtnInner.sapMToggleBtnPressed .sapMBtnIcon,
 .repoioOntoGraphBar .sapMBtnInner.sapMToggleBtnPressed .sapMBtnContent { color: #0a6ed1 !important; }
 .repoioOntoTree .sapMLIB.sapMTreeItemBase { min-height: 2.25rem; height: 2.25rem; }
+/* Ontology: records mode */
+.repoioOntoCrumbBar { flex: none; display: flex; gap: 0.5rem; padding: 0.375rem 1rem; background: #f5f8fb; border-bottom: 1px solid #e5ecf3; }
+.repoioOntoCrumbText.sapMText { font-weight: bold; color: #32363a; }
+.repoioOntoCrumbCount { margin-inline-start: auto; }
+.repoioOntoTableScroll { flex: 1 1 auto; min-height: 0; height: auto !important; }
+.repoioSq { display: inline-block; width: 0.875rem; height: 0.625rem; border-radius: 0.1875rem; border: 1px solid; }
+.repoioSqCus { background: #d6e9f8; border-color: #7fa7d4; }
+.repoioSqVen { background: #f3ece0; border-color: #c9b48d; }
+.repoioSqPro { background: #e3efe8; border-color: #93bba2; }
+.repoioLinePending { border-top: 2px dashed #e9730c; }
+.repoioOntoAttrList .sapMDLI { padding-inline: 0; height: 2rem; }
+.repoioOntoAttrList .sapMDLILabel { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 0.8125rem; }

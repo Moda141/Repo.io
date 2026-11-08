@@ -2311,96 +2311,6 @@
     "owner": "محمد"
    },
    {
-    "id": "SourceRecord",
-    "nameEn": "Source record",
-    "nameAr": "سجل مصدر",
-    "cat": "governance",
-    "parent": [],
-    "descEn": "A record as received from a source system before matching.",
-    "descAr": "سجل كما ورد من نظام المصدر قبل المطابقة.",
-    "props": [
-     {
-      "name": "source_key",
-      "type": "xsd:string",
-      "req": true
-     },
-     {
-      "name": "received_at",
-      "type": "xsd:dateTime",
-      "req": true
-     }
-    ],
-    "links": {
-     "assets": [
-      "raw.*",
-      "staged.*"
-     ]
-    },
-    "owner": "محمد"
-   },
-   {
-    "id": "SourceSystem",
-    "nameEn": "Source system",
-    "nameAr": "نظام مصدر",
-    "cat": "asset",
-    "parent": [],
-    "descEn": "An external system registered as a connection, such as SAP C4C or SQL Server.",
-    "descAr": "نظام خارجي مسجل كاتصال مثل SAP C4C أو SQL Server.",
-    "props": [
-     {
-      "name": "connection_id",
-      "type": "xsd:string",
-      "req": true
-     }
-    ],
-    "links": {
-     "glossary": [
-      "System of record"
-     ]
-    },
-    "owner": "أحمد ناصر"
-   },
-   {
-    "id": "Domain",
-    "nameEn": "Domain",
-    "nameAr": "مجال",
-    "cat": "governance",
-    "parent": [],
-    "descEn": "A governed master data domain: Customer, Vendor, Product, Author, Employee or Store.",
-    "descAr": "مجال بيانات رئيسية محكوم: عميل أو مورد أو منتج أو مؤلف أو موظف أو متجر.",
-    "props": [
-     {
-      "name": "domain_key",
-      "type": "xsd:string",
-      "req": true
-     }
-    ],
-    "links": {
-     "glossary": [
-      "Data domain"
-     ]
-    },
-    "owner": "محمد"
-   },
-   {
-    "id": "Repository",
-    "nameEn": "Repository",
-    "nameAr": "مستودع",
-    "cat": "governance",
-    "parent": [],
-    "descEn": "A repository inside a domain with one assigned model version.",
-    "descAr": "مستودع داخل مجال له نسخة نموذج واحدة.",
-    "props": [
-     {
-      "name": "model_version",
-      "type": "xsd:string",
-      "req": true
-     }
-    ],
-    "links": {},
-    "owner": "محمد"
-   },
-   {
     "id": "DataAsset",
     "nameEn": "Data asset",
     "nameAr": "أصل بيانات",
@@ -2639,164 +2549,461 @@
     ],
     "status": "active",
     "from": "Vendor"
+   }
+  ],
+  "records": [
+   {
+    "code": "C-10001",
+    "nameAr": "مجموعة مدارس الأمل",
+    "nameEn": "Al Amal Schools Group",
+    "concept": "School",
+    "sources": [
+     "SAP C4C"
+    ]
    },
    {
-    "id": "represents",
-    "to": "MasterEntity",
-    "labelEn": "represents",
-    "labelAr": "يمثّل",
-    "kind": "semantic",
-    "inverse": "represented_by",
-    "card": "1:1",
-    "attrs": [],
-    "status": "active",
-    "from": "GoldenRecord"
+    "code": "C-10002",
+    "nameAr": "مدرسة الأمل - المعادي",
+    "nameEn": "Al Amal School – Maadi",
+    "concept": "School",
+    "sources": [
+     "SAP C4C",
+     "SQL Server"
+    ]
    },
    {
-    "id": "merged_into",
-    "to": "GoldenRecord",
-    "labelEn": "merged into",
-    "labelAr": "مدمج في",
-    "kind": "semantic",
-    "inverse": "merged_from",
-    "card": "N:1",
-    "attrs": [],
-    "status": "active",
-    "from": "SourceRecord"
+    "code": "C-10003",
+    "nameAr": "مدرسة الأمل - التجمع",
+    "nameEn": "Al Amal School – New Cairo",
+    "concept": "School",
+    "sources": [
+     "SAP C4C"
+    ]
    },
    {
-    "id": "originates_from",
-    "to": "SourceSystem",
-    "labelEn": "originates from",
-    "labelAr": "وارد من",
-    "kind": "semantic",
-    "inverse": "feeds",
-    "card": "N:1",
-    "attrs": [],
-    "status": "active",
-    "from": "SourceRecord"
+    "code": "C-10004",
+    "nameAr": "مدرسة الأمل - الشيخ زايد",
+    "nameEn": "Al Amal School – Sheikh Zayed",
+    "concept": "School",
+    "sources": [
+     "SAP C4C"
+    ]
    },
    {
-    "id": "governed_in",
-    "to": "Domain",
-    "labelEn": "governed in",
-    "labelAr": "محكوم في",
-    "kind": "semantic",
-    "inverse": "governs",
-    "card": "N:1",
-    "attrs": [],
-    "status": "active",
-    "from": "MasterEntity"
+    "code": "C-10005",
+    "nameAr": "مدرسة الأمل المعادي",
+    "nameEn": "Al Amal Maadi School",
+    "concept": "School",
+    "sources": [
+     "SQL Server"
+    ]
    },
    {
-    "id": "has_repository",
-    "to": "Repository",
-    "labelEn": "has repository",
-    "labelAr": "له مستودع",
-    "kind": "semantic",
-    "inverse": "repository_of",
-    "card": "1:N",
-    "attrs": [],
-    "status": "active",
-    "from": "Domain"
+    "code": "C-10010",
+    "nameAr": "مكتبات النور",
+    "nameEn": "Al Nour Bookstores",
+    "concept": "Bookstore",
+    "sources": [
+     "SAP C4C"
+    ]
    },
    {
-    "id": "stored_as",
-    "to": "DataAsset",
-    "labelEn": "stored as",
-    "labelAr": "مخزّن كـ",
-    "kind": "semantic",
-    "inverse": "stores",
-    "card": "1:N",
-    "attrs": [],
-    "status": "active",
-    "from": "Repository"
+    "code": "C-10011",
+    "nameAr": "مكتبة النور - الزمالك",
+    "nameEn": "Al Nour – Zamalek",
+    "concept": "Bookstore",
+    "sources": [
+     "SAP C4C"
+    ]
    },
    {
-    "id": "exposes",
-    "to": "GoldenRecord",
-    "labelEn": "exposes",
-    "labelAr": "يعرض",
-    "kind": "semantic",
-    "inverse": "exposed_by",
-    "card": "N:M",
-    "attrs": [],
-    "status": "active",
-    "from": "DataProduct"
+    "code": "C-10012",
+    "nameAr": "مكتبة النور - مصر الجديدة",
+    "nameEn": "Al Nour – Heliopolis",
+    "concept": "Bookstore",
+    "sources": [
+     "SAP C4C"
+    ]
    },
    {
-    "id": "measured_on",
-    "to": "DataProduct",
-    "labelEn": "measured on",
-    "labelAr": "يُقاس على",
-    "kind": "semantic",
-    "inverse": "measures",
-    "card": "N:M",
-    "attrs": [],
-    "status": "active",
-    "from": "KPI"
+    "code": "C-10020",
+    "nameAr": "اتحاد مكتبات الدلتا",
+    "nameEn": "Delta Booksellers Union",
+    "concept": "Customer",
+    "sources": [
+     "SAP C4C"
+    ]
    },
    {
-    "id": "defines",
-    "to": "MasterEntity",
-    "labelEn": "defines",
-    "labelAr": "يعرّف",
-    "kind": "semantic",
-    "inverse": "defined_by",
-    "card": "N:M",
-    "attrs": [],
-    "status": "active",
-    "from": "GlossaryTerm"
+    "code": "C-10021",
+    "nameAr": "مكتبة المنصورة الحديثة",
+    "nameEn": "Modern Mansoura Bookstore",
+    "concept": "Bookstore",
+    "sources": [
+     "SAP C4C"
+    ]
    },
    {
-    "id": "served_by",
-    "to": "BusinessUnit",
-    "labelEn": "served by",
-    "labelAr": "تخدمه",
-    "kind": "semantic",
-    "inverse": "serves",
-    "card": "N:1",
-    "attrs": [],
-    "status": "active",
-    "from": "Customer"
+    "code": "C-10022",
+    "nameAr": "مكتبة طنطا الكبرى",
+    "nameEn": "Grand Tanta Bookstore",
+    "concept": "Bookstore",
+    "sources": [
+     "CSV / Excel"
+    ]
    },
    {
-    "id": "works_in",
-    "to": "BusinessUnit",
-    "labelEn": "works in",
-    "labelAr": "يعمل في",
-    "kind": "semantic",
-    "inverse": "employs",
-    "card": "N:1",
-    "attrs": [],
-    "status": "active",
-    "from": "Employee"
+    "code": "C-10030",
+    "nameAr": "الرواد للتوزيع",
+    "nameEn": "Al Rowad Distribution",
+    "concept": "Distributor",
+    "sources": [
+     "SAP C4C"
+    ]
    },
    {
-    "id": "operated_by",
-    "to": "BusinessUnit",
-    "labelEn": "operated by",
-    "labelAr": "تديره",
-    "kind": "semantic",
-    "inverse": "operates",
-    "card": "N:1",
-    "attrs": [],
-    "status": "active",
-    "from": "Store"
+    "code": "C-10031",
+    "nameAr": "شركة الرواد للتوزيع",
+    "nameEn": "Al Rowad Distribution Co.",
+    "concept": "Distributor",
+    "sources": [
+     "SAP HANA"
+    ]
    },
    {
-    "id": "contributes_to",
-    "to": "Product",
-    "labelEn": "contributes to",
-    "labelAr": "يساهم في",
-    "kind": "semantic",
-    "inverse": "has_contributor",
-    "card": "N:M",
-    "attrs": [
-     "role"
-    ],
+    "code": "V-20001",
+    "nameAr": "الرواد للتوزيع والنقل",
+    "nameEn": "Al Rowad Distribution & Logistics",
+    "concept": "Vendor",
+    "sources": [
+     "SAP HANA"
+    ]
+   },
+   {
+    "code": "V-20002",
+    "nameAr": "مطابع الوادي",
+    "nameEn": "Al Wadi Printing",
+    "concept": "Vendor",
+    "sources": [
+     "SAP HANA"
+    ]
+   },
+   {
+    "code": "P-30001",
+    "nameAr": "سلسلة رحلة الرياضيات",
+    "nameEn": "Math Journey series",
+    "concept": "Series",
+    "sources": [
+     "SAP HANA"
+    ]
+   },
+   {
+    "code": "P-30002",
+    "nameAr": "رحلة الرياضيات - الصف الأول",
+    "nameEn": "Math Journey – Grade 1",
+    "concept": "Book",
+    "sources": [
+     "SAP HANA"
+    ]
+   },
+   {
+    "code": "P-30003",
+    "nameAr": "رحلة الرياضيات - الصف الثاني",
+    "nameEn": "Math Journey – Grade 2",
+    "concept": "Book",
+    "sources": [
+     "SAP HANA"
+    ]
+   },
+   {
+    "code": "P-30004",
+    "nameAr": "رحلة الرياضيات - الصف الأول (طبعة 2026)",
+    "nameEn": "Math Journey – Grade 1 (2026 ed.)",
+    "concept": "Book",
+    "sources": [
+     "SAP HANA"
+    ]
+   },
+   {
+    "code": "P-30005",
+    "nameAr": "حقيبة الصف الأول",
+    "nameEn": "Grade 1 bundle",
+    "concept": "Product",
+    "sources": [
+     "SAP HANA"
+    ]
+   },
+   {
+    "code": "P-30006",
+    "nameAr": "Math Journey – Grade 1 (English)",
+    "nameEn": "Math Journey – Grade 1 (English)",
+    "concept": "Book",
+    "sources": [
+     "SAP HANA"
+    ]
+   },
+   {
+    "code": "P-30007",
+    "nameAr": "رحلة الرياضيات ص1",
+    "nameEn": "Math Journey G1",
+    "concept": "Book",
+    "sources": [
+     "CSV / Excel"
+    ]
+   }
+  ],
+  "links": [
+   {
+    "id": "L-0001",
+    "type": "parent_of",
+    "to": "C-10002",
+    "attrs": {
+     "effective_from": "2023-09-01"
+    },
     "status": "active",
-    "from": "Author"
+    "cr": "CR-2026-0112",
+    "by": "سارة عادل",
+    "on": "2026-02-03",
+    "from": "C-10001"
+   },
+   {
+    "id": "L-0002",
+    "type": "parent_of",
+    "to": "C-10003",
+    "attrs": {
+     "effective_from": "2023-09-01"
+    },
+    "status": "active",
+    "cr": "CR-2026-0112",
+    "by": "سارة عادل",
+    "on": "2026-02-03",
+    "from": "C-10001"
+   },
+   {
+    "id": "L-0003",
+    "type": "parent_of",
+    "to": "C-10004",
+    "attrs": {
+     "effective_from": "2025-09-01"
+    },
+    "status": "pending",
+    "cr": "CR-2026-0418",
+    "by": "سارة عادل",
+    "on": "2026-11-06",
+    "from": "C-10001"
+   },
+   {
+    "id": "L-0004",
+    "type": "parent_of",
+    "to": "C-10011",
+    "attrs": {
+     "effective_from": "2022-01-01"
+    },
+    "status": "active",
+    "cr": "CR-2026-0087",
+    "by": "سارة عادل",
+    "on": "2026-01-20",
+    "from": "C-10010"
+   },
+   {
+    "id": "L-0005",
+    "type": "parent_of",
+    "to": "C-10012",
+    "attrs": {
+     "effective_from": "2024-05-15"
+    },
+    "status": "active",
+    "cr": "CR-2026-0087",
+    "by": "سارة عادل",
+    "on": "2026-01-20",
+    "from": "C-10010"
+   },
+   {
+    "id": "L-0006",
+    "type": "member_of",
+    "to": "C-10020",
+    "attrs": {
+     "role": "member",
+     "effective_from": "2024-01-01"
+    },
+    "status": "active",
+    "cr": "CR-2026-0203",
+    "by": "سارة عادل",
+    "on": "2026-04-11",
+    "from": "C-10021"
+   },
+   {
+    "id": "L-0007",
+    "type": "member_of",
+    "to": "C-10020",
+    "attrs": {
+     "role": "member",
+     "effective_from": "2024-01-01"
+    },
+    "status": "active",
+    "cr": "CR-2026-0203",
+    "by": "سارة عادل",
+    "on": "2026-04-11",
+    "from": "C-10022"
+   },
+   {
+    "id": "L-0008",
+    "type": "member_of",
+    "to": "C-10020",
+    "attrs": {
+     "role": "associate",
+     "effective_from": "2026-07-01"
+    },
+    "status": "pending",
+    "cr": "CR-2026-0421",
+    "by": "سارة عادل",
+    "on": "2026-11-07",
+    "from": "C-10012"
+   },
+   {
+    "id": "L-0009",
+    "type": "customer_same_as",
+    "to": "C-10002",
+    "attrs": {
+     "match_score": "0.97",
+     "confirmed_by": "Sara Adel"
+    },
+    "status": "active",
+    "cr": "MATCH-88213",
+    "by": "سارة عادل",
+    "on": "2026-05-02",
+    "from": "C-10005"
+   },
+   {
+    "id": "L-0010",
+    "type": "customer_same_as",
+    "to": "C-10030",
+    "attrs": {
+     "match_score": "0.93",
+     "confirmed_by": "Sara Adel"
+    },
+    "status": "active",
+    "cr": "MATCH-90127",
+    "by": "سارة عادل",
+    "on": "2026-06-18",
+    "from": "C-10031"
+   },
+   {
+    "id": "L-0011",
+    "type": "same_party",
+    "to": "V-20001",
+    "attrs": {},
+    "status": "active",
+    "cr": "CR-2026-0301",
+    "by": "هالة سمير",
+    "on": "2026-06-25",
+    "from": "C-10030"
+   },
+   {
+    "id": "L-0012",
+    "type": "supplies",
+    "to": "P-30002",
+    "attrs": {
+     "effective_from": "2025-06-01",
+     "is_primary": "true"
+    },
+    "status": "active",
+    "cr": "CR-2026-0155",
+    "by": "هالة سمير",
+    "on": "2026-03-01",
+    "from": "V-20002"
+   },
+   {
+    "id": "L-0013",
+    "type": "supplies",
+    "to": "P-30003",
+    "attrs": {
+     "effective_from": "2025-06-01",
+     "is_primary": "true"
+    },
+    "status": "active",
+    "cr": "CR-2026-0155",
+    "by": "هالة سمير",
+    "on": "2026-03-01",
+    "from": "V-20002"
+   },
+   {
+    "id": "L-0014",
+    "type": "part_of_series",
+    "to": "P-30001",
+    "attrs": {
+     "sequence_no": "1"
+    },
+    "status": "active",
+    "cr": "CR-2026-0098",
+    "by": "كريم فوزي",
+    "on": "2026-01-28",
+    "from": "P-30002"
+   },
+   {
+    "id": "L-0015",
+    "type": "part_of_series",
+    "to": "P-30001",
+    "attrs": {
+     "sequence_no": "2"
+    },
+    "status": "active",
+    "cr": "CR-2026-0098",
+    "by": "كريم فوزي",
+    "on": "2026-01-28",
+    "from": "P-30003"
+   },
+   {
+    "id": "L-0016",
+    "type": "edition_of",
+    "to": "P-30002",
+    "attrs": {
+     "edition_no": "2026",
+     "language": "ar"
+    },
+    "status": "active",
+    "cr": "CR-2026-0377",
+    "by": "كريم فوزي",
+    "on": "2026-09-14",
+    "from": "P-30004"
+   },
+   {
+    "id": "L-0017",
+    "type": "bundle_component",
+    "to": "P-30005",
+    "attrs": {
+     "quantity": "1"
+    },
+    "status": "active",
+    "cr": "CR-2026-0390",
+    "by": "كريم فوزي",
+    "on": "2026-09-30",
+    "from": "P-30002"
+   },
+   {
+    "id": "L-0018",
+    "type": "alternative_to",
+    "to": "P-30002",
+    "attrs": {},
+    "status": "pending",
+    "cr": "CR-2026-0420",
+    "by": "كريم فوزي",
+    "on": "2026-11-07",
+    "from": "P-30006"
+   },
+   {
+    "id": "L-0019",
+    "type": "product_same_as",
+    "to": "P-30002",
+    "attrs": {
+     "match_score": "0.95",
+     "confirmed_by": "Karim Fawzy"
+    },
+    "status": "active",
+    "cr": "MATCH-91540",
+    "by": "كريم فوزي",
+    "on": "2026-08-09",
+    "from": "P-30007"
    }
   ]
  }

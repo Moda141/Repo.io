@@ -43,7 +43,8 @@ sap.ui.define([
 				that.viewModel().setProperty("/onto", {
 					name: that.lang() === "ar" ? that._o.nameAr : that._o.nameEn, prefix: that._o.prefix, ns: that._o.ns,
 					versions: that._o.versions, version: that._o.versions[0].key, state: that._o.versions[0].state, editable: true, changes: 0,
-					tab: "concepts", query: "", show: { type: true, semantic: true, subclass: true }, layout: "force", edgeLabels: true,
+					tab: "concepts", query: "", show: { type: true, subclass: true }, layout: "force", edgeLabels: true, mode: "schema",
+					rec: { domain: "", type: "", query: "", view: "graph", rows: [], domains: [], types: [] },
 					full: false, rtl: that.isRtl(), sel: {}, graph: { nodes: [], edges: [] }, tree: [], types: [], conceptOptions: []
 				});
 				that._refresh(true);
@@ -76,10 +77,12 @@ sap.ui.define([
 				byName = function (a, b) { return that._name(a).localeCompare(that._name(b), that.lang()); };
 			var match = function (c) { return !q || [c.id, c.nameEn, c.nameAr].join(" ").toLowerCase().indexOf(q) > -1; };
 
-			if (bGraph !== false) {
+			if (bGraph !== false && m.getProperty("/onto/mode") === "records") {
+				this._refreshRecords();
+			} else if (bGraph !== false) {
 				m.setProperty("/onto/graph", {
 					nodes: this._o.concepts.map(function (c) { return { id: c.id, label: that._name(c), cat: c.cat, draft: !!c.draft || !!that._changes["c:" + c.id] }; }),
-					edges: rels.filter(function (r) { return r.kind === "subclass" ? show.subclass : r.kind === "semantic" ? show.semantic : show.type; })
+					edges: rels.filter(function (r) { return r.kind === "subclass" ? show.subclass : show.type; })
 						.map(function (r) { return { id: r.id, source: r.from, target: r.to, label: that._label(r), kind: r.kind, draft: !!r.draft }; })
 				});
 			}
@@ -130,7 +133,8 @@ sap.ui.define([
 			this.viewModel().setProperty("/onto/sel", {
 				kind: "node", id: id, title: this._name(c), name: this._name(c), desc: ar ? c.descAr : c.descEn, parents: c.parent.slice(),
 				owner: c.owner, kindText: this.text("onto.cat." + c.cat) + (c.draft ? " · " + this.text("onto.draftItem") : ""),
-				kindState: c.draft ? "Warning" : "None", links: links, props: c.props, rels: rels, propsCount: c.props.length, relsCount: rels.length
+				kindState: c.draft ? "Warning" : "None", links: links, props: c.props, rels: rels, propsCount: c.props.length, relsCount: rels.length,
+				domain: this._domainOf(id), linkCount: this._domainOf(id) ? this._recLinks(this._domainOf(id), "").length : 0
 			});
 		},
 
@@ -144,20 +148,25 @@ sap.ui.define([
 				attrsText: r.attrs && r.attrs.length ? r.attrs.join(" · ") : "—",
 				kindText: this.text("onto.kind." + r.kind) + (r.draft ? " · " + this.text("onto.draftItem") : ""),
 				kindState: r.draft ? "Warning" : r.kind === "type" ? "Information" : "None",
-				note: r.kind === "subclass" ? "" : that.text("onto.note." + r.kind)
+				note: r.kind === "subclass" ? "" : that.text("onto.note." + r.kind),
+				linkCount: r.kind === "subclass" ? 0 : this._recLinks("", r.id).length
 			});
 		},
 
 		onGraphSelect: function (e) {
-			var k = e.getParameter("kind"), id = e.getParameter("id");
-			if (k === "node") { this._selectNode(id); } else if (k === "edge") { this._selectEdge(id); } else { this.viewModel().setProperty("/onto/sel", {}); }
+			var k = e.getParameter("kind"), id = e.getParameter("id"), rec = this.viewModel().getProperty("/onto/mode") === "records";
+			if (k === "node") { if (rec) { this._selectRecord(id); } else { this._selectNode(id); } }
+			else if (k === "edge") { if (rec) { this._selectLink(id); } else { this._selectEdge(id); } }
+			else { this.viewModel().setProperty("/onto/sel", {}); }
 		},
 		onTreeSelect: function (e) {
 			var it = e.getParameter("listItem"), k = it.data("kind");
+			this._setMode("schema");
 			this._select(k === "prop" ? "node" : k, it.data("ref"), true);
 		},
 		onTypeSelect: function (e) {
 			var id = e.getParameter("listItem").data("ref");
+			this._setMode("schema");
 			this._ensureVisible(this._rel(id).kind);
 			this._select("edge", id, true);
 		},
@@ -166,7 +175,7 @@ sap.ui.define([
 			this._ensureVisible(this._rel(id).kind);
 			this._select("edge", id, true);
 		},
-		onSelectConcept: function (e) { this._select("node", e.getSource().data("ref"), true); },
+		onSelectConcept: function (e) { this._setMode("schema"); this._select("node", e.getSource().data("ref"), true); },
 		onCloseDetail: function () {
 			this.viewModel().setProperty("/onto/sel", {});
 			this.byId("graph").selectElement("");
@@ -174,9 +183,132 @@ sap.ui.define([
 			this.byId("typeList").removeSelections(true);
 		},
 		_ensureVisible: function (sKind) {
-			var p = "/onto/show/" + (sKind === "system" ? "type" : sKind), m = this.viewModel();
+			var p = "/onto/show/" + (sKind === "subclass" ? "subclass" : "type"), m = this.viewModel();
 			if (!m.getProperty(p)) { m.setProperty(p, true); this._refresh(); }
 		},
+
+		/* ---------- records: governed links between golden records (instance level) ---------- */
+
+		/* The governed domain a concept belongs to: itself or its nearest domain ancestor (School → Customer). */
+		_domainOf: function (id) {
+			if (DOMAIN_CONCEPTS.indexOf(id) > -1) { return id; }
+			var c = this._concept(id);
+			if (!c) { return ""; }
+			for (var i = 0; i < c.parent.length; i++) { var d = this._domainOf(c.parent[i]); if (d) { return d; } }
+			return "";
+		},
+		_record: function (code) { return (this._o.records || []).filter(function (r) { return r.code === code; })[0]; },
+		_recName: function (r) { return r ? (this.lang() === "ar" ? r.nameAr : r.nameEn) : ""; },
+		_recLinks: function (sDomain, sType) {
+			var that = this;
+			return (this._o.links || []).filter(function (l) {
+				var a = that._domainOf(that._record(l.from).concept), b = that._domainOf(that._record(l.to).concept);
+				return (!sType || l.type === sType) && (!sDomain || a === sDomain || b === sDomain);
+			});
+		},
+
+		_setMode: function (sMode) {
+			var m = this.viewModel();
+			if (m.getProperty("/onto/mode") === sMode) { return; }
+			m.setProperty("/onto/mode", sMode);
+			m.setProperty("/onto/sel", {});
+			this._refresh();
+			if (sMode === "records") { this.byId("graph").relayout(true); } else { this.byId("graph").fit(); }
+		},
+		onMode: function (e) {
+			this._setMode(e.getParameter("item").getKey()); // selectedKey is bound one-way
+		},
+
+		/* Drill down from a concept (its domain) or from a relationship type to the actual record links. */
+		onViewLinks: function () {
+			var m = this.viewModel(), sel = m.getProperty("/onto/sel");
+			m.setProperty("/onto/rec/domain", sel.kind === "node" ? sel.domain : "");
+			m.setProperty("/onto/rec/type", sel.kind === "edge" ? sel.id : "");
+			m.setProperty("/onto/rec/query", "");
+			if (m.getProperty("/onto/mode") === "records") { this.onRecFilter(); } else { this._setMode("records"); }
+		},
+		onRecFilter: function () {
+			this.viewModel().setProperty("/onto/sel", {});
+			this._refresh();
+			this.byId("graph").relayout(true);
+		},
+
+		_refreshRecords: function () {
+			var m = this.viewModel(), that = this, f = m.getProperty("/onto/rec"), q = (f.query || "").trim().toLowerCase(), rtl = this.isRtl();
+			var match = function (r) { return !q || (r.code + " " + r.nameAr + " " + r.nameEn).toLowerCase().indexOf(q) > -1; };
+			var links = this._recLinks(f.domain, f.type).filter(function (l) { return match(that._record(l.from)) || match(that._record(l.to)); });
+			var codes = {};
+			links.forEach(function (l) { codes[l.from] = true; codes[l.to] = true; });
+			var rel = function (l) { return that._rel(l.type); };
+			m.setProperty("/onto/graph", {
+				nodes: Object.keys(codes).sort().map(function (c) {
+					var r = that._record(c), d = that._domainOf(r.concept);
+					return { id: c, label: c + "\n" + that._recName(r), cat: "rec-" + d.toLowerCase(), hit: !!q && match(r) };
+				}),
+				edges: links.map(function (l) { return { id: l.id, source: l.from, target: l.to, label: that._label(rel(l)), kind: rel(l).kind, draft: l.status === "pending" }; })
+			});
+			m.setProperty("/onto/rec/rows", links.map(function (l) {
+				var a = that._record(l.from), b = that._record(l.to);
+				return { id: l.id, from: l.from, fromName: that._recName(a), to: l.to, toName: that._recName(b), type: that._label(rel(l)), kind: rel(l).kind,
+					attrs: Object.keys(l.attrs).map(function (k) { return k + "=" + l.attrs[k]; }).join(" · ") || "—", status: l.status, cr: l.cr };
+			}));
+			m.setProperty("/onto/rec/count", links.length);
+			// Filter choices: domains with links, and the governed types (optionally narrowed to the domain).
+			m.setProperty("/onto/rec/domains", [{ key: "", text: this.text("onto.rec.allDomains") }].concat(["Customer", "Vendor", "Product"].map(function (d) {
+				return { key: d, text: that._name(that._concept(d)) };
+			})));
+			m.setProperty("/onto/rec/types", [{ key: "", text: this.text("onto.rec.allTypes") }].concat(this._o.relations.filter(function (r) {
+				return r.kind !== "semantic" && (!f.domain || r.from === f.domain || r.to === f.domain);
+			}).map(function (r) {
+				return { key: r.id, text: that._name(that._concept(r.from)) + (rtl ? " ← " : " → ") + that._name(that._concept(r.to)) + ": " + that._label(r) };
+			})));
+			var crumb = [this.text("onto.rec.records")];
+			if (f.domain) { crumb.push(this._name(this._concept(f.domain))); }
+			if (f.type) { crumb.push(this._label(this._rel(f.type))); }
+			m.setProperty("/onto/rec/crumb", crumb.join("  ›  "));
+		},
+
+		_selectRecord: function (code) {
+			var r = this._record(code), that = this;
+			var links = (this._o.links || []).filter(function (l) { return l.from === code || l.to === code; }).map(function (l) {
+				var out = l.from === code, other = that._record(out ? l.to : l.from);
+				return { id: l.id, label: that._label(that._rel(l.type)), other: other.code + " · " + that._recName(other), draft: l.status === "pending",
+					icon: out ? "sap-icon://arrow-right" : "sap-icon://arrow-left", kindText: that.text("onto.rec.status." + l.status) };
+			});
+			this.viewModel().setProperty("/onto/sel", {
+				kind: "record", id: code, title: this._recName(r), code: code, concept: r.concept, conceptName: this._name(this._concept(r.concept)),
+				kindText: this.text("onto.rec.golden"), kindState: "Success", sources: r.sources.join(" · "), rels: links, relsCount: links.length
+			});
+		},
+
+		_selectLink: function (id) {
+			var l = (this._o.links || []).filter(function (x) { return x.id === id; })[0], r = this._rel(l.type), a = this._record(l.from), b = this._record(l.to);
+			this.viewModel().setProperty("/onto/sel", {
+				kind: "link", id: id, title: this._label(r), typeId: r.id, rkind: r.kind, typeText: this._o.prefix + ":" + r.tech,
+				from: l.from, to: l.to, fromName: l.from + " · " + this._recName(a), toName: l.to + " · " + this._recName(b),
+				attrs: Object.keys(l.attrs).map(function (k) { return { k: k, v: l.attrs[k] }; }),
+				status: l.status, statusText: this.text("onto.rec.status." + l.status), statusState: l.status === "pending" ? "Warning" : "Success",
+				kindText: this.text("onto.kind." + r.kind), kindState: r.kind === "type" ? "Information" : "None",
+				cr: l.cr, by: l.by, on: l.on, isMatch: r.kind === "system",
+				note: this.text(r.kind === "system" ? "onto.rec.noteSystem" : l.status === "pending" ? "onto.rec.notePending" : "onto.rec.noteType")
+			});
+		},
+
+		onRecRowPress: function (e) {
+			var id = e.getParameter("listItem").getBindingContext("view").getProperty("id");
+			this._selectLink(id);
+		},
+		onSelectRecord: function (e) { var code = e.getSource().data("ref"); this._selectRecord(code); this.byId("graph").selectElement(code, true); },
+		onRecRelPress: function (e) {
+			var id = e.getParameter("listItem").data("ref");
+			this._selectLink(id); this.byId("graph").selectElement(id, true);
+		},
+		onGoType: function () {
+			var id = this.viewModel().getProperty("/onto/sel/typeId");
+			this._setMode("schema"); this._select("edge", id, true);
+		},
+		onOpenBuilder: function () { this.navKey("relationshipBuilder"); },
+		onOpenRequest: function () { MessageToast.show(this.text("onto.linkPlanned", [this.viewModel().getProperty("/onto/sel/cr")])); },
 
 		/* ---------- canvas toolbar ---------- */
 
@@ -189,7 +321,7 @@ sap.ui.define([
 		onLayout: function () { var sel = this.viewModel().getProperty("/onto/sel"); if (sel.id) { this.byId("graph").selectElement(sel.id); } },
 		onZoomIn: function () { this.byId("graph").zoomBy(1.25); },
 		onZoomOut: function () { this.byId("graph").zoomBy(0.8); },
-		onFit: function () { this.byId("graph").fit(); },
+		onFit: function () { this.byId("graph").fit(this.viewModel().getProperty("/onto/mode") === "records" ? 0.5 : undefined); },
 		onSideTab: function () { this.viewModel().setProperty("/onto/query", ""); this._refresh(false); },
 		onSearch: function () { this._refresh(false); },
 
