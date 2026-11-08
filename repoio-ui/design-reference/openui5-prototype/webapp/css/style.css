@@ -73,3 +73,14 @@
 .rlgFocus .rlgNode.rlgOn { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .rlgNode, .rlgEdge { transition: none; } }
 .repoioPerson { display: inline-flex; align-items: center; vertical-align: middle; }
+.repoioBigSearch .sapMSFF { height: 2.5rem; }
+.repoioBigSearch .sapMSFI { font-size: 1rem; }
+.repoioExplore { width: 100%; }
+.repoioFacets { background: var(--sapGroup_ContentBackground); border: 1px solid var(--sapGroup_TitleBorderColor); border-radius: 0.5rem; padding: 0.75rem; }
+.repoioFacet { padding-block: 0.5rem; border-top: 1px solid var(--sapGroup_TitleBorderColor); }
+.repoioFacetList .sapMLIB { min-height: 2rem; padding-inline: 0; }
+.repoioResults { flex: 1 1 28rem; min-width: 0; }
+.repoioResultList .sapMLIB { padding-block: 0.25rem; }
+.repoioResult { padding: 0.5rem 0; width: 100%; }
+.repoioResultBody { flex: 1; min-width: 0; }
+.repoioResultMeta .sapMObjectAttributeDiv { padding-block: 0.125rem; }

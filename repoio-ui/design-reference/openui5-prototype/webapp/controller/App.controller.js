@@ -67,6 +67,7 @@ sap.ui.define([
 				oRouter = this.getOwnerComponent().getRouter();
 			if (sKey === "home") { oRouter.navTo("home"); }
 			else if (sKey === "domains") { oRouter.navTo("domains"); }
+			else if (sKey === "explore") { oRouter.navTo("explore"); }
 			else { oRouter.navTo("page", { key: sKey }); }
 			if (this.getOwnerComponent().getModel("device").getProperty("/system/phone")) {
 				this.byId("toolPage").setSideExpanded(false);
@@ -76,7 +77,7 @@ sap.ui.define([
 		_onRouteMatched: function (oEvent) {
 			var sRoute = oEvent.getParameter("name"),
 				sKey = sRoute === "page" ? oEvent.getParameter("arguments").key :
-					sRoute === "home" ? "home" : "domains";
+					sRoute === "home" ? "home" : (sRoute === "explore" || sRoute === "record") ? "explore" : "domains";
 			this._sSelectedKey = sKey;
 			if (this.byId("navList").getItems().length) { this.byId("sideNavigation").setSelectedKey(sKey); }
 		},

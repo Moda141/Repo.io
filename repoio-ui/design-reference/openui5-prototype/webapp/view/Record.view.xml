@@ -1,0 +1,208 @@
+<mvc:View controllerName="repoio.proto.controller.Record"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- J2 golden record view: SAP Object Page. Golden records are never edited inline. -->
+	<uxap:ObjectPageLayout id="page" showTitleInHeaderContent="true" upperCaseAnchorBar="false" headerContentPinnable="true">
+		<uxap:headerTitle>
+			<uxap:ObjectPageDynamicHeaderTitle>
+				<uxap:breadcrumbs>
+					<Breadcrumbs currentLocationText="{view>/rec/id}">
+						<Link text="{i18n>nav.explore}" press=".onToExplore"/>
+						<Link text="{view>/rec/domainName}" press=".onToDomain"/>
+						<Link text="{view>/rec/repoName}" press=".onToRepo"/>
+					</Breadcrumbs>
+				</uxap:breadcrumbs>
+				<uxap:expandedHeading><Title text="{view>/rec/name}" level="H1" wrapping="true"/></uxap:expandedHeading>
+				<uxap:snappedHeading>
+					<HBox alignItems="Center"><Avatar src="{view>/rec/icon}" displaySize="XS" backgroundColor="{view>/rec/iconColor}" class="sapUiSmallMarginEnd"/><Title text="{view>/rec/name}" level="H1"/></HBox>
+				</uxap:snappedHeading>
+				<uxap:expandedContent><Text text="{i18n>rec.golden} · {view>/rec/id} · {view>/rec/sub}"/></uxap:expandedContent>
+				<uxap:snappedContent><Text text="{view>/rec/id} · {view>/rec/repoName}"/></uxap:snappedContent>
+				<uxap:actions>
+					<Button text="{i18n>rec.requestChange}" type="Emphasized" press=".onRequestChange"/>
+					<Button text="{i18n>rec.addRelationship}" press=".onAddRelationship"/>
+					<Button icon="sap-icon://action" type="Transparent" tooltip="{i18n>dsp.share}"/>
+				</uxap:actions>
+			</uxap:ObjectPageDynamicHeaderTitle>
+		</uxap:headerTitle>
+		<uxap:headerContent>
+			<VBox>
+				<MessageStrip visible="{= ${view>/rec/stateKey} !== 'pos' }" text="{view>/rec/reviewText}" type="{= ${view>/rec/stateKey} === 'neg' ? 'Error' : 'Warning' }"
+					showIcon="true" class="sapUiSmallMarginBottom">
+					<link><Link text="{i18n>nav.matchDetection}" press=".onNav" app:key="matchDetection" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/></link>
+				</MessageStrip>
+				<FlexBox wrap="Wrap" alignItems="Start">
+					<Avatar src="{view>/rec/icon}" displaySize="M" backgroundColor="{view>/rec/iconColor}" class="sapUiMediumMarginEnd"/>
+					<VBox class="sapUiMediumMarginEnd sapUiSmallMarginBottom" width="18rem">
+						<ObjectAttribute title="{i18n>home.filter.domain}" text="{view>/rec/domainName}" active="true" press=".onToDomain"/>
+						<ObjectAttribute title="{i18n>repo.repository}" text="{view>/rec/repoName}" active="true" press=".onToRepo"/>
+						<ObjectAttribute title="{i18n>repo.model}" text="{view>/rec/model}"/>
+						<ObjectStatus title="{i18n>domains.col.status}" text="{path: 'view>/rec/stateKey', formatter: '.goldenStateText'}" state="{view>/rec/state}" class="sapUiTinyMarginTop"/>
+					</VBox>
+					<VBox class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
+						<Label text="{i18n>domains.col.quality}"/>
+						<ObjectNumber number="{path: 'view>/rec/quality', formatter: '.fmt.pct'}" state="{view>/rec/qualityState}" class="sapMObjectNumberLarge"/>
+					</VBox>
+					<VBox class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
+						<Label text="{i18n>rec.confidence}"/>
+						<ObjectNumber number="{path: 'view>/rec/prob', formatter: '.fmt.dec'}" state="{view>/rec/probState}" class="sapMObjectNumberLarge"/>
+					</VBox>
+					<VBox class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
+						<Label text="{i18n>repo.sourceRecords}"/>
+						<ObjectNumber number="{view>/rec/sourceRecords}" class="sapMObjectNumberLarge"/>
+					</VBox>
+					<VBox class="sapUiSmallMarginBottom">
+						<Label text="{i18n>repo.lastMerge}"/>
+						<Text text="{view>/rec/lastMerge}" class="sapUiTinyMarginTop"/>
+					</VBox>
+				</FlexBox>
+			</VBox>
+		</uxap:headerContent>
+		<uxap:sections>
+			<!-- Attributes: value, the source that won, and why -->
+			<uxap:ObjectPageSection id="secAttrs" title="{i18n>rec.sec.attrs}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>rec.sec.attrs}" titleUppercase="false" showTitle="false">
+						<Table items="{view>/rec/attributes}" popinLayout="GridSmall">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="{i18n>rec.sec.attrs} ({view>/rec/attributes/length})" level="H3"/>
+									<ToolbarSpacer/>
+									<Text text="{i18n>rec.attrsHint}" class="repoioMuted"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="20%"><Text text="{i18n>repo.attr}"/></Column>
+								<Column><Text text="{i18n>rec.value}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>rec.winner}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>rec.why}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<ObjectIdentifier title="{view>attr}" text="{view>type}{= ${view>required} ? ' · ' + ${i18n>repo.required} : '' }"/>
+									<VBox>
+										<Text text="{view>value}"/>
+										<ObjectStatus visible="{view>conflict}" text="{i18n>rec.conflict}" state="Warning" icon="sap-icon://alert"/>
+									</VBox>
+									<GenericTag text="{view>sourceName}" design="StatusIconHidden"/>
+									<Text text="{view>rule}"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Contributing source records -->
+			<uxap:ObjectPageSection id="secSources" title="{i18n>rec.sec.sources}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>rec.sec.sources}" titleUppercase="false" showTitle="false">
+						<Table items="{view>/rec/records}" popinLayout="GridSmall">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="{i18n>rec.sec.sources} ({view>/rec/records/length})" level="H3"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>rec.unmerge}" type="Transparent" press=".onUnmerge"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>repo.source}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>rec.sourceId}"/></Column>
+								<Column><Text text="{i18n>rec.sourceName}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>rec.city}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>rec.phone}"/></Column>
+								<Column hAlign="End"><Text text="{i18n>repo.matchProb}"/></Column>
+								<Column><Text text="{i18n>dsp.role}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>dsp.changedOn}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<Text text="{view>sourceName}"/>
+									<Text text="{view>sourceId}"/>
+									<Text text="{view>name}"/>
+									<Text text="{view>city}"/>
+									<Text text="{= ${view>phone} || '—' }"/>
+									<ObjectNumber number="{path: 'view>prob', formatter: '.fmt.dec'}" state="{= ${view>prob} >= 0.9 ? 'Success' : ${view>prob} >= 0.75 ? 'Warning' : 'Error' }"/>
+									<ObjectStatus text="{= ${view>role} === 'survivor' ? ${i18n>rec.survivor} : ${i18n>rec.merged} }" state="{= ${view>role} === 'survivor' ? 'Information' : 'None' }"/>
+									<Text text="{view>updated}"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Relationships -->
+			<uxap:ObjectPageSection id="secRels" title="{i18n>nav.relationships}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>nav.relationships}" titleUppercase="false" showTitle="false">
+						<Table items="{view>/rec/relationships}" noDataText="{i18n>rec.noRels}" popinLayout="GridSmall">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="{i18n>nav.relationships} ({view>/rec/relationships/length})" level="H3"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>rec.addRelationship}" type="Transparent" press=".onAddRelationship"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>rec.relType}"/></Column>
+								<Column><Text text="{i18n>rec.relTarget}"/></Column>
+								<Column><Text text="{i18n>domains.col.status}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<VBox><Text text="{= ${view>/lang} === 'ar' ? ${view>typeAr} : ${view>type} }"/><Label text="{view>type}" visible="{= ${view>/lang} === 'ar' }"/></VBox>
+									<VBox><Text text="{view>target}"/><Label text="{view>targetId}"/></VBox>
+									<ObjectStatus text="{= ${view>status} === 'active' ? ${i18n>rec.relActive} : ${i18n>rec.relPending} }" state="{= ${view>status} === 'active' ? 'Success' : 'Information' }"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Change history with provenance -->
+			<uxap:ObjectPageSection id="secHistory" title="{i18n>rec.sec.history}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>rec.sec.history}" titleUppercase="false" showTitle="false">
+						<Table items="{view>/rec/history}" popinLayout="GridSmall">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="{i18n>rec.sec.history}" level="H3"/>
+									<ToolbarSpacer/>
+									<Text text="{i18n>rec.historyHint}" class="repoioMuted"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>rec.when}"/></Column>
+								<Column><Text text="{i18n>rec.change}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.attr}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>rec.fromTo}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.source}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>rec.ruleVersion}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<Text text="{view>at}"/>
+									<ObjectStatus text="{path: 'view>change', formatter: '.changeText'}" state="{= ${view>change} === 'merge' ? 'Information' : 'None' }"/>
+									<Text text="{view>field}"/>
+									<Text text="{= ${view>from} ? ${view>from} + '  →  ' + ${view>to} : ${view>to} }"/>
+									<Text text="{view>source}"/>
+									<Text text="{view>rule}"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Lineage -->
+			<uxap:ObjectPageSection id="secLineage" title="{i18n>dsp.impact}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>dsp.impact}" titleUppercase="false" showTitle="false">
+						<rc:LineageGraph columns="{view>/rec/lineage}" edges="{view>/rec/edges}" typeLabels="{view>/rec/lineageTypes}"/>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+		</uxap:sections>
+	</uxap:ObjectPageLayout>
+</mvc:View>

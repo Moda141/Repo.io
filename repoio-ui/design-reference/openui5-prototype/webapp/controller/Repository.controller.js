@@ -60,7 +60,7 @@ sap.ui.define([
 			var o = oEvent.getSource().getBindingContext("view").getObject();
 			this.router().navTo("sources", { domainId: this._args.domainId, repoId: this._args.repoId, sourceId: o.id });
 		},
-		onGoldenPress: function () { this.navKey("explore"); },
+		onGoldenPress: function (e) { this.router().navTo("record", { recordId: e.getSource().getBindingContext("view").getProperty("id") }); },
 		onExplore: function () { this.navKey("explore"); },
 		onToModel: function () { this.navKey("modelsRules"); },
 		onRequestChange: function () { MessageToast.show(this.text("repo.requestChangeToast")); },
