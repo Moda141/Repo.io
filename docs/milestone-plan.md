@@ -281,8 +281,10 @@ drill's evidence attached.
 service integration; execution delegated to the runtime.
 **Skills:** `repoio-workflow-python` (Part 1)
 
-- [ ] bpmn-js designer embedded in OpenUI5 behind a wrapper control
-      (clean destroy, no DOM leaks).
+- [ ] Repo.io flow designer (ADR-0002) as an OpenUI5 control: step
+      cards, "+" insert, automatic layout, RTL; clean destroy.
+- [ ] Flow model → BPMN 2.0 compiler in `repoio-service`, with tests
+      (every node type, every branch ends, no `scriptTask`).
 - [ ] Repo.io-specific property panels (approvers, conditions,
       ownership, validation) in OpenUI5 forms.
 - [ ] Definitions persist through Repo.io APIs to the control plane with

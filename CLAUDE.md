@@ -107,8 +107,10 @@ Explicit traps to avoid:
   `sap.tnt` (ToolPage / ToolHeader / SideNavigation with search) on the
   `sap_fiori_3` theme — verified to ship in OpenUI5; do not replace it
   with a hand-built shell or a different theme.
-- **bpmn-js is the designer only; Flowable is the engine.** Never execute
-  workflow logic in the browser or in `repoio-service`.
+- **The Repo.io flow designer is the designer only; Flowable is the
+  engine** (ADR-0002 replaced bpmn-js). Never execute workflow logic in
+  the browser or in `repoio-service`; scripts compile to service tasks
+  that call the isolated workers, never to BPMN `scriptTask`.
 - **Splink owns matching, Great Expectations owns DQ.** Do not hand-roll
   either, and do not embed matching logic into ingestion.
 - **Jena reasoning is deliberately bounded.** Never promise or attempt full
@@ -270,7 +272,8 @@ an honest "not verified" is acceptable; an unverified "done" is not.
   One module boundary per change; cross-module work is split into
   reviewable commits.
 - **Decisions:** accepted deviations from the kit live in
-  `docs/decisions/` (ADR-0001: a domain holds one or more repositories).
+  `docs/decisions/` (ADR-0001: a domain holds one or more repositories;
+  ADR-0002: the Repo.io flow designer replaces bpmn-js, Flowable stays).
 - **Docs:** every module gets a README following
   `docs/module-readme-template.md` — update it when adding entry points,
   config or commands.

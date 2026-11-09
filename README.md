@@ -536,7 +536,7 @@ or when a specialist library is materially better for that job.
 
 | Capability | Candidate library | Repo.io use |
 |------------|-------------------|-------------|
-| Workflow / BPMN designer | **bpmn-js** | Drag-and-drop BPMN 2.0 workflow authoring |
+| Workflow designer | **Repo.io flow designer** (OpenUI5, no library — ADR-0002) | Step-card workflow authoring, compiled to BPMN 2.0 for Flowable |
 | Code editor | **Monaco Editor** | Python, SQL, JSON and configuration editing |
 | Charts | **Apache ECharts** | Data quality, profiling and operational dashboards |
 | Graph visualization | **Cytoscape.js** | Data lineage, relationships and entity networks |
@@ -558,8 +558,10 @@ Integration rules:
 
 The Workflow Designer is an authoring experience, not the workflow engine.
 
-- **Designer:** `bpmn-js` provides the BPMN 2.0 canvas, nodes, connections,
-  import/export and diagram editing.
+- **Designer:** the Repo.io flow designer (ADR-0002) — an OpenUI5 canvas of
+  step cards (Begin, Template, Validation, Approval, Script, Write-back,
+  Notification, Condition, End) with "+" to add a step on a path. It saves a
+  JSON flow model; publishing compiles it to BPMN 2.0 for the engine.
 - **Configuration:** OpenUI5 forms/panels provide Repo.io-specific task
   properties, approvers, conditions, ownership and validation.
 - **Persistence:** save workflow definitions, versions and metadata through
@@ -570,7 +572,7 @@ The Workflow Designer is an authoring experience, not the workflow engine.
   asynchronous integration is required.
 
 **Decision: integrate a dedicated workflow engine, with Flowable as the
-initial candidate.** `bpmn-js` is the authoring/designer component only; it
+initial candidate.** The flow designer is the authoring component only; it
 does not execute workflows. Flowable owns BPMN process execution, task
 lifecycle, timers, retries and runtime state. `repoio-service` remains the
 Repo.io integration/governance layer for authentication, authorization,
@@ -671,7 +673,6 @@ npm install --save-dev @ui5/cli
 npm install --save-dev ui5-tooling-modules
 
 # Specialist UI capabilities
-npm install bpmn-js
 npm install monaco-editor
 npm install echarts
 npm install cytoscape
@@ -758,7 +759,8 @@ Recommended order:
 - **Frontend:** fully migrate React to OpenUI5. React is only the migration
   baseline and is not the target frontend architecture.
 - **Workflow:** integrate a dedicated workflow engine; Flowable is the
-  initial candidate. `bpmn-js` provides the designer, not execution.
+  initial candidate. The Repo.io flow designer (ADR-0002) authors and
+  compiles to BPMN 2.0; it never executes.
 - **Python:** v1 includes script execution and Python Script Tasks inside
   workflows. A full notebook UI is optional future scope.
 - **Python packages:** support controlled package configuration using pinned

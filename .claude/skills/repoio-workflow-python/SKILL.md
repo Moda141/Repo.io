@@ -9,8 +9,10 @@ description: Use when working on Repo.io workflow and governed Python execution 
 
 ### What it owns
 
-- **Designer:** bpmn-js inside an OpenUI5 page — BPMN 2.0 canvas,
-  import/export, diagram editing.
+- **Designer:** the Repo.io flow designer (ADR-0002) — an OpenUI5
+  step-card canvas (Begin, Template, Validation, Approval, Script,
+  Write-back, Notification, Condition, End) that saves a JSON flow model,
+  compiled to BPMN 2.0 on publish.
 - **Configuration:** OpenUI5 forms/panels for Repo.io-specific task
   properties, approvers, conditions, ownership, validation.
 - **Persistence:** workflow definitions, versions and metadata through
@@ -22,8 +24,9 @@ description: Use when working on Repo.io workflow and governed Python execution 
 
 ### Non-negotiables (M7)
 
-1. **bpmn-js is the designer, never the engine.** Nothing "executes" in
-   the browser. Execution belongs to Flowable.
+1. **The flow designer is the designer, never the engine** (ADR-0002).
+   Nothing "executes" in the browser. Execution belongs to Flowable;
+   Script steps compile to service tasks calling the isolated workers.
 2. **Flowable sits behind an adapter.** `repoio-service` stays the
    integration/governance layer (auth, business context, API façade,
    audit); the engine is swappable through the adapter boundary. Confirm

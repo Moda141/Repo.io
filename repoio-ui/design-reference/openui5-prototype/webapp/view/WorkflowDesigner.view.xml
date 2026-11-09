@@ -1,70 +1,40 @@
 <mvc:View controllerName="repoio.proto.controller.WorkflowDesigner"
 	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-	<!-- New workflow (J7): SAP Datasphere "Task Chain" layout — building blocks | bpmn-js canvas | properties.
-	     The designer edits BPMN only; published definitions run in Flowable behind the repoio-service adapter. -->
+	<!-- New workflow (J7) — Repo.io flow designer (ADR-0002): card nodes on a canvas, properties on the side.
+	     The flow compiles to BPMN 2.0 for Flowable; the engine, versions and audit do not change. -->
 	<Page id="page" showHeader="false" enableScrolling="false" class="repoioOntoPage repoioWfPage">
 		<VBox class="repoioOnto" renderType="Bare" height="100%">
-			<!-- Header: name, version state, lifecycle actions (author → validate → save version → publish) -->
 			<OverflowToolbar class="repoioOntoHeader" design="Transparent" height="3.25rem">
 				<core:Icon src="sap-icon://process" class="repoioOntoHeaderIcon" decorative="true"/>
 				<Link text="{i18n>wf.crumb}" press=".onWorkflows"/>
 				<Text text="/" class="repoioWfSlash"/>
-				<Title text="{view>/wf/proc/name}" level="H1" titleStyle="H4"/>
+				<Link text="{view>/wf/name}" press=".onShowWorkflow" class="repoioWfTitleLink"/>
 				<ObjectStatus text="{view>/wf/statusText}" state="{= ${view>/wf/state} === 'published' ? 'Success' : 'Information' }" inverted="true"/>
 				<ObjectStatus visible="{view>/wf/dirty}" text="{i18n>wf.unsaved}" icon="sap-icon://edit" state="Warning"/>
 				<ToolbarSpacer/>
-				<Button icon="sap-icon://undo" type="Transparent" tooltip="{i18n>wf.undo}" press=".onUndo" enabled="{view>/wf/canUndo}"/>
-				<Button icon="sap-icon://redo" type="Transparent" tooltip="{i18n>wf.redo}" press=".onRedo" enabled="{view>/wf/canRedo}"/>
+				<Button icon="sap-icon://undo" type="Transparent" tooltip="{i18n>wf.undo}" press=".onUndo" enabled="{= ${view>/wf/canUndo} &amp;&amp; !${view>/wf/readOnly} }"/>
+				<Button icon="sap-icon://redo" type="Transparent" tooltip="{i18n>wf.redo}" press=".onRedo" enabled="{= ${view>/wf/canRedo} &amp;&amp; !${view>/wf/readOnly} }"/>
+				<Button text="{i18n>fd.blank}" icon="sap-icon://document" type="Transparent" press=".onStartBlank" enabled="{= !${view>/wf/readOnly} }"/>
 				<ToolbarSeparator/>
 				<Button text="{i18n>wf.save}" icon="sap-icon://save" type="Transparent" press=".onSave" enabled="{= !${view>/wf/readOnly} }"/>
-				<Button id="validateBtn" text="{i18n>onto.validate}" icon="sap-icon://validate" type="Transparent" press=".onValidate"/>
+				<Button id="validateBtn" text="{= ${view>/wf/issueCount} ? ${i18n>onto.validate} + ' (' + ${view>/wf/issueCount} + ')' : ${i18n>onto.validate} }" icon="sap-icon://validate"
+					type="{= ${view>/wf/issueCount} ? 'Negative' : 'Transparent' }" press=".onValidate"/>
 				<Button text="{i18n>wf.exportBpmn}" icon="sap-icon://download" type="Transparent" press=".onExport"/>
 				<Button text="{i18n>wf.publish}" type="Emphasized" press=".onPublish" enabled="{= !${view>/wf/readOnly} }"/>
-				<ToggleButton icon="sap-icon://detail-view" text="{i18n>wf.details}" pressed="{view>/wf/showProps}" type="Transparent"/>
+				<ToggleButton icon="sap-icon://detail-view" tooltip="{i18n>wf.details}" pressed="{view>/wf/showProps}" type="Transparent"/>
 			</OverflowToolbar>
 			<MessageStrip visible="{view>/wf/readOnly}" type="Information" showIcon="true" class="repoioOntoStrip" text="{view>/wf/roText}">
 				<link><Link text="{i18n>wf.newVersion}" press=".onNewVersion"/></link>
 			</MessageStrip>
 
 			<HBox class="repoioOntoBody" renderType="Bare">
-				<!-- Left: building blocks and templates (Datasphere "Repository") -->
-				<VBox class="repoioOntoSide" renderType="Bare">
-					<IconTabHeader selectedKey="blocks" mode="Inline" backgroundDesign="Transparent">
-						<items><IconTabFilter key="blocks" text="{i18n>wf.blocks}"/></items>
-					</IconTabHeader>
-					<SearchField value="{view>/wf/q}" liveChange=".onBlockSearch" placeholder="{i18n>common.search}" class="repoioOntoSearch"/>
-					<ScrollContainer vertical="true" horizontal="false" class="repoioOntoSideScroll">
-						<List id="blockList" items="{path: 'view>/wf/blocks', sorter: {path: 'groupOrder', group: '.blockGroup'}, groupHeaderFactory: '.blockHeader'}"
-							itemPress=".onBlockPress" noDataText="{i18n>onto.noMatch}" class="repoioWfBlocks" updateFinished=".onBlocksRendered">
-							<StandardListItem type="Active" title="{view>title}" description="{view>desc}" icon="{view>icon}" app:key="{view>key}"
-								tooltip="{view>tip}"/>
-						</List>
-					</ScrollContainer>
-					<Text text="{i18n>wf.blocksHint}" class="repoioHint repoioWfHint"/>
-				</VBox>
+				<!-- Canvas -->
+				<rc:FlowCanvas id="canvas" flow="{view>/wf/canvas}" rtl="{view>/wf/rtl}" readOnly="{view>/wf/readOnly}" class="repoioWfCanvas"
+					ariaLabel="{i18n>fd.canvasAria}" insertLabel="{i18n>fd.addStep}" zoomInLabel="{i18n>onto.zoomIn}" zoomOutLabel="{i18n>onto.zoomOut}" fitLabel="{i18n>onto.fit}"
+					select=".onCanvasSelect" insert=".onInsert" remove=".onRemove"/>
 
-				<!-- Centre: bpmn-js canvas -->
-				<VBox class="repoioOntoCanvas" renderType="Bare">
-					<OverflowToolbar class="repoioOntoGraphBar" design="Transparent">
-						<Label text="{i18n>wf.add}" showColon="true"/>
-						<Button text="{i18n>wf.b.approval}" icon="sap-icon://approvals" type="Transparent" press=".onQuickAdd" app:key="approval" enabled="{= !${view>/wf/readOnly} }"/>
-						<Button text="{i18n>wf.b.condition}" icon="sap-icon://split" type="Transparent" press=".onQuickAdd" app:key="condition" enabled="{= !${view>/wf/readOnly} }"/>
-						<Button text="{i18n>wf.b.parallelShort}" icon="sap-icon://combine" type="Transparent" press=".onQuickAdd" app:key="parallel" enabled="{= !${view>/wf/readOnly} }"/>
-						<Button text="{i18n>wf.b.timer}" icon="sap-icon://fob-watch" type="Transparent" press=".onQuickAdd" app:key="timer" enabled="{= !${view>/wf/readOnly} }"/>
-						<ToolbarSeparator/>
-						<Button icon="sap-icon://delete" type="Transparent" tooltip="{i18n>common.delete}" press=".onDeleteSel"
-							enabled="{= !${view>/wf/readOnly} &amp;&amp; !!${view>/wf/sel/id} }"/>
-						<ToolbarSpacer/>
-						<Button icon="sap-icon://zoom-in" type="Transparent" tooltip="{i18n>onto.zoomIn}" press=".onZoomIn"><layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData></Button>
-						<Button icon="sap-icon://zoom-out" type="Transparent" tooltip="{i18n>onto.zoomOut}" press=".onZoomOut"><layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData></Button>
-						<Button icon="sap-icon://popup-window" type="Transparent" tooltip="{i18n>onto.fit}" press=".onFit"><layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData></Button>
-					</OverflowToolbar>
-					<rc:BpmnDesigner id="designer" readOnly="{view>/wf/readOnly}" selectionChange=".onSelection" changed=".onChanged"
-						elementChanged=".onElementChanged" class="repoioWfCanvas"/>
-				</VBox>
-
-				<!-- Right: properties (Datasphere "Properties") -->
+				<!-- Properties -->
 				<VBox class="repoioOntoDetail repoioWfProps" renderType="Bare" visible="{view>/wf/showProps}">
 					<HBox class="repoioOntoDetailHead" renderType="Bare" alignItems="Center">
 						<core:Icon src="sap-icon://action-settings" color="#ffffff" decorative="true"/>
@@ -73,257 +43,266 @@
 					</HBox>
 					<ScrollContainer vertical="true" horizontal="false" class="repoioOntoDetailScroll">
 						<VBox renderType="Bare" class="repoioWfPropsBody">
-							<HBox alignItems="Center" renderType="Bare" class="repoioWfPropsTitle">
-								<core:Icon src="{view>/wf/sel/icon}" class="repoioOntoLinkIcon" decorative="true"/>
-								<Title text="{= ${view>/wf/sel/name} || ${view>/wf/sel/typeText} }" level="H2" titleStyle="H5" wrapping="true"/>
-							</HBox>
-							<Text text="{view>/wf/sel/typeText}" class="repoioHint sapUiSmallMarginBegin"/>
-
-							<!-- General (every element) -->
-							<Panel expandable="true" expanded="true" headerText="{i18n>wf.general}" class="repoioWfPanel">
+							<HBox renderType="Bare" alignItems="Center" class="repoioWfPropsTitle">
+								<core:Icon src="{view>/wf/sel/icon}" decorative="true" class="rfPropIcon"/>
 								<VBox renderType="Bare">
-									<Label text="{= ${view>/wf/sel/kind} === 'process' ? ${i18n>dsp.businessName} : ${i18n>wf.name} }" required="{= ${view>/wf/sel/kind} === 'process' || ${view>/wf/sel/isTask} }" labelFor="wfName"/>
-									<Input id="wfName" value="{view>/wf/sel/name}" editable="{= !${view>/wf/readOnly} }" change=".onName" valueLiveUpdate="false"/>
-									<Label text="{i18n>dsp.technicalName}" class="sapUiSmallMarginTop"/>
-									<Text text="{view>/wf/sel/tech}" class="repoioMono"/>
-									<VBox renderType="Bare" visible="{= ${view>/wf/sel/kind} === 'process' }">
-										<Label text="{i18n>domains.col.status}" class="sapUiSmallMarginTop"/>
-										<ObjectStatus text="{view>/wf/statusText}" icon="{= ${view>/wf/state} === 'published' ? 'sap-icon://locked' : 'sap-icon://pending' }"
-											state="{= ${view>/wf/state} === 'published' ? 'Success' : 'None' }"/>
-										<Label text="{i18n>wf.domain}" required="true" labelFor="wfDomain" class="sapUiSmallMarginTop"/>
-										<Select id="wfDomain" selectedKey="{view>/wf/sel/domain}" items="{view>/wf/domains}" width="100%" change=".onProcAttr"
-											app:attr="domain" enabled="{= !${view>/wf/readOnly} }" forceSelection="false">
-											<core:Item key="{view>key}" text="{view>text}"/>
-										</Select>
-										<Text text="{i18n>wf.domainHint}" class="repoioHint"/>
-										<Label text="{i18n>domain.owner}" class="sapUiSmallMarginTop"/>
-										<rc:PersonLink name="{view>/wf/sel/owner}"/>
-									</VBox>
-									<VBox renderType="Bare" visible="{= ${view>/wf/sel/kind} === 'end' }">
-										<Label text="{i18n>wf.outcome}" class="sapUiSmallMarginTop"/>
-										<Select selectedKey="{view>/wf/sel/outcome}" width="100%" change=".onAttr" app:attr="outcome" enabled="{= !${view>/wf/readOnly} }">
-											<core:Item key="completed" text="{i18n>wf.out.completed}"/>
-											<core:Item key="rejected" text="{i18n>wf.out.rejected}"/>
-											<core:Item key="cancelled" text="{i18n>wf.out.cancelled}"/>
-										</Select>
-									</VBox>
-									<VBox renderType="Bare" visible="{= ${view>/wf/sel/kind} === 'parallel' }">
-										<Text text="{i18n>wf.parallelHint}" class="repoioHint sapUiSmallMarginTop"/>
-									</VBox>
-									<VBox renderType="Bare" visible="{= ${view>/wf/sel/kind} === 'task' }">
-										<Label text="{i18n>wf.repoioType}" class="sapUiSmallMarginTop"/>
-										<Select selectedKey="" width="100%" change=".onTaskType" forceSelection="false" enabled="{= !${view>/wf/readOnly} }">
-											<core:Item key="approval" text="{i18n>wf.b.approval}"/>
-											<core:Item key="python" text="{i18n>wf.b.python}"/>
-											<core:Item key="writeBack" text="{i18n>wf.b.writeBack}"/>
-										</Select>
-										<Text text="{i18n>wf.taskHint}" class="repoioHint"/>
-									</VBox>
+									<Title text="{view>/wf/sel/title}" level="H2" titleStyle="H5" wrapping="true"/>
+									<Text text="{view>/wf/sel/typeText}" class="repoioHint"/>
 								</VBox>
+							</HBox>
+							<MessageStrip visible="{= !!${view>/wf/sel/issues} }" text="{view>/wf/sel/issues}" type="Error" showIcon="true" class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"/>
+
+							<!-- Workflow (nothing selected) -->
+							<VBox renderType="Bare" visible="{= ${view>/wf/sel/type} === 'process' }">
+								<Panel headerText="{i18n>wf.general}" expandable="true" expanded="true" class="repoioWfPanel">
+									<Label text="{i18n>wf.name}" required="true"/>
+									<Input value="{view>/wf/name}" change=".onNodeName" editable="{= !${view>/wf/readOnly} }"/>
+									<Label text="{i18n>dsp.technicalName}" class="sapUiSmallMarginTop"/>
+									<Text text="{view>/wf/tech}" class="repoioMono"/>
+									<Label text="{i18n>wf.domain}" class="sapUiSmallMarginTop"/>
+									<Text text="{view>/wf/domainText}"/>
+									<Text text="{i18n>fd.domainHint}" class="repoioHint"/>
+									<Label text="{i18n>domain.owner}" class="sapUiSmallMarginTop"/>
+									<rc:PersonLink name="{view>/wf/owner}"/>
+								</Panel>
+								<Panel headerText="{i18n>wf.steps}" expandable="true" expanded="true" class="repoioWfPanel">
+									<List items="{view>/wf/steps}" showSeparators="Inner" itemPress=".onStepPress" class="repoioWfSteps">
+										<StandardListItem type="Active" title="{view>title}" description="{view>type}" icon="{view>icon}" app:id="{view>id}"
+											highlight="{= ${view>bad} ? 'Error' : 'None' }"/>
+									</List>
+								</Panel>
+								<Panel headerText="{i18n>wf.versions}" expandable="true" expanded="false" class="repoioWfPanel">
+									<List items="{view>/wf/versions}" showSeparators="Inner">
+										<StandardListItem title="v{view>v}" description="{view>date}" info="{view>stateText}" infoState="{= ${view>state} === 'published' ? 'Success' : 'Information' }"/>
+									</List>
+								</Panel>
+							</VBox>
+
+							<!-- Name (every step) -->
+							<Panel headerText="{i18n>wf.general}" expandable="true" expanded="true" class="repoioWfPanel"
+								visible="{= ${view>/wf/sel/type} !== 'process' &amp;&amp; ${view>/wf/sel/type} !== 'begin' }">
+								<Label text="{i18n>wf.name}"/>
+								<Input value="{view>/wf/sel/name}" placeholder="{view>/wf/sel/title}" change=".onNodeName" editable="{= !${view>/wf/readOnly} }"/>
+								<Label text="{i18n>dsp.technicalName}" class="sapUiSmallMarginTop"/>
+								<Text text="{view>/wf/sel/id}" class="repoioMono"/>
 							</Panel>
 
-							<!-- Workflow: steps and versions (Datasphere "Objects in Task Chain") -->
-							<Panel expandable="true" expanded="true" headerText="{i18n>wf.steps} ({view>/wf/stepCount})" visible="{= ${view>/wf/sel/kind} === 'process' }" class="repoioWfPanel">
-								<List items="{view>/wf/steps}" showSeparators="Inner" itemPress=".onStepPress" class="repoioWfSteps">
-									<StandardListItem type="Active" title="{view>name}" description="{view>typeText}" icon="{view>icon}" app:id="{view>id}"
-										highlight="{= ${view>error} ? 'Error' : 'None' }"/>
-								</List>
-							</Panel>
-							<Panel expandable="true" expanded="false" headerText="{i18n>wf.versions}" visible="{= ${view>/wf/sel/kind} === 'process' }" class="repoioWfPanel">
-								<List items="{view>/wf/versions}" showSeparators="Inner">
-									<StandardListItem title="v{view>v}" description="{view>date}" info="{view>stateText}" infoState="{= ${view>state} === 'published' ? 'Success' : 'Information' }"/>
+							<!-- Begin -->
+							<VBox renderType="Bare" visible="{= ${view>/wf/sel/type} === 'begin' }" class="sapUiSmallMargin">
+								<Text text="{i18n>fd.beginHint}"/>
+							</VBox>
+
+							<!-- Template -->
+							<Panel headerText="{i18n>fd.n.template}" visible="{= ${view>/wf/sel/type} === 'template' }" class="repoioWfPanel">
+								<Label text="{i18n>fd.template}" required="true"/>
+								<Select selectedKey="{view>/wf/sel/template}" items="{path: 'view>/wf/templates', sorter: {path: 'domainText', group: true}}" width="100%"
+									forceSelection="false" change=".onTemplate" enabled="{= !${view>/wf/readOnly} }" showSecondaryValues="true"
+									valueState="{= ${view>/wf/sel/template} ? 'None' : 'Warning' }">
+									<core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>version}"/>
+								</Select>
+								<Text text="{i18n>fd.templateHint}" class="repoioHint"/>
+								<Title text="{i18n>fd.fields}" level="H3" titleStyle="H6" class="sapUiSmallMarginTop"/>
+								<List items="{view>/wf/fields}" showSeparators="Inner" noDataText="{i18n>fd.pickTemplate}" class="repoioWfFields">
+									<StandardListItem title="{view>label}" description="{view>name}" info="{= ${view>key} ? 'key' : ${view>req} ? '*' : '' }"
+										icon="{= ${view>codeList} ? 'sap-icon://list' : ${view>type} === 'decimal' ? 'sap-icon://number-sign' : 'sap-icon://text' }"/>
 								</List>
 							</Panel>
 
-							<!-- Approval step -->
-							<Panel expandable="true" expanded="true" headerText="{i18n>wf.approval}" visible="{= ${view>/wf/sel/kind} === 'approval' }" class="repoioWfPanel">
-								<VBox renderType="Bare">
-									<Label text="{i18n>wf.approvers}" required="true"/>
-									<SegmentedButton selectedKey="{path: 'view>/wf/sel/approverType', mode: 'OneWay'}" selectionChange=".onApproverType" width="100%"
-										enabled="{= !${view>/wf/readOnly} }">
-										<items>
-											<SegmentedButtonItem key="users" text="{i18n>wf.ap.users}" icon="sap-icon://person-placeholder"/>
-											<SegmentedButtonItem key="team" text="{i18n>wf.ap.team}" icon="sap-icon://group"/>
-										</items>
-									</SegmentedButton>
-									<MultiComboBox selectedKeys="{view>/wf/sel/approvers}" items="{view>/wf/people}" width="100%" class="sapUiTinyMarginTop"
-										visible="{= ${view>/wf/sel/approverType} !== 'team' }" selectionFinish=".onApprovers" showSecondaryValues="true"
-										editable="{= !${view>/wf/readOnly} }" placeholder="{i18n>wf.ap.usersPh}"
-										valueState="{= ${view>/wf/sel/hasApprovers} ? 'None' : 'Warning' }" valueStateText="{i18n>wf.v.noApproverShort}">
-										<core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>role}"/>
-									</MultiComboBox>
-									<VBox renderType="Bare" visible="{= ${view>/wf/sel/approverType} === 'team' }" class="sapUiTinyMarginTop">
-										<Select selectedKey="{view>/wf/sel/approverTeam}" items="{view>/wf/teams}" width="100%" forceSelection="false" showSecondaryValues="true"
-											change=".onAttr" app:attr="approverTeam" enabled="{= !${view>/wf/readOnly} }"
-											valueState="{= ${view>/wf/sel/approverTeam} ? 'None' : 'Warning' }" valueStateText="{i18n>wf.v.noApproverShort}">
-											<core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>count}"/>
-										</Select>
-										<HBox items="{view>/wf/sel/teamMembers}" renderType="Bare" wrap="Wrap" class="repoioWfMembers">
-											<rc:PersonLink name="{view>name}"/>
-										</HBox>
-										<Text text="{i18n>wf.ap.teamHint}" class="repoioHint"/>
-									</VBox>
-									<Label text="{i18n>wf.rule}" class="sapUiSmallMarginTop"/>
-									<SegmentedButton selectedKey="{view>/wf/sel/approvalRule}" selectionChange=".onRule" width="100%" enabled="{= !${view>/wf/readOnly} }">
-										<items>
-											<SegmentedButtonItem key="any" text="{= ${view>/wf/sel/approverType} === 'team' ? ${i18n>wf.rule.anyMember} : ${i18n>wf.rule.any} }"/>
-											<SegmentedButtonItem key="all" text="{= ${view>/wf/sel/approverType} === 'team' ? ${i18n>wf.rule.allMembers} : ${i18n>wf.rule.all} }"/>
-										</items>
-									</SegmentedButton>
-									<Label text="{i18n>wf.dueIn}" class="sapUiSmallMarginTop"/>
-									<Select selectedKey="{view>/wf/sel/dueIn}" width="100%" change=".onAttr" app:attr="dueIn" enabled="{= !${view>/wf/readOnly} }">
-										<core:Item key="" text="{i18n>wf.none}"/>
-										<core:Item key="PT24H" text="{i18n>wf.due.24h}"/>
-										<core:Item key="P2D" text="{i18n>wf.due.2d}"/>
-										<core:Item key="P3D" text="{i18n>wf.due.3d}"/>
-										<core:Item key="P5D" text="{i18n>wf.due.5d}"/>
-									</Select>
-									<Label text="{i18n>wf.escalateTo}" class="sapUiSmallMarginTop"/>
-									<Select selectedKey="{view>/wf/sel/escalateTo}" items="{view>/wf/teamsOpt}" width="100%" change=".onAttr" app:attr="escalateTo" showSecondaryValues="true"
-										enabled="{= !${view>/wf/readOnly} &amp;&amp; !!${view>/wf/sel/dueIn} }">
+							<!-- Approval -->
+							<Panel headerText="{i18n>wf.approval}" visible="{= ${view>/wf/sel/type} === 'approval' }" class="repoioWfPanel">
+								<Label text="{i18n>wf.approvers}" required="true"/>
+								<SegmentedButton selectedKey="{path: 'view>/wf/sel/approverType', mode: 'OneWay'}" selectionChange=".onApproverType" width="100%" enabled="{= !${view>/wf/readOnly} }">
+									<items>
+										<SegmentedButtonItem key="users" text="{i18n>wf.ap.users}" icon="sap-icon://person-placeholder"/>
+										<SegmentedButtonItem key="team" text="{i18n>wf.ap.team}" icon="sap-icon://group"/>
+									</items>
+								</SegmentedButton>
+								<MultiComboBox selectedKeys="{path: 'view>/wf/sel/approvers', mode: 'OneWay'}" items="{view>/wf/people}" width="100%" class="sapUiTinyMarginTop"
+									visible="{= ${view>/wf/sel/approverType} !== 'team' }" selectionFinish=".onApprovers" showSecondaryValues="true"
+									editable="{= !${view>/wf/readOnly} }" placeholder="{i18n>wf.ap.usersPh}"
+									valueState="{= ${view>/wf/sel/hasApprovers} ? 'None' : 'Warning' }">
+									<core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>role}"/>
+								</MultiComboBox>
+								<VBox renderType="Bare" visible="{= ${view>/wf/sel/approverType} === 'team' }" class="sapUiTinyMarginTop">
+									<Select selectedKey="{view>/wf/sel/approverTeam}" items="{view>/wf/teams}" width="100%" forceSelection="false" showSecondaryValues="true"
+										change=".onProp" app:prop="approverTeam" enabled="{= !${view>/wf/readOnly} }"
+										valueState="{= ${view>/wf/sel/approverTeam} ? 'None' : 'Warning' }">
 										<core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>count}"/>
 									</Select>
+									<HBox items="{view>/wf/sel/teamMembers}" renderType="Bare" wrap="Wrap" class="repoioWfMembers">
+										<rc:PersonLink name="{view>name}"/>
+									</HBox>
 								</VBox>
+								<Label text="{i18n>wf.rule}" class="sapUiSmallMarginTop"/>
+								<SegmentedButton selectedKey="{path: 'view>/wf/sel/rule', mode: 'OneWay'}" selectionChange=".onRule" width="100%" enabled="{= !${view>/wf/readOnly} }">
+									<items>
+										<SegmentedButtonItem key="any" text="{= ${view>/wf/sel/approverType} === 'team' ? ${i18n>wf.rule.anyMember} : ${i18n>wf.rule.any} }"/>
+										<SegmentedButtonItem key="all" text="{= ${view>/wf/sel/approverType} === 'team' ? ${i18n>wf.rule.allMembers} : ${i18n>wf.rule.all} }"/>
+									</items>
+								</SegmentedButton>
+								<Label text="{i18n>fd.sla}" class="sapUiSmallMarginTop"/>
+								<Select selectedKey="{view>/wf/sel/sla}" width="100%" change=".onProp" app:prop="sla" enabled="{= !${view>/wf/readOnly} }">
+									<core:Item key="PT8H" text="{i18n>fd.sla.PT8H}"/>
+									<core:Item key="P1D" text="{i18n>fd.sla.P1D}"/>
+									<core:Item key="P2D" text="{i18n>fd.sla.P2D}"/>
+									<core:Item key="P3D" text="{i18n>fd.sla.P3D}"/>
+									<core:Item key="P5D" text="{i18n>fd.sla.P5D}"/>
+								</Select>
+								<Label text="{i18n>fd.escalate}" class="sapUiSmallMarginTop"/>
+								<Select selectedKey="{view>/wf/sel/escalateTo}" items="{path: 'view>/wf/escalation', sorter: {path: 'group', group: true}}" width="100%"
+									change=".onProp" app:prop="escalateTo" enabled="{= !${view>/wf/readOnly} }">
+									<core:Item key="{view>key}" text="{view>text}"/>
+								</Select>
+								<Text text="{i18n>fd.slaHint}" class="repoioHint"/>
 							</Panel>
 
-							<!-- Python Script Task (M8) -->
-							<Panel expandable="true" expanded="true" headerText="{i18n>wf.script}" visible="{= ${view>/wf/sel/kind} === 'python' }" class="repoioWfPanel">
-								<VBox renderType="Bare">
-									<Label text="{i18n>wf.script}" required="true" labelFor="wfScript"/>
-									<Select id="wfScript" selectedKey="{view>/wf/sel/scriptId}" items="{view>/wf/scripts}" width="100%" forceSelection="false"
-										change=".onScript" enabled="{= !${view>/wf/readOnly} }" valueState="{= ${view>/wf/sel/scriptId} ? 'None' : 'Warning' }">
-										<core:Item key="{view>key}" text="{view>file}"/>
+							<!-- Notification -->
+							<Panel headerText="{i18n>fd.n.notification}" visible="{= ${view>/wf/sel/type} === 'notification' }" class="repoioWfPanel">
+								<Label text="{i18n>fd.channels}" required="true"/>
+								<HBox renderType="Bare" class="repoioWfPair">
+									<CheckBox text="{i18n>fd.ch.inApp}" selected="{view>/wf/sel/inApp}" select=".onChannel" enabled="{= !${view>/wf/readOnly} }"/>
+									<CheckBox text="{i18n>fd.ch.email}" selected="{view>/wf/sel/email}" select=".onChannel" enabled="{= !${view>/wf/readOnly} }"/>
+								</HBox>
+								<Label text="{i18n>fd.to}" required="true" class="sapUiSmallMarginTop"/>
+								<MultiComboBox selectedKeys="{path: 'view>/wf/sel/recipients', mode: 'OneWay'}" items="{path: 'view>/wf/sel/recipientOptions', sorter: {path: 'group', group: true}}"
+									width="100%" selectionFinish=".onRecipients" editable="{= !${view>/wf/readOnly} }">
+									<core:Item key="{view>key}" text="{view>text}"/>
+								</MultiComboBox>
+								<Label text="{i18n>fd.subject}" class="sapUiSmallMarginTop" visible="{= !!${view>/wf/sel/email} }"/>
+								<Input value="{view>/wf/sel/subject}" change=".onProp" app:prop="subject" visible="{= !!${view>/wf/sel/email} }" editable="{= !${view>/wf/readOnly} }"/>
+								<Label text="{i18n>fd.message}" required="true" class="sapUiSmallMarginTop"/>
+								<TextArea value="{view>/wf/sel/message}" rows="4" width="100%" growing="true" change=".onProp" app:prop="message" editable="{= !${view>/wf/readOnly} }"/>
+								<HBox items="{view>/wf/vars}" renderType="Bare" wrap="Wrap" class="repoioWfChips">
+									<Button text="{path: 'view>key', formatter: '.varText'}" type="Transparent" press=".onInsertVar" app:var="{view>key}"
+										enabled="{= !${view>/wf/readOnly} }" class="repoioWfChip"/>
+								</HBox>
+								<Text text="{i18n>fd.notifyHint}" class="repoioHint"/>
+							</Panel>
+
+							<!-- Script -->
+							<Panel headerText="{i18n>fd.n.script}" visible="{= ${view>/wf/sel/type} === 'script' }" class="repoioWfPanel">
+								<Label text="{i18n>fd.language}"/>
+								<SegmentedButton selectedKey="{path: 'view>/wf/sel/language', mode: 'OneWay'}" selectionChange=".onLanguage" width="100%" enabled="{= !${view>/wf/readOnly} }">
+									<items>
+										<SegmentedButtonItem key="python" text="{i18n>fd.lang.python}"/>
+										<SegmentedButtonItem key="sql" text="{i18n>fd.lang.sql}"/>
+									</items>
+								</SegmentedButton>
+								<Label text="{i18n>fd.templateFields}" class="sapUiSmallMarginTop"/>
+								<HBox items="{view>/wf/fields}" renderType="Bare" wrap="Wrap" class="repoioWfChips">
+									<Button text="{view>name}" tooltip="{view>label}" type="Transparent" press=".onInsertField" app:field="{view>name}"
+										enabled="{= !${view>/wf/readOnly} }" class="repoioWfChip"/>
+								</HBox>
+								<rc:CodeEditor id="codeEditor" height="17rem" change=".onCode" class="sapUiTinyMarginTop"/>
+								<Label text="{i18n>wf.timeout}" class="sapUiSmallMarginTop"/>
+								<StepInput value="{view>/wf/sel/timeoutMin}" min="1" max="60" width="8rem" change=".onPropNum" app:prop="timeoutMin" editable="{= !${view>/wf/readOnly} }"/>
+								<MessageStrip text="{= ${view>/wf/sel/language} === 'sql' ? ${i18n>fd.sqlNote} : ${i18n>fd.pyNote} }" showIcon="true" class="sapUiSmallMarginTop"/>
+							</Panel>
+
+							<!-- Validation -->
+							<Panel headerText="{i18n>fd.n.validation}" visible="{= ${view>/wf/sel/type} === 'validation' }" class="repoioWfPanel">
+								<Label text="{i18n>fd.rule}" required="true"/>
+								<Select selectedKey="{view>/wf/sel/rule}" items="{path: 'view>/wf/rules', sorter: {path: 'engine', group: true}}" width="100%" forceSelection="false"
+									change=".onValidationRule" enabled="{= !${view>/wf/readOnly} }" valueState="{= ${view>/wf/sel/rule} ? 'None' : 'Warning' }">
+									<core:Item key="{view>key}" text="{view>text}"/>
+								</Select>
+								<Text text="{view>/wf/sel/ruleDesc}" class="repoioHint" visible="{= !!${view>/wf/sel/ruleDesc} }"/>
+								<VBox renderType="Bare" visible="{= ${view>/wf/sel/ruleKind} === 'dq' }">
+									<Label text="{i18n>fd.appliesTo}" class="sapUiSmallMarginTop"/>
+									<Text text="{view>/wf/sel/fixedFields}" class="repoioMono" visible="{= !!${view>/wf/sel/fixedFields} }"/>
+									<MultiComboBox selectedKeys="{path: 'view>/wf/sel/fields', mode: 'OneWay'}" items="{view>/wf/fields}" width="100%"
+										visible="{= !${view>/wf/sel/fixedFields} }" selectionFinish=".onValidationFields" editable="{= !${view>/wf/readOnly} }" showSecondaryValues="true">
+										<core:ListItem key="{view>name}" text="{view>label}" additionalText="{view>name}"/>
+									</MultiComboBox>
+									<Label text="{i18n>fd.onFail}" class="sapUiSmallMarginTop"/>
+									<Select selectedKey="{view>/wf/sel/severity}" width="100%" change=".onProp" app:prop="severity" enabled="{= !${view>/wf/readOnly} }">
+										<core:Item key="block" text="{i18n>fd.sev.block}"/>
+										<core:Item key="warn" text="{i18n>fd.sev.warn}"/>
 									</Select>
-									<Label text="{i18n>wf.scriptVersion}" class="sapUiSmallMarginTop"/>
-									<Select selectedKey="{view>/wf/sel/scriptVersion}" items="{view>/wf/sel/versionsOpt}" width="100%" change=".onAttr" app:attr="scriptVersion"
-										enabled="{= !${view>/wf/readOnly} }">
+								</VBox>
+								<VBox renderType="Bare" visible="{= ${view>/wf/sel/ruleKind} === 'match' }">
+									<Label text="{i18n>fd.compareWith}" required="true" class="sapUiSmallMarginTop"/>
+									<Select selectedKey="{view>/wf/sel/source}" items="{view>/wf/sel/sources}" width="100%" change=".onProp" app:prop="source" enabled="{= !${view>/wf/readOnly} }">
 										<core:Item key="{view>key}" text="{view>text}"/>
 									</Select>
-									<HBox renderType="Bare" class="repoioWfPair">
-										<VBox renderType="Bare">
-											<Label text="{i18n>wf.retries}" class="sapUiSmallMarginTop"/>
-											<StepInput value="{view>/wf/sel/retries}" min="0" max="5" width="7rem" change=".onAttrNum" app:attr="retries" editable="{= !${view>/wf/readOnly} }"/>
-										</VBox>
-										<VBox renderType="Bare">
-											<Label text="{i18n>wf.timeout}" class="sapUiSmallMarginTop"/>
-											<StepInput value="{view>/wf/sel/timeoutMin}" min="1" max="120" width="7rem" change=".onAttrNum" app:attr="timeoutMin" editable="{= !${view>/wf/readOnly} }"/>
-										</VBox>
-									</HBox>
-									<Label text="{i18n>wf.runtime}" class="sapUiSmallMarginTop"/>
-									<Text text="{i18n>wf.runtimeText}" class="repoioMono"/>
-									<MessageStrip text="{i18n>wf.pythonNote}" showIcon="true" type="Information" class="sapUiSmallMarginTop"/>
+									<Label text="{i18n>fd.threshold}: {view>/wf/sel/thresholdPct}%" class="sapUiSmallMarginTop"/>
+									<Slider value="{path: 'view>/wf/sel/thresholdPct', mode: 'OneWay'}" min="50" max="99" step="1" width="100%" change=".onThreshold"
+										enabled="{= !${view>/wf/readOnly} }"/>
+									<Text text="{i18n>fd.matchHint}" class="repoioHint"/>
 								</VBox>
+								<Text text="{i18n>fd.validationNote}" class="repoioHint sapUiSmallMarginTop"/>
 							</Panel>
 
-							<!-- Write-back Task (README §2.4; execution ships with M9) -->
-							<Panel expandable="true" expanded="true" headerText="{i18n>wf.target}" visible="{= ${view>/wf/sel/kind} === 'writeBack' }" class="repoioWfPanel">
-								<VBox renderType="Bare">
-									<Label text="{i18n>wf.connection}" required="true" labelFor="wfConn"/>
-									<Select id="wfConn" selectedKey="{view>/wf/sel/connection}" items="{view>/wf/wbConnections}" width="100%" forceSelection="false"
-										change=".onWbTarget" enabled="{= !${view>/wf/readOnly} }" valueState="{= ${view>/wf/sel/connection} ? 'None' : 'Warning' }">
-										<core:Item key="{view>key}" text="{view>text}"/>
-									</Select>
-									<Label text="{i18n>wf.entity}" required="true" class="sapUiSmallMarginTop"/>
-									<Select selectedKey="{view>/wf/sel/entity}" items="{view>/wf/domains}" width="100%" change=".onWbTarget" enabled="{= !${view>/wf/readOnly} }">
-										<core:Item key="{view>key}" text="{view>text}"/>
-									</Select>
-								</VBox>
-							</Panel>
-							<Panel expandable="true" expanded="true" headerText="{i18n>wf.mapping}" visible="{= ${view>/wf/sel/kind} === 'writeBack' }" class="repoioWfPanel">
-								<VBox renderType="Bare">
-									<Text text="{i18n>wf.mappingHint}" class="repoioHint sapUiTinyMarginBottom"/>
-									<Table items="{view>/wf/sel/mapping}" noDataText="{i18n>wf.noAllowlist}" class="repoioWfMap">
-										<columns>
-											<Column width="2.5rem"/>
-											<Column><Text text="{i18n>wf.goldenField}"/></Column>
-											<Column><Text text="{i18n>wf.targetField}"/></Column>
-										</columns>
-										<ColumnListItem>
-											<CheckBox selected="{view>on}" select=".onMapping" enabled="{= !${view>/wf/readOnly} }"/>
-											<Text text="{view>golden}" class="repoioMono"/>
-											<Text text="{view>target}" class="repoioMono"/>
-										</ColumnListItem>
-									</Table>
-								</VBox>
-							</Panel>
-							<Panel expandable="true" expanded="true" headerText="{i18n>wf.policy}" visible="{= ${view>/wf/sel/kind} === 'writeBack' }" class="repoioWfPanel">
-								<VBox renderType="Bare">
-									<Label text="{i18n>wf.conflict}"/>
-									<Select selectedKey="{view>/wf/sel/conflictPolicy}" width="100%" change=".onAttr" app:attr="conflictPolicy" enabled="{= !${view>/wf/readOnly} }">
-										<core:Item key="review" text="{i18n>wf.conflict.review}"/>
-										<core:Item key="fail" text="{i18n>wf.conflict.fail}"/>
-									</Select>
-									<HBox renderType="Bare" class="repoioWfPair">
-										<VBox renderType="Bare">
-											<Label text="{i18n>wf.retries}" class="sapUiSmallMarginTop"/>
-											<StepInput value="{view>/wf/sel/retries}" min="0" max="10" width="7rem" change=".onAttrNum" app:attr="retries" editable="{= !${view>/wf/readOnly} }"/>
-										</VBox>
-										<VBox renderType="Bare">
-											<Label text="{i18n>wf.backoff}" class="sapUiSmallMarginTop"/>
-											<Select selectedKey="{view>/wf/sel/backoff}" width="9rem" change=".onAttr" app:attr="backoff" enabled="{= !${view>/wf/readOnly} }">
-												<core:Item key="exponential" text="{i18n>wf.backoff.exp}"/>
-												<core:Item key="fixed" text="{i18n>wf.backoff.fixed}"/>
-											</Select>
-										</VBox>
-									</HBox>
-									<MessageStrip text="{i18n>wf.wbNote}" showIcon="true" type="Information" class="sapUiSmallMarginTop"/>
-								</VBox>
+							<!-- Write-back -->
+							<Panel headerText="{i18n>fd.n.writeBack}" visible="{= ${view>/wf/sel/type} === 'writeBack' }" class="repoioWfPanel">
+								<Label text="{i18n>fd.sourceSystem}" required="true"/>
+								<Select selectedKey="{view>/wf/sel/connection}" items="{view>/wf/connections}" width="100%" forceSelection="false" change=".onConnection"
+									enabled="{= !${view>/wf/readOnly} }" valueState="{= ${view>/wf/sel/connection} ? 'None' : 'Warning' }">
+									<core:Item key="{view>key}" text="{view>text}"/>
+								</Select>
+								<Label text="{i18n>wf.entity}" class="sapUiSmallMarginTop"/>
+								<Text text="{view>/wf/domainText}"/>
+								<MessageStrip visible="{= !!${view>/wf/sel/noAllowlist} }" text="{i18n>fd.v.noAllowlist}" type="Warning" showIcon="true" class="sapUiTinyMarginTop"/>
+								<HBox renderType="Bare" alignItems="Center" justifyContent="SpaceBetween" class="sapUiSmallMarginTop">
+									<Title text="{i18n>wf.mapping} ({view>/wf/sel/mappedCount} / {view>/wf/sel/targetCount})" level="H3" titleStyle="H6"/>
+									<Button text="{i18n>fd.map.open}" icon="sap-icon://chain-link" type="Emphasized" press=".onMapFields"
+										enabled="{= !!${view>/wf/sel/connection} &amp;&amp; ${view>/wf/sel/targetCount} > 0 }"/>
+								</HBox>
+								<Table items="{view>/wf/sel/mappedRows}" class="repoioWfMap" noDataText="{i18n>fd.map.none}">
+									<columns>
+										<Column><Text text="{i18n>fd.templateField}"/></Column>
+										<Column><Text text="{i18n>wf.targetField}"/></Column>
+									</columns>
+									<ColumnListItem>
+										<Text text="{view>source}" class="repoioMono"/>
+										<Text text="{view>target}" class="repoioMono"/>
+									</ColumnListItem>
+								</Table>
+								<Label text="{i18n>wf.conflict}" class="sapUiSmallMarginTop"/>
+								<Select selectedKey="{view>/wf/sel/conflict}" width="100%" change=".onProp" app:prop="conflict" enabled="{= !${view>/wf/readOnly} }">
+									<core:Item key="review" text="{i18n>wf.conflict.review}"/>
+									<core:Item key="fail" text="{i18n>wf.conflict.fail}"/>
+								</Select>
+								<Label text="{i18n>wf.retries}" class="sapUiSmallMarginTop"/>
+								<StepInput value="{view>/wf/sel/retries}" min="0" max="10" width="8rem" change=".onPropNum" app:prop="retries" editable="{= !${view>/wf/readOnly} }"/>
+								<MessageStrip text="{i18n>wf.wbNote}" showIcon="true" class="sapUiSmallMarginTop"/>
 							</Panel>
 
-							<!-- Condition (exclusive gateway) and its paths -->
-							<Panel expandable="true" expanded="true" headerText="{i18n>wf.paths}" visible="{= ${view>/wf/sel/kind} === 'exclusive' }" class="repoioWfPanel">
-								<VBox renderType="Bare">
-									<List items="{view>/wf/sel/paths}" showSeparators="Inner" itemPress=".onStepPress" noDataText="{i18n>wf.noPaths}">
-										<StandardListItem type="Active" title="{view>name}" description="{view>cond}" icon="sap-icon://journey-arrive" app:id="{view>id}"
-											info="{= ${view>isDefault} ? ${i18n>wf.defaultPath} : '' }" highlight="{= ${view>missing} ? 'Warning' : 'None' }"/>
-									</List>
-									<Text text="{i18n>wf.pathsHint}" class="repoioHint sapUiTinyMarginTop"/>
-								</VBox>
+							<!-- Condition -->
+							<Panel headerText="{i18n>fd.n.condition}" visible="{= ${view>/wf/sel/type} === 'condition' }" class="repoioWfPanel">
+								<Label text="{i18n>fd.cond.field}" required="true"/>
+								<Select selectedKey="{view>/wf/sel/field}" items="{view>/wf/fields}" width="100%" forceSelection="false" change=".onProp" app:prop="field"
+									enabled="{= !${view>/wf/readOnly} }" showSecondaryValues="true">
+									<core:ListItem key="{view>name}" text="{view>label}" additionalText="{view>name}"/>
+								</Select>
+								<Label text="{i18n>fd.cond.op}" class="sapUiSmallMarginTop"/>
+								<Select selectedKey="{view>/wf/sel/op}" width="100%" change=".onProp" app:prop="op" enabled="{= !${view>/wf/readOnly} }">
+									<core:Item key="eq" text="{i18n>fd.op.eq}"/>
+									<core:Item key="ne" text="{i18n>fd.op.ne}"/>
+									<core:Item key="gt" text="{i18n>fd.op.gt}"/>
+									<core:Item key="lt" text="{i18n>fd.op.lt}"/>
+									<core:Item key="empty" text="{i18n>fd.op.empty}"/>
+									<core:Item key="notEmpty" text="{i18n>fd.op.notEmpty}"/>
+								</Select>
+								<Label text="{i18n>fd.cond.value}" class="sapUiSmallMarginTop"
+									visible="{= ${view>/wf/sel/op} !== 'empty' &amp;&amp; ${view>/wf/sel/op} !== 'notEmpty' }"/>
+								<Input value="{view>/wf/sel/value}" change=".onProp" app:prop="value" editable="{= !${view>/wf/readOnly} }"
+									visible="{= ${view>/wf/sel/op} !== 'empty' &amp;&amp; ${view>/wf/sel/op} !== 'notEmpty' }"/>
+								<Text text="{i18n>fd.condHint}" class="repoioHint"/>
 							</Panel>
 
-							<!-- Sequence flow condition -->
-							<Panel expandable="true" expanded="true" headerText="{i18n>wf.condition}" visible="{= ${view>/wf/sel/kind} === 'flow' &amp;&amp; ${view>/wf/sel/fromExclusive} }" class="repoioWfPanel">
-								<VBox renderType="Bare">
-									<CheckBox text="{i18n>wf.defaultPath}" selected="{view>/wf/sel/isDefault}" select=".onDefaultPath" enabled="{= !${view>/wf/readOnly} }"/>
-									<VBox renderType="Bare" visible="{= !${view>/wf/sel/isDefault} }">
-										<Label text="{i18n>wf.when}" class="sapUiSmallMarginTop"/>
-										<Select selectedKey="{view>/wf/sel/cField}" width="100%" change=".onCondition" enabled="{= !${view>/wf/readOnly} }">
-											<core:Item key="decision" text="{i18n>wf.f.decision}"/>
-											<core:Item key="risk_score" text="{i18n>wf.f.risk}"/>
-											<core:Item key="entity.country" text="{i18n>wf.f.country}"/>
-											<core:Item key="changed_field_count" text="{i18n>wf.f.changed}"/>
-										</Select>
-										<HBox renderType="Bare" class="repoioWfPair sapUiTinyMarginTop">
-											<Select selectedKey="{view>/wf/sel/cOp}" width="5rem" change=".onCondition" enabled="{= !${view>/wf/readOnly} }">
-												<core:Item key="==" text="="/>
-												<core:Item key="!=" text="≠"/>
-												<core:Item key="&gt;" text="&gt;"/>
-												<core:Item key="&lt;" text="&lt;"/>
-											</Select>
-											<Input value="{view>/wf/sel/cValue}" change=".onCondition" editable="{= !${view>/wf/readOnly} }" placeholder="approved"/>
-										</HBox>
-										<Label text="{i18n>wf.expression}" class="sapUiSmallMarginTop"/>
-										<Text text="{view>/wf/sel/cond}" class="repoioMono repoioWfExpr"/>
-									</VBox>
-								</VBox>
+							<!-- End -->
+							<Panel headerText="{i18n>fd.n.end}" visible="{= ${view>/wf/sel/type} === 'end' }" class="repoioWfPanel">
+								<Label text="{i18n>wf.outcome}"/>
+								<Select selectedKey="{view>/wf/sel/outcome}" width="100%" change=".onProp" app:prop="outcome" enabled="{= !${view>/wf/readOnly} }">
+									<core:Item key="completed" text="{i18n>fd.out.completed}"/>
+									<core:Item key="rejected" text="{i18n>fd.out.rejected}"/>
+									<core:Item key="cancelled" text="{i18n>fd.out.cancelled}"/>
+								</Select>
 							</Panel>
 
-							<!-- Timer -->
-							<Panel expandable="true" expanded="true" headerText="{i18n>wf.b.timer}" visible="{= ${view>/wf/sel/kind} === 'timer' }" class="repoioWfPanel">
-								<VBox renderType="Bare">
-									<Label text="{i18n>wf.wait}"/>
-									<HBox renderType="Bare" class="repoioWfPair">
-										<StepInput value="{view>/wf/sel/tAmount}" min="1" max="999" width="8rem" change=".onTimer" editable="{= !${view>/wf/readOnly} }"/>
-										<Select selectedKey="{view>/wf/sel/tUnit}" width="8rem" change=".onTimer" enabled="{= !${view>/wf/readOnly} }">
-											<core:Item key="M" text="{i18n>wf.unit.min}"/>
-											<core:Item key="H" text="{i18n>wf.unit.hour}"/>
-											<core:Item key="D" text="{i18n>wf.unit.day}"/>
-										</Select>
-									</HBox>
-									<Label text="{i18n>wf.expression}" class="sapUiSmallMarginTop"/>
-									<Text text="{view>/wf/sel/timer}" class="repoioMono"/>
-								</VBox>
-							</Panel>
+							<Button text="{i18n>fd.removeStep}" icon="sap-icon://delete" type="Reject" press=".onRemoveSel" class="sapUiSmallMargin"
+								visible="{= ${view>/wf/sel/removable} &amp;&amp; !${view>/wf/readOnly} }"/>
 						</VBox>
 					</ScrollContainer>
 				</VBox>

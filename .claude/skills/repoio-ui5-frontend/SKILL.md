@@ -34,12 +34,13 @@ description: Use when working on the Repo.io frontend — the OpenUI5 console, t
    tabs, notifications, admin screens — use standard OpenUI5 controls.
    Reach for a third-party library only when OpenUI5 lacks the capability
    or is materially worse at it.
-3. **Every third-party library is wrapped.** bpmn-js (BPMN designer),
-   Monaco (code editor), Apache ECharts (charts), Cytoscape.js (graphs),
+3. **Every third-party library is wrapped.** Monaco (code editor), Apache ECharts (charts), Cytoscape.js (graphs),
    CodeMirror 6 (lightweight editor) each live inside an OpenUI5 custom
    control or dedicated page component. Library DOM and event handling
    stays inside the wrapper and respects the OpenUI5 rendering and
    destruction lifecycle. Never let library DOM leak into views.
+   The workflow designer is our own OpenUI5 control (ADR-0002), not a
+   wrapped library.
 4. **Never introduce React to host a JavaScript library.** The classic
    trap — "I'll just mount this React wrapper for Monaco" — re-imports
    the framework we are migrating away from.

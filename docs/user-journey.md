@@ -210,19 +210,36 @@ current entity schema → blocked at save with the schema rule cited.
 
 ## J7 — Design & publish a workflow
 
-1. The designer opens the **Workflow Designer** (bpmn-js canvas inside
-   OpenUI5).
-2. Compose: approval steps whose approvers are named people (one or
-   more) or a team — any one or all of them must approve, with an
-   optional due date and escalation to a team — conditions, parallel
-   branches, timers, retries.
-3. Optional nodes: **Write-back Task** (target system, field mapping,
-   conflict policy — execution ships with M9), **Python Script Task**
-   (M8).
-4. Repo.io-specific properties are set in OpenUI5 panels beside the
-   canvas; the palette itself stays standard BPMN.
-5. **Validate** runs definition checks (dangling nodes, no approver on
-   an approval step, unreachable ends).
+1. The designer opens the **Workflow Designer** — the Repo.io flow
+   designer (ADR-0002): step cards on a canvas, "+" on any path to add a
+   step, properties in a panel beside it. It starts with **Begin** and
+   **Template**: exactly one request template, chosen from the published
+   templates the user can see; the workflow's domain is that template's.
+2. Compose with steps:
+   - **Approval** — named people (one or more) or a team; any one or
+     all; SLA with reminder and escalation to a person or team;
+     branches *approved* / *rejected*.
+   - **Validation** — a data quality rule (Great Expectations) on the
+     template's fields, or a duplicate check (Splink) against the chosen
+     source (the domain's golden records or a source connection) with a
+     threshold; branches *passed* / *failed*.
+   - **Script** — choose the language (Python, or read-only SQL) and
+     write the code in the step, with the template's field names offered;
+     runs in the isolated workers as the requester (M8).
+   - **Write-back** — source system, then map template fields to the
+     target system's allowlisted fields in a mapper (code lists
+     translated by reference data); conflict → review (execution M9).
+   - **Notification** — in-app alert and/or email to the requester,
+     earlier approvers, teams or people.
+   - **Condition** (branch on a template field) and **End** (completed /
+     rejected / cancelled).
+3. Every branch ends in an End by construction; removing a step removes
+   its side branch after a confirmation.
+4. The flow compiles to BPMN 2.0 for Flowable on publish; "Export BPMN"
+   shows the result.
+5. **Validate** runs definition checks (no template, no approver,
+   missing recipients or message, missing rule or comparison source,
+   unmapped key fields, fields that are not in the template).
 6. Save as new version; **publish** freezes it. Published workflows
    are immutable; running instances keep their version.
 7. Tag the workflow with entity/domain so request forms (J3) can offer

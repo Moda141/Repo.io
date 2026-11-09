@@ -1,0 +1,17 @@
+{
+  "name": "repoio-codemirror-bundle",
+  "private": true,
+  "description": "Builds webapp/thirdparty/codemirror/codemirror6.min.js (CodeMirror 6, MIT) for the CodeEditor control. Run: npm ci && npm run build",
+  "scripts": {
+    "build": "esbuild entry.js --bundle --minify --format=iife --global-name=RepoioCM --target=es2019 --outfile=../../webapp/thirdparty/codemirror/codemirror6.min.js \"--footer:js=window.RepoioCM=RepoioCM;\""
+  },
+  "devDependencies": {
+    "codemirror": "6.0.1",
+    "@codemirror/autocomplete": "6.18.1",
+    "@codemirror/lang-python": "6.1.6",
+    "@codemirror/lang-sql": "6.8.0",
+    "@codemirror/state": "6.4.1",
+    "@codemirror/view": "6.34.1",
+    "esbuild": "0.24.0"
+  }
+}

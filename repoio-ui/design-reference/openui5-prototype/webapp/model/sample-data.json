@@ -3006,5 +3006,641 @@
     "from": "P-30007"
    }
   ]
+ },
+ "workflow": {
+  "templates": [
+   {
+    "key": "TPL_CUSTOMER_CREATE",
+    "domain": "Customer",
+    "version": "3",
+    "en": "Customer – create",
+    "ar": "إنشاء عميل",
+    "fields": [
+     {
+      "name": "customer_id",
+      "type": "string",
+      "en": "Customer ID",
+      "ar": "كود العميل",
+      "req": true,
+      "key": true,
+      "codeList": false
+     },
+     {
+      "name": "business_name",
+      "type": "string",
+      "en": "Business name",
+      "ar": "اسم العميل",
+      "req": true,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "business_name_ar",
+      "type": "string",
+      "en": "Business name (Arabic)",
+      "ar": "الاسم بالعربي",
+      "req": false,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "tax_number",
+      "type": "string",
+      "en": "Tax number",
+      "ar": "الرقم الضريبي",
+      "req": false,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "customer_group",
+      "type": "code",
+      "en": "Customer group",
+      "ar": "مجموعة العميل",
+      "req": true,
+      "key": false,
+      "codeList": true
+     },
+     {
+      "name": "street",
+      "type": "string",
+      "en": "Street",
+      "ar": "الشارع",
+      "req": false,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "city",
+      "type": "string",
+      "en": "City",
+      "ar": "المدينة",
+      "req": false,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "postal_code",
+      "type": "string",
+      "en": "Postal code",
+      "ar": "الرمز البريدي",
+      "req": false,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "country",
+      "type": "code",
+      "en": "Country",
+      "ar": "الدولة",
+      "req": true,
+      "key": false,
+      "codeList": true
+     },
+     {
+      "name": "phone",
+      "type": "string",
+      "en": "Phone",
+      "ar": "التليفون",
+      "req": false,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "email",
+      "type": "string",
+      "en": "Email",
+      "ar": "البريد الإلكتروني",
+      "req": false,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "credit_limit",
+      "type": "decimal",
+      "en": "Credit limit",
+      "ar": "حد الائتمان",
+      "req": false,
+      "key": false,
+      "codeList": false
+     }
+    ]
+   },
+   {
+    "key": "TPL_CUSTOMER_CHANGE",
+    "domain": "Customer",
+    "version": "2",
+    "en": "Customer – change address or tax data",
+    "ar": "تعديل عنوان أو بيانات ضريبية لعميل",
+    "fields": [
+     {
+      "name": "customer_id",
+      "type": "string",
+      "en": "Customer ID",
+      "ar": "كود العميل",
+      "req": true,
+      "key": true,
+      "codeList": false
+     },
+     {
+      "name": "tax_number",
+      "type": "string",
+      "en": "Tax number",
+      "ar": "الرقم الضريبي",
+      "req": false,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "street",
+      "type": "string",
+      "en": "Street",
+      "ar": "الشارع",
+      "req": false,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "city",
+      "type": "string",
+      "en": "City",
+      "ar": "المدينة",
+      "req": false,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "postal_code",
+      "type": "string",
+      "en": "Postal code",
+      "ar": "الرمز البريدي",
+      "req": false,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "country",
+      "type": "code",
+      "en": "Country",
+      "ar": "الدولة",
+      "req": true,
+      "key": false,
+      "codeList": true
+     }
+    ]
+   },
+   {
+    "key": "TPL_VENDOR_CREATE",
+    "domain": "Vendor",
+    "version": "1",
+    "en": "Vendor – create",
+    "ar": "إنشاء مورد",
+    "fields": [
+     {
+      "name": "vendor_id",
+      "type": "string",
+      "en": "Vendor ID",
+      "ar": "كود المورد",
+      "req": true,
+      "key": true,
+      "codeList": false
+     },
+     {
+      "name": "business_name",
+      "type": "string",
+      "en": "Business name",
+      "ar": "اسم المورد",
+      "req": true,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "tax_number",
+      "type": "string",
+      "en": "Tax number",
+      "ar": "الرقم الضريبي",
+      "req": true,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "payment_terms",
+      "type": "code",
+      "en": "Payment terms",
+      "ar": "شروط الدفع",
+      "req": false,
+      "key": false,
+      "codeList": true
+     },
+     {
+      "name": "city",
+      "type": "string",
+      "en": "City",
+      "ar": "المدينة",
+      "req": false,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "country",
+      "type": "code",
+      "en": "Country",
+      "ar": "الدولة",
+      "req": true,
+      "key": false,
+      "codeList": true
+     },
+     {
+      "name": "email",
+      "type": "string",
+      "en": "Email",
+      "ar": "البريد الإلكتروني",
+      "req": false,
+      "key": false,
+      "codeList": false
+     }
+    ]
+   },
+   {
+    "key": "TPL_PRODUCT_CREATE",
+    "domain": "Product",
+    "version": "4",
+    "en": "Book – create",
+    "ar": "إنشاء كتاب",
+    "fields": [
+     {
+      "name": "product_id",
+      "type": "string",
+      "en": "Product ID",
+      "ar": "كود المنتج",
+      "req": true,
+      "key": true,
+      "codeList": false
+     },
+     {
+      "name": "title",
+      "type": "string",
+      "en": "Title",
+      "ar": "العنوان",
+      "req": true,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "isbn",
+      "type": "string",
+      "en": "ISBN",
+      "ar": "ISBN",
+      "req": false,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "language",
+      "type": "code",
+      "en": "Language",
+      "ar": "اللغة",
+      "req": true,
+      "key": false,
+      "codeList": true
+     },
+     {
+      "name": "grade",
+      "type": "code",
+      "en": "Grade",
+      "ar": "الصف الدراسي",
+      "req": false,
+      "key": false,
+      "codeList": true
+     },
+     {
+      "name": "price",
+      "type": "decimal",
+      "en": "Price",
+      "ar": "السعر",
+      "req": false,
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "series_code",
+      "type": "string",
+      "en": "Series code",
+      "ar": "كود السلسلة",
+      "req": false,
+      "key": false,
+      "codeList": false
+     }
+    ]
+   }
+  ],
+  "targets": {
+   "c4c": {
+    "Customer": [
+     {
+      "name": "AccountID",
+      "type": "string",
+      "src": "customer_id",
+      "key": true,
+      "codeList": false
+     },
+     {
+      "name": "Name",
+      "type": "string",
+      "src": "business_name",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "AdditionalName",
+      "type": "string",
+      "src": "business_name_ar",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "TaxNumber",
+      "type": "string",
+      "src": "tax_number",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "CustomerGroupCode",
+      "type": "code",
+      "src": "customer_group",
+      "key": false,
+      "codeList": true
+     },
+     {
+      "name": "StreetName",
+      "type": "string",
+      "src": "street",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "CityName",
+      "type": "string",
+      "src": "city",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "StreetPostalCode",
+      "type": "string",
+      "src": "postal_code",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "CountryCode",
+      "type": "code",
+      "src": "country",
+      "key": false,
+      "codeList": true
+     },
+     {
+      "name": "Phone",
+      "type": "string",
+      "src": "phone",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "Email",
+      "type": "string",
+      "src": "email",
+      "key": false,
+      "codeList": false
+     }
+    ]
+   },
+   "erp": {
+    "Customer": [
+     {
+      "name": "KUNNR",
+      "type": "string",
+      "src": "customer_id",
+      "key": true,
+      "codeList": false
+     },
+     {
+      "name": "NAME1",
+      "type": "string",
+      "src": "business_name",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "NAME2",
+      "type": "string",
+      "src": "business_name_ar",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "STCD1",
+      "type": "string",
+      "src": "tax_number",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "KDGRP",
+      "type": "code",
+      "src": "customer_group",
+      "key": false,
+      "codeList": true
+     },
+     {
+      "name": "STRAS",
+      "type": "string",
+      "src": "street",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "ORT01",
+      "type": "string",
+      "src": "city",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "PSTLZ",
+      "type": "string",
+      "src": "postal_code",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "LAND1",
+      "type": "code",
+      "src": "country",
+      "key": false,
+      "codeList": true
+     },
+     {
+      "name": "TELF1",
+      "type": "string",
+      "src": "phone",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "SMTP_ADDR",
+      "type": "string",
+      "src": "email",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "KLIMK",
+      "type": "decimal",
+      "src": "credit_limit",
+      "key": false,
+      "codeList": false
+     }
+    ],
+    "Vendor": [
+     {
+      "name": "LIFNR",
+      "type": "string",
+      "src": "vendor_id",
+      "key": true,
+      "codeList": false
+     },
+     {
+      "name": "NAME1",
+      "type": "string",
+      "src": "business_name",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "STCD1",
+      "type": "string",
+      "src": "tax_number",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "ZTERM",
+      "type": "code",
+      "src": "payment_terms",
+      "key": false,
+      "codeList": true
+     },
+     {
+      "name": "ORT01",
+      "type": "string",
+      "src": "city",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "LAND1",
+      "type": "code",
+      "src": "country",
+      "key": false,
+      "codeList": true
+     },
+     {
+      "name": "SMTP_ADDR",
+      "type": "string",
+      "src": "email",
+      "key": false,
+      "codeList": false
+     }
+    ],
+    "Product": [
+     {
+      "name": "MATNR",
+      "type": "string",
+      "src": "product_id",
+      "key": true,
+      "codeList": false
+     },
+     {
+      "name": "MAKTX",
+      "type": "string",
+      "src": "title",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "EAN11",
+      "type": "string",
+      "src": "isbn",
+      "key": false,
+      "codeList": false
+     },
+     {
+      "name": "SPRAS",
+      "type": "code",
+      "src": "language",
+      "key": false,
+      "codeList": true
+     }
+    ]
+   }
+  },
+  "rules": [
+   {
+    "key": "dq_required",
+    "kind": "dq",
+    "en": "Required fields are complete",
+    "ar": "الحقول الإلزامية مكتملة",
+    "engine": "Great Expectations",
+    "fields": [],
+    "descEn": "expect_column_values_to_not_be_null on every required template field",
+    "descAr": "كل حقل إلزامي في القالب له قيمة"
+   },
+   {
+    "key": "dq_tax_eg",
+    "kind": "dq",
+    "en": "Egyptian tax number format",
+    "ar": "صيغة الرقم الضريبي المصري",
+    "engine": "Great Expectations",
+    "fields": [
+     "tax_number"
+    ],
+    "descEn": "9 digits, no separators",
+    "descAr": "9 أرقام بدون فواصل"
+   },
+   {
+    "key": "dq_email",
+    "kind": "dq",
+    "en": "Email format",
+    "ar": "صيغة البريد الإلكتروني",
+    "engine": "Great Expectations",
+    "fields": [
+     "email"
+    ],
+    "descEn": "Valid address syntax",
+    "descAr": "عنوان بريد صحيح الصيغة"
+   },
+   {
+    "key": "dq_codes_ref",
+    "kind": "dq",
+    "en": "Codes exist in the target system's reference list",
+    "ar": "الأكواد موجودة في القائمة المرجعية للنظام الهدف",
+    "engine": "Great Expectations",
+    "fields": [],
+    "descEn": "Code-list fields checked against reference data for the (domain, system) pair",
+    "descAr": "حقول الأكواد تُفحص مقابل البيانات المرجعية للمجال والنظام"
+   },
+   {
+    "key": "match_duplicate",
+    "kind": "match",
+    "en": "Duplicate check (match)",
+    "ar": "فحص التكرار (مطابقة)",
+    "engine": "Splink",
+    "fields": [],
+    "descEn": "Scores the request against the chosen source; candidates above the threshold fail the check",
+    "descAr": "يقارن الطلب بالمصدر المختار؛ أي مرشح فوق الحد يُفشل الفحص"
+   }
+  ]
  }
 }
