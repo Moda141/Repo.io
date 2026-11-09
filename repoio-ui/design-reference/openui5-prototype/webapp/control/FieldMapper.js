@@ -4,8 +4,9 @@
  * Map by dragging a template field onto a target field, or by clicking one then the other.
  * Filter All / Mapped / Unmapped and search each column. Pure OpenUI5 control (no library).
  *
- * mapping = { <targetField>: <templateField> } — a target takes one template field; a template field
- * may feed several targets. Only allowlisted target fields exist here, so nothing else can be written.
+ * mapping = { <targetField>: <templateField> | { src, fx: { type, arg, src2 } } } — a target takes one template
+ * field, optionally transformed (constant, combine, truncate, upper case, trim, default); a template field may
+ * feed several targets. Only allowlisted target fields exist here, so nothing else can be written.
  */
 sap.ui.define([
 	"sap/ui/core/Control",
@@ -19,6 +20,7 @@ sap.ui.define([
 		var i = IconPool.getIconInfo(src);
 		return i ? "<span class=\"" + (cls || "fmGlyph") + "\" aria-hidden=\"true\" style=\"font-family:'" + esc(i.fontFamily) + "'\">" + esc(i.content) + "</span>" : "";
 	};
+	var srcOf = function (v) { return typeof v === "string" ? v : (v && v.src) || ""; };
 	var typeMark = function (t) {
 		if (t === "decimal" || t === "integer" || t === "number") { return "<span class=\"fmType\">1.23</span>"; }
 		if (t === "date") { return icon("sap-icon://calendar", "fmType fmGlyph"); }
@@ -35,7 +37,11 @@ sap.ui.define([
 				editable: { type: "boolean", defaultValue: true },
 				texts: { type: "object", defaultValue: {} }        // all, mapped, unmapped, search, src, tgt, unmap, valueMap, key, auto, hint
 			},
-			events: { change: { parameters: { mapping: { type: "object" } } } }
+			events: {
+				change: { parameters: { mapping: { type: "object" } } },
+				/* fx button on a target field: the owner opens its transformation editor. */
+				transform: { parameters: { target: { type: "string" }, domRef: { type: "object" } } }
+			}
 		},
 
 		init: function () { this._filter = "all"; this._pick = null; },
@@ -44,7 +50,8 @@ sap.ui.define([
 			apiVersion: 2,
 			render: function (oRm, c) {
 				var T = c.getTexts(), map = c.getMapping() || {}, used = {}, ed = c.getEditable();
-				Object.keys(map).forEach(function (k) { used[map[k]] = true; });
+				Object.keys(map).forEach(function (k) { used[srcOf(map[k])] = true; });
+				var fxText = c.getTexts().fx || {};
 				oRm.openStart("div", c).class("repoioMapper").openEnd();
 				var seg = ["all", "mapped", "unmapped"].map(function (k) {
 					return "<button type=\"button\" class=\"fmSeg" + (c._filter === k ? " fmOn" : "") + "\" data-f=\"" + k + "\" aria-pressed=\"" + (c._filter === k) + "\">" + esc(T[k]) + "</button>";
@@ -62,9 +69,11 @@ sap.ui.define([
 						"<span class=\"fmName\">" + esc(f.label) + "<small>" + esc(f.name) + "</small></span>" + (f.key ? icon("sap-icon://key", "fmKey fmGlyph") : "") + "</div>";
 				});
 				var tgt = (c.getTarget() || []).map(function (f) {
-					var m = map[f.name];
-					return "<div class=\"fmItem" + (m ? " fmUsed" : "") + "\" role=\"listitem\" tabindex=\"0\" data-side=\"tgt\" data-name=\"" + esc(f.name) + "\" title=\"" + esc(f.name + (m ? " ← " + m : "")) + "\">" +
-						"<span class=\"fmGrip\">⋮</span>" + typeMark(f.type) + "<span class=\"fmName\" dir=\"ltr\">" + esc(f.name) + "</span>" +
+					var m = map[f.name], fx = m && m.fx, fxLabel = fx ? (fxText[fx.type] || fx.type) + (fx.arg ? ": " + fx.arg : "") + (fx.src2 ? " + " + fx.src2 : "") : "";
+					return "<div class=\"fmItem" + (m ? " fmUsed" : "") + "\" role=\"listitem\" tabindex=\"0\" data-side=\"tgt\" data-name=\"" + esc(f.name) + "\" title=\"" + esc(f.name + (m ? " ← " + (srcOf(m) || fxLabel) : "")) + "\">" +
+						"<span class=\"fmGrip\">⋮</span>" + typeMark(f.type) + "<span class=\"fmName\" dir=\"ltr\">" + esc(f.name) + (f.maxLen ? "<small>≤" + f.maxLen + "</small>" : "") + "</span>" +
+						(fx ? "<span class=\"fmFx\" dir=\"ltr\">" + esc(fxLabel) + "</span>" : "") +
+						(ed ? "<button type=\"button\" class=\"fmFxBtn" + (fx ? " fmFxOn" : "") + "\" data-name=\"" + esc(f.name) + "\" title=\"" + esc(T.fxTip || "fx") + "\">fx</button>" : "") +
 						(f.codeList ? "<span class=\"fmVm\" title=\"" + esc(T.valueMap) + "\">" + icon("sap-icon://value-help") + "</span>" : "") +
 						(f.key ? icon("sap-icon://key", "fmKey fmGlyph") : "") +
 						(m && ed ? "<button type=\"button\" class=\"fmUnmap\" data-name=\"" + esc(f.name) + "\" title=\"" + esc(T.unmap) + "\" aria-label=\"" + esc(T.unmap + " " + f.name) + "\">" + icon("sap-icon://decline") + "</button>" : "") +
@@ -104,6 +113,8 @@ sap.ui.define([
 		_onClick: function (e) {
 			var t = e.target, s = t.closest(".fmSeg"), u = t.closest(".fmUnmap"), it = t.closest(".fmItem");
 			if (s) { this._filter = s.getAttribute("data-f"); this.invalidate(); return; }
+			var fxb = t.closest(".fmFxBtn");
+			if (fxb) { e.stopPropagation(); this.fireTransform({ target: fxb.getAttribute("data-name"), domRef: fxb }); return; }
 			if (t.closest(".fmAuto")) { this.autoMap(); return; }
 			if (u) { e.stopPropagation(); var m = Object.assign({}, this.getMapping()); delete m[u.getAttribute("data-name")]; this._set(m); return; }
 			if (it) { this._onItem(it); }
@@ -117,7 +128,9 @@ sap.ui.define([
 		},
 		_map: function (tgt, src) {
 			if (!this.getEditable() || !src || !tgt) { return; }
-			var m = Object.assign({}, this.getMapping()); m[tgt] = src; this._set(m);
+			var m = Object.assign({}, this.getMapping()), old = m[tgt];
+			m[tgt] = old && old.fx ? { src: src, fx: old.fx } : src; // re-mapping keeps the target's transformation
+			this._set(m);
 		},
 		_set: function (m) { this.setProperty("mapping", m); this.fireChange({ mapping: m }); },
 
@@ -159,7 +172,8 @@ sap.ui.define([
 				return el && el.style.display !== "none" ? el.getBoundingClientRect() : null;
 			};
 			Object.keys(map).forEach(function (t) {
-				var a = find("src", map[t]), b = find("tgt", t); if (!a || !b) { return; }
+				if (!srcOf(map[t])) { return; } // constants have no source line
+				var a = find("src", srcOf(map[t])), b = find("tgt", t); if (!a || !b) { return; }
 				var ltr = a.left < b.left;
 				var x1 = (ltr ? a.right : a.left) - B.left, y1 = a.top + a.height / 2 - B.top, x2 = (ltr ? b.left : b.right) - B.left, y2 = b.top + b.height / 2 - B.top;
 				var dx = (x2 - x1) / 2;

@@ -380,3 +380,45 @@
 .repoioWfMapPanel .fmSeg { padding: 0.3125rem 0.875rem; }
 .repoioWfMapPanel .fmItem { font-size: 0.8125rem; padding: 0.375rem 0.4375rem; }
 .repoioWfMapPanel .fmName small { display: none; }
+/* Flow designer overlays: test run, compare, runs; minimap */
+.rfEdge.rfOnPath { stroke: #0a6ed1; stroke-width: 2.5; stroke-dasharray: none; }
+.rfArrow.rfOnPath { fill: #0a6ed1; }
+.rfEdge.rfOffPath, .rfArrow.rfOffPath { opacity: 0.25; }
+.rfNode.rfRun-off { opacity: 0.35; }
+.rfNode.rfRun-on { border-color: #0a6ed1; box-shadow: 0 0 0 3px rgba(10,110,209,0.16); }
+.rfNode.rfRun-fail, .rfNode.rfRun-stop { border-color: #e9730c; box-shadow: 0 0 0 3px rgba(233,115,12,0.18); }
+.rfNode.rfDiff-added { border-color: #2b7c4f; box-shadow: 0 0 0 3px rgba(43,124,79,0.18); }
+.rfNode.rfDiff-changed { border-color: #e9730c; box-shadow: 0 0 0 3px rgba(233,115,12,0.16); }
+.rfNode.rfDiff-same { opacity: 0.55; }
+.rfTag { position: absolute; top: -0.625rem; inset-inline-start: 0.625rem; z-index: 1; font: 600 0.625rem/1.5 "72", Arial, sans-serif; padding: 0 0.4375rem;
+	border-radius: 0.5rem; color: #fff; background: #0a6ed1; white-space: nowrap; max-width: 92%; overflow: hidden; text-overflow: ellipsis; }
+.rfCard { overflow: visible; }
+.rfCard > .rfBody { overflow: hidden; border-radius: 0 0 0.625rem 0.625rem; }
+.rfTag-ok { background: #2b7c4f; } .rfTag-warn { background: #e9730c; } .rfTag-bad { background: #bb0000; } .rfTag-info { background: #0a6ed1; } .rfTag-muted { background: #8396a8; }
+.rfStats { position: absolute; bottom: -0.75rem; inset-inline-end: 0.5rem; display: flex; gap: 0.25rem; z-index: 1; }
+.rfStat { font: 600 0.625rem/1.5 "72", Arial, sans-serif; padding: 0 0.375rem; border-radius: 0.5rem; background: #fff; border: 1px solid #c9d0d7; color: #475e75;
+	white-space: nowrap; display: inline-flex; gap: 0.1875rem; align-items: center; }
+.rfStat.rfStatBad { border-color: #e9b9b9; color: #a33; background: #fbefef; }
+.rfBadges { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.25rem; }
+.rfBadge { font-size: 0.625rem; padding: 0 0.375rem; border-radius: 0.5rem; background: #eef1f4; color: #475e75; border: 1px solid #dde3e9; white-space: nowrap; }
+.rfMini { position: absolute; bottom: 0.75rem; inset-inline-end: 0.75rem; background: rgba(255,255,255,0.92); border: 1px solid #e1e5ea; border-radius: 0.375rem;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.06); cursor: pointer; padding: 0.25rem; box-sizing: content-box; }
+.rfMiniN { fill: #c9d3dd; } .rfMiniN.rfMiniRun { fill: #0a6ed1; } .rfMiniN.rfMiniBad { fill: #e9a0a0; }
+.rfMiniView { fill: rgba(10,110,209,0.08); stroke: #0a6ed1; stroke-width: 1; }
+.fmFx { font: 0.6875rem SFMono-Regular, Consolas, monospace; color: #6d4bb5; background: #f3effc; border: 1px solid #ddd3f5; border-radius: 0.5rem; padding: 0 0.375rem;
+	white-space: nowrap; max-width: 9rem; overflow: hidden; text-overflow: ellipsis; }
+.fmFxBtn { border: 1px solid #c9d0d7; background: #fff; color: #6a6d70; border-radius: 0.25rem; font: italic 600 0.6875rem Georgia, serif; padding: 0 0.3125rem; cursor: pointer; }
+.fmFxBtn:hover, .fmFxBtn.fmFxOn { color: #6d4bb5; border-color: #b9a6ea; }
+/* Flow designer side panel: parallel groups, controls, review banner, test/compare lists */
+.repoioWfGroup { gap: 0.375rem; margin-top: 0.375rem; }
+.repoioWfGroup > .sapMSlt:first-of-type { flex: 1 1 auto; min-width: 0; }
+.repoioWfGroupNo { flex: 0 0 1.25rem; height: 1.25rem; line-height: 1.25rem; text-align: center; border-radius: 50%; background: #eef1f4; color: #475e75; font-size: 0.6875rem; font-weight: 600; }
+.repoioWfProps .repoioWfPanel .repoioWfIndent { padding-inline-start: 1.75rem; }
+.repoioWfReview { gap: 0.25rem; padding-inline-end: 0.75rem; }
+.repoioWfReviewText { flex: 1 1 auto; }
+.repoioWfRunRow { gap: 0.5rem; padding: 0.375rem 0; align-items: flex-start; }
+.repoioWfRunIcon { margin-top: 0.125rem; color: #556b82; flex: 0 0 auto; }
+.repoioWfProps .repoioWfPanel .repoioWfRunTitle { font-weight: 600; display: inline-block; }
+.repoioWfProps .repoioWfPanel .repoioWfRunMsg { white-space: pre-wrap; font-size: 0.6875rem; background: #f5f6f7; border-radius: 0.25rem; padding: 0.25rem 0.375rem; margin-top: 0.25rem; }
+.repoioFxPrev { display: block; white-space: pre-wrap; background: #f5f6f7; border-radius: 0.25rem; padding: 0.375rem; }
+.repoioWfMode { margin-inline-end: 0.25rem; }

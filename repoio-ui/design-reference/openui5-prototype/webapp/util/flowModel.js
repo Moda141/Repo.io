@@ -22,6 +22,23 @@ sap.ui.define([], function () {
 	function Flow(o) { this.nodes = o.nodes; this.root = o.root; this.seq = o.seq || 100; }
 
 	Flow.PORTS = PORTS;
+	/* Values a step exposes to later steps (e.g. a Condition on the match score). */
+	Flow.OUTPUTS = {
+		validation: [{ name: "result", type: "code", values: ["passed", "failed"] }, { name: "score", type: "decimal", matchOnly: true }],
+		approval: [{ name: "decision", type: "code", values: ["approved", "rejected"] }, { name: "approver", type: "string" }, { name: "returns", type: "decimal" }],
+		script: [{ name: "status", type: "code", values: ["ok", "warn"] }, { name: "message", type: "string" }],
+		writeBack: [{ name: "status", type: "code", values: ["written", "review"] }, { name: "targetId", type: "string" }]
+	};
+	/* What changed between two saved versions (by step id). */
+	Flow.diff = function (a, b) {
+		var A = a.nodes, B = b.nodes, out = { added: [], removed: [], changed: [] };
+		Object.keys(B).forEach(function (k) {
+			if (!A[k]) { out.added.push(k); return; }
+			if (JSON.stringify([A[k].name, A[k].props, A[k].next]) !== JSON.stringify([B[k].name, B[k].props, B[k].next])) { out.changed.push(k); }
+		});
+		Object.keys(A).forEach(function (k) { if (!B[k]) { out.removed.push(A[k]); } });
+		return out;
+	};
 	Flow.INSERTABLE = INSERTABLE;
 	Flow.fromJSON = function (o) { return new Flow(clone(o)); };
 
@@ -166,12 +183,25 @@ sap.ui.define([], function () {
 				// The template binds the workflow; no runtime step of its own.
 				els.push("    <bpmn:serviceTask id=\"" + id + "\" name=\"" + nm + "\" repoio:taskType=\"loadRequest\"" + attrs({ template: p.template }) + " />"); break;
 			case "approval":
-				els.push("    <bpmn:userTask id=\"" + id + "\" name=\"" + nm + "\" repoio:taskType=\"approval\"" +
-					attrs({ approverType: p.approverType, approvers: (p.approvers || []).join(","), approverTeam: p.approverTeam, rule: p.rule, sla: p.sla, escalateTo: p.escalateTo }) + " />");
+				var common = attrs({ sla: p.sla, escalateTo: p.escalateTo, excludeRequester: p.sod !== false, delegation: p.delegate ? "directory" : "", delegateTo: p.delegateTo });
+				if (p.mode === "parallel") {
+					// Several groups at the same time: split, one task per group, join; every group must approve.
+					els.push("    <bpmn:parallelGateway id=\"" + id + "\" name=\"" + nm + "\" />");
+					(p.groups || []).forEach(function (g, i) {
+						var gid = id + "_g" + (i + 1);
+						els.push("    <bpmn:userTask id=\"" + gid + "\" name=\"" + nm + " · " + (i + 1) + "\" repoio:taskType=\"approval\"" + attrs({ assignee: g.who, rule: g.rule }) + common + " />");
+						flow(id, gid); flow(gid, id + "_join");
+					});
+					els.push("    <bpmn:parallelGateway id=\"" + id + "_join\" />");
+				} else {
+					els.push("    <bpmn:userTask id=\"" + id + "\" name=\"" + nm + "\" repoio:taskType=\"approval\"" +
+						attrs({ approverType: p.approverType, approvers: (p.approvers || []).join(","), approverTeam: p.approverTeam, rule: p.rule }) + common + " />");
+				}
 				break;
 			case "notification":
 				els.push("    <bpmn:sendTask id=\"" + id + "\" name=\"" + nm + "\" repoio:taskType=\"notification\"" +
-					attrs({ channels: (p.channels || []).join(","), recipients: (p.recipients || []).join(","), subject: p.subject }) + " repoio:message=\"" + esc(p.message) + "\" />"); break;
+					attrs({ channels: (p.channels || []).join(","), recipients: (p.recipients || []).join(","), subjectEn: p.subjectEn, subjectAr: p.subjectAr }) +
+					" repoio:messageEn=\"" + esc(p.messageEn) + "\" repoio:messageAr=\"" + esc(p.messageAr) + "\" />"); break;
 			case "script":
 				// A service task that calls the isolated worker API: the engine never runs the code itself.
 				els.push("    <bpmn:serviceTask id=\"" + id + "\" name=\"" + nm + "\" repoio:taskType=\"script\"" + attrs({ language: p.language, timeoutMin: p.timeoutMin }) +
@@ -191,16 +221,27 @@ sap.ui.define([], function () {
 			var ports = PORTS[n.type];
 			if (n.type === "approval" || n.type === "validation") {
 				// Two outcomes become an exclusive gateway on the task's result.
+				var last = n.type === "approval" && p.mode === "parallel" ? id + "_join" : id;
 				gw = id + "_gw";
 				els.push("    <bpmn:exclusiveGateway id=\"" + gw + "\" />");
-				flow(id, gw);
+				flow(last, gw);
+				if (n.type === "approval" && p.allowReturn) {
+					// Return for rework: the requester fixes the request, then it comes back to this approval.
+					els.push("    <bpmn:userTask id=\"" + id + "_rework\" name=\"" + esc(label({ type: "rework" })) + "\" repoio:taskType=\"rework\" repoio:assignee=\"requester\"" +
+						attrs({ maxReturns: p.maxReturns }) + " />");
+					flow(gw, id + "_rework", label({ type: "port", port: "returned" }), "${decision == 'returned'}");
+					flow(id + "_rework", id);
+				}
 				var v = n.type === "approval" ? "decision" : "validation";
 				emit(next[ports[0]], gw, label({ type: "port", port: ports[0] }), "${" + v + " == '" + ports[0] + "'}");
 				emit(next[ports[1]], gw, label({ type: "port", port: ports[1] }), "${" + v + " == '" + ports[1] + "'}");
 			} else if (n.type === "condition") {
-				var expr = "${" + (p.field ? "record." + p.field : "true") + " " + ({ eq: "==", ne: "!=", gt: ">", lt: "<" }[p.op] || "==") + " '" + (p.value || "") + "'}";
-				if (p.op === "empty") { expr = "${empty record." + p.field + "}"; }
-				if (p.op === "notEmpty") { expr = "${not empty record." + p.field + "}"; }
+				// Template fields are record.<name>; step outputs (step:<id>.<output>) are steps.<id>.<output>.
+				var ref = !p.field ? "true" : p.field.indexOf("step:") === 0 ? "steps." + p.field.slice(5) : "record." + p.field;
+				var num = /^-?\d+(\.\d+)?$/.test(String(p.value || ""));
+				var expr = "${" + ref + " " + ({ eq: "==", ne: "!=", gt: ">", lt: "<" }[p.op] || "==") + " " + (num ? p.value : "'" + (p.value || "") + "'") + "}";
+				if (p.op === "empty") { expr = "${empty " + ref + "}"; }
+				if (p.op === "notEmpty") { expr = "${not empty " + ref + "}"; }
 				emit(next.yes, id, label({ type: "port", port: "yes" }), expr);
 				emit(next.no, id, label({ type: "port", port: "no" }), "${!(" + expr.slice(2, -1) + ")}");
 			} else {
