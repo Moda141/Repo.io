@@ -26,6 +26,9 @@ sap.ui.define([
 	var DOMAIN_CONCEPTS = ["Customer", "Vendor", "Product", "Author", "Employee", "Store"];
 	var DOMAIN_ITEM = { customer: "customers", vendor: "vendors", product: "products", author: "authors", employee: "employees", store: "stores" };
 	var CATS = ["master", "governance", "asset", "business"];
+	/* Tree icon per concept category (instead of a plain circle that reads like a radio button). */
+	var CAT_ICON = { master: "sap-icon://database", abstract: "sap-icon://dimension", governance: "sap-icon://shield",
+		asset: "sap-icon://table-view", business: "sap-icon://business-objects-experience" };
 	var LINK_ICON = { entity: "sap-icon://database", glossary: "sap-icon://course-book", kpi: "sap-icon://kpi-corporate-performance", assets: "sap-icon://table-view" };
 
 	return BaseController.extend("repoio.proto.controller.Ontology", {
@@ -43,7 +46,7 @@ sap.ui.define([
 				that.viewModel().setProperty("/onto", {
 					name: that.lang() === "ar" ? that._o.nameAr : that._o.nameEn, prefix: that._o.prefix, ns: that._o.ns,
 					versions: that._o.versions, version: that._o.versions[0].key, state: that._o.versions[0].state, editable: true, changes: 0,
-					tab: "concepts", query: "", show: { type: true, subclass: true }, layout: "force", edgeLabels: true, mode: "schema",
+					tab: "concepts", query: "", show: { type: true, subclass: true }, group: true, showIsolated: false, isolatedCount: 0, layout: "force", edgeLabels: true, mode: "schema",
 					rec: { domain: "", type: "", query: "", preview: false, rows: [], domains: [], types: [] },
 					full: false, rtl: that.isRtl(), sel: {}, graph: { nodes: [], edges: [] }, tree: [], types: [], conceptOptions: []
 				});
@@ -80,11 +83,7 @@ sap.ui.define([
 			if (bGraph !== false && m.getProperty("/onto/mode") === "records") {
 				this._refreshRecords();
 			} else if (bGraph !== false) {
-				m.setProperty("/onto/graph", {
-					nodes: this._o.concepts.map(function (c) { return { id: c.id, label: that._name(c), cat: c.cat, draft: !!c.draft || !!that._changes["c:" + c.id] }; }),
-					edges: rels.filter(function (r) { return r.kind === "subclass" ? show.subclass : show.type; })
-						.map(function (r) { return { id: r.id, source: r.from, target: r.to, label: that._label(r), kind: r.kind, draft: !!r.draft }; })
-				});
+				m.setProperty("/onto/graph", this._schemaGraph(rels, show));
 			}
 			m.setProperty("/onto/tree", this._o.concepts.slice().sort(byName).filter(function (c) {
 				return match(c) || rels.some(function (r) { return r.from === c.id && r.kind !== "subclass" && (that._label(r) + " " + r.tech).toLowerCase().indexOf(q) > -1; });
@@ -94,7 +93,7 @@ sap.ui.define([
 				}).concat(c.props.map(function (p) {
 					return { title: p.name, icon: "sap-icon://text", kind: "prop", ref: c.id, tip: p.type };
 				}));
-				return { title: that._name(c), icon: "sap-icon://circle-task", kind: "node", ref: c.id,
+				return { title: that._name(c), icon: CAT_ICON[c.cat] || CAT_ICON.master, kind: "node", ref: c.id,
 					tip: that._o.prefix + ":" + c.id, draft: !!c.draft, nodes: kids };
 			}));
 			m.setProperty("/onto/types", rels.filter(function (r) {
@@ -108,10 +107,52 @@ sap.ui.define([
 			if (q) { this.byId("conceptTree").expandToLevel(1); }
 		},
 
+		/*
+		 * Schema graph. Several relationship types between the same two concepts (or on one concept) are drawn as
+		 * one grouped line with a count; tapping it shows them. Concepts with no visible line are hidden unless
+		 * "Unlinked" is on, so the connected model stays readable.
+		 */
+		_pairKey: function (r) { return r.kind === "subclass" ? "" : [r.from, r.to].sort().join("|"); },
+		_schemaGraph: function (rels, show) {
+			var m = this.viewModel(), that = this, group = m.getProperty("/onto/group"), exp = this._expanded || {}, sel = m.getProperty("/onto/sel") || {};
+			var vis = rels.filter(function (r) { return r.kind === "subclass" ? show.subclass : show.type; }), count = {}, bundles = {}, edges = [];
+			vis.forEach(function (r) { var k = that._pairKey(r); if (k) { count[k] = (count[k] || 0) + 1; } });
+			vis.forEach(function (r) {
+				var k = that._pairKey(r);
+				if (group && k && count[k] > 1 && !exp[k]) { (bundles[k] = bundles[k] || []).push(r); return; }
+				edges.push({ id: r.id, source: r.from, target: r.to, label: that._label(r), kind: r.kind, draft: !!r.draft });
+			});
+			Object.keys(bundles).forEach(function (k) {
+				var b = bundles[k], f = b[0];
+				edges.push({ id: "bundle:" + k, source: f.from, target: f.to, kind: "bundle", label: that.text("onto.bundle", [b.length]),
+					mixed: b.some(function (r) { return r.from !== f.from; }), draft: b.some(function (r) { return !!r.draft; }) });
+			});
+			var linked = {};
+			edges.forEach(function (e) { linked[e.source] = true; linked[e.target] = true; });
+			var isolated = this._o.concepts.filter(function (c) { return !linked[c.id]; });
+			m.setProperty("/onto/isolatedCount", isolated.length);
+			var keep = function (c) { return linked[c.id] || m.getProperty("/onto/showIsolated") || c.id === sel.id || c.draft || that._changes["c:" + c.id]; };
+			return {
+				nodes: this._o.concepts.filter(keep).map(function (c) { return { id: c.id, label: that._name(c), cat: c.cat, draft: !!c.draft || !!that._changes["c:" + c.id] }; }),
+				edges: edges
+			};
+		},
+		onGroup: function () { this._expanded = {}; this._refresh(); },
+		onIsolated: function () { this._refresh(); this.byId("graph").fit(); },
+		/* Make sure an element is drawn before selecting it: open its group, or show an unlinked concept. */
+		_reveal: function (sKind, sId) {
+			var g = this.viewModel().getProperty("/onto/graph") || { nodes: [], edges: [] }, list = sKind === "node" ? g.nodes : g.edges;
+			if (this.viewModel().getProperty("/onto/mode") !== "schema" || list.some(function (x) { return x.id === sId; })) { return; }
+			if (sKind === "edge") { var r = this._rel(sId); if (r) { this._expanded = this._expanded || {}; this._expanded[this._pairKey(r)] = true; } }
+			else { this.viewModel().setProperty("/onto/showIsolated", true); }
+			this._refresh();
+		},
+
 		/* ---------- selection ---------- */
 
 		_select: function (sKind, sId, bCenter) {
 			if (sKind === "node") { this._selectNode(sId); } else if (sKind === "edge") { this._selectEdge(sId); } else { this.onCloseDetail(); return; }
+			this._reveal(sKind, sId);
 			this.byId("graph").selectElement(sId, bCenter);
 		},
 
@@ -156,8 +197,19 @@ sap.ui.define([
 		onGraphSelect: function (e) {
 			var k = e.getParameter("kind"), id = e.getParameter("id"), rec = this.viewModel().getProperty("/onto/mode") === "records";
 			if (k === "node") { if (rec) { this._selectRecord(id); } else { this._selectNode(id); } }
+			else if (k === "edge" && id.indexOf("bundle:") === 0) { this._openBundle(id.slice(7)); }
 			else if (k === "edge") { if (rec) { this._selectLink(id); } else { this._selectEdge(id); } }
 			else { this.viewModel().setProperty("/onto/sel", {}); }
+		},
+		/* A grouped line: draw its relationship types one by one and say which they are. */
+		_openBundle: function (key) {
+			var that = this, ends = key.split("|"), n = this._allRels().filter(function (r) { return that._pairKey(r) === key; }).length;
+			this._expanded = this._expanded || {}; this._expanded[key] = true;
+			this.viewModel().setProperty("/onto/sel", {});
+			this._refresh();
+			this.byId("graph").selectElement(ends[0], true);
+			MessageToast.show(ends[0] === ends[1] ? this.text("onto.bundleOpenedSelf", [n, this._name(this._concept(ends[0]))]) :
+				this.text("onto.bundleOpened", [n, this._name(this._concept(ends[0])), this._name(this._concept(ends[1]))]));
 		},
 		onTreeSelect: function (e) {
 			var it = e.getParameter("listItem"), k = it.data("kind");
@@ -389,6 +441,7 @@ sap.ui.define([
 
 		onSubmit: function () {
 			var that = this, n = Object.keys(this._changes).length;
+			if (!n) { MessageToast.show(this.text("onto.noChanges")); return; }
 			MessageBox.confirm(this.text("onto.submitConfirm", [this.viewModel().getProperty("/onto/version"), n]), {
 				title: this.text("onto.submit"),
 				onClose: function (a) {

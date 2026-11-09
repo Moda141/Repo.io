@@ -429,3 +429,4 @@
 .repoioOntoPreviewTitle { flex: 1 1 auto; color: #0a6ed1; font-size: 0.875rem; padding-bottom: 0.5rem; border-bottom: 2px solid #0a6ed1; margin-top: 0.5rem; max-width: max-content; }
 .repoioOntoPreviewHead > .sapMBtn { margin-inline-start: auto; }
 .repoioOntoPreview .repoioOntoTableScroll { flex: 1 1 auto; min-height: 0; }
+.repoioLine.repoioLineBundle { border-top: 3px solid #7fa7d4; }

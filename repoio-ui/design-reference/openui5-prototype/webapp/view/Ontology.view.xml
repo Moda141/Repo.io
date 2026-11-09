@@ -20,7 +20,8 @@
 				<Button text="{i18n>onto.sparql}" icon="sap-icon://search" type="Transparent" press=".onSparql"/>
 				<Button text="{i18n>onto.validate}" icon="sap-icon://validate" type="Transparent" press=".onValidate"/>
 				<Button text="{i18n>onto.export}" icon="sap-icon://download" type="Transparent" press=".onExport"/>
-				<Button text="{i18n>onto.submit}" type="Emphasized" enabled="{= ${view>/onto/editable} &amp;&amp; ${view>/onto/changes} > 0 }" press=".onSubmit"/>
+				<Button text="{i18n>onto.submit}" type="Emphasized" enabled="{view>/onto/editable}" press=".onSubmit"
+					tooltip="{= ${view>/onto/changes} > 0 ? ${i18n>onto.submitTip} : ${i18n>onto.noChanges} }"/>
 			</OverflowToolbar>
 			<MessageStrip visible="{= !${view>/onto/editable} }" type="Information" showIcon="true" class="repoioOntoStrip"
 				text="{= ${view>/onto/state} === 'review' ? ${i18n>onto.inReviewNote} : ${i18n>onto.readOnlyNote} }"/>
@@ -84,6 +85,11 @@
 							visible="{= ${view>/onto/mode} === 'schema' }"/>
 						<ToggleButton icon="sap-icon://org-chart" text="{i18n>onto.show.subclass}" pressed="{view>/onto/show/subclass}" press=".onShow" type="Transparent"
 							visible="{= ${view>/onto/mode} === 'schema' }"/>
+						<ToggleButton icon="sap-icon://combine" text="{i18n>onto.group}" tooltip="{i18n>onto.groupTip}" pressed="{view>/onto/group}" press=".onGroup"
+							type="Transparent" visible="{= ${view>/onto/mode} === 'schema' }"/>
+						<ToggleButton icon="sap-icon://hide" text="{i18n>onto.isolated} ({view>/onto/isolatedCount})" tooltip="{i18n>onto.isolatedTip}"
+							pressed="{view>/onto/showIsolated}" press=".onIsolated" type="Transparent"
+							visible="{= ${view>/onto/mode} === 'schema' &amp;&amp; (${view>/onto/isolatedCount} > 0 || ${view>/onto/showIsolated}) }"/>
 						<ToggleButton icon="sap-icon://table-view" text="{i18n>onto.rec.preview}" pressed="{view>/onto/rec/preview}" press=".onTogglePreview" type="Transparent"
 							visible="{= ${view>/onto/mode} === 'records' }">
 							<layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData>
@@ -125,6 +131,7 @@
 						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioLine repoioLineType"/><Text text="{i18n>onto.kind.type}"/></HBox>
 						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioLine repoioLineSys"/><Text text="{i18n>onto.kind.system}"/></HBox>
 						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioLine repoioLineSub"/><Text text="{i18n>onto.kind.subclass}"/></HBox>
+						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioLine repoioLineBundle"/><Text text="{i18n>onto.legBundle}"/></HBox>
 						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioDot repoioDotDraft"/><Text text="{i18n>onto.draftItem}"/></HBox>
 					</HBox>
 					<!-- Data preview under the graph (Datasphere style): the graph stays visible above it. -->

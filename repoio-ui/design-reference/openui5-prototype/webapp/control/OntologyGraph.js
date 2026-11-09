@@ -46,6 +46,11 @@ sap.ui.define([
 		{ selector: "edge[kind = 'type']", style: { "line-color": "#7fa7d4", "target-arrow-color": "#7fa7d4", "width": 1.25 } },
 		{ selector: "edge[kind = 'system']", style: { "line-style": "dotted", "line-color": "#8a9aaa", "target-arrow-color": "#8a9aaa" } },
 		{ selector: "edge[kind = 'subclass']", style: { "line-style": "dashed", "target-arrow-shape": "triangle", "target-arrow-fill": "hollow", "line-color": "#c3c9cf", "target-arrow-color": "#9aa3ab", "label": "" } },
+		/* Grouped parallel relationships: one thicker line with a count; no arrow when they run both ways. */
+		{ selector: "edge[kind = 'bundle']", style: { "width": 2.5, "line-color": "#7fa7d4", "target-arrow-color": "#7fa7d4", "color": "#0a6ed1",
+			"font-size": 10, "font-weight": "bold", "text-rotation": "none", "text-background-color": "#eef5fc", "text-background-opacity": 1, "text-background-padding": 2,
+			"text-background-shape": "roundrectangle", "text-border-width": 1, "text-border-color": "#b9d4ef", "text-border-opacity": 1 } },
+		{ selector: "edge[kind = 'bundle'][?mixed]", style: { "target-arrow-shape": "none" } },
 		{ selector: "edge[?draft]", style: { "line-color": "#e9730c", "target-arrow-color": "#e9730c" } },
 		{ selector: "edge:selected", style: { "width": 2.5, "line-color": "#0a6ed1", "target-arrow-color": "#0a6ed1", "color": "#0a6ed1", "font-weight": "bold" } },
 		{ selector: ".faded", style: { "opacity": 0.22 } },
