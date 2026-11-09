@@ -14,10 +14,9 @@ sap.ui.define([
 	"sap/m/MessageItem",
 	"sap/m/MessageStrip",
 	"sap/m/VBox",
-	"sap/ui/model/json/JSONModel",
-	"repoio/proto/control/FieldMapper"
+	"sap/ui/model/json/JSONModel"
 ], function (BaseController, Flow, People, MessageToast, MessageBox, Dialog, Button, TextArea, ResponsivePopover, List, StandardListItem,
-	MessagePopover, MessageItem, MessageStrip, VBox, JSONModel, FieldMapper) {
+	MessagePopover, MessageItem, MessageStrip, VBox, JSONModel) {
 	"use strict";
 
 	/*
@@ -299,7 +298,11 @@ sap.ui.define([
 				if (n.type === "writeBack") {
 					var tf = this._targetFields(p);
 					sel.targetCount = tf.length; sel.mappedCount = Object.keys(p.mapping || {}).length;
-					sel.mappedRows = Object.keys(p.mapping || {}).map(function (k) { return { target: k, source: p.mapping[k] }; });
+					var cn = this._conn(p.connection), tpl = this._tpl(this._templateKey()), T = this.text.bind(this);
+					sel.targetFields = tf; sel.mapping = Object.assign({}, p.mapping || {});
+					sel.mapTexts = { all: T("fd.map.all"), mapped: T("fd.map.mapped"), unmapped: T("fd.map.unmapped"), search: T("fd.map.search"),
+						src: tpl ? (this.lang() === "ar" ? tpl.ar : tpl.en) : T("fd.n.template"), tgt: cn ? cn.text : "",
+						unmap: T("fd.map.unmap"), valueMap: T("fd.map.valueMap"), auto: T("fd.map.auto"), hint: T("fd.map.hint"), count: T("fd.map.count") };
 					sel.noAllowlist = !!p.connection && !tf.length;
 				}
 				if (n.type === "template") {
@@ -408,39 +411,13 @@ sap.ui.define([
 			this.byId("codeEditor").insertText(lang === "sql" ? ":" + f : "record[\"" + f + "\"]");
 		},
 
-		/* Write-back: connection and the field mapping dialog (Datasphere style). */
+		/* Write-back: connection; the field mapping lives in the panel's Mapping section. */
 		onConnection: function (e) {
 			var k = e.getSource().getSelectedKey(), dom = this.viewModel().getProperty("/wf/domain");
 			this._upd({ connection: k, entity: dom, mapping: {} });
 		},
-		onMapFields: function () {
-			var that = this, id = this.viewModel().getProperty("/wf/sel/id"), n = this._flow.node(id), T = this.text.bind(this);
-			var cn = this._conn(n.props.connection), tpl = this._tpl(this._templateKey());
-			var mapper = new FieldMapper({
-				source: this._tplFields(), target: this._targetFields(n.props), mapping: Object.assign({}, n.props.mapping || {}),
-				editable: !this.viewModel().getProperty("/wf/readOnly"),
-				texts: { all: T("fd.map.all"), mapped: T("fd.map.mapped"), unmapped: T("fd.map.unmapped"), search: T("fd.map.search"),
-					src: tpl ? (this.lang() === "ar" ? tpl.ar : tpl.en) : T("fd.n.template"), tgt: (cn ? cn.text : "") + " · " + this._domainText(n.props.entity),
-					unmap: T("fd.map.unmap"), valueMap: T("fd.map.valueMap"), auto: T("fd.map.auto"), hint: T("fd.map.hint"), count: T("fd.map.count") }
-			});
-			var oDlg = new Dialog({
-				title: T("fd.map.title"), contentWidth: "52rem", contentHeight: "34rem", resizable: true, draggable: true,
-				content: [new VBox({ items: [
-					new MessageStrip({ text: T("fd.map.strip"), showIcon: true, type: "Information" }).addStyleClass("sapUiSmallMarginBottom"),
-					mapper
-				] }).addStyleClass("sapUiSmallMargin")],
-				beginButton: new Button({ text: T("common.apply"), type: "Emphasized", enabled: !this.viewModel().getProperty("/wf/readOnly"), press: function () {
-					var mp = mapper.getMapping(), keys = that._targetFields(n.props).filter(function (t) { return t.key; });
-					var missKey = keys.filter(function (k) { return !mp[k.name]; });
-					if (missKey.length) { MessageToast.show(T("fd.map.keyMissing", [missKey.map(function (k) { return k.name; }).join(", ")])); return; }
-					that._select(id); that._upd({ mapping: mp }); oDlg.close();
-				} }),
-				endButton: new Button({ text: T("common.cancel"), press: function () { oDlg.close(); } }),
-				afterClose: function () { oDlg.destroy(); }
-			});
-			this.getView().addDependent(oDlg);
-			oDlg.open();
-		},
+		/* Mapping section: every change is kept on the step (validation flags unmapped key fields). */
+		onMapping: function (e) { this._upd({ mapping: e.getParameter("mapping") }); },
 
 		/* ---------- insert and remove steps ---------- */
 

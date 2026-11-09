@@ -374,3 +374,9 @@
 .fmUnmap:hover { color: #bb0000; }
 .fmHint { margin-top: 0.5rem; color: #6a6d70; font-size: 0.75rem; }
 .repoioWfPanel .sapMPanelContent > .sapMLabel, .repoioWfPanel .sapMPanelContent > .sapMText, .repoioWfPanel .sapMPanelContent > .sapMTitle { display: block; }
+/* Write-back selected: wider side panel so the Mapping section fits two columns (like Datasphere's side panel). */
+.repoioWfProps[data-wide="yes"] { flex: 0 0 38rem !important; width: 38rem; max-width: 38rem; }
+.repoioWfMapPanel .fmGap { flex-basis: 3.5rem; }
+.repoioWfMapPanel .fmSeg { padding: 0.3125rem 0.875rem; }
+.repoioWfMapPanel .fmItem { font-size: 0.8125rem; padding: 0.375rem 0.4375rem; }
+.repoioWfMapPanel .fmName small { display: none; }

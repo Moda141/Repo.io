@@ -227,7 +227,8 @@ current entity schema → blocked at save with the schema rule cited.
      write the code in the step, with the template's field names offered;
      runs in the isolated workers as the requester (M8).
    - **Write-back** — source system, then map template fields to the
-     target system's allowlisted fields in a mapper (code lists
+     target system's allowlisted fields in the side panel's **Mapping**
+     section (code lists
      translated by reference data); conflict → review (execution M9).
    - **Notification** — in-app alert and/or email to the requester,
      earlier approvers, teams or people.

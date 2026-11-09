@@ -58,7 +58,8 @@ Notification → End, with Condition branches.
      passed / failed.
    - **Write-back** — source system (connections with write-back), the
      template's entity, and a field mapping from template fields to the
-     target system's write-back allowlist (Datasphere-style mapper).
+     target system's write-back allowlist, edited in the **Mapping**
+     section of the step's side panel (Datasphere-style mapper).
      Code-list fields are translated with the target system's reference
      data. Conflict → review, retries. Execution unchanged (README §2.4,
      CLAUDE.md rule 13).

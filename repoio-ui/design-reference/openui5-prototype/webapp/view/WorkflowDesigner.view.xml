@@ -36,6 +36,7 @@
 
 				<!-- Properties -->
 				<VBox class="repoioOntoDetail repoioWfProps" renderType="Bare" visible="{view>/wf/showProps}">
+					<customData><core:CustomData key="wide" value="{= ${view>/wf/sel/type} === 'writeBack' ? 'yes' : 'no' }" writeToDom="true"/></customData>
 					<HBox class="repoioOntoDetailHead" renderType="Bare" alignItems="Center">
 						<core:Icon src="sap-icon://action-settings" color="#ffffff" decorative="true"/>
 						<Text text="{i18n>wf.properties}" class="repoioOntoDetailKind"/>
@@ -243,21 +244,6 @@
 								<Label text="{i18n>wf.entity}" class="sapUiSmallMarginTop"/>
 								<Text text="{view>/wf/domainText}"/>
 								<MessageStrip visible="{= !!${view>/wf/sel/noAllowlist} }" text="{i18n>fd.v.noAllowlist}" type="Warning" showIcon="true" class="sapUiTinyMarginTop"/>
-								<HBox renderType="Bare" alignItems="Center" justifyContent="SpaceBetween" class="sapUiSmallMarginTop">
-									<Title text="{i18n>wf.mapping} ({view>/wf/sel/mappedCount} / {view>/wf/sel/targetCount})" level="H3" titleStyle="H6"/>
-									<Button text="{i18n>fd.map.open}" icon="sap-icon://chain-link" type="Emphasized" press=".onMapFields"
-										enabled="{= !!${view>/wf/sel/connection} &amp;&amp; ${view>/wf/sel/targetCount} > 0 }"/>
-								</HBox>
-								<Table items="{view>/wf/sel/mappedRows}" class="repoioWfMap" noDataText="{i18n>fd.map.none}">
-									<columns>
-										<Column><Text text="{i18n>fd.templateField}"/></Column>
-										<Column><Text text="{i18n>wf.targetField}"/></Column>
-									</columns>
-									<ColumnListItem>
-										<Text text="{view>source}" class="repoioMono"/>
-										<Text text="{view>target}" class="repoioMono"/>
-									</ColumnListItem>
-								</Table>
 								<Label text="{i18n>wf.conflict}" class="sapUiSmallMarginTop"/>
 								<Select selectedKey="{view>/wf/sel/conflict}" width="100%" change=".onProp" app:prop="conflict" enabled="{= !${view>/wf/readOnly} }">
 									<core:Item key="review" text="{i18n>wf.conflict.review}"/>
@@ -266,6 +252,16 @@
 								<Label text="{i18n>wf.retries}" class="sapUiSmallMarginTop"/>
 								<StepInput value="{view>/wf/sel/retries}" min="0" max="10" width="8rem" change=".onPropNum" app:prop="retries" editable="{= !${view>/wf/readOnly} }"/>
 								<MessageStrip text="{i18n>wf.wbNote}" showIcon="true" class="sapUiSmallMarginTop"/>
+							</Panel>
+
+							<!-- Write-back: Mapping (Datasphere-style, in the side panel) -->
+							<Panel headerText="{i18n>wf.mapping} ({view>/wf/sel/mappedCount} / {view>/wf/sel/targetCount})" expandable="true" expanded="true"
+								visible="{= ${view>/wf/sel/type} === 'writeBack' }" class="repoioWfPanel repoioWfMapPanel">
+								<Text text="{i18n>fd.pickConnection}" class="repoioHint" visible="{= !${view>/wf/sel/connection} }"/>
+								<rc:FieldMapper id="mapper" visible="{= ${view>/wf/sel/targetCount} > 0 }"
+									source="{view>/wf/fields}" target="{view>/wf/sel/targetFields}" mapping="{path: 'view>/wf/sel/mapping', mode: 'OneWay'}"
+									texts="{view>/wf/sel/mapTexts}" editable="{= !${view>/wf/readOnly} }" change=".onMapping"/>
+								<Text text="{i18n>fd.map.strip}" class="repoioHint sapUiTinyMarginTop" visible="{= ${view>/wf/sel/targetCount} > 0 }"/>
 							</Panel>
 
 							<!-- Condition -->
