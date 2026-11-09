@@ -13,21 +13,30 @@
 		</f:title>
 		<f:content>
 			<VBox>
-			<!-- Datasphere Home: hero banner with a short brief about the tool -->
-			<VBox class="repoioHero">
+			<!-- Datasphere Home: a compact banner with a short brief about the tool (smaller, so the work below is in view) -->
+			<VBox class="repoioHero repoioHeroCompact">
 				<Image src="img/welcome.jpg" alt="{i18n>home.hero.alt}" width="100%" class="repoioHeroImg" decorative="false"/>
 				<FlexBox direction="Column" justifyContent="Center" alignItems="Start" class="repoioHeroBody">
 					<VBox class="repoioHeroText">
-						<Title text="{i18n>home.hero.title}" level="H2" titleStyle="H3" wrapping="true"/>
-						<Text text="{i18n>home.hero.text}" class="sapUiTinyMarginTop"/>
+						<Title text="{i18n>home.hero.title}" level="H2" titleStyle="H4" wrapping="true"/>
+						<Text text="{i18n>home.hero.text}" maxLines="2" class="sapUiTinyMarginTop"/>
 					</VBox>
-					<Button text="{i18n>home.hero.more}" type="Emphasized" press=".onLearnMore" class="sapUiSmallMarginTop"/>
+					<Button text="{i18n>home.hero.more}" type="Emphasized" press=".onLearnMore" class="sapUiTinyMarginTop"/>
 				</FlexBox>
 			</VBox>
 			<MessageStrip text="{= ${view>/lang} === 'ar' ? ${home>/announcement/text_ar} : ${home>/announcement/text_en} }"
 				type="Information" showIcon="true" customIcon="sap-icon://marketing-campaign" showCloseButton="true" class="repoioHeroStrip">
 				<link><Link text="{i18n>home.allAnnouncements}" press=".onNavKey" app:key="feeds" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/></link>
 			</MessageStrip>
+			<!-- J1: what needs me now. Each tile opens its list (counts are permission-filtered server-side). -->
+			<HBox items="{home>/attention}" wrap="Wrap" renderType="Bare" class="repoioAttention">
+				<GenericTile header="{path: 'home>key', formatter: '.attnTitle'}" subheader="{path: 'home>key', formatter: '.attnSub'}" frameType="OneByOne"
+					press=".onNavKey" app:key="{home>nav}" class="repoioAttnTile" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+					<TileContent footer="{path: 'home>key', formatter: '.attnFooter'}">
+						<NumericContent value="{home>value}" valueColor="{home>color}" icon="{home>icon}" withMargin="false"/>
+					</TileContent>
+				</GenericTile>
+			</HBox>
 			<f:GridContainer id="cards" containerQuery="true" snapToRow="true" class="sapUiSmallMarginTop">
 				<f:layout><f:GridContainerSettings rowSize="5rem" columnSize="4.5rem" gap="1rem"/></f:layout>
 				<f:layoutS><f:GridContainerSettings rowSize="5rem" columnSize="5rem" gap="0.5rem"/></f:layoutS>
@@ -41,12 +50,20 @@
 						<f:layoutData><f:GridContainerItemLayoutData columns="8" minRows="4"/></f:layoutData>
 						<f:content>
 							<VBox class="repoioWelcomeCard" width="100%">
-								<Title text="{i18n>home.wc.title}" level="H2" titleStyle="H3" wrapping="true"/>
+								<HBox justifyContent="SpaceBetween" alignItems="Center">
+									<Title text="{i18n>home.wc.title}" level="H2" titleStyle="H3" wrapping="true"/>
+									<Button text="{i18n>home.wc.hide}" icon="sap-icon://hide" type="Transparent" press=".onHideWelcome"/>
+								</HBox>
 								<Text text="{i18n>home.wc.text}" class="sapUiSmallMarginTop sapUiMediumMarginBottom"/>
-								<Label text="{i18n>home.wc.start}" design="Bold" class="sapUiSmallMarginBottom"/>
+								<HBox alignItems="Center" class="sapUiSmallMarginBottom repoioStepHead">
+									<Label text="{i18n>home.wc.start}" design="Bold"/>
+									<ObjectStatus text="{view>/home/stepsText}" state="{= ${view>/home/stepsLeft} ? 'Information' : 'Success' }" class="sapUiSmallMarginBegin"/>
+								</HBox>
 								<VBox items="{home>/steps}">
 									<HBox alignItems="Center" class="repoioStep">
-										<Text text="{home>n}" class="repoioStepNo"/>
+										<customData><core:CustomData key="done" value="{= ${home>done} ? 'yes' : 'no' }" writeToDom="true"/></customData>
+										<Text text="{home>n}" class="repoioStepNo" visible="{= !${home>done} }"/>
+										<core:Icon src="sap-icon://accept" class="repoioStepCheck" visible="{= !!${home>done} }" tooltip="{i18n>home.wc.done}"/>
 										<VBox>
 											<Link text="{path: 'home>key', formatter: '.stepText'}" press=".onNavKey" app:key="{home>nav}" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
 											<Label text="{path: 'home>key', formatter: '.stepHint'}" wrapping="true"/>
@@ -63,8 +80,8 @@
 						<f:header><card:Header title="{i18n>home.card.recent}" subtitle="{i18n>home.card.recentSub}" iconSrc="sap-icon://history"/></f:header>
 						<f:content>
 							<List items="{home>/recent}" showSeparators="Inner" class="repoioRecent">
-								<StandardListItem icon="{home>icon}" title="{home>name}" iconInset="false"
-									description="{path: 'home>type', formatter: '.recentType'} · {home>changed}"/>
+								<StandardListItem icon="{home>icon}" title="{home>name}" iconInset="false" description="{home>changed}"
+									info="{path: 'home>type', formatter: '.recentType'}" infoState="{path: 'home>type', formatter: '.recentState'}"/>
 							</List>
 						</f:content>
 					</f:Card>

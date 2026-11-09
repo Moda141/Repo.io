@@ -35,6 +35,7 @@ sap.ui.define([
 				if (that.byId("fDomain")) { that.byId("fDomain").setSelectedKey(""); }
 			});
 			this._updateCounts();
+			this._steps();
 			var aPipes = oHome.getProperty("/pipelines"),
 				nWarn = aPipes.filter(function (p) { return p.state !== "Success"; }).length;
 			this.viewModel().setProperty("/home/pipeStatus", this.text("home.pipeStatus", [aPipes.length - nWarn, aPipes.length]));
@@ -117,6 +118,11 @@ sap.ui.define([
 
 		/* ---------- Card content helpers ---------- */
 		recentType: function (k) { return k ? this.text("home.recent." + k) : ""; },
+		/* Type of a recent item as a coloured label: tables blue, repositories green, connections grey. */
+		recentState: function (k) { return { table: "Information", repository: "Success" }[k] || "None"; },
+		attnTitle: function (k) { return k ? this.text("home.attn." + k) : ""; },
+		attnSub: function (k) { return k ? this.text("home.attn." + k + ".sub") : ""; },
+		attnFooter: function (k) { return k ? this.text("home.attn." + k + ".foot") : ""; },
 		recentDomain: function (k) { var d = this.data().getProperty("/domains").filter(function (x) { return x.id === k; })[0]; return this.domainName(d); },
 		stepText: function (k) { return k ? this.text("home.step." + k) : ""; },
 		stepHint: function (k) { return k ? this.text("home.step." + k + ".hint") : ""; },
@@ -124,6 +130,19 @@ sap.ui.define([
 		crKindText: function (k) { return k ? this.text("home.kind." + k) : ""; },
 		stageText: function (k) { return k ? this.text("home.stage." + k) : ""; },
 		runText: function (k) { return k ? this.text("home.run." + k) : ""; },
+
+		/* Getting started: done steps are ticked; the card hides itself once every step is done. */
+		_steps: function () {
+			var a = this.getOwnerComponent().getModel("home").getProperty("/steps") || [], done = a.filter(function (x) { return x.done; }).length;
+			this.viewModel().setProperty("/home/stepsLeft", a.length - done);
+			this.viewModel().setProperty("/home/stepsText", this.text("home.wc.progress", [done, a.length]));
+			if (a.length && done === a.length) { this.byId("card_welcome").setVisible(false); }
+		},
+		onHideWelcome: function () {
+			this.byId("card_welcome").setVisible(false);
+			this._saveLayout();
+			MessageToast.show(this.text("home.wc.hidden"));
+		},
 
 		onOwnerDomain: function () { this.navKey("domains"); },
 
@@ -182,6 +201,7 @@ sap.ui.define([
 
 		_cardTitle: function (oCard) {
 			var oHeader = oCard.getHeader();
+			if (oCard === this.byId("card_welcome")) { return this.text("home.wc.title"); }
 			return oHeader && oHeader.getTitle ? oHeader.getTitle() : oCard.getId();
 		},
 

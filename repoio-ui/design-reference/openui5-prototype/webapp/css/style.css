@@ -430,3 +430,18 @@
 .repoioOntoPreviewHead > .sapMBtn { margin-inline-start: auto; }
 .repoioOntoPreview .repoioOntoTableScroll { flex: 1 1 auto; min-height: 0; }
 .repoioLine.repoioLineBundle { border-top: 3px solid #7fa7d4; }
+/* Home: compact hero banner (image kept, smaller) and the "needs me now" tiles */
+.repoioHero.repoioHeroCompact.sapMFlexBox { grid-template-columns: minmax(13rem, 1.1fr) minmax(0, 3fr); height: 9.5rem; margin-block: 1rem 0.75rem; }
+.repoioHeroCompact .repoioHeroImg, .repoioHeroCompact img.repoioHeroImg { height: 100%; width: 100%; object-fit: cover; object-position: center 40%; }
+.repoioHeroCompact .repoioHeroBody { padding: 0.875rem 1.5rem; }
+.repoioHeroCompact .repoioHeroText .sapMText { line-height: 1.5; color: #556b82; }
+@media (max-width: 900px) { .repoioHero.repoioHeroCompact.sapMFlexBox { grid-template-columns: 1fr; height: auto; } .repoioHeroCompact .repoioHeroImg, .repoioHeroCompact img.repoioHeroImg { height: 6.5rem; } }
+.repoioAttention { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.75rem; }
+.repoioAttention .repoioAttnTile { margin: 0; }
+.repoioStepHead .sapMObjStatus { margin-inline-start: 0.75rem; }
+.repoioStep .repoioStepCheck { flex: none; width: 1.75rem; height: 1.75rem; line-height: 1.75rem; border-radius: 50%; text-align: center; background: #e7f4ec; color: #2b7c4f; margin-inline-end: 0.75rem; font-size: 0.875rem; }
+.repoioStep[data-done="yes"] .sapMLnk { color: #556b82; }
+@media (max-width: 600px) {
+	.repoioAttention { gap: 0.5rem; }
+	.repoioAttention .sapMGT.repoioAttnTile { width: calc(50% - 0.25rem); height: 9rem; }
+}

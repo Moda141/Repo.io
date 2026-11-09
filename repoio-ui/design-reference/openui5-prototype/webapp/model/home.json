@@ -330,17 +330,26 @@
   {
    "n": "1",
    "key": "domain",
-   "nav": "domains"
+   "nav": "domains",
+   "done": true
   },
   {
    "n": "2",
    "key": "sources",
-   "nav": "connections"
+   "nav": "connections",
+   "done": true
   },
   {
    "n": "3",
    "key": "golden",
-   "nav": "matchDetection"
+   "nav": "matchDetection",
+   "done": false
   }
+ ],
+ "attention": [
+  { "key": "approval", "nav": "awaitingApproval", "value": 4, "color": "Neutral", "icon": "sap-icon://inbox" },
+  { "key": "overdue", "nav": "openChangeRequests", "value": 2, "color": "Error", "icon": "sap-icon://lateness" },
+  { "key": "dq", "nav": "alerts", "value": 7, "color": "Critical", "icon": "sap-icon://quality-issue" },
+  { "key": "writeback", "nav": "dataJobs", "value": 1, "color": "Error", "icon": "sap-icon://upload-to-cloud" }
  ]
 }
