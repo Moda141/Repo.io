@@ -92,3 +92,41 @@ Notification → End, with Condition branches.
   BPMN are stored together with the version.
 - The prototype implements the designer and the compile in the browser
   for review only; in the product the compile runs server-side.
+
+## Amendment 1 — governed-flow features (2026-11-10, Mohamed)
+
+Accepted with the prototype review. Still within this ADR's node set;
+no new node types, no change to the engine or to any CLAUDE.md §6 rule.
+
+1. **Approval**: `mode` single or **parallel groups** (compiled to a
+   parallel gateway split, one `userTask` per group, a join, then the
+   decision gateway); **return for rework** (`allowReturn`, `maxReturns`:
+   a rework `userTask` assigned to the requester, looping back to the
+   approval on `decision == 'returned'`); **segregation of duties**
+   (`excludeRequester`, on by default) and **out-of-office delegation**
+   (`delegation`), both resolved by `repoio-service` at task creation,
+   not in the browser.
+2. **Step outputs** are a fixed contract (`Flow.OUTPUTS`): validation
+   `result`, `score` (match only); approval `decision`, `approver`,
+   `returns`; script `status`, `message`; write-back `status`,
+   `targetId`. Conditions may branch on them (`steps.<id>.<output>` in
+   the compiled expression); only outputs of earlier steps on the path
+   are offered.
+3. **Mapping transformations** on a write-back target: `const`,
+   `concat` (second field, separator), `truncate`, `upper`, `trim`,
+   `default`. They are declarative and executed by the write-back
+   adapter, never by user code in the browser; anything else belongs in
+   a Script step.
+4. **Template version pinning**: the Template step stores the version.
+   Upgrading is explicit and migrates renamed fields; removed fields
+   fail validation.
+5. **Bilingual notifications**: `subjectAr/En`, `messageAr/En`, both
+   required; delivered in the recipient's language.
+6. **Publishing approval**: submit → review by the domain owner, or the
+   data governance board when the owner is the designer → published.
+   The approval is recorded in the audit trail with the version.
+7. **Designer aids** (no runtime effect): test run with a sample
+   request and write-back payload preview (in the product a dry-run API
+   of the workflow service; scripts in the isolated workers), version
+   compare, Runs overlay from Flowable history, copy of an existing
+   workflow, minimap.

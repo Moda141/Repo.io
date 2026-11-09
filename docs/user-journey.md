@@ -212,13 +212,28 @@ current entity schema → blocked at save with the schema rule cited.
 
 1. The designer opens the **Workflow Designer** — the Repo.io flow
    designer (ADR-0002): step cards on a canvas, "+" on any path to add a
-   step, properties in a panel beside it. It starts with **Begin** and
-   **Template**: exactly one request template, chosen from the published
-   templates the user can see; the workflow's domain is that template's.
-2. Compose with steps:
-   - **Approval** — named people (one or more) or a team; any one or
-     all; SLA with reminder and escalation to a person or team;
-     branches *approved* / *rejected*.
+   step, properties in a panel beside it, a minimap for large flows. It
+   starts with **Begin** and **Template**: exactly one request template,
+   chosen from the published templates the user can see; the workflow's
+   domain is that template's. **New** starts from a blank canvas or as a
+   **copy** of an existing workflow (a new draft v1; the original is
+   unchanged).
+2. The workflow is **pinned to a template version**. When a newer
+   template version is published, the Template step says so; **Review
+   upgrade** lists what changed (renamed / removed / added fields) and
+   the steps that use them. Upgrading migrates renamed fields in
+   mappings, scripts, conditions and validations; removed fields are
+   flagged by validation, never dropped silently.
+3. Compose with steps:
+   - **Approval** — named people (one or more) or a team, any one or
+     all; or **parallel groups** (every group decides at the same time;
+     all must approve; one rejection rejects). SLA with reminder and
+     escalation to a person or team. Controls: **return for rework**
+     (the requester edits and resubmits to the same step, up to a
+     maximum), **segregation of duties** (the requester is never an
+     approver of their own request), **out-of-office delegation** (the
+     approver's delegate gets the task). Branches *approved* /
+     *rejected*.
    - **Validation** — a data quality rule (Great Expectations) on the
      template's fields, or a duplicate check (Splink) against the chosen
      source (the domain's golden records or a source connection) with a
@@ -228,27 +243,52 @@ current entity schema → blocked at save with the schema rule cited.
      runs in the isolated workers as the requester (M8).
    - **Write-back** — source system, then map template fields to the
      target system's allowlisted fields in the side panel's **Mapping**
-     section (code lists
-     translated by reference data); conflict → review (execution M9).
+     section, with optional **transformations** per target field
+     (constant, combine two fields, truncate, upper case, trim, default
+     if empty) previewed on a sample request; code lists translated by
+     reference data; conflict → review (execution M9).
    - **Notification** — in-app alert and/or email to the requester,
-     earlier approvers, teams or people.
-   - **Condition** (branch on a template field) and **End** (completed /
-     rejected / cancelled).
-3. Every branch ends in an End by construction; removing a step removes
+     earlier approvers, teams or people; subject and message in
+     **Arabic and English** (each recipient gets their language; both
+     are required). Awareness only.
+   - **Condition** — branch on a template field or on an **output of an
+     earlier step** (validation result / score, approval decision /
+     approver / returns, script status, write-back status); **End**
+     (completed / rejected / cancelled).
+4. Every branch ends in an End by construction; removing a step removes
    its side branch after a confirmation.
-4. The flow compiles to BPMN 2.0 for Flowable on publish; "Export BPMN"
-   shows the result.
-5. **Validate** runs definition checks (no template, no approver,
-   missing recipients or message, missing rule or comparison source,
-   unmapped key fields, fields that are not in the template).
-6. Save as new version; **publish** freezes it. Published workflows
-   are immutable; running instances keep their version.
-7. Tag the workflow with entity/domain so request forms (J3) can offer
-   it as applicable.
+5. **Test run** — pick a sample request, the requester and each
+   approval's decision; the canvas highlights the path the request
+   takes, and the panel lists every step's outcome (rules that fail,
+   who approves after segregation of duties and delegation, escalation,
+   the notifications in both languages) and the **write-back payload
+   preview** (values after transformations and code translation, length
+   warnings). Nothing is written, sent or approved. In the product the
+   test run calls the workflow service; scripts run in the workers.
+6. **Validate** runs definition checks (no template, no approver,
+   fewer than two parallel groups, a missing message in either
+   language, missing rule or comparison source, unmapped key fields,
+   fields or step outputs that do not exist).
+7. **Compare** the draft with another saved version: added and changed
+   steps are marked on the canvas, with what changed per step.
+8. **Submit for publishing**: the version is read-only and goes to the
+   **domain owner** for approval, or to the **data governance board**
+   when the owner designed the workflow. Approval publishes it (the
+   previous published version is retired); sending it back makes it a
+   draft again. Published workflows are immutable; running instances
+   keep their version. The flow compiles to BPMN 2.0 for Flowable on
+   publish; "Export BPMN" shows the result.
+9. **Runs** shows the published version on the canvas with per-step
+   numbers from the engine history (started, failed, waiting, average
+   time, SLA breaches) and the requests waiting at a selected approval.
+10. Tag the workflow with entity/domain so request forms (J3) can offer
+    it as applicable.
 
 *Edge cases:* deleting a node running instances rely on → blocked on
 the published version, allowed in a new draft; unpublish stops *new*
-   selections, never running instances.
+selections, never running instances; a parallel group or approver
+left with nobody after segregation of duties escalates; a test run of
+a script other than the known sample is not simulated in the browser.
 
 ## J8 — Develop & run a governed Python task
 
