@@ -84,13 +84,10 @@
 							visible="{= ${view>/onto/mode} === 'schema' }"/>
 						<ToggleButton icon="sap-icon://org-chart" text="{i18n>onto.show.subclass}" pressed="{view>/onto/show/subclass}" press=".onShow" type="Transparent"
 							visible="{= ${view>/onto/mode} === 'schema' }"/>
-						<SegmentedButton selectedKey="{view>/onto/rec/view}" visible="{= ${view>/onto/mode} === 'records' }">
-							<items>
-								<SegmentedButtonItem key="graph" icon="sap-icon://overview-chart" tooltip="{i18n>onto.rec.graph}"/>
-								<SegmentedButtonItem key="table" icon="sap-icon://table-view" tooltip="{i18n>onto.rec.table}"/>
-							</items>
+						<ToggleButton icon="sap-icon://table-view" text="{i18n>onto.rec.preview}" pressed="{view>/onto/rec/preview}" press=".onTogglePreview" type="Transparent"
+							visible="{= ${view>/onto/mode} === 'records' }">
 							<layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData>
-						</SegmentedButton>
+						</ToggleButton>
 						<ToolbarSeparator/>
 						<Select selectedKey="{view>/onto/layout}" change=".onLayout" width="8rem" tooltip="{i18n>onto.layout}">
 							<core:Item key="force" text="{i18n>onto.layout.force}"/>
@@ -109,30 +106,7 @@
 						<Text text="{view>/onto/rec/crumb}" class="repoioOntoCrumbText"/>
 						<ObjectNumber number="{view>/onto/rec/count}" unit="{i18n>onto.rec.links}" class="repoioOntoCrumbCount"/>
 					</HBox>
-					<ScrollContainer vertical="true" horizontal="false" class="repoioOntoTableScroll"
-						visible="{= ${view>/onto/mode} === 'records' &amp;&amp; ${view>/onto/rec/view} === 'table' }">
-						<Table items="{view>/onto/rec/rows}" mode="SingleSelectMaster" selectionChange=".onRecRowPress" sticky="ColumnHeaders"
-							noDataText="{i18n>onto.rec.none}" popinLayout="GridSmall" contextualWidth="Auto">
-							<columns>
-								<Column><Text text="{i18n>onto.from}"/></Column>
-								<Column width="8rem" minScreenWidth="30rem" demandPopin="true"><Text text="{i18n>onto.rec.type}"/></Column>
-								<Column><Text text="{i18n>onto.to}"/></Column>
-								<Column minScreenWidth="56rem" demandPopin="true"><Text text="{i18n>onto.attrs}"/></Column>
-								<Column width="8rem" minScreenWidth="36rem" demandPopin="true"><Text text="{i18n>domains.col.status}"/></Column>
-								<Column minScreenWidth="46rem" demandPopin="true" width="8rem"><Text text="{i18n>onto.rec.cr}"/></Column>
-							</columns>
-							<ColumnListItem highlight="{= ${view>status} === 'pending' ? 'Warning' : 'None' }">
-								<ObjectIdentifier title="{view>from}" text="{view>fromName}"/>
-								<Text text="{view>type}"/>
-								<ObjectIdentifier title="{view>to}" text="{view>toName}"/>
-								<Text text="{view>attrs}" class="repoioMono"/>
-								<ObjectStatus text="{= ${view>status} === 'pending' ? ${i18n>onto.rec.status.pending} : ${i18n>onto.rec.status.active} }"
-									state="{= ${view>status} === 'pending' ? 'Warning' : 'Success' }"/>
-								<Text text="{view>cr}" class="repoioMono"/>
-							</ColumnListItem>
-						</Table>
-					</ScrollContainer>
-					<rc:OntologyGraph id="graph" visible="{= ${view>/onto/mode} === 'schema' || ${view>/onto/rec/view} === 'graph' }" elements="{view>/onto/graph}" layout="{view>/onto/layout}" edgeLabels="{view>/onto/edgeLabels}"
+					<rc:OntologyGraph id="graph" elements="{view>/onto/graph}" layout="{view>/onto/layout}" edgeLabels="{view>/onto/edgeLabels}"
 						select=".onGraphSelect" ariaLabel="{i18n>onto.graphAria}" class="repoioOntoGraph"/>
 					<HBox class="repoioOntoLegend" renderType="Bare" wrap="Wrap" visible="{= ${view>/onto/mode} === 'records' }">
 						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioSq repoioSqCus"/><Text text="{i18n>onto.rec.legCustomer}"/></HBox>
@@ -153,6 +127,35 @@
 						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioLine repoioLineSub"/><Text text="{i18n>onto.kind.subclass}"/></HBox>
 						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioDot repoioDotDraft"/><Text text="{i18n>onto.draftItem}"/></HBox>
 					</HBox>
+					<!-- Data preview under the graph (Datasphere style): the graph stays visible above it. -->
+					<VBox class="repoioOntoPreview" renderType="Bare" visible="{= ${view>/onto/mode} === 'records' &amp;&amp; !!${view>/onto/rec/preview} }">
+						<HBox class="repoioOntoPreviewHead" renderType="Bare" alignItems="Center">
+							<Text text="{i18n>onto.rec.preview}: {view>/onto/rec/crumb} ({view>/onto/rec/count})" class="repoioOntoPreviewTitle"/>
+							<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>common.close}" press=".onClosePreview"/>
+						</HBox>
+						<ScrollContainer vertical="true" horizontal="false" class="repoioOntoTableScroll">
+							<Table items="{view>/onto/rec/rows}" mode="SingleSelectMaster" selectionChange=".onRecRowPress" sticky="ColumnHeaders"
+								noDataText="{i18n>onto.rec.none}" popinLayout="GridSmall" contextualWidth="Auto">
+								<columns>
+									<Column><Text text="{i18n>onto.from}"/></Column>
+									<Column width="8rem" minScreenWidth="30rem" demandPopin="true"><Text text="{i18n>onto.rec.type}"/></Column>
+									<Column><Text text="{i18n>onto.to}"/></Column>
+									<Column minScreenWidth="40rem" demandPopin="true"><Text text="{i18n>onto.attrs}"/></Column>
+									<Column width="8rem" minScreenWidth="36rem" demandPopin="true"><Text text="{i18n>domains.col.status}"/></Column>
+									<Column minScreenWidth="46rem" demandPopin="true" width="8rem"><Text text="{i18n>onto.rec.cr}"/></Column>
+								</columns>
+								<ColumnListItem highlight="{= ${view>status} === 'pending' ? 'Warning' : 'None' }">
+									<ObjectIdentifier title="{view>from}" text="{view>fromName}"/>
+									<Text text="{view>type}"/>
+									<ObjectIdentifier title="{view>to}" text="{view>toName}"/>
+									<Text text="{view>attrs}" class="repoioMono"/>
+									<ObjectStatus text="{= ${view>status} === 'pending' ? ${i18n>onto.rec.status.pending} : ${i18n>onto.rec.status.active} }"
+										state="{= ${view>status} === 'pending' ? 'Warning' : 'Success' }"/>
+									<Text text="{view>cr}" class="repoioMono"/>
+								</ColumnListItem>
+							</Table>
+						</ScrollContainer>
+					</VBox>
 				</VBox>
 
 				<!-- Right: details of the selected concept or relationship -->

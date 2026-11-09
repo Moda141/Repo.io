@@ -118,7 +118,11 @@ sap.ui.define([
 			el.select();
 			var hood = el.isNode() ? el.closedNeighborhood() : el.union(el.connectedNodes());
 			cy.elements().not(hood).addClass("faded");
-			if (bCenter) { cy.animate({ center: { eles: el }, duration: 250 }); }
+			if (bCenter === "focus") {
+				// Zoom to the element and its neighbours, readable but never closer than MAX_FIT.
+				cy.stop(); cy.fit(hood, 70);
+				if (cy.zoom() > MAX_FIT) { cy.zoom(MAX_FIT); cy.center(hood); }
+			} else if (bCenter) { cy.animate({ center: { eles: el }, duration: 250 }); }
 		},
 		zoomBy: function (f) {
 			var cy = this._cy; if (!cy) { return; }

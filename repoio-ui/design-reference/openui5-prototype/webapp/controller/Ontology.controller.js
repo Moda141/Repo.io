@@ -44,7 +44,7 @@ sap.ui.define([
 					name: that.lang() === "ar" ? that._o.nameAr : that._o.nameEn, prefix: that._o.prefix, ns: that._o.ns,
 					versions: that._o.versions, version: that._o.versions[0].key, state: that._o.versions[0].state, editable: true, changes: 0,
 					tab: "concepts", query: "", show: { type: true, subclass: true }, layout: "force", edgeLabels: true, mode: "schema",
-					rec: { domain: "", type: "", query: "", view: "graph", rows: [], domains: [], types: [] },
+					rec: { domain: "", type: "", query: "", preview: false, rows: [], domains: [], types: [] },
 					full: false, rtl: that.isRtl(), sel: {}, graph: { nodes: [], edges: [] }, tree: [], types: [], conceptOptions: []
 				});
 				that._refresh(true);
@@ -296,8 +296,12 @@ sap.ui.define([
 
 		onRecRowPress: function (e) {
 			var id = e.getParameter("listItem").getBindingContext("view").getProperty("id");
-			this._selectLink(id);
+			this._selectLink(id); this.byId("graph").selectElement(id, "focus");
 		},
+		/* Data preview opens under the graph; the graph keeps the rest of the height and is never hidden. */
+		onTogglePreview: function () { this._refitGraph(); },
+		onClosePreview: function () { this.viewModel().setProperty("/onto/rec/preview", false); this._refitGraph(); },
+		_refitGraph: function () { var that = this; setTimeout(function () { that.onFit(); }, 60); },
 		onSelectRecord: function (e) { var code = e.getSource().data("ref"); this._selectRecord(code); this.byId("graph").selectElement(code, true); },
 		onRecRelPress: function (e) {
 			var id = e.getParameter("listItem").data("ref");

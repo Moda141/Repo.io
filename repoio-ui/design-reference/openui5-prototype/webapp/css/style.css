@@ -422,3 +422,10 @@
 .repoioWfProps .repoioWfPanel .repoioWfRunMsg { white-space: pre-wrap; font-size: 0.6875rem; background: #f5f6f7; border-radius: 0.25rem; padding: 0.25rem 0.375rem; margin-top: 0.25rem; }
 .repoioFxPrev { display: block; white-space: pre-wrap; background: #f5f6f7; border-radius: 0.25rem; padding: 0.375rem; }
 .repoioWfMode { margin-inline-end: 0.25rem; }
+/* Ontology: data preview docked under the graph (Datasphere Data Builder style) */
+.repoioOntoPreview { flex: 0 0 38%; min-height: 12rem; display: flex; flex-direction: column; border-top: 1px solid #d9d9d9; background: #fff;
+	box-shadow: 0 -2px 4px rgba(0,0,0,0.04); }
+.repoioOntoPreviewHead { flex: none; gap: 0.5rem; padding: 0 0.5rem 0 1rem; height: 2.5rem; border-bottom: 1px solid #e5e5e5; }
+.repoioOntoPreviewTitle { flex: 1 1 auto; color: #0a6ed1; font-size: 0.875rem; padding-bottom: 0.5rem; border-bottom: 2px solid #0a6ed1; margin-top: 0.5rem; max-width: max-content; }
+.repoioOntoPreviewHead > .sapMBtn { margin-inline-start: auto; }
+.repoioOntoPreview .repoioOntoTableScroll { flex: 1 1 auto; min-height: 0; }
