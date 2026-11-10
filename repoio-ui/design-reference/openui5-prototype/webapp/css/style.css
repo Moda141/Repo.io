@@ -134,9 +134,23 @@
 	.sapTntToolHeader .repoioNavSearch { position: absolute; left: 50%; transform: translateX(-50%); margin: 0; }
 }
 
-/* Shell header (navigation bar): black. */
-.sapUiBody .sapTntToolPage .sapTntToolHeader, .sapUiBody .sapTntToolPageHeader, .sapUiBody .sapTntToolPageHeaderWrapper { background: #0d0d0d !important; border-bottom-color: #000 !important; }
-.sapTntToolHeader .sapMSF:not(.sapMFocus) .sapMSFF { background-color: #1f1f1f; border-color: #5a5a5a; }
+/* Shell header + side navigation: SAP shell blue (#354a5f, as in Datasphere); the header search stays black. */
+.sapUiBody .sapTntToolPage .sapTntToolHeader, .sapUiBody .sapTntToolPageHeader, .sapUiBody .sapTntToolPageHeaderWrapper { background: #354a5f !important; border-bottom-color: #2b3d4f !important; }
+.sapTntToolHeader .sapMSF .sapMSFF, .sapTntToolHeader .sapMSF .sapMSFI { background-color: #0d0d0d !important; color: #fff; }
+.sapTntToolHeader .sapMSF .sapMSFF { border-color: #5a5a5a !important; }
+.sapTntToolHeader .sapMSF .sapMSFI::placeholder { color: #a9b4be; }
+.sapTntToolHeader .sapMSF .sapMSFB { color: #d1d9e0; }
+.sapUiBody .sapTntToolPage .sapTntToolPageAside, .sapUiBody .sapTntToolPageAsideContent,
+.sapUiBody .sapTntSideNavigation, .sapUiBody .sapTntSideNavigation .sapTntNL, .sapUiBody .sapTntSideNavigationFlexible,
+.sapUiBody .sapTntSideNavigationFixed { background: #354a5f !important; border-color: #2b3d4f !important; box-shadow: none !important; }
+.sapUiBody .sapTntSideNavigation .sapTntNLI, .sapUiBody .sapTntSideNavigation .sapTntNLI a, .sapUiBody .sapTntSideNavigation .sapTntNLIText,
+.sapUiBody .sapTntSideNavigation .sapTntNLIIcon, .sapUiBody .sapTntSideNavigation .sapTntNLIExpandIcon, .sapUiBody .sapTntSideNavigation .sapUiIcon { color: #e3e8ec !important; }
+.sapUiBody .sapTntSideNavigation .sapTntNLI:not(.sapTntNLISelected) { background: transparent !important; }
+.sapUiBody .sapTntSideNavigation .sapTntNLI:not(.sapTntNLISelected):hover { background: #2b3d4f !important; }
+.sapUiBody .sapTntSideNavigation .sapTntNLISelected { background: #4b6278 !important; }
+.sapUiBody .sapTntSideNavigation .sapTntNLISelected .sapTntNLIText, .sapUiBody .sapTntSideNavigation .sapTntNLISelected .sapUiIcon { color: #fff !important; }
+.sapUiBody .sapTntSideNavigation .sapTntNLISelected::after, .sapUiBody .sapTntSideNavigation .sapTntNLISelected .sapTntNLIItem::after { border-color: #fff !important; }
+.sapUiBody .sapTntSideNavigation .sapTntNLGroup, .sapUiBody .sapTntSideNavigation .sapTntNLIGroup, .sapUiBody .sapTntSideNavigation .sapTntNLSeparator { border-color: #4b6278 !important; }
 
 /* Connections (Datasphere): logo in the table, create dialog with filters + type tiles. */
 .repoioConnLogo { margin-inline-end: 0.5rem; object-fit: contain; }
@@ -618,3 +632,4 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioCatBody[data-mode="cards"] .repoioCatResults { padding: 1rem; background: #f7f7f7; }
 .repoioCatBody[data-mode="list"] .repoioCatResults { padding: 0; }
 .repoioCatBody .repoioFacetPanel { border-inline-end: 1px solid #d9d9d9; }
+.sapUiBody .sapTntSideNavigation .sapTntNLI::before, .sapUiBody .sapTntSideNavigation .sapTntNLI::after { border-color: #4b6278 !important; }
