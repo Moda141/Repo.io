@@ -276,8 +276,8 @@ an honest "not verified" is acceptable; an unverified "done" is not.
 - **Decisions:** accepted deviations from the kit live in
   `docs/decisions/` (ADR-0001: a domain holds one or more repositories;
   ADR-0002: the Repo.io flow designer replaces bpmn-js, Flowable stays;
-  ADR-0003: broadcast exports render in a Node worker, attachment size
-  policy proposed).
+  ADR-0003: broadcast exports render in a Node worker; attachments up
+  to 10 MB, otherwise a link-only email).
 - **Docs:** every module gets a README following
   `docs/module-readme-template.md` — update it when adding entry points,
   config or commands.

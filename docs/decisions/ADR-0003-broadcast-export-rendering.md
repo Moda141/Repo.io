@@ -2,8 +2,8 @@
 
 - Status:
   - Part A (render runtime): **accepted** (2026-11-10, Mohamed).
-  - Part B (attachment size policy): **proposed**. The relay limit
-    needs confirmation from IT.
+  - Part B (attachment size policy): **accepted** (2026-11-10, Mohamed),
+    with a 10 MB relay limit.
 - Amends: README §2.8 (open decisions), §6 module layout; CLAUDE.md §3
   module map, §4 technology table, §8 decisions list;
   `docs/user-journey.md` J14.
@@ -71,15 +71,13 @@ Two runtimes were considered for rendering charts and documents.
 5. Package versions (Node LTS, ECharts, Chromium, `pptxgenjs`, `exceljs`)
    are pinned when the module is scaffolded. They are not chosen here.
 
-### Part B — attachment size policy (proposed)
+### Part B — attachment size policy (accepted)
 
-1. **Limit.** The limit is set by
-   `BROADCAST_MAX_ATTACHMENT_MB`, which must equal the relay's maximum
-   message size; IT confirms the value. It is measured on the encoded
-   message: base64 adds about 37 %, so the raw file cap is about the
-   limit ÷ 1.37 minus room for the body.
-   - Until IT confirms, assume 10 MB, a common relay default. That gives
-     a raw file cap of about 7 MB.
+1. **Limit.** The limit is set by `BROADCAST_MAX_ATTACHMENT_MB`, which
+   equals the relay's maximum message size. The decided value is
+   **10 MB**. It is measured on the encoded message: base64 adds about
+   37 %, so the raw file cap is about 10 ÷ 1.37 minus room for the body,
+   about **7 MB**. If the relay limit changes, only the setting changes.
 2. **Pre-flight before rendering.** `repoio-service` estimates the size
    from the recipient's row count, the column count and the format. If
    the estimate is clearly over the cap, it skips rendering and goes to
@@ -123,6 +121,6 @@ Two runtimes were considered for rendering charts and documents.
   - `linkOnly`;
   - `skipped` (no grant);
   - `failed` (relay error; retried at the next slot or with Start now).
-- Open until IT answers: the relay's maximum message size, and whether
-  the relay needs authentication (credentials as a secret-store
-  reference, CLAUDE.md §6.13).
+- Still open with IT: whether the relay needs authentication
+  (credentials as a secret-store reference, CLAUDE.md §6.13), and its
+  host and port (environment placeholders until then).

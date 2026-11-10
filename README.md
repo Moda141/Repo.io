@@ -524,9 +524,9 @@ Chromium (correct Arabic shaping and RTL), PPTX with `pptxgenjs` and
 XLSX with `exceljs`. It only renders data the service already queried as
 the recipient: no database or Trino access, no grants, no storage.
 
-**Attachment size — ADR-0003 Part B (proposed):** the limit equals the
-relay's maximum message size (IT to confirm; 10 MB assumed, about 7 MB
-raw after base64), a pre-flight size estimate, a 100,000-row cap per
+**Attachment size — ADR-0003 Part B (accepted):** the limit equals the
+relay's maximum message size, set to 10 MB (about 7 MB raw after
+base64), a pre-flight size estimate, a 100,000-row cap per
 broadcast, automatic ZIP for CSV only, and otherwise a **link-only**
 email to the live report (outcome `linkOnly`), decided per recipient.
 Never split across emails, never stored for linking.

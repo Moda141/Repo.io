@@ -491,7 +491,7 @@ rendered per recipient with their own grants; links in the email
 require sign-in (no anonymous "view without logging in"); only Entra ID
 users can be recipients; the attachment is generated per run and never
 stored; a file over the relay limit is sent as a link-only email to the
-live report (ADR-0003 Part B, proposed); retiring a
+live report (ADR-0003 Part B: 10 MB relay limit); retiring a
 report pauses its broadcasts; a failed run is retried at the next
 scheduled run or with Start now.
 
