@@ -481,7 +481,7 @@ never defines a measure.**
 │    (no shared broadcast identity, no owner's grants)         │
 └──────────────┬───────────────────────────────────────────────┘
                ▼
-┌──── Export worker (open) ────────────────────┐
+┌──── Export worker (Node, ADR-0003) ──────────┐
 │ XLSX · CSV · PDF (stories: PDF · PPTX) · ZIP │
 │ isolated, no inbound network, platform code  │
 └──────────────┬───────────────────────────────┘
@@ -517,12 +517,19 @@ never defines a measure.**
 **Confirmed (10 Nov 2026):** SMTP relay for mail; exports generated per
 run and never stored; Entra ID recipients only.
 
-**Open decisions (need an ADR before M-planning):**
+**Export rendering — ADR-0003 (accepted):** a Node render worker
+(`repoio-export-worker/`, planned) renders charts with server-side
+ECharts (same chart options as the console), PDF through headless
+Chromium (correct Arabic shaping and RTL), PPTX with `pptxgenjs` and
+XLSX with `exceljs`. It only renders data the service already queried as
+the recipient: no database or Trino access, no grants, no storage.
 
-1. Export rendering runtime for charts in PDF / PPTX (Node worker with
-   server-side ECharts vs. a Python renderer).
-2. Attachment size limit of the relay and the fallback when a file is
-   too large (ZIP, then link-only).
+**Attachment size — ADR-0003 Part B (proposed):** the limit equals the
+relay's maximum message size (IT to confirm; 10 MB assumed, about 7 MB
+raw after base64), a pre-flight size estimate, a 100,000-row cap per
+broadcast, automatic ZIP for CSV only, and otherwise a **link-only**
+email to the live report (outcome `linkOnly`), decided per recipient.
+Never split across emails, never stored for linking.
 
 ## 3. Entity coverage (Phase 1)
 
@@ -601,6 +608,7 @@ repoio-mcp/             MCP server · tool registry · agent policies
 repoio-ui/              OpenUI5 console (Discover · Workbench · Admin)
 repoio-ui5-components/  NEW · shared OpenUI5 controls (Table, Form, Diff, Lineage)
 repoio-python-runtime/  NEW · isolated Python execution workers / kernels
+repoio-export-worker/   NEW · Node render worker for broadcast exports (ADR-0003)
 repoio-k8s-operator/    CRDs: Repository, Pipeline, IcebergCatalog
 repoio-integration-tests/   Cross-module e2e
 repoio-shaded-deps/     Shaded Elasticsearch / OpenSearch

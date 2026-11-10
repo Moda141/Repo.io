@@ -58,6 +58,7 @@ Spark Structured Streaming, FastAPI and a Jena ontology service.
 | `repoio-ui5-components/` | *(planned)* Reusable OpenUI5 controls (Table, Form, Diff, Lineage) |
 | `repoio-ui-core-components/` | React component library — migration baseline only, no new work |
 | `repoio-python-runtime/` | *(planned)* Isolated Python execution workers / kernels |
+| `repoio-export-worker/` | *(planned)* Node render worker for broadcast exports — ECharts SSR, headless Chromium PDF, PPTX, XLSX (ADR-0003) |
 | `repoio-stream/` | Spark Structured Streaming jobs (standardise → DQ → match → survivorship) |
 | `repoio-catalog/` | Iceberg REST catalog, table DDL, index config |
 | `repoio-ontology/` | *(planned)* Jena RDF/OWL ontology, SPARQL, SHACL, reasoning |
@@ -93,6 +94,7 @@ introduce a parallel technology without an approved ADR.
 | Data quality | **Great Expectations** |
 | Workflow engine | **Flowable** (behind an adapter) |
 | Ontology | **Apache Jena** (Fuseki, TDB2, SHACL, bounded reasoning) |
+| Broadcast export rendering | **Node** worker: ECharts server-side rendering, headless Chromium (PDF), `pptxgenjs`, `exceljs` (ADR-0003); mail via corporate SMTP relay |
 | AI agent interface | **MCP** server (JDK) |
 | Metadata store | Postgres 15 (control plane) + Iceberg (data plane) |
 
@@ -273,7 +275,9 @@ an honest "not verified" is acceptable; an unverified "done" is not.
   reviewable commits.
 - **Decisions:** accepted deviations from the kit live in
   `docs/decisions/` (ADR-0001: a domain holds one or more repositories;
-  ADR-0002: the Repo.io flow designer replaces bpmn-js, Flowable stays).
+  ADR-0002: the Repo.io flow designer replaces bpmn-js, Flowable stays;
+  ADR-0003: broadcast exports render in a Node worker, attachment size
+  policy proposed).
 - **Docs:** every module gets a README following
   `docs/module-readme-template.md` — update it when adding entry points,
   config or commands.
