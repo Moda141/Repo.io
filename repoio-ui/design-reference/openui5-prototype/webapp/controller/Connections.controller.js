@@ -142,8 +142,25 @@ sap.ui.define([
 					stateIcon: c.state === "active" ? "sap-icon://sys-enter-2" : c.state === "paused" ? "sap-icon://pause" : "sap-icon://error"
 				});
 			}).filter(function (r) { return !q || [r.title, r.id, r.typeText, r.owner].join(" ").toLowerCase().indexOf(q) > -1; });
-			this.viewModel().setProperty("/conn/items", rows);
+			this._rows = rows.sort(function (a, b) { return a.changed < b.changed ? 1 : a.changed > b.changed ? -1 : 0; });
 			this.viewModel().setProperty("/conn/count", rows.length);
+			this.viewModel().setProperty("/conn/page", 1);
+			if (!this.viewModel().getProperty("/conn/size")) { this.viewModel().setProperty("/conn/size", 25); }
+			this._slice();
+			this.byId("connTable").removeSelections(true);
+			this.onSelect();
+		},
+
+		/* One page of connections (Previous / Next instead of "More"). */
+		_slice: function () {
+			var vm = this.viewModel(), p = vm.getProperty("/conn/page"), n = vm.getProperty("/conn/size");
+			vm.setProperty("/conn/items", (this._rows || []).slice((p - 1) * n, p * n));
+		},
+		onPage: function (oEvent) {
+			var vm = this.viewModel();
+			vm.setProperty("/conn/page", oEvent.getParameter("page"));
+			vm.setProperty("/conn/size", oEvent.getParameter("pageSize"));
+			this._slice();
 			this.byId("connTable").removeSelections(true);
 			this.onSelect();
 		},

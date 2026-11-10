@@ -93,7 +93,7 @@
 					</VBox>
 				</FlexBox>
 				<Table id="jrTable" items="{view>/jr/rows}" class="repoioDenseTable repoioJrTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar"
-					growing="true" growingThreshold="25" noDataText="{i18n>jr.noData}">
+					noDataText="{i18n>jr.noData}">
 					<headerToolbar>
 						<OverflowToolbar>
 							<Title text="{path: 'view>/jr/count', formatter: '.listTitle'}" level="H2"/>
@@ -138,6 +138,7 @@
 						</ColumnListItem>
 					</items>
 				</Table>
+				<rc:Pager total="{view>/jr/count}" page="{view>/jr/page}" pageSize="{view>/jr/size}" change=".onPage"/>
 			</VBox>
 		</f:content>
 	</f:DynamicPage>

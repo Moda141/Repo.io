@@ -180,7 +180,7 @@
 				<IconTabBar id="jdTabs" selectedKey="{view>/jd/tab}" expandable="false" headerMode="Inline" class="repoioJdTabs" applyContentPadding="false">
 					<items>
 						<IconTabFilter key="msg" text="{path: 'view>/jd/run/messages', formatter: '.messagesTitle'}">
-							<Table items="{view>/jd/msgs}" class="repoioDenseTable" noDataText="{i18n>jr.d.noMessages}" growing="true" growingThreshold="50">
+							<VBox><Table items="{view>/jd/msgs}" class="repoioDenseTable" noDataText="{i18n>jr.d.noMessages}">
 								<headerToolbar>
 									<OverflowToolbar style="Clear">
 										<Title text="{i18n>jr.d.message}" level="H3"/>
@@ -210,6 +210,7 @@
 									</ColumnListItem>
 								</items>
 							</Table>
+							<rc:Pager total="{view>/jd/mcount}" page="{view>/jd/mpage}" pageSize="{view>/jd/msize}" change=".onMsgPage"/></VBox>
 						</IconTabFilter>
 						<IconTabFilter key="metrics" text="{i18n>jr.d.metrics}">
 							<VBox class="repoioJdMetrics">

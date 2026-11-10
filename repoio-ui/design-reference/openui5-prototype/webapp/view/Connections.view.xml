@@ -9,8 +9,9 @@
 			</f:DynamicPageTitle>
 		</f:title>
 		<f:content>
-			<Table id="connTable" items="{path: 'view>/conn/items', sorter: {path: 'changed', descending: true}}" mode="MultiSelect"
-				selectionChange=".onSelect" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" growing="true" growingThreshold="20"
+			<VBox>
+			<Table id="connTable" items="{view>/conn/items}" mode="MultiSelect"
+				selectionChange=".onSelect" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar"
 				noDataText="{i18n>conn.noData}" class="repoioDenseTable" fixedLayout="false">
 				<headerToolbar>
 					<OverflowToolbar>
@@ -56,6 +57,8 @@
 					</ColumnListItem>
 				</items>
 			</Table>
+			<rc:Pager total="{view>/conn/count}" page="{view>/conn/page}" pageSize="{view>/conn/size}" change=".onPage"/>
+			</VBox>
 		</f:content>
 	</f:DynamicPage>
 </mvc:View>

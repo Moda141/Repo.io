@@ -41,6 +41,18 @@ sap.ui.define([
 			}.bind(this));
 		},
 
+		/* One page of runs (Previous / Next instead of "More"). */
+		_slice: function () {
+			var vm = this.viewModel(), p = vm.getProperty("/jr/page"), n = vm.getProperty("/jr/size");
+			vm.setProperty("/jr/rows", (this._rows || []).slice((p - 1) * n, p * n));
+		},
+		onPage: function (oEvent) {
+			var vm = this.viewModel();
+			vm.setProperty("/jr/page", oEvent.getParameter("page"));
+			vm.setProperty("/jr/size", oEvent.getParameter("pageSize"));
+			this._slice();
+		},
+
 		listTitle: function (n) { return this.text("jr.list.title", [n || 0]); },
 
 		/* Runs in the time range and every filter except the chart bucket (the chart shows those). */
@@ -83,8 +95,11 @@ sap.ui.define([
 					error: r.error, paramText: R.params(r.params), active: r.status === "running" || r.status === "queued", airflow: j.orch === "airflow"
 				};
 			});
-			vm.setProperty("/jr/rows", aRows);
+			this._rows = aRows;
 			vm.setProperty("/jr/count", aRows.length);
+			vm.setProperty("/jr/page", 1);
+			if (!vm.getProperty("/jr/size")) { vm.setProperty("/jr/size", 25); }
+			this._slice();
 			this._errorCodes(aIn);
 			this._top(aIn);
 			this._chart(aIn);

@@ -51,6 +51,7 @@ history. Every other navigation item opens the planned-page placeholder.
 | `webapp/control/OntologyGraph.js` | Cytoscape.js wrapper control for the ontology graph (README §2.3, §7.2) |
 | `webapp/control/FlowCanvas.js` | Flow designer canvas: step cards, connectors, "+" insert, pan and zoom (ADR-0002) |
 | `webapp/control/FieldMapper.js` | Datasphere-style field mapping (two columns, lines, filters, drag or click) |
+| `webapp/control/Pager.js` | Previous / Next paging under long tables (job runs, run messages, Connections) with rows per page; hidden when everything fits on one page |
 | `webapp/control/CodeEditor.js` | CodeMirror 6 wrapper for the Script step |
 | `webapp/util/flowModel.js` | Flow model: insert / remove, lane layout, compile to BPMN 2.0 |
 | `webapp/controller/JobRuns.controller.js`, `webapp/controller/JobRun.controller.js`, `webapp/util/jobRuns.js` | Job runs list, run details, and the shared Airflow link and replay request helpers; sample runs in `webapp/model/runs.json` |

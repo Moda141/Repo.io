@@ -152,7 +152,21 @@ sap.ui.define([
 						text: R.msg(that, m.key, m.args, lang), detail: m.detail };
 				}).filter(function (m) { return (!cat || m.cat === cat) && (!q || m.text.toLowerCase().indexOf(q) > -1); });
 			if (!vm.getProperty("/jd/masc")) { a.reverse(); }
-			vm.setProperty("/jd/msgs", a);
+			this._mrows = a;
+			vm.setProperty("/jd/mcount", a.length);
+			vm.setProperty("/jd/mpage", 1);
+			if (!vm.getProperty("/jd/msize")) { vm.setProperty("/jd/msize", 25); }
+			this._mslice();
+		},
+		_mslice: function () {
+			var vm = this.viewModel(), p = vm.getProperty("/jd/mpage"), n = vm.getProperty("/jd/msize");
+			vm.setProperty("/jd/msgs", this._mrows.slice((p - 1) * n, p * n));
+		},
+		onMsgPage: function (oEvent) {
+			var vm = this.viewModel();
+			vm.setProperty("/jd/mpage", oEvent.getParameter("page"));
+			vm.setProperty("/jd/msize", oEvent.getParameter("pageSize"));
+			this._mslice();
 		},
 		onMsgFilter: function () { this._msgs(); },
 		onMsgSort: function () { var vm = this.viewModel(); vm.setProperty("/jd/masc", !vm.getProperty("/jd/masc")); this._msgs(); },
