@@ -1,7 +1,7 @@
 <mvc:View controllerName="repoio.proto.controller.Domains"
 	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
 	<!-- SAP Datasphere "Catalog" layout: dark search header, type tabs, result cards (or list) -->
-	<f:DynamicPage id="page" headerExpanded="true" stickySubheaderProvider="tabs" class="repoioCatalog">
+	<f:DynamicPage id="page" headerExpanded="true" stickySubheaderProvider="tabs" class="repoioCatalog repoioEdge">
 		<f:header>
 			<f:DynamicPageHeader pinnable="false">
 				<VBox alignItems="Center" class="repoioCatHero">
@@ -51,26 +51,27 @@
 					</SegmentedButton>
 				</OverflowToolbar>
 
-				<FlexBox alignItems="Start" class="repoioCatBody">
-					<!-- Filter panel (Datasphere: the filter icon opens facets beside the results) -->
-					<VBox visible="{view>/cat/showFilters}" width="15rem" class="repoioCatFacets">
-						<VBox class="repoioCatFacet">
-							<Title text="{view>/cat/facets/0/title}" level="H3" titleStyle="H6" class="sapUiTinyMarginBottom"/>
-							<List items="{view>/cat/facets/0/values}" mode="MultiSelect" includeItemNavigation="false" selectionChange=".onFacetChange"
-								showSeparators="None" backgroundDesign="Transparent" app:facet="domain" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-								<StandardListItem title="{view>text}" counter="{view>count}" selected="{view>selected}"/>
-							</List>
-						</VBox>
-						<VBox class="repoioCatFacet">
-							<Title text="{view>/cat/facets/1/title}" level="H3" titleStyle="H6" class="sapUiTinyMarginBottom"/>
-							<List items="{view>/cat/facets/1/values}" mode="MultiSelect" includeItemNavigation="false" selectionChange=".onFacetChange"
-								showSeparators="None" backgroundDesign="Transparent" app:facet="status" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-								<StandardListItem title="{view>text}" counter="{view>count}" selected="{view>selected}"/>
-							</List>
-						</VBox>
+				<FlexBox alignItems="Stretch" class="repoioCatBody">
+					<customData><core:CustomData key="mode" value="{view>/cat/mode}" writeToDom="true"/></customData>
+					<!-- Filter panel (Datasphere Repository Explorer: "Filter by" with facet groups and counts) -->
+					<VBox visible="{view>/cat/showFilters}" width="15rem" class="repoioFacetPanel" renderType="Bare">
+						<HBox alignItems="Center" justifyContent="SpaceBetween" class="repoioFacetHead">
+							<Title text="{i18n>wl.filterBy}" level="H3" titleStyle="H5"/>
+							<Button icon="sap-icon://clear-filter" type="Transparent" tooltip="{i18n>cat.clearAll}" enabled="{= ${view>/cat/active} > 0 }" press=".onClearFacets"/>
+						</HBox>
+						<Title text="{view>/cat/facets/0/title}" level="H4" class="repoioFacetGroup"/>
+						<List items="{view>/cat/facets/0/values}" mode="MultiSelect" includeItemNavigation="false" selectionChange=".onFacetChange"
+							showSeparators="None" class="repoioFacetList" app:facet="domain" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+							<StandardListItem title="{view>text}" icon="{view>icon}" counter="{view>count}" selected="{view>selected}"/>
+						</List>
+						<Title text="{view>/cat/facets/1/title}" level="H4" class="repoioFacetGroup"/>
+						<List items="{view>/cat/facets/1/values}" mode="MultiSelect" includeItemNavigation="false" selectionChange=".onFacetChange"
+							showSeparators="None" class="repoioFacetList" app:facet="status" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+							<StandardListItem title="{view>text}" icon="{view>icon}" counter="{view>count}" selected="{view>selected}"/>
+						</List>
 					</VBox>
 
-					<VBox width="100%">
+					<VBox width="100%" class="repoioCatResults">
 						<layoutData><FlexItemData growFactor="1" shrinkFactor="1" minWidth="0"/></layoutData>
 						<IllustratedMessage visible="{= ${view>/cat/items}.length === 0 }" illustrationType="sapIllus-NoSearchResults" illustrationSize="Dialog"
 							title="{i18n>cat.noResults}" description="{i18n>cat.noResultsHint}"/>
@@ -110,7 +111,7 @@
 						</f:GridContainer>
 
 						<Table items="{view>/cat/items}" visible="{= ${view>/cat/mode} === 'list' &amp;&amp; ${view>/cat/items}.length > 0 }" popinLayout="GridSmall"
-							sticky="ColumnHeaders">
+							sticky="ColumnHeaders" class="repoioDenseTable">
 							<columns>
 								<Column width="30%"><Text text="{i18n>dsp.businessName}"/></Column>
 								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.type}"/></Column>
@@ -130,7 +131,7 @@
 									<Text text="{view>context}"/>
 									<rc:PersonLink name="{view>owner}"/>
 									<ObjectStatus text="{view>statusText}" state="{view>state}"/>
-									<Text text="{view>updated}"/>
+									<Text text="{view>updated}" wrapping="false"/>
 									<HBox justifyContent="End">
 										<Button icon="sap-icon://chain-link" type="Transparent" tooltip="{i18n>cat.copyLink}" press=".onCopyLink"/>
 										<Button icon="{= ${view>fav} ? 'sap-icon://favorite' : 'sap-icon://unfavorite' }" type="Transparent"

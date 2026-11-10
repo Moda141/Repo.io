@@ -1,0 +1,104 @@
+<mvc:View controllerName="repoio.proto.controller.WorkflowsList"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" height="100%">
+	<!-- Workflows list, laid out like the SAP Datasphere Repository Explorer: search on top, a filter panel
+	     (collection + facets with counts) beside a full-width table. -->
+	<VBox height="100%" renderType="Bare" class="repoioExplorer">
+		<OverflowToolbar class="repoioExTop">
+			<Title text="{i18n>nav.workflowsList}" level="H1" titleStyle="H4"/>
+			<ToolbarSpacer/>
+			<SearchField value="{view>/wl/q}" liveChange=".onSearch" search=".onSearch" width="32rem" placeholder="{view>/wl/searchPh}">
+				<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" minWidth="12rem"/></layoutData>
+			</SearchField>
+		</OverflowToolbar>
+		<OverflowToolbar class="repoioExBar">
+			<ToggleButton icon="sap-icon://filter" pressed="{view>/wl/showFilters}" tooltip="{i18n>cat.filters}" type="Emphasized"/>
+			<ToolbarSpacer/>
+			<MenuButton icon="sap-icon://add" type="Transparent" tooltip="{i18n>wl.new}">
+				<menu>
+					<Menu>
+						<MenuItem text="{i18n>wl.newBlank}" icon="sap-icon://create" press=".onNewBlank"/>
+						<MenuItem text="{i18n>wl.newCopy}" icon="sap-icon://copy" press=".onNewCopy" enabled="{= ${view>/wl/selected} === 1 }"/>
+					</Menu>
+				</menu>
+			</MenuButton>
+			<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>common.edit}" enabled="{= ${view>/wl/selected} === 1 }" press=".onEdit"/>
+			<Button icon="sap-icon://download" type="Transparent" tooltip="{i18n>wl.exportBpmn}" enabled="{= ${view>/wl/selected} === 1 }" press=".onExport"/>
+			<Button icon="sap-icon://locked" type="Transparent" tooltip="{i18n>wl.retire}" enabled="{view>/wl/canRetire}" press=".onRetire"/>
+			<Button icon="sap-icon://delete" type="Transparent" tooltip="{i18n>common.delete}" enabled="{view>/wl/canDelete}" press=".onDelete"/>
+		</OverflowToolbar>
+		<HBox class="repoioExBody" renderType="Bare">
+			<!-- Filter panel (Datasphere Repository Explorer) -->
+			<ScrollContainer vertical="true" height="100%" width="15rem" visible="{view>/wl/showFilters}" class="repoioFacetPanel">
+				<Title text="{i18n>wl.collection}" level="H3" class="repoioFacetGroup"/>
+				<List items="{view>/wl/collections}" mode="SingleSelectMaster" selectionChange=".onCollection" showSeparators="None" class="repoioFacetList">
+					<StandardListItem title="{view>text}" icon="{view>icon}" selected="{view>selected}"/>
+				</List>
+				<HBox alignItems="Center" justifyContent="SpaceBetween" class="repoioFacetHead">
+					<Title text="{i18n>wl.filterBy}" level="H3" titleStyle="H5"/>
+					<Button icon="sap-icon://clear-filter" type="Transparent" tooltip="{i18n>cat.clearAll}" enabled="{= ${view>/wl/active} > 0 }" press=".onClearFacets"/>
+				</HBox>
+				<VBox items="{view>/wl/facets}" renderType="Bare">
+					<VBox renderType="Bare">
+						<Title text="{view>title}" level="H4" class="repoioFacetGroup"/>
+						<List items="{path: 'view>values', templateShareable: false}" mode="MultiSelect" includeItemNavigation="false" selectionChange=".onFacetChange"
+							showSeparators="None" class="repoioFacetList" app:facet="{view>key}">
+							<StandardListItem title="{view>text}" icon="{view>icon}" counter="{view>count}" selected="{view>selected}"/>
+						</List>
+					</VBox>
+				</VBox>
+			</ScrollContainer>
+
+			<VBox class="repoioExMain" renderType="Bare">
+				<HBox alignItems="Center" class="repoioExScope">
+					<Label text="{i18n>wl.searchIn}" class="repoioExScopeLbl"/>
+					<core:Icon src="{view>/wl/collIcon}" class="repoioExScopeIcon"/>
+					<Text text="{view>/wl/scopeText}"/>
+				</HBox>
+				<ScrollContainer vertical="true" horizontal="true" height="100%" class="repoioExScroll">
+					<Table id="wlTable" items="{view>/wl/rows}" mode="MultiSelect" selectionChange=".onSelect" sticky="ColumnHeaders"
+						class="repoioDenseTable" fixedLayout="false" noDataText="{i18n>wl.noData}" popinLayout="GridSmall">
+						<columns>
+							<Column><Text text="{i18n>dsp.businessName}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>dsp.technicalName}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>wl.col.domain}"/></Column>
+							<Column minScreenWidth="1600px"><Text text="{i18n>wl.col.template}"/></Column>
+							<Column hAlign="Center"><Text text="{i18n>wl.col.version}"/></Column>
+							<Column><Text text="{i18n>domains.col.status}"/></Column>
+							<Column minScreenWidth="Desktop" demandPopin="true" hAlign="End"><Text text="{i18n>wl.col.steps}"/></Column>
+							<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>wl.col.writeback}"/></Column>
+							<Column minScreenWidth="Desktop" demandPopin="true" hAlign="End"><Text text="{i18n>wl.col.runs}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center"><Text text="{i18n>domain.owner}"/></Column>
+							<Column minScreenWidth="1700px"><Text text="{i18n>dsp.changedOn}"/></Column>
+							<Column hAlign="End" width="2.5rem"><Text text="{i18n>cat.tab.fav}" class="sapUiInvisibleText"/></Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<HBox alignItems="Center">
+									<core:Icon src="sap-icon://process" class="repoioExRowIcon"/>
+									<Link text="{view>title}" press=".onOpen" wrapping="false"/>
+								</HBox>
+								<Text text="{view>id}" class="repoioMono" wrapping="false"/>
+								<HBox alignItems="Center">
+									<core:Icon src="{view>domIcon}" class="repoioExRowIcon"/>
+									<Text text="{view>domText}" wrapping="false"/>
+								</HBox>
+								<Text text="{view>tplText}" wrapping="false"/>
+								<Text text="{view>version}"/>
+								<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+								<Text text="{view>steps}"/>
+								<Text text="{view>wbText}" wrapping="false"/>
+								<Text text="{view>runs}"/>
+								<rc:PersonLink name="{view>owner}"/>
+								<Text text="{view>changed}" wrapping="false" textDirection="LTR"/>
+								<Button icon="{= ${view>fav} ? 'sap-icon://favorite' : 'sap-icon://unfavorite' }" type="Transparent"
+									tooltip="{= ${view>fav} ? ${i18n>cat.unfav} : ${i18n>cat.fav} }" press=".onFav" class="repoioCatStar"/>
+							</ColumnListItem>
+						</items>
+					</Table>
+					<rc:Pager total="{view>/wl/count}" page="{view>/wl/page}" pageSize="{view>/wl/size}" change=".onPage"/>
+				</ScrollContainer>
+			</VBox>
+		</HBox>
+	</VBox>
+</mvc:View>

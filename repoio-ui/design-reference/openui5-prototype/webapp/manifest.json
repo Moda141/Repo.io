@@ -72,6 +72,10 @@
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/home.json"
 			},
+			"workflows": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/workflows.json"
+			},
 			"runs": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/runs.json"
@@ -117,6 +121,11 @@
 					"name": "ontology",
 					"pattern": "ontology",
 					"target": "ontology"
+				},
+				{
+					"name": "workflows",
+					"pattern": "workflows",
+					"target": "workflows"
 				},
 				{
 					"name": "workflow",
@@ -169,6 +178,11 @@
 					"id": "connections",
 					"name": "Connections",
 					"level": 1
+				},
+				"workflows": {
+					"id": "workflows",
+					"name": "WorkflowsList",
+					"level": 2
 				},
 				"jobs": {
 					"id": "jobs",

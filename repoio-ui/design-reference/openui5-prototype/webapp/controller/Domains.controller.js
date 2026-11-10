@@ -101,7 +101,7 @@ sap.ui.define([
 			var facet = function (key, values) {
 				return { key: key, title: that.text(key === "domain" ? "home.filter.domain" : "domains.col.status"),
 					values: values.map(function (v) {
-						return { key: v.key, text: v.text, selected: !!sel[key][v.key],
+						return { key: v.key, text: v.text, icon: v.icon, selected: !!sel[key][v.key],
 							count: (that._all.filter(function (o) { return inTab(o) && match(o, key) && (key === "domain" ? o.domains.indexOf(v.key) > -1 : o.statusKey === v.key); }).length) };
 					}) };
 			};
@@ -110,9 +110,10 @@ sap.ui.define([
 			V.setProperty("/cat/active", Object.keys(sel.domain).length + Object.keys(sel.status).length);
 			V.setProperty("/cat/resultText", this.text("cat.results", [items.length]));
 			V.setProperty("/cat/facets", [
-				facet("domain", this._domains.map(function (d) { return { key: d.id, text: that.domainName(d) }; })),
+				facet("domain", this._domains.map(function (d) { return { key: d.id, text: that.domainName(d), icon: d.icon }; })),
 				facet("status", ["healthy", "attention", "draft", "archived", "empty"].map(function (k) {
-					return { key: k, text: that.text(k === "empty" ? "domains.noRepo" : "health." + k) }; }))
+					return { key: k, text: that.text(k === "empty" ? "domains.noRepo" : "health." + k),
+						icon: { healthy: "sap-icon://sys-enter-2", attention: "sap-icon://alert", draft: "sap-icon://edit", archived: "sap-icon://locked", empty: "sap-icon://less" }[k] }; }))
 			]);
 		},
 

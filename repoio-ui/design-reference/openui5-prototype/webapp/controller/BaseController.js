@@ -21,6 +21,7 @@ sap.ui.define([
 			else if (sKey === "ontologyExplorer") { this.router().navTo("ontology"); }
 			else if (sKey === "newWorkflow") { this.router().navTo("workflow"); }
 			else if (sKey === "dataJobs") { this.router().navTo("jobs"); }
+			else if (sKey === "workflowsList") { this.router().navTo("workflows"); }
 			else { this.router().navTo("page", { key: sKey }); }
 		},
 		onNavKey: function (oEvent) {
