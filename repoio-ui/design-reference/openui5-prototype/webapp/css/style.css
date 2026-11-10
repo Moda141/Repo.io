@@ -134,12 +134,11 @@
 	.sapTntToolHeader .repoioNavSearch { position: absolute; left: 50%; transform: translateX(-50%); margin: 0; }
 }
 
-/* Shell header + side navigation: SAP shell blue (#354a5f, as in Datasphere); the header search stays black. */
-.sapUiBody .sapTntToolPage .sapTntToolHeader, .sapUiBody .sapTntToolPageHeader, .sapUiBody .sapTntToolPageHeaderWrapper { background: #354a5f !important; border-bottom-color: #2b3d4f !important; }
-.sapTntToolHeader .sapMSF .sapMSFF, .sapTntToolHeader .sapMSF .sapMSFI { background-color: #0d0d0d !important; color: #fff; }
-.sapTntToolHeader .sapMSF .sapMSFF { border-color: #5a5a5a !important; }
-.sapTntToolHeader .sapMSF .sapMSFI::placeholder { color: #a9b4be; }
-.sapTntToolHeader .sapMSF .sapMSFB { color: #d1d9e0; }
+/* Shell header (navigation bar): black. */
+.sapUiBody .sapTntToolPage .sapTntToolHeader, .sapUiBody .sapTntToolPageHeader, .sapUiBody .sapTntToolPageHeaderWrapper { background: #0d0d0d !important; border-bottom-color: #000 !important; }
+.sapTntToolHeader .sapMSF:not(.sapMFocus) .sapMSFF { background-color: #1f1f1f; border-color: #5a5a5a; }
+
+/* Side navigation: SAP shell blue (#354a5f, as in Datasphere). */
 .sapUiBody .sapTntToolPage .sapTntToolPageAside, .sapUiBody .sapTntToolPageAsideContent,
 .sapUiBody .sapTntSideNavigation, .sapUiBody .sapTntSideNavigation .sapTntNL, .sapUiBody .sapTntSideNavigationFlexible,
 .sapUiBody .sapTntSideNavigationFixed { background: #354a5f !important; border-color: #2b3d4f !important; box-shadow: none !important; }
