@@ -58,6 +58,18 @@ sap.ui.define([
 			return c.text(key, (args || []).map(function (a) { return H.person(a, lang); }));
 		},
 
+		/* Error code -> the place where it is fixed (J9 connection, model version, governed replay). */
+		fixFor: function (c, code, job) {
+			var conn = job.conn || "";
+			if (!code || !c.text("jr.fix." + code) || c.text("jr.fix." + code) === "jr.fix." + code) { return null; }
+			return { code: code, text: c.text("jr.fix." + code, [conn]) };
+		},
+		runFix: function (c, code, job, run, lang) {
+			if ((code === "AUTH_TOKEN_EXPIRED" || code === "SOURCE_TIMEOUT") && job.conn) { c.router().navTo("connections", { conn: job.conn }); }
+			else if (code === "SCHEMA_DRIFT") { MessageToast.show(c.text("jr.t.modelVersion", ["SeriesISSN", job.entity])); c.navKey("modelsRules"); }
+			else { H.requestReplay(c, job, run, lang); }
+		},
+
 		/* Airflow deep link. The base URL belongs to the Airflow connection (Connections, J9);
 		   the prototype has none, so it shows the link template instead of opening it. */
 		airflowPath: function (job, run, task) {

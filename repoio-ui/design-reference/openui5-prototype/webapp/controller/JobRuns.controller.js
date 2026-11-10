@@ -179,11 +179,12 @@ sap.ui.define([
 		onRowMenu: function (oEvent) {
 			var o = this._row(oEvent), oBtn = oEvent.getSource(), that = this,
 				oRun = this.getOwnerComponent().getModel("runs").getProperty("/runs").filter(function (r) { return r.id === o.id; })[0],
-				oJob = this._jobs[o.job];
+				oJob = this._jobs[o.job], oFix = R.fixFor(this, oRun.error, oJob);
 			var oMenu = new Menu({ items: [
 				new MenuItem({ text: this.text("jr.a.open"), icon: "sap-icon://detail-view", press: function () { that.router().navTo("jobRun", { runId: o.id }); } }),
 				new MenuItem({ text: this.text("jr.a.airflow"), icon: "sap-icon://popup-window", visible: o.airflow, press: function () { R.openAirflow(that, oBtn, oJob, oRun); } }),
 				new MenuItem({ text: this.text("jr.a.replay"), icon: "sap-icon://replay", enabled: R.finished(oRun.status), press: function () { R.requestReplay(that, oJob, oRun, that.lang()); } }),
+				new MenuItem({ text: oFix ? this.text("jr.fix.menu", [oFix.text]) : "", icon: "sap-icon://wrench", visible: !!oFix, press: function () { R.runFix(that, oRun.error, oJob, oRun, that.lang()); } }),
 				new MenuItem({ text: this.text("jr.a.stop"), icon: "sap-icon://stop", visible: o.active, press: function () { MessageToast.show(that.text("jr.t.stopped", [o.id])); } }),
 				new MenuItem({ text: this.text("jr.a.copyId"), icon: "sap-icon://copy", press: function () {
 					try { navigator.clipboard.writeText(o.id); } catch (e) { /* clipboard blocked */ }

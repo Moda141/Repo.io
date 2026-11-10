@@ -39,6 +39,7 @@ sap.ui.define([
 			var j = this._job, lang = this.lang(), vm = this.viewModel(), that = this,
 				all = this._jobRuns(), latest = all.filter(function (r) { return r.status !== "queued"; })[0] || all[0],
 				lastDone = all.filter(function (r) { return r.status === "succeeded" || r.status === "succeededWithFailures"; })[0],
+				lastOk = all.filter(function (r) { return r.status === "succeeded"; })[0],
 				st = latest.status === "running" && latest.runType === "permanent" ? "active" : latest.status,
 				next = "—";
 			if (j.cron) {
@@ -55,6 +56,7 @@ sap.ui.define([
 				orchText: this.text("jr.orch." + j.orch) + (j.dagId ? " · " + j.dagId : ""),
 				owner: j.owner, ownerText: R.person(j.owner, lang),
 				freq: lang === "ar" ? j.freq_ar : j.freq_en,
+				lastOkId: lastOk ? lastOk.id : "", lastOkText: lastOk ? R.date(lastOk.start, lang) + (lastOk.id === this._run.id ? " ✓" : "") : this.text("jr.d.lastOkNone"),
 				latest: j.kind === "stream" ? R.date(latest.messages[latest.messages.length - 1].ts, lang) : lastDone ? R.date(lastDone.end, lang) : "—", next: next
 			});
 		},
@@ -127,6 +129,7 @@ sap.ui.define([
 				runAs: r.runAs, runAsText: R.person(r.runAs, lang), runTypeText: this.text("jr.rt." + r.runType),
 				launchedText: this.text("jr.launched." + r.launched), dagRunId: r.dagRunId,
 				errorText: lastErr ? R.msg(this, lastErr.key, lastErr.args, lang) : "",
+				fixText: (R.fixFor(this, r.error, j) || {}).text || "",
 				tasks: tasks, objects: objects, messages: r.messages, quarantined: r.quarantined, hasDq: r.dq.length > 0 || r.quarantined > 0,
 				qText: this.text("jr.dq.quarantined", [r.quarantined]),
 				dq: r.dq.map(function (d) { return Object.assign({}, d, { pctText: d.pct.toFixed(2) + "%", resText: that.text(d.ok ? "jr.dq.pass" : "jr.dq.fail") }); })
@@ -198,6 +201,11 @@ sap.ui.define([
 
 		/* ---------- actions ---------- */
 		onBack: function () { this.router().navTo("jobs"); },
+		onFix: function () { R.runFix(this, this._run.error, this._job, this._run, this.lang()); },
+		onLastOk: function () {
+			var id = this.viewModel().getProperty("/jd/job/lastOkId");
+			if (id) { this.router().navTo("jobRun", { runId: id }, true); }
+		},
 		onAirflow: function (oEvent) { R.openAirflow(this, oEvent.getSource(), this._job, this._run); },
 		onReplay: function () { R.requestReplay(this, this._job, this._run, this.lang()); },
 		onStop: function () { MessageToast.show(this.text("jr.t.stopped", [this._run.id])); },

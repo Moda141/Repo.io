@@ -8,7 +8,7 @@
 		<VBox id="jdLeft" class="repoioJdLeft" height="100%" renderType="Bare">
 			<layoutData><l:SplitterLayoutData size="22rem" minSize="240"/></layoutData>
 			<OverflowToolbar class="repoioJdBar">
-				<Button icon="sap-icon://nav-back" type="Transparent" tooltip="{i18n>jr.a.back}" press=".onBack"/>
+				<Button icon="sap-icon://nav-back" type="Transparent" tooltip="{i18n>jr.a.back}" press=".onBack"><layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData></Button>
 				<Title text="{view>/jd/job/title}" level="H2" wrapping="false" tooltip="{view>/jd/job/id}"/>
 				<ToolbarSpacer/>
 				<MenuButton text="{i18n>jr.a.run}" type="Transparent">
@@ -36,6 +36,8 @@
 					<Label text="{i18n>jr.d.status}"/>
 					<ObjectStatus text="{view>/jd/job/statusText}" state="{view>/jd/job/statusState}" class="repoioJdBig"/>
 					<HBox class="repoioJdGap"/>
+					<Label text="{i18n>jr.d.lastOk}"/>
+					<Link text="{view>/jd/job/lastOkText}" enabled="{= !!${view>/jd/job/lastOkId} }" press=".onLastOk" class="repoioJdLastOk"/>
 					<Label text="{i18n>jr.d.delta}" visible="{= !!${view>/jd/job/delta} }"/>
 					<Text text="{view>/jd/job/delta}" visible="{= !!${view>/jd/job/delta} }" textDirection="LTR"/>
 					<Label text="{i18n>jr.d.source}"/>
@@ -128,7 +130,9 @@
 						<Text text="100.00 (1/1)"/>
 					</VBox>
 				</FlexBox>
-				<MessageStrip text="{view>/jd/run/errorText}" type="Error" showIcon="true" visible="{= !!${view>/jd/run/errorText} }" class="repoioJdStrip"/>
+				<MessageStrip text="{view>/jd/run/errorText}" type="Error" showIcon="true" visible="{= !!${view>/jd/run/errorText} }" class="repoioJdStrip">
+					<link><Link text="{view>/jd/run/fixText}" visible="{= !!${view>/jd/run/fixText} }" press=".onFix"/></link>
+				</MessageStrip>
 
 				<VBox class="repoioJdSection">
 					<HBox alignItems="Center" justifyContent="SpaceBetween">

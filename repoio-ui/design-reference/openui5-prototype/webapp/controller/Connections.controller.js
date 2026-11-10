@@ -111,11 +111,14 @@ sap.ui.define([
 			this.router().getRoute("connections").attachPatternMatched(this._onMatched, this);
 		},
 
-		_onMatched: function () {
-			var that = this;
+		_onMatched: function (oEvent) {
+			var that = this, sConn = oEvent.getParameter("arguments").conn;
 			this.data().dataLoaded().then(function () {
 				if (!that._all) { that._all = JSON.parse(JSON.stringify(that.data().getProperty("/connections"))); }
 				that._refresh();
+				// Deep link from a failed run (e.g. AUTH_TOKEN_EXPIRED): open that connection to fix it.
+				var e = sConn && that._entry(sConn);
+				if (e) { that._openDialog(e); that.router().navTo("connections", {}, true); }
 			});
 		},
 

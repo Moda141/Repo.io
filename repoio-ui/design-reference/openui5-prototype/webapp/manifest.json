@@ -110,7 +110,7 @@
 				},
 				{
 					"name": "connections",
-					"pattern": "connections",
+					"pattern": "connections/:conn:",
 					"target": "connections"
 				},
 				{
