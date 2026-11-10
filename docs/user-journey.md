@@ -68,7 +68,7 @@ detection** · Connections hub = **Connections**.
 | J5 | Review a potential match | Data Steward | M3 (match data), M4+ (queue UI) |
 | J6 | Author & publish a request template | Data Steward | M1 (registry), M4 (UI) |
 | J7 | Design & publish a workflow | Data Steward, Admin | M7 |
-| J8 | Develop & run a governed Python task | Data Engineer | M8 |
+| J8 | *Retired — no Python Workspace screen (ADR-0004)* | — | — |
 | J9 | Administer connections & write-back | Admin | M9 |
 | J10 | Monitor pipelines & data quality | Data Engineer | M2/M3 (jobs), M4 (runs UI) |
 | J11 | Browse the ontology | Data Steward, Approver | Ontology track |
@@ -291,25 +291,14 @@ selections, never running instances; a parallel group or approver
 left with nobody after segregation of duties escalates; a test run of
 a script other than the known sample is not simulated in the browser.
 
-## J8 — Develop & run a governed Python task
+## J8 — Retired (ADR-0004)
 
-1. The Data Engineer opens the **Python Workspace** (Monaco editor
-   inside OpenUI5): script explorer, tabs, run controls.
-2. Edit script; declare a pinned dependency manifest alongside.
-3. **Run** submits to `repoio-python-runtime` disposable workers —
-   never inside an API process. CPU/memory/time limits apply.
-4. Follow the run: status, logs, errors, DataFrame/sample preview of
-   outputs.
-5. Promote a script version for workflow use: a **Python Script Task**
-   in a published workflow (J7) invokes it with the same worker
-   isolation and the initiating identity audited.
-6. New dependencies go through: pinned manifest → approval → approved
-   registry → scan → immutable image. No runtime `pip install`.
-
-*Edge cases:* run killed at the limit → partial outputs clearly marked,
-no orphaned state; package out of allowlist → rejected with the policy
-reason; execution without permission → denied at the API, not
-disabled-looking UI.
+There is no Python Workspace screen. Custom Python is written and
+test-run in the **Script** step of the flow designer (J7) and runs in
+`repoio-python-runtime` isolated workers as the requesting user, with
+packages from the approved pinned image (no run-time `pip install`).
+Exploration belongs in the data platform; bulk fixes go through
+bulk-upload change requests.
 
 ## J9 — Administer connections & write-back
 

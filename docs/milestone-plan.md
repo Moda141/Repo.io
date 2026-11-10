@@ -312,39 +312,34 @@ delegated to a workflow runtime" — demonstrated end to end.
 
 ---
 
-## M8 — Python Workspace
+## M8 — Python runtime for workflow Script steps
 
-**Scope:** code editor, scripts/notebooks, isolated execution, logs and
-data preview.
+**Scope:** isolated execution of the Script steps of published workflows.
+There is no Python Workspace screen (ADR-0004); scripts are authored and
+test-run in the flow designer's Script step (ADR-0002).
 **Skills:** `repoio-workflow-python` (Part 2)
 
-- [ ] Monaco editor embedded in OpenUI5: script explorer, tabs, run
-      controls, output/logs/errors panel, DataFrame/sample preview.
-- [ ] Script metadata, versions, dependency manifests, run metadata and
-      audit stored in the control plane; large outputs in approved object
-      storage.
 - [ ] `repoio-python-runtime/` workers: disposable containers with CPU/
       memory/disk/time limits; no Docker socket or host mounts; default
       no outbound network (allowlist config).
+- [ ] Script steps invoked from published workflows via the secured
+      worker integration (never executed inside Flowable), as the
+      requesting user.
+- [ ] Script versions (with the workflow version), run metadata, logs and
+      audit stored in the control plane.
 - [ ] Dependency flow: pinned manifest → approval → build from approved
-      registry → scan → immutable image. No production runtime
-      `pip install`.
+      registry → scan → immutable image. No run-time `pip install`.
 - [ ] RBAC actions separated (author, approve, execute, publish,
-      administer), mapped to deployment-configured roles, enforced at API
-      **and** worker boundaries — including workflow-triggered runs.
-- [ ] Python Script Task invocable from a published workflow via the
-      secured worker integration (never executed inside Flowable).
+      administer), enforced at API **and** worker boundaries.
+- [ ] Test run from the Script step panel uses the same workers and
+      limits.
 - [ ] Negative tests: unpermitted execution denied; out-of-allowlist
       package rejected; worker kill mid-run leaves no orphaned state.
 - [ ] Audit records initiating identity + script version for every run.
-- [ ] Journey J8 (develop & run a governed Python task) in
-      `docs/user-journey.md` passes end to end, including the manifest →
-      approval → image dependency flow.
 
-**Exit gate:** "Data engineers can develop and run approved Python data
-tasks without executing code in API processes" — demonstrated, including
-the denials.
-
+**Exit gate:** "Script steps of published workflows run in isolated
+workers as the requesting user, never in API processes" — demonstrated,
+including the negative tests.
 ---
 
 ## M9 — Connections hub & workflow-driven write-back

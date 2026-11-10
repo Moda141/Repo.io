@@ -1,9 +1,9 @@
 ---
 name: repoio-workflow-python
-description: Use when working on Repo.io workflow and governed Python execution — the BPMN Workflow Designer (M7), Flowable engine integration, workflow definitions/versioning/approvals, the Python Workspace with Monaco editor (M8), or the isolated Python worker runtime. Trigger on tasks touching repoio-ui workflow screens, bpmn-js, Flowable, repoio-python-runtime, script permissions/allowlists, or any "let users run Python scripts" request.
+description: Use when working on Repo.io workflow and governed Python execution — the BPMN Workflow Designer (M7), Flowable engine integration, workflow definitions/versioning/approvals, the isolated Python worker runtime that executes workflow Script steps (M8; no Python Workspace screen, ADR-0004). Trigger on tasks touching repoio-ui workflow screens, bpmn-js, Flowable, repoio-python-runtime, script permissions/allowlists, or any "let users run Python scripts" request.
 ---
 
-# Repo.io Workflow & Python Workspace (M7 + M8)
+# Repo.io Workflow & Python runtime (M7 + M8)
 
 ## Part 1 — Workflow capability (M7)
 
@@ -36,23 +36,20 @@ description: Use when working on Repo.io workflow and governed Python execution 
    validate → approve → publish. A published version is immutable;
    changes create a new version.
 
-## Part 2 — Python Workspace (M8)
+## Part 2 — Python runtime for Script steps (M8)
 
 ### What it owns
 
-- **Frontend:** Monaco editor embedded in OpenUI5, script explorer,
-  tabs, run controls, output/logs/errors panel, DataFrame/record
-  preview. Script-based execution in V1; notebooks are optional future
-  scope.
-- **Backend:** script metadata, permissions, run requests and status via
-  `repoio-service` or a dedicated API; large outputs in approved object
-  storage; versions, dependency manifests, run metadata and audit in the
-  control plane.
+There is **no Python Workspace screen** (ADR-0004): no workspace editor,
+no notebooks, no `%pip`. Python is written in the flow designer's Script
+step (ADR-0002) and executed here.
+
+- **Backend:** script versions (with the workflow version), run requests,
+  status, logs and audit in the control plane via `repoio-service`.
 - **Runtime:** `repoio-python-runtime/` — disposable, isolated worker
-  containers. Jupyter kernels/notebooks only if interactive cell-based
-  execution becomes a confirmed requirement. Pyodide may be evaluated for
-  browser-side examples — it is never the trusted backend execution
-  environment.
+  containers invoked by Flowable through the secured worker integration,
+  and by the Script step's test run. Packages come from the approved
+  pinned image.
 
 ### Non-negotiables (M8) — security invariants
 
@@ -79,7 +76,6 @@ description: Use when working on Repo.io workflow and governed Python execution 
 
 ### Implementation notes
 
-- Reuse the Monaco integration for SQL and JSON editing where practical.
 - The worker API returns execution status and output references (not
   inline blobs) through REST or a controlled event channel.
 - Package requests follow the manifest → approval → build → scan flow;
@@ -91,7 +87,7 @@ description: Use when working on Repo.io workflow and governed Python execution 
 executes end-to-end via the engine (approvals, retries, audit history
 present); workflow events land on Kafka where async is configured.
 
-**M8:** a script authored in the workspace runs in an isolated worker
+**M8:** a Script step of a published workflow runs in an isolated worker
 with visible resource limits; a second run by a user without the execute
 permission is denied at the API *and* at the worker; dependency requests
 outside the allowlist are rejected; the audit trail records initiating

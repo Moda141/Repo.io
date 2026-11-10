@@ -142,7 +142,7 @@ skill matches, work from the root README and say so in your report.
 | **M5** | MCP server + Entra ID auth + role-based access | `repoio-mcp-identity` | §M5 |
 | **M6** | Production hardening: k8s operator, OTel, backup, DR, Helm on AKS | `repoio-platform-ops` | §M6 |
 | **M7** | Workflow Designer: BPMN authoring + Flowable execution | `repoio-workflow-python` (§ M7 part) | §M7 |
-| **M8** | Python Workspace: editor, scripts, isolated execution | `repoio-workflow-python` (§ M8 part) | §M8 |
+| **M8** | Python runtime for workflow Script steps (no workspace screen, ADR-0004) | `repoio-workflow-python` (§ M8 part) | §M8 |
 | **M9** | Connections hub (admin-managed integrations, tokens) + workflow-driven write-back to C4C/ERP + data-platform federation | `repoio-integrations` | §M9 |
 | any | Request templates / reference data / domain scoping / role→domain visibility | `repoio-templates-refdata` | §M1/M4/M5 items |
 | any | Console screens / UX flows / persona journeys (any area) | read `docs/user-journey.md`, then the matching domain skill | journey file |
@@ -277,7 +277,8 @@ an honest "not verified" is acceptable; an unverified "done" is not.
   `docs/decisions/` (ADR-0001: a domain holds one or more repositories;
   ADR-0002: the Repo.io flow designer replaces bpmn-js, Flowable stays;
   ADR-0003: broadcast exports render in a Node worker; attachments up
-  to 10 MB, otherwise a link-only email).
+  to 10 MB, otherwise a link-only email; ADR-0004: no Python Workspace
+  screen, the Python runtime serves workflow Script steps only).
 - **Docs:** every module gets a README following
   `docs/module-readme-template.md` — update it when adding entry points,
   config or commands.

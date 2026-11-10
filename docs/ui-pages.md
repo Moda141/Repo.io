@@ -119,9 +119,6 @@
        `repoio-spec`), model versions, match rules, survivorship rules.
        Domain management links a model to its domain; this page owns the
        model itself. [J5]
-   - **(+) Python Workspace** — governed Python: editor, pinned dependency
-     manifests, isolated runs with limits, logs and data previews,
-     promotion to workflow Script Tasks. [J8]
 
 5. **Ontology Explorer** — business-concept graph: classes, properties,
    the relationship **type catalog** (including same-entity types:
@@ -248,7 +245,7 @@ J1 Home · J2 Explore + Golden Records management ·
 J3 Templates catalog (served by Reference data management) ·
 J4 Awaiting my approval + Open change requests · J5 Match detection ·
 J6 Template authoring + Reference data maintenance · J7 Workflows ·
-J8 Python Workspace · J9 Connections ·
+J8 retired (ADR-0004) · J9 Connections ·
 J10 Data jobs + Test cases + Quarantine + Alerts ·
 J11 Ontology Explorer · J12 Relationships list + Relationship builder
 (types from the Ontology Explorer catalog) · J13 Feeds (Activity +

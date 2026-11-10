@@ -20,8 +20,7 @@
 			] },
 			{ "key": "stewardship", "icon": "sap-icon://group", "items": [
 				{ "key": "matchDetection" }, { "key": "quarantine" }, { "key": "modelsRules" }
-			] },
-			{ "key": "pythonWorkspace", "icon": "sap-icon://syntax" }
+			] }
 		] },
 		{ "key": "ontologyExplorer", "icon": "sap-icon://tree" },
 		{ "key": "workflows", "icon": "sap-icon://process", "items": [

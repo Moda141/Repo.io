@@ -45,8 +45,7 @@ Migrate screen by screen, but OpenUI5 is the final frontend architecture.
 | UI (target)           | **OpenUI5** — MVC, routing, models, data binding     | `repoio-ui/`                       |
 | UI5 shared components | Reusable OpenUI5 controls / custom controls          | `repoio-ui5-components/` *(new)*   |
 | UI integrations       | BPMN.js, Monaco Editor, ECharts, Cytoscape.js        | `repoio-ui/` integrations          |
-| Python workspace UI  | Monaco Editor + notebook-style workspace            | `repoio-ui/` Python Workbench      |
-| Python execution      | Isolated Python worker containers / Jupyter kernels | `repoio-python-runtime/` *(new)*   |
+| Python execution      | Isolated worker containers for workflow Script steps (ADR-0004) | `repoio-python-runtime/` *(new)* |
 | AI agent interface    | **MCP** server (JDK)                                 | `repoio-mcp/`                      |
 | Pipelines             | Airflow DAGs (Managed APIs)                          | `repoio-airflow-apis/`             |
 | Infra                 | **Kubernetes operator** (CRD: `Repository`)          | `repoio-k8s-operator/`             |
@@ -570,7 +569,7 @@ anywhere.
 | M5  | **MCP server** + Entra ID auth + role-based access                                                   | AI agents can read/write golden records with per-user scopes      |         |
 | M6  | Production hardening — k8s operator, monitoring (OTel), backup, DR                                   | Helm chart deployed to staging on AKS                             |         |
 | M7  | Workflow Designer — BPMN editor, workflow definitions, validation, versioning and service integration | Users can design and publish governed workflows; execution delegated to a workflow runtime | planned |
-| M8  | Python Workspace — code editor, scripts/notebooks, isolated execution, logs and data preview          | Data engineers can develop and run approved Python data tasks without executing code in API processes | planned |
+| M8  | Python runtime for workflow Script steps — isolated workers, approved pinned image, RBAC, audit (no workspace screen, ADR-0004) | Script steps of published workflows run in isolated workers as the requesting user, never in API processes | planned |
 | M9  | **Connections hub + workflow-driven write-back** — connections registry & admin UI, secret-store integration, C4C/ERP write-back adapters, Write-back Task in the Workflow Designer, data-platform federation | Admins manage connections with tokens in the secret store; approved ChangeRequests write back to C4C/ERP only via workflows containing a Write-back Task | planned |
 
 ---
@@ -668,8 +667,7 @@ frontend frameworks inside the same screen unless there is a documented
 technical reason.
 
 The console's user journeys — per persona, across every area (Discover,
-requests, approvals, stewardship, workflow designer, Python workspace,
-admin) — are specified in `docs/user-journey.md`; build and test each
+requests, approvals, stewardship, workflow designer, admin) — are specified in `docs/user-journey.md`; build and test each
 screen against its journey there.
 
 ### 7.2 Third-party libraries are embedded capabilities
@@ -724,63 +722,34 @@ business context, API façade and audit integration. Add an adapter boundary
 so Repo.io is not tightly coupled to one engine's APIs. Confirm the selected
 Flowable edition, license and deployment model before production adoption.
 
-### 7.4 Python Workspace
+### 7.4 Python runtime (no Python Workspace screen — ADR-0004)
 
-Add a Python Workspace for authorized users who need governed scripts for
-profiling, quality checks, matching experiments and data operations. V1
-supports script-based execution and adding a Python Script Task to a workflow;
-a full notebook experience is optional future scope.
+There is **no Python Workspace screen in Phase 1** (ADR-0004). Custom
+Python is written in the **Script** step of the flow designer
+(ADR-0002), versioned with the workflow and test-run from the step.
+Exploration happens in the data platform (Databricks through the Iceberg
+REST catalog), matching / DQ tuning in their configuration screens, and
+bulk fixes through bulk-upload change requests.
 
-**Frontend**
-- Monaco Editor embedded in an OpenUI5 page for Python editing.
-- Script explorer, tabs, editor, run controls and execution status.
-- Output / logs / error panel.
-- DataFrame and sample-record preview.
-- Optional notebook-style experience using Jupyter components if cell-based
-  execution is required.
-- Reuse the same editor integration for SQL and JSON where practical.
-
-**Backend and runtime**
-- `repoio-service` or a dedicated Python API manages script metadata,
-  permissions, run requests and execution status.
-- `repoio-python-runtime` runs code in disposable, isolated worker
-  containers. Managed Jupyter kernels/notebooks are optional future scope.
-- Flowable invokes Python tasks through a secured Repo.io worker/API
-  integration; it must not execute arbitrary Python inside the engine.
+**Runtime**
+- `repoio-python-runtime` runs Script steps in disposable, isolated worker
+  containers with CPU, memory, disk and execution-time limits.
+- Flowable invokes Script steps through a secured Repo.io worker/API
+  integration as the requesting user; it never executes Python inside the
+  engine. The initiating identity and script version are audited.
 - Workers read/write data only through explicitly granted identities and
-  approved connectors.
-- Store script versions, dependency manifests, run metadata, logs and
-  audit events in the control plane; store large outputs in approved
-  object/lakehouse storage.
-- Support package requests/configuration through pinned dependency manifests.
-  Resolve packages from approved registries, scan dependencies and build
-  reproducible immutable runtime environments; do not permit unrestricted
-  production `pip install` during an active task.
-- Author, approve, execute, publish and runtime-administer permissions are
-  separate RBAC actions mapped to deployment-configured Repo.io roles.
-  Enforce permissions at both API and worker execution boundaries, including
-  workflow-triggered runs, and audit the initiating identity and script version.
-- Return execution status and output references to the UI through REST APIs
-  or a controlled event channel.
+  approved connectors; default no outbound network; no Docker socket or
+  host path mounts.
+- Packages come from an approved, pinned runtime image: pinned manifest →
+  approval → build from approved registries → scan → immutable image. No
+  `pip install` at run time.
+- Author, approve, execute, publish and administer permissions stay
+  separate RBAC actions, enforced at the API and worker boundaries.
+- Never execute user-submitted Python inside the FastAPI ingestion
+  process, Dropwizard process or UI container.
 
-**Security requirements**
-- Never execute user-submitted Python inside the FastAPI ingestion process,
-  Dropwizard process or UI container.
-- Use isolated containers/kernels with CPU, memory, disk and execution-time
-  limits.
-- Apply per-user authorization, workload identity, secrets isolation and
-  audit logging.
-- Default to no outbound network access; allowlist destinations only when
-  required.
-- Do not mount Docker sockets or host paths into user-code workers.
-- Define package allowlists, dependency pinning and image scanning.
-- Separate development experimentation from production pipeline execution.
-
-**Runtime choice:** use isolated Python worker containers for controlled
-script execution. Add Jupyter kernels / notebook UI only if interactive,
-cell-based workflows are a confirmed product requirement. Pyodide may be
-evaluated for limited browser-side examples, but it is not the trusted
-backend execution environment for production data access.
+Notebooks / a script workspace may be revisited by a new ADR if a
+recurring need appears that the homes above do not cover.
 
 ### 7.5 Docker deployment view
 
@@ -891,8 +860,8 @@ Recommended order:
    and deployment automation.
 7. **M7 — Workflow capability:** BPMN authoring first, then engine selection,
    workflow persistence, execution, approvals and audit.
-8. **M8 — Python Workspace:** Monaco editor and script management, followed
-   by isolated execution workers; add notebooks only if required.
+8. **M8 — Python runtime:** isolated execution workers for workflow Script
+   steps and the approved package image; no workspace screen (ADR-0004).
 9. **M9 — Connections & write-back:** connections registry with admin UI
    and secret-store tokens, C4C/ERP write-back adapters and the Write-back
    Task in the Workflow Designer, and data-platform federation through the
@@ -905,8 +874,9 @@ Recommended order:
 - **Workflow:** integrate a dedicated workflow engine; Flowable is the
   initial candidate. The Repo.io flow designer (ADR-0002) authors and
   compiles to BPMN 2.0; it never executes.
-- **Python:** v1 includes script execution and Python Script Tasks inside
-  workflows. A full notebook UI is optional future scope.
+- **Python:** v1 runs Python only as Script steps inside workflows, in
+  isolated workers. No Python Workspace screen and no notebooks
+  (ADR-0004).
 - **Python packages:** support controlled package configuration using pinned
   dependencies, approved registries, scanning and reproducible environments.
 - **Python permissions:** author, approve, execute, publish and administer
