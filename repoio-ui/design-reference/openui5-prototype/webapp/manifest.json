@@ -79,6 +79,10 @@
 			"runs": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/runs.json"
+			},
+			"analytics": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/analytics.json"
 			}
 		},
 		"resources": {
@@ -143,6 +147,26 @@
 					"target": "jobRun"
 				},
 				{
+					"name": "reports",
+					"pattern": "analytics/reports",
+					"target": "reports"
+				},
+				{
+					"name": "report",
+					"pattern": "analytics/reports/{id}",
+					"target": "report"
+				},
+				{
+					"name": "studio",
+					"pattern": "analytics/studio/{id}/:mode:",
+					"target": "studio"
+				},
+				{
+					"name": "broadcasts",
+					"pattern": "analytics/broadcasts:?query:",
+					"target": "broadcasts"
+				},
+				{
 					"name": "page",
 					"pattern": "page/{key}",
 					"target": "placeholder"
@@ -193,6 +217,26 @@
 					"id": "jobRun",
 					"name": "JobRun",
 					"level": 3
+				},
+				"reports": {
+					"id": "reports",
+					"name": "ReportsList",
+					"level": 2
+				},
+				"report": {
+					"id": "report",
+					"name": "Report",
+					"level": 3
+				},
+				"studio": {
+					"id": "studio",
+					"name": "Studio",
+					"level": 3
+				},
+				"broadcasts": {
+					"id": "broadcasts",
+					"name": "Broadcasts",
+					"level": 2
 				}
 			}
 		}

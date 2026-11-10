@@ -1,0 +1,82 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
+	<!-- New / edit broadcast (SAP C4C "Broadcasts" flow): object, view, email, recipients, format, schedule. -->
+	<Dialog id="bcDialog" title="{view>/bc/d/dlgTitle}" contentWidth="44rem" contentHeight="80%" resizable="true" draggable="true" class="repoioBcDialog">
+		<content>
+			<MessageStrip text="{i18n>bc.d.governed}" type="Information" showIcon="true" class="sapUiSmallMargin"/>
+			<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="3" labelSpanM="3" labelSpanS="12" columnsL="1" columnsM="1" singleContainerFullSize="false">
+				<core:Title text="{i18n>bc.d.general}"/>
+				<Label text="{i18n>bc.d.objType}"/>
+				<SegmentedButton selectedKey="{view>/bc/d/objType}" selectionChange=".onDlgObjType">
+					<items>
+						<SegmentedButtonItem key="report" text="{i18n>bc.ot.report}" icon="sap-icon://table-chart"/>
+						<SegmentedButtonItem key="story" text="{i18n>bc.ot.story}" icon="sap-icon://business-objects-experience"/>
+					</items>
+				</SegmentedButton>
+				<Label text="{i18n>bc.d.name}" required="true"/>
+				<Input value="{view>/bc/d/name}" valueLiveUpdate="true" liveChange=".onDlgCheck"/>
+				<Label text="{i18n>bc.d.object}" required="true"/>
+				<Select selectedKey="{view>/bc/d/object}" change=".onDlgObject" items="{path: 'view>/bc/d/objects', templateShareable: false}" width="100%">
+					<core:Item key="{view>key}" text="{view>text}"/>
+				</Select>
+				<Label text="{view>/bc/d/viewLabel}"/>
+				<Select selectedKey="{view>/bc/d/view}" items="{path: 'view>/bc/d/views', templateShareable: false}" width="100%">
+					<core:Item key="{view>key}" text="{view>text}"/>
+				</Select>
+
+				<core:Title text="{i18n>bc.d.email}"/>
+				<Label text="{i18n>bc.d.subject}" required="true"/>
+				<Input value="{view>/bc/d/subject}" valueLiveUpdate="true" liveChange=".onDlgCheck"/>
+				<Label text="{i18n>bc.d.message}"/>
+				<TextArea value="{view>/bc/d/message}" rows="3" width="100%"/>
+				<Label text="{i18n>bc.d.recipients}" required="true"/>
+				<MultiInput id="bcRecipients" showValueHelp="false" showSuggestion="true" suggestionItems="{path: 'view>/bc/people', templateShareable: false}"
+					tokenUpdate=".onDlgTokens" placeholder="{i18n>bc.d.recipientsPh}" width="100%">
+					<core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>role}"/>
+				</MultiInput>
+				<Label text=""/>
+				<MessageStrip text="{view>/bc/d/accessWarn}" type="Warning" showIcon="true" visible="{= !!${view>/bc/d/accessWarn} }"/>
+
+				<core:Title text="{i18n>bc.d.delivery}"/>
+				<Label text="{i18n>bc.d.format}"/>
+				<Select selectedKey="{view>/bc/d/format}" items="{path: 'view>/bc/d/formats', templateShareable: false}" width="12rem">
+					<core:Item key="{view>key}" text="{view>text}"/>
+				</Select>
+				<Label text="{i18n>bc.d.zip}"/>
+				<CheckBox selected="{view>/bc/d/zip}" text="{i18n>bc.d.zipText}"/>
+				<Label text="{i18n>bc.d.link}"/>
+				<CheckBox selected="{view>/bc/d/link}" text="{i18n>bc.d.linkText}"/>
+
+				<core:Title text="{i18n>bc.d.schedule}"/>
+				<Label text="{i18n>bc.d.scheduling}"/>
+				<SegmentedButton selectedKey="{view>/bc/d/sched}" selectionChange=".onDlgSched">
+					<items>
+						<SegmentedButtonItem key="none" text="{i18n>bc.s.none}"/>
+						<SegmentedButtonItem key="daily" text="{i18n>bc.s.daily}"/>
+						<SegmentedButtonItem key="weekly" text="{i18n>bc.s.weekly}"/>
+						<SegmentedButtonItem key="monthly" text="{i18n>bc.s.monthly}"/>
+					</items>
+				</SegmentedButton>
+				<Label text="{i18n>bc.d.day}" visible="{= ${view>/bc/d/sched} === 'weekly' || ${view>/bc/d/sched} === 'monthly' }"/>
+				<Select selectedKey="{view>/bc/d/day}" width="12rem" items="{path: 'view>/bc/d/days', templateShareable: false}"
+					visible="{= ${view>/bc/d/sched} === 'weekly' || ${view>/bc/d/sched} === 'monthly' }">
+					<core:Item key="{view>key}" text="{view>text}"/>
+				</Select>
+				<Label text="{i18n>bc.d.time}" visible="{= ${view>/bc/d/sched} !== 'none' }"/>
+				<TimePicker value="{view>/bc/d/time}" valueFormat="HH:mm" displayFormat="HH:mm" width="8rem" visible="{= ${view>/bc/d/sched} !== 'none' }"/>
+				<Label text="{i18n>bc.d.start}" visible="{= ${view>/bc/d/sched} !== 'none' }"/>
+				<DatePicker value="{view>/bc/d/start}" valueFormat="yyyy-MM-dd" width="12rem" visible="{= ${view>/bc/d/sched} !== 'none' }"/>
+				<Label text="{i18n>bc.d.tz}" visible="{= ${view>/bc/d/sched} !== 'none' }"/>
+				<Text text="Africa/Cairo (UTC+02:00)" visible="{= ${view>/bc/d/sched} !== 'none' }"/>
+				<Label text="" visible="{= ${view>/bc/d/sched} === 'none' }"/>
+				<Text text="{i18n>bc.d.noneHint}" visible="{= ${view>/bc/d/sched} === 'none' }"/>
+			</form:SimpleForm>
+		</content>
+		<buttons>
+			<Button text="{i18n>bc.d.saveStart}" icon="sap-icon://paper-plane" press=".onDlgSave" enabled="{view>/bc/d/valid}">
+				<customData><core:CustomData key="start" value="yes"/></customData>
+			</Button>
+			<Button text="{i18n>bc.d.saveClose}" type="Emphasized" press=".onDlgSave" enabled="{view>/bc/d/valid}"/>
+			<Button text="{i18n>common.cancel}" press=".onDlgCancel"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

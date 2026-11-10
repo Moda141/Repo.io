@@ -1,0 +1,179 @@
+<mvc:View controllerName="repoio.proto.controller.Report"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- J14: analytical list report (SAP Fiori ALP pattern): visual filters in the header,
+	     a main chart with "view by", and the record table. Data comes from a governed view. -->
+	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="true" class="repoioAlp repoioEdge">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>
+					<HBox alignItems="Center">
+						<Button icon="sap-icon://nav-back" type="Transparent" tooltip="{i18n>common.back}" press=".onBack"/>
+						<Title text="{view>/rp/title}" level="H1" wrapping="false"/>
+						<MenuButton text="{view>/rp/variantText}" type="Transparent" class="repoioAlpVariant">
+							<menu>
+								<Menu items="{view>/rp/variants}" itemSelected=".onVariant">
+									<MenuItem text="{view>text}" key="{view>key}" icon="{= ${view>current} ? 'sap-icon://accept' : '' }"/>
+								</Menu>
+							</menu>
+						</MenuButton>
+					</HBox>
+				</f:heading>
+				<f:expandedContent>
+					<Text text="{view>/rp/subtitle}"/>
+				</f:expandedContent>
+				<f:actions>
+					<Button text="{i18n>rp.adapt}" type="Transparent" press=".onAdapt"/>
+					<SegmentedButton selectedKey="{view>/rp/filterMode}">
+						<items>
+							<SegmentedButtonItem key="compact" icon="sap-icon://filter-fields" tooltip="{i18n>rp.compact}"/>
+							<SegmentedButtonItem key="visual" icon="sap-icon://filter-analytics" tooltip="{i18n>rp.visual}"/>
+						</items>
+					</SegmentedButton>
+					<Button icon="sap-icon://email" type="Transparent" tooltip="{i18n>rl.broadcast}" press=".onBroadcast"/>
+					<Button icon="sap-icon://action" type="Transparent" tooltip="{i18n>rp.share}" press=".onShare"/>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader pinnable="false">
+				<VBox renderType="Bare">
+					<HBox class="repoioAlpVisual" visible="{= ${view>/rp/filterMode} === 'visual' }" renderType="Bare">
+						<VBox class="repoioAlpVf" renderType="Bare">
+							<HBox justifyContent="SpaceBetween" alignItems="Center">
+								<Title text="{view>/rp/vf/line}" level="H4" titleStyle="H6" wrapping="false"/>
+								<Button icon="sap-icon://value-help" type="Transparent" tooltip="{i18n>rp.vfPick}" press=".onVfPick" class="repoioAlpVfBtn">
+									<customData><core:CustomData key="dim" value="line"/></customData>
+								</Button>
+							</HBox>
+							<rc:EChart id="vfLine" height="7.5rem" select=".onVfSelect">
+								<rc:customData><core:CustomData key="dim" value="line"/></rc:customData>
+							</rc:EChart>
+						</VBox>
+						<VBox class="repoioAlpVf" renderType="Bare">
+							<HBox justifyContent="SpaceBetween" alignItems="Center">
+								<Title text="{view>/rp/vf/source}" level="H4" titleStyle="H6" wrapping="false"/>
+								<Button icon="sap-icon://value-help" type="Transparent" tooltip="{i18n>rp.vfPick}" press=".onVfPick" class="repoioAlpVfBtn">
+									<customData><core:CustomData key="dim" value="source"/></customData>
+								</Button>
+							</HBox>
+							<rc:EChart id="vfSource" height="7.5rem" select=".onVfSelect">
+								<rc:customData><core:CustomData key="dim" value="source"/></rc:customData>
+							</rc:EChart>
+						</VBox>
+						<VBox class="repoioAlpVf" renderType="Bare">
+							<HBox justifyContent="SpaceBetween" alignItems="Center">
+								<Title text="{view>/rp/vf/dq}" level="H4" titleStyle="H6" wrapping="false"/>
+								<Button icon="sap-icon://value-help" type="Transparent" tooltip="{i18n>rp.vfPick}" press=".onVfPick" class="repoioAlpVfBtn">
+									<customData><core:CustomData key="dim" value="dq"/></customData>
+								</Button>
+							</HBox>
+							<rc:EChart id="vfDq" height="7.5rem" select=".onVfSelect">
+								<rc:customData><core:CustomData key="dim" value="dq"/></rc:customData>
+							</rc:EChart>
+						</VBox>
+					</HBox>
+					<FlexBox wrap="Wrap" alignItems="End" class="repoioJrFilters" visible="{= ${view>/rp/filterMode} === 'compact' }">
+						<VBox>
+							<Label text="{i18n>common.search}"/>
+							<SearchField width="14rem" value="{view>/rp/q}" liveChange=".onSearch" search=".onSearch"/>
+						</VBox>
+						<VBox>
+							<Label text="{view>/rp/dimText/line}"/>
+							<MultiComboBox width="12rem" selectedKeys="{view>/rp/f/line}" selectionFinish=".onCompact" items="{path: 'view>/rp/dimItems/line', templateShareable: false}">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+						<VBox>
+							<Label text="{view>/rp/dimText/region}"/>
+							<MultiComboBox width="12rem" selectedKeys="{view>/rp/f/region}" selectionFinish=".onCompact" items="{path: 'view>/rp/dimItems/region', templateShareable: false}">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+						<VBox>
+							<Label text="{view>/rp/dimText/source}"/>
+							<MultiComboBox width="12rem" selectedKeys="{view>/rp/f/source}" selectionFinish=".onCompact" items="{path: 'view>/rp/dimItems/source', templateShareable: false}">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+						<VBox>
+							<Label text="{view>/rp/dimText/dq}"/>
+							<MultiComboBox width="12rem" selectedKeys="{view>/rp/f/dq}" selectionFinish=".onCompact" items="{path: 'view>/rp/dimItems/dq', templateShareable: false}">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+					</FlexBox>
+					<HBox alignItems="Center" wrap="Wrap" class="repoioAlpTokens" visible="{= ${view>/rp/tokens}.length > 0 }">
+						<Label text="{i18n>rp.filteredBy}" class="sapUiTinyMarginEnd"/>
+						<HBox items="{view>/rp/tokens}" wrap="Wrap" renderType="Bare">
+							<Token text="{view>text}" delete=".onTokenDelete"/>
+						</HBox>
+						<Link text="{i18n>jr.f.clear}" press=".onClearFilters" class="sapUiSmallMarginBegin"/>
+					</HBox>
+				</VBox>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<VBox renderType="Bare" class="repoioAlpContent">
+				<MessageStrip text="{view>/rp/sampleNote}" type="Information" showIcon="true" visible="{= !!${view>/rp/sampleNote} }" class="repoioAlpNote"/>
+				<OverflowToolbar class="repoioAlpBar" style="Clear">
+					<Title text="{view>/rp/chartTitle}" level="H3" titleStyle="H5" visible="{= ${view>/rp/mode} !== 'table' }"/>
+					<ToolbarSpacer/>
+					<Label text="{i18n>rp.viewBy}" visible="{= ${view>/rp/mode} !== 'table' }"/>
+					<Select selectedKey="{view>/rp/viewBy}" change=".onViewBy" width="10rem" items="{view>/rp/dims}" visible="{= ${view>/rp/mode} !== 'table' }">
+						<core:Item key="{view>key}" text="{view>text}"/>
+					</Select>
+					<SegmentedButton selectedKey="{view>/rp/chartType}" selectionChange=".onChartType" visible="{= ${view>/rp/mode} !== 'table' }">
+						<items>
+							<SegmentedButtonItem key="column" icon="sap-icon://vertical-bar-chart" tooltip="{i18n>st.ct.column}"/>
+							<SegmentedButtonItem key="bar" icon="sap-icon://horizontal-bar-chart" tooltip="{i18n>st.ct.bar}"/>
+							<SegmentedButtonItem key="donut" icon="sap-icon://donut-chart" tooltip="{i18n>st.ct.donut}"/>
+						</items>
+					</SegmentedButton>
+					<ToolbarSeparator visible="{= ${view>/rp/mode} !== 'table' }"/>
+					<SegmentedButton selectedKey="{view>/rp/mode}" selectionChange=".onMode">
+						<items>
+							<SegmentedButtonItem key="chart" icon="sap-icon://business-objects-experience" tooltip="{i18n>rp.mode.chart}"/>
+							<SegmentedButtonItem key="hybrid" icon="sap-icon://chart-table-view" tooltip="{i18n>rp.mode.hybrid}"/>
+							<SegmentedButtonItem key="table" icon="sap-icon://table-view" tooltip="{i18n>rp.mode.table}"/>
+						</items>
+					</SegmentedButton>
+				</OverflowToolbar>
+				<rc:EChart id="mainChart" height="{= ${view>/rp/mode} === 'chart' ? '26rem' : '13rem' }" visible="{= ${view>/rp/mode} !== 'table' }" select=".onMainSelect"/>
+
+				<VBox renderType="Bare" visible="{= ${view>/rp/mode} !== 'chart' }">
+					<OverflowToolbar class="repoioAlpBar repoioAlpTblBar" style="Clear">
+						<Title text="{view>/rp/tableTitle}" level="H3" titleStyle="H5"/>
+						<ToolbarSpacer/>
+						<SearchField width="14rem" value="{view>/rp/q}" liveChange=".onSearch" search=".onSearch" visible="{= ${view>/rp/filterMode} === 'visual' }"/>
+						<Button icon="sap-icon://excel-attachment" type="Transparent" tooltip="{i18n>rp.exportXlsx}" press=".onExport"/>
+					</OverflowToolbar>
+					<Table id="rpTable" items="{view>/rp/rows}" sticky="ColumnHeaders" class="repoioDenseTable" fixedLayout="false" popinLayout="GridSmall" noDataText="{i18n>rp.noData}">
+						<columns>
+							<Column><Text text="{i18n>rp.col.id}"/></Column>
+							<Column><Text text="{i18n>rp.col.name}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{view>/rp/dimText/line}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{view>/rp/dimText/region}"/></Column>
+							<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{view>/rp/dimText/source}"/></Column>
+							<Column hAlign="End"><Text text="{i18n>rp.col.dq}"/></Column>
+							<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>domains.col.status}"/></Column>
+							<Column minScreenWidth="1400px"><Text text="{i18n>dsp.changedOn}"/></Column>
+						</columns>
+						<items>
+							<ColumnListItem type="Navigation" press=".onRow">
+								<Text text="{view>id}" class="repoioMono" wrapping="false"/>
+								<Text text="{view>name}" wrapping="false"/>
+								<Text text="{view>lineText}" wrapping="false"/>
+								<Text text="{view>regionText}" wrapping="false"/>
+								<Text text="{view>sourceText}" wrapping="false"/>
+								<ObjectNumber number="{view>dq}" unit="%" state="{view>dqState}"/>
+								<ObjectStatus text="{view>statusText}" state="{view>statusState}"/>
+								<Text text="{view>changed}" wrapping="false" textDirection="LTR"/>
+							</ColumnListItem>
+						</items>
+					</Table>
+					<rc:Pager total="{view>/rp/count}" page="{view>/rp/page}" pageSize="{view>/rp/size}" change=".onPage"/>
+				</VBox>
+			</VBox>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

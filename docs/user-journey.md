@@ -74,6 +74,7 @@ detection** · Connections hub = **Connections**.
 | J11 | Browse the ontology | Data Steward, Approver | Ontology track |
 | J12 | Build & govern entity relationships | Data Steward | M1 (type catalog + CR path), M4 (builder + list UI), Ontology track (RDF materialization) |
 | J13 | Stay informed: feeds & announcements | all | M4 (feeds page, Home strip, authoring UI) |
+| J14 | Analyse & broadcast reports | Data Analyst, Data Steward, Manager | M4 (reports, studio, broadcasts UI); reports API + governed views (M5 grants) |
 
 A journey is "available" only when its milestone's acceptance criteria
 in `docs/milestone-plan.md` pass — never before.
@@ -447,6 +448,47 @@ limits are configurable and enforced at the API, not just the UI.
 from the feed on the next load; an announcement past its window
 auto-hides; an empty feed is a friendly state ("no activity yet in
 your domains"), not a blank page.
+
+## J14 — Analyse & broadcast reports
+
+1. A user opens **Analytics → Reports**: the same explorer layout as
+   the workflows list (collections, facets for type / domain / status
+   with counts, full-width table, Previous / Next paging). Only
+   reports over domains the user is granted are listed — server-side.
+2. An **analytical list** report opens as a Fiori ALP: visual filters
+   in the header (selecting a bar, slice or point filters everything
+   below; a compact filter bar is the alternative), a main chart with
+   "view by" and chart type, chart / chart + table / table modes, and
+   the record table. Variants (Standard, saved filter sets) are
+   per report; a changed variant shows "*". Rows come from the
+   report's governed view filtered by the viewer's grants.
+3. A **story** opens in the **Analytics studio** (SAP Analytics Cloud
+   pattern): page tabs, a grid canvas of chart tiles, and in Designer
+   mode a **Builder** panel for the selected tile — data source,
+   chart structure (column, bar, line, donut, stacked, numeric),
+   measure and dimension, colour palette, filters. Measures come from
+   the governed KPI catalog; the studio never defines formulas. Each
+   tile has a "⋯" menu: sort, rank (top N), linked analysis, compare
+   to previous period, show / hide labels and legend, duplicate,
+   export data, full screen, pin to Home, remove.
+4. Saving a published story creates a new draft version; the published
+   version stays live until the draft is published.
+5. **Analytics → Broadcasts** (SAP C4C broadcast flow): new broadcast
+   = object type (report / story) → name → object → view or page →
+   email subject and message → recipients → format (Excel, CSV, PDF;
+   PDF or PowerPoint for stories) → ZIP → link (sign-in required) →
+   schedule (none, daily, weekly, monthly; day, time, start date,
+   Africa/Cairo). The list supports Start now, Pause, Resume, Edit and
+   Delete, and shows last run (sent / sent with skipped recipients /
+   failed) and next run.
+
+*Edge cases:* a recipient without a grant on the report's domain is
+skipped and reported (the dialog warns before saving) — a broadcast
+never sends data the recipient cannot see in the console; stories are
+rendered per recipient with their own grants; links in the email
+require sign-in (no anonymous "view without logging in"); retiring a
+report pauses its broadcasts; a failed run is retried at the next
+scheduled run or with Start now.
 
 ---
 

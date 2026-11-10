@@ -72,6 +72,8 @@ sap.ui.define([
 			else if (sKey === "newWorkflow") { oRouter.navTo("workflow"); }
 			else if (sKey === "dataJobs") { oRouter.navTo("jobs"); }
 			else if (sKey === "workflowsList") { oRouter.navTo("workflows"); }
+			else if (sKey === "reports") { oRouter.navTo("reports"); }
+			else if (sKey === "broadcasts") { oRouter.navTo("broadcasts"); }
 			else { oRouter.navTo("page", { key: sKey }); }
 			if (this.getOwnerComponent().getModel("device").getProperty("/system/phone")) {
 				this.byId("toolPage").setSideExpanded(false);
@@ -83,7 +85,8 @@ sap.ui.define([
 				sKey = sRoute === "page" ? oEvent.getParameter("arguments").key :
 					sRoute === "home" ? "home" : sRoute === "connections" ? "connections" :
 					sRoute === "ontology" ? "ontologyExplorer" : sRoute === "workflow" ? "newWorkflow" :
-					sRoute === "jobs" || sRoute === "jobRun" ? "dataJobs" : sRoute === "workflows" ? "workflowsList" : "domains";
+					sRoute === "jobs" || sRoute === "jobRun" ? "dataJobs" : sRoute === "workflows" ? "workflowsList" :
+					sRoute === "reports" || sRoute === "report" || sRoute === "studio" ? "reports" : sRoute === "broadcasts" ? "broadcasts" : "domains";
 			this._sSelectedKey = sKey;
 			if (this.byId("navList").getItems().length) { this._expandTo(sKey); this.byId("sideNavigation").setSelectedKey(sKey); }
 		},

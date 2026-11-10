@@ -1,0 +1,119 @@
+<mvc:View controllerName="repoio.proto.controller.Studio"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" height="100%">
+	<!-- J14: Analytics studio, laid out like the SAP Analytics Cloud story designer: toolbar, page tabs,
+	     a grid canvas of chart tiles (each with a "⋯" menu) and the Builder panel for the selected tile. -->
+	<VBox height="100%" renderType="Bare" class="repoioStudio">
+		<OverflowToolbar class="repoioStTop">
+			<Button icon="sap-icon://nav-back" type="Transparent" tooltip="{i18n>common.back}" press=".onBack">
+				<layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData>
+			</Button>
+			<Title text="{view>/st/titleText}" level="H1" titleStyle="H5" wrapping="false">
+				<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true"/></layoutData>
+			</Title>
+			<ObjectStatus text="{view>/st/statusText}" state="{view>/st/statusState}" class="sapUiTinyMarginBegin"/>
+			<ToolbarSeparator visible="{view>/st/edit}"/>
+			<Button icon="sap-icon://save" type="Transparent" tooltip="{i18n>common.save}" press=".onSave" visible="{view>/st/edit}" enabled="{view>/st/dirty}"/>
+			<MenuButton text="{i18n>st.insert}" icon="sap-icon://add" type="Transparent" visible="{view>/st/edit}">
+				<menu>
+					<Menu itemSelected=".onInsert">
+						<MenuItem key="chart" text="{i18n>st.ins.chart}" icon="sap-icon://vertical-bar-chart"/>
+						<MenuItem key="kpi" text="{i18n>st.ins.kpi}" icon="sap-icon://kpi-managing-my-area"/>
+						<MenuItem key="table" text="{i18n>st.ins.table}" icon="sap-icon://table-view"/>
+						<MenuItem key="text" text="{i18n>st.ins.text}" icon="sap-icon://text"/>
+						<MenuItem key="filter" text="{i18n>st.ins.filter}" icon="sap-icon://filter"/>
+					</Menu>
+				</menu>
+			</MenuButton>
+			<Button text="{i18n>st.storyFilter}" icon="sap-icon://filter" type="Transparent" press=".onStoryFilter" visible="{view>/st/edit}"/>
+			<Button text="{i18n>st.linked}" icon="sap-icon://chain-link" type="Transparent" press=".onLinked" visible="{view>/st/edit}"/>
+			<ToolbarSpacer/>
+			<Button icon="sap-icon://email" type="Transparent" tooltip="{i18n>rl.broadcast}" press=".onBroadcast" visible="{= !${view>/st/isNew} }"/>
+			<SegmentedButton selectedKey="{view>/st/mode}" selectionChange=".onMode">
+				<items>
+					<SegmentedButtonItem key="edit" text="{i18n>st.designer}" icon="sap-icon://edit"/>
+					<SegmentedButtonItem key="view" text="{i18n>st.view}" icon="sap-icon://show"/>
+				</items>
+				<layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData>
+			</SegmentedButton>
+		</OverflowToolbar>
+		<IconTabHeader id="stPages" selectedKey="{view>/st/page}" select=".onPage" mode="Inline" class="repoioStPages"
+			items="{path: 'view>/st/pages', templateShareable: false}">
+			<items><IconTabFilter key="{view>key}" text="{view>text}"/></items>
+		</IconTabHeader>
+		<HBox class="repoioStBody" renderType="Bare">
+			<ScrollContainer vertical="true" height="100%" class="repoioStCanvasWrap">
+				<FlexBox id="stCanvas" renderType="Bare" class="repoioStCanvas"/>
+				<VBox id="stEmpty" alignItems="Center" class="repoioStEmpty" visible="false">
+					<core:Icon src="sap-icon://business-objects-experience" size="3rem" color="#89919a"/>
+					<Title text="{i18n>st.empty.title}" level="H3" class="sapUiSmallMarginTop"/>
+					<Text text="{i18n>st.empty.text}" textAlign="Center"/>
+					<Button text="{i18n>st.ins.chart}" icon="sap-icon://vertical-bar-chart" type="Emphasized" press=".onInsertChart" class="sapUiSmallMarginTop" visible="{view>/st/edit}"/>
+				</VBox>
+			</ScrollContainer>
+
+			<!-- Builder panel (SAC): data source, chart structure, measures, dimensions, colour, filters. -->
+			<ScrollContainer vertical="true" height="100%" width="20rem" visible="{view>/st/edit}" class="repoioStBuilder">
+				<HBox alignItems="Center" class="repoioStBHead">
+					<core:Icon src="sap-icon://wrench" class="sapUiTinyMarginEnd"/>
+					<Title text="{i18n>st.builder}" level="H3" titleStyle="H5"/>
+				</HBox>
+				<VBox visible="{= !${view>/st/sel} }" alignItems="Center" class="repoioStBNone">
+					<core:Icon src="sap-icon://cursor-arrow" size="2rem" color="#89919a"/>
+					<Text text="{i18n>st.b.none}" textAlign="Center" class="sapUiSmallMarginTop"/>
+				</VBox>
+				<VBox visible="{= !!${view>/st/sel} }" renderType="Bare" class="repoioStBForm">
+					<Label text="{i18n>st.b.source}"/>
+					<HBox alignItems="Center" class="repoioStBSource">
+						<core:Icon src="sap-icon://database" class="sapUiTinyMarginEnd"/>
+						<Text text="{view>/st/b/source}" class="repoioMono" wrapping="false"/>
+					</HBox>
+
+					<Title text="{i18n>st.b.structure}" level="H4" titleStyle="H6" class="repoioStBSec"/>
+					<HBox items="{path: 'view>/st/b/types', templateShareable: false}" wrap="Wrap" renderType="Bare" class="repoioStBTypes">
+						<VBox alignItems="Center" class="repoioStBType" renderType="Bare">
+							<Button icon="{view>icon}" tooltip="{view>text}" type="{= ${view>selected} ? 'Emphasized' : 'Default' }" press=".onChartType"/>
+							<Text text="{view>text}" wrapping="false" class="repoioStBTypeTxt"/>
+						</VBox>
+					</HBox>
+
+					<HBox alignItems="Center" justifyContent="SpaceBetween" class="repoioStBSec">
+						<Title text="{i18n>st.b.measures}" level="H4" titleStyle="H6"/>
+					</HBox>
+					<HBox alignItems="Center" class="repoioStBItem repoioStBMeasure">
+						<core:Icon src="sap-icon://measure" class="sapUiTinyMarginEnd"/>
+						<Text text="{view>/st/b/measure}" wrapping="false"/>
+					</HBox>
+					<MenuButton text="{i18n>st.b.addMeasure}" icon="sap-icon://add" type="Transparent" class="repoioStBAdd">
+						<menu><Menu items="{path: 'view>/st/b/measures', templateShareable: false}" itemSelected=".onMeasure">
+							<MenuItem key="{view>key}" text="{view>text}"/>
+						</Menu></menu>
+					</MenuButton>
+
+					<Title text="{i18n>st.b.dimensions}" level="H4" titleStyle="H6" class="repoioStBSec"/>
+					<HBox alignItems="Center" class="repoioStBItem repoioStBDim" visible="{= ${view>/st/b/dimKey} !== 'none' }">
+						<core:Icon src="sap-icon://dimension" class="sapUiTinyMarginEnd"/>
+						<Text text="{view>/st/b/dim}" wrapping="false"/>
+					</HBox>
+					<MenuButton text="{i18n>st.b.addDim}" icon="sap-icon://add" type="Transparent" class="repoioStBAdd" enabled="{= ${view>/st/b/type} !== 'kpi' }">
+						<menu><Menu items="{path: 'view>/st/b/dims', templateShareable: false}" itemSelected=".onDim">
+							<MenuItem key="{view>key}" text="{view>text}"/>
+						</Menu></menu>
+					</MenuButton>
+
+					<Title text="{i18n>st.b.color}" level="H4" titleStyle="H6" class="repoioStBSec"/>
+					<HBox items="{path: 'view>/st/b/palettes', templateShareable: false}" renderType="Bare" class="repoioStBPals">
+						<Button text="{view>text}" type="{= ${view>selected} ? 'Emphasized' : 'Default' }" press=".onPalette" class="repoioStBPal"/>
+					</HBox>
+
+					<Title text="{i18n>st.b.filters}" level="H4" titleStyle="H6" class="repoioStBSec"/>
+					<HBox items="{path: 'view>/st/b/filters', templateShareable: false}" wrap="Wrap" renderType="Bare">
+						<Token text="{view>text}" editable="false"/>
+					</HBox>
+					<Button text="{i18n>st.b.addFilter}" icon="sap-icon://add" type="Transparent" press=".onStoryFilter" class="repoioStBAdd"/>
+
+					<MessageStrip text="{i18n>st.b.governed}" type="Information" showIcon="true" class="sapUiSmallMarginTop"/>
+				</VBox>
+			</ScrollContainer>
+		</HBox>
+	</VBox>
+</mvc:View>

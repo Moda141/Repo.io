@@ -1,0 +1,97 @@
+<mvc:View controllerName="repoio.proto.controller.Broadcasts"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" height="100%">
+	<!-- Broadcasts (SAP C4C flow) in the Repository Explorer layout: email distribution of reports and stories. -->
+	<VBox height="100%" renderType="Bare" class="repoioExplorer">
+		<OverflowToolbar class="repoioExTop">
+			<Title text="{i18n>nav.broadcasts}" level="H1" titleStyle="H4"/>
+			<ToolbarSpacer/>
+			<SearchField value="{view>/bc/q}" liveChange=".onSearch" search=".onSearch" width="32rem" placeholder="{view>/bc/searchPh}">
+				<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" minWidth="12rem"/></layoutData>
+			</SearchField>
+		</OverflowToolbar>
+		<OverflowToolbar class="repoioExBar">
+			<ToggleButton icon="sap-icon://filter" pressed="{view>/bc/showFilters}" tooltip="{i18n>cat.filters}" type="Emphasized"/>
+			<ToolbarSpacer/>
+			<Button icon="sap-icon://add" type="Transparent" tooltip="{i18n>bc.new}" press=".onNew"/>
+			<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>common.edit}" enabled="{= ${view>/bc/selected} === 1 }" press=".onEdit"/>
+			<Button icon="sap-icon://paper-plane" type="Transparent" tooltip="{i18n>bc.startNow}" enabled="{view>/bc/canStart}" press=".onStart"/>
+			<Button icon="sap-icon://media-pause" type="Transparent" tooltip="{i18n>bc.pause}" enabled="{view>/bc/canPause}" press=".onPause"/>
+			<Button icon="sap-icon://media-play" type="Transparent" tooltip="{i18n>bc.resume}" enabled="{view>/bc/canResume}" press=".onResume"/>
+			<Button icon="sap-icon://delete" type="Transparent" tooltip="{i18n>common.delete}" enabled="{= ${view>/bc/selected} > 0 }" press=".onDelete"/>
+		</OverflowToolbar>
+		<HBox class="repoioExBody" renderType="Bare">
+			<ScrollContainer vertical="true" height="100%" width="15rem" visible="{view>/bc/showFilters}" class="repoioFacetPanel">
+				<Title text="{i18n>wl.collection}" level="H3" class="repoioFacetGroup"/>
+				<List items="{view>/bc/collections}" mode="SingleSelectMaster" selectionChange=".onCollection" showSeparators="None" class="repoioFacetList">
+					<StandardListItem title="{view>text}" icon="{view>icon}" selected="{view>selected}"/>
+				</List>
+				<HBox alignItems="Center" justifyContent="SpaceBetween" class="repoioFacetHead">
+					<Title text="{i18n>wl.filterBy}" level="H3" titleStyle="H5"/>
+					<Button icon="sap-icon://clear-filter" type="Transparent" tooltip="{i18n>cat.clearAll}" enabled="{= ${view>/bc/active} > 0 }" press=".onClearFacets"/>
+				</HBox>
+				<VBox items="{view>/bc/facets}" renderType="Bare">
+					<VBox renderType="Bare">
+						<Title text="{view>title}" level="H4" class="repoioFacetGroup"/>
+						<List items="{path: 'view>values', templateShareable: false}" mode="MultiSelect" includeItemNavigation="false" selectionChange=".onFacetChange"
+							showSeparators="None" class="repoioFacetList" app:facet="{view>key}">
+							<StandardListItem title="{view>text}" icon="{view>icon}" counter="{view>count}" selected="{view>selected}"/>
+						</List>
+					</VBox>
+				</VBox>
+			</ScrollContainer>
+
+			<VBox class="repoioExMain" renderType="Bare">
+				<HBox alignItems="Center" class="repoioExScope">
+					<Label text="{i18n>wl.searchIn}" class="repoioExScopeLbl"/>
+					<core:Icon src="{view>/bc/collIcon}" class="repoioExScopeIcon"/>
+					<Text text="{view>/bc/scopeText}"/>
+				</HBox>
+				<ScrollContainer vertical="true" horizontal="true" height="100%" class="repoioExScroll">
+					<Table id="bcTable" items="{view>/bc/rows}" mode="MultiSelect" selectionChange=".onSelect" sticky="ColumnHeaders"
+						class="repoioDenseTable" fixedLayout="false" noDataText="{i18n>bc.noData}" popinLayout="GridSmall">
+						<columns>
+							<Column><Text text="{i18n>bc.col.name}"/></Column>
+							<Column minScreenWidth="1600px"><Text text="{i18n>bc.col.id}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>bc.col.object}"/></Column>
+							<Column minScreenWidth="1500px"><Text text="{i18n>bc.d.format}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>bc.d.schedule}"/></Column>
+							<Column minScreenWidth="Desktop" demandPopin="true" hAlign="End"><Text text="{i18n>bc.d.recipients}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>bc.col.last}"/></Column>
+							<Column minScreenWidth="1600px"><Text text="{i18n>bc.col.next}"/></Column>
+							<Column minScreenWidth="1500px" hAlign="Center"><Text text="{i18n>domain.owner}"/></Column>
+							<Column><Text text="{i18n>domains.col.status}"/></Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<HBox alignItems="Center">
+									<core:Icon src="sap-icon://email" class="repoioExRowIcon"/>
+									<Link text="{view>title}" press=".onOpen" wrapping="false"/>
+								</HBox>
+								<Text text="{view>id}" class="repoioMono" wrapping="false"/>
+								<HBox alignItems="Center">
+									<core:Icon src="{view>objIcon}" class="repoioExRowIcon"/>
+									<Link text="{view>objText}" press=".onObject" wrapping="false"/>
+								</HBox>
+								<HBox alignItems="Center">
+									<Text text="{view>fmtText}" wrapping="false"/>
+									<core:Icon src="sap-icon://attachment-zip-file" visible="{view>zip}" tooltip="{i18n>bc.d.zipText}" class="sapUiTinyMarginBegin"/>
+								</HBox>
+								<Text text="{view>schedText}" wrapping="false"/>
+								<Link text="{view>rcpText}" press=".onRecipients"/>
+								<VBox>
+									<ObjectStatus text="{view>lastText}" state="{view>lastState}" icon="{view>lastIcon}" active="{= ${view>last} === 'partial' || ${view>last} === 'failed' }" press=".onLast"/>
+									<Text text="{view>lastRunText}" class="repoioExSub" visible="{= !!${view>lastRun} }"/>
+								</VBox>
+								<Text text="{view>nextRunText}" wrapping="false"/>
+								<rc:PersonLink name="{view>owner}"/>
+								<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+							</ColumnListItem>
+						</items>
+					</Table>
+					<rc:Pager total="{view>/bc/count}" page="{view>/bc/page}" pageSize="{view>/bc/size}" change=".onPage"/>
+				</ScrollContainer>
+			</VBox>
+		</HBox>
+	</VBox>
+</mvc:View>

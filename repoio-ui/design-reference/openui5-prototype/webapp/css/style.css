@@ -632,3 +632,60 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioCatBody[data-mode="list"] .repoioCatResults { padding: 0; }
 .repoioCatBody .repoioFacetPanel { border-inline-end: 1px solid #d9d9d9; }
 .sapUiBody .sapTntSideNavigation .sapTntNLI::before, .sapUiBody .sapTntSideNavigation .sapTntNLI::after { border-color: #4b6278 !important; }
+
+/* ===== Analytics (J14) ===== */
+.repoioExSub.sapMText { font-size: 0.75rem; color: #6a6d70; }
+/* Analytical list report (Fiori ALP): visual filter cards in the header, chart + table below. */
+.repoioAlp .sapFDynamicPageHeader { background: #f2f4f7; }
+.repoioAlpVariant .sapMBtnInner { font-size: 1.25rem; }
+.repoioAlpVariant.sapMMenuBtn .sapMBtnInner { border: none; background: transparent; }
+.repoioAlpVisual { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.repoioAlpVf { min-width: 0; padding: 0.25rem 0.5rem 0; }
+.repoioAlpVf .sapMTitle { font-size: 0.8125rem; color: #32363a; }
+.repoioAlpVfBtn.sapMBtn { height: 1.5rem; }
+.repoioAlpVfBtn .sapMBtnInner { height: 1.5rem; min-width: 1.5rem; }
+.repoioAlpTokens { gap: 0.25rem; margin-top: 0.5rem; }
+.repoioAlpTokens .sapMToken { margin-inline-end: 0.25rem; }
+@media (max-width: 1023px) { .repoioAlpVisual { grid-template-columns: 1fr; } }
+.repoioAlpContent { background: #fff; }
+.repoioAlpNote.sapMMsgStrip { margin: 0.5rem 1rem 0; }
+.repoioAlpBar.sapMTB { padding-inline: 1rem; height: 2.75rem; }
+.repoioAlpTblBar.sapMTB { border-top: 1px solid #e5e5e5; }
+.repoioAlpContent .repoioChart { padding-inline: 0.5rem; box-sizing: border-box; }
+
+/* Analytics studio (SAC story designer): toolbar, page tabs, grid canvas of tiles, Builder panel. */
+.repoioStudio { display: flex; flex-direction: column; height: 100%; background: #fff; }
+.repoioStTop.sapMTB { flex: none; height: 2.75rem; padding-inline: 0.5rem; border-bottom: 1px solid #e5e5e5; }
+.repoioStPages.sapMITH { flex: none; box-shadow: none; border-bottom: 1px solid #e5e5e5; padding-inline: 0.5rem; }
+.repoioStBody { display: flex; flex: 1 1 0; min-height: 0; }
+.repoioStCanvasWrap { flex: 1 1 0; min-width: 0; background-color: #f7f7f7;
+	background-image: radial-gradient(#d5dadd 1px, transparent 1px); background-size: 16px 16px; }
+.repoioStCanvas.sapMFlexBox { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; padding: 0.75rem; align-items: start; }
+@media (max-width: 1400px) { .repoioStCanvas.sapMFlexBox { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .repoioStCanvas.sapMFlexBox { grid-template-columns: 1fr; } }
+.repoioStTile { background: #fff; border: 1px solid #e5e5e5; border-radius: 0.25rem; padding: 0.5rem 0.5rem 0.25rem; min-width: 0; cursor: default; }
+.repoioStTile:hover { border-color: #bfc8d1; }
+.repoioStTileSel { border-color: #0a6ed1 !important; box-shadow: 0 0 0 1px #0a6ed1; }
+.repoioStTileHead { padding-inline: 0.25rem; }
+.repoioStTileHead .sapMTitle { font-size: 0.875rem; }
+.repoioStTileSub.sapMText { font-size: 0.75rem; color: #6a6d70; }
+.repoioStTileMenu.sapMBtn { height: 1.75rem; opacity: 0.55; }
+.repoioStTile:hover .repoioStTileMenu, .repoioStTileSel .repoioStTileMenu { opacity: 1; }
+.repoioStKpiDelta.sapMText { color: #107e3e; font-size: 0.8125rem; }
+.repoioStEmpty { padding: 5rem 1rem; }
+.repoioStBuilder { flex: none; background: #fff; border-inline-start: 1px solid #e5e5e5; }
+.repoioStBHead { height: 2.5rem; padding-inline: 0.75rem; background: #354a5f; color: #fff; }
+.repoioStBHead .sapMTitle, .repoioStBHead .sapUiIcon { color: #fff; }
+.repoioStBNone { padding: 3rem 1.5rem; }
+.repoioStBForm { display: flex; flex-direction: column; padding: 0.75rem; }
+.repoioStBForm .sapMLabel { font-size: 0.75rem; }
+.repoioStBSource { padding: 0.25rem 0 0.5rem; }
+.repoioStBSec { margin-top: 0.875rem; margin-bottom: 0.375rem; color: #0a6ed1; }
+.repoioStBSec.sapMTitle, .repoioStBSec .sapMTitle { color: #0a6ed1; }
+.repoioStBTypes { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; }
+.repoioStBType { display: flex; flex-direction: column; align-items: center; }
+.repoioStBTypeTxt.sapMText { font-size: 0.6875rem; color: #6a6d70; margin-top: 0.125rem; }
+.repoioStBItem { height: 1.75rem; padding-inline: 0.5rem; background: #f2f4f7; border-inline-start: 3px solid #5899da; border-radius: 0.125rem; }
+.repoioStBDim { border-inline-start-color: #5fae7c; }
+.repoioStBAdd.sapMBtn, .repoioStBAdd.sapMMenuBtn { align-self: flex-start; width: auto !important; margin-top: 0.125rem; }
+.repoioStBPals { display: flex; gap: 0.25rem; }
