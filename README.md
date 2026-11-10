@@ -485,9 +485,9 @@ never defines a measure.**
 │ XLSX · CSV · PDF (stories: PDF · PPTX) · ZIP │
 │ isolated, no inbound network, platform code  │
 └──────────────┬───────────────────────────────┘
-               │ short-lived private file (object storage, open)
+               │ generated in memory per run, attached, never stored
                ▼
-┌──── Mail adapter (open: SMTP relay or Microsoft Graph) ──────┐
+┌──── Mail adapter: corporate SMTP relay ──────────────────────┐
 │ subject + message + attachment + console link                │
 │ the link requires sign-in; no anonymous "view" link          │
 └──────────────┬───────────────────────────────────────────────┘
@@ -503,22 +503,26 @@ never defines a measure.**
 - **Scheduling uses Airflow**, which the platform already runs
   (`repoio-airflow-apis`); no second scheduler. Pause / resume toggle
   the schedule; a run that is in flight finishes.
-- **Secrets** for the mail channel are secret-store references, like
-  connection tokens (CLAUDE.md §6.13); hosts and senders are
-  environment placeholders until confirmed.
+- **Mail goes through the corporate SMTP relay.** Relay host, port,
+  sender and credentials are secret-store references and environment
+  placeholders (CLAUDE.md §6.10, §6.13).
+- **Exports are generated, not stored.** Each run renders the file in
+  memory from live governed data, attaches it and discards it; there is
+  no export file store and no file retention. `broadcast_runs` keeps
+  only run metadata and per-recipient outcomes (no file content).
+- **Recipients are Entra ID users only.** External addresses are not
+  allowed, since there are no grants to evaluate for them; the
+  recipient picker only offers directory users.
+
+**Confirmed (10 Nov 2026):** SMTP relay for mail; exports generated per
+run and never stored; Entra ID recipients only.
 
 **Open decisions (need an ADR before M-planning):**
 
-1. Export rendering: where charts are rendered for PDF / PPTX
-   (server-side ECharts in a Node worker vs. a Python renderer) and
-   whether it reuses the isolated worker runtime (`repoio-python-runtime`)
-   as a separate, platform-only pool.
-2. Mail channel: corporate SMTP relay vs. Microsoft Graph with an
-   Entra ID app registration; attachment size limit and the fallback
-   when a file is too large (ZIP, then link-only).
-3. Storage and retention of rendered files and of `broadcast_runs`.
-4. External recipients (outside Entra ID): proposed **not allowed**,
-   since they have no grants to evaluate.
+1. Export rendering runtime for charts in PDF / PPTX (Node worker with
+   server-side ECharts vs. a Python renderer).
+2. Attachment size limit of the relay and the fallback when a file is
+   too large (ZIP, then link-only).
 
 ## 3. Entity coverage (Phase 1)
 

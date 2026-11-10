@@ -488,7 +488,9 @@ your domains"), not a blank page.
 skipped and reported (the dialog warns before saving) — a broadcast
 never sends data the recipient cannot see in the console; stories are
 rendered per recipient with their own grants; links in the email
-require sign-in (no anonymous "view without logging in"); retiring a
+require sign-in (no anonymous "view without logging in"); only Entra ID
+users can be recipients; the attachment is generated per run and never
+stored; retiring a
 report pauses its broadcasts; a failed run is retried at the next
 scheduled run or with Start now.
 
