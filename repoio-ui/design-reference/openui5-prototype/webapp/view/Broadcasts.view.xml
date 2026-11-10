@@ -4,7 +4,11 @@
 	<!-- Broadcasts (SAP C4C flow) in the Repository Explorer layout: email distribution of reports and stories. -->
 	<VBox height="100%" renderType="Bare" class="repoioExplorer">
 		<OverflowToolbar class="repoioExTop">
-			<Title text="{i18n>nav.broadcasts}" level="H1" titleStyle="H4"/>
+			<VBox renderType="Bare" class="repoioExHead">
+				<Title text="{i18n>nav.broadcasts}" level="H1" titleStyle="H4"/>
+				<Text text="{i18n>bc.desc}" class="repoioExDesc" maxLines="1" tooltip="{i18n>bc.desc}"/>
+				<layoutData><OverflowToolbarLayoutData shrinkable="true" minWidth="12rem"/></layoutData>
+			</VBox>
 			<ToolbarSpacer/>
 			<SearchField value="{view>/bc/q}" liveChange=".onSearch" search=".onSearch" width="32rem" placeholder="{view>/bc/searchPh}">
 				<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" minWidth="12rem"/></layoutData>

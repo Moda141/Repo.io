@@ -693,3 +693,6 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioBcLast .sapMObjStatus { flex: none; }
 .repoioBcLast .sapMObjStatus, .repoioBcLast .sapMText { line-height: 1.5rem; }
 .repoioBcLast .sapMObjStatusText, .repoioBcLast .sapMObjStatusIcon { vertical-align: middle; }
+.repoioExTop.sapMTB { height: 3.75rem; }
+.repoioExHead { display: flex; flex-direction: column; min-width: 0; }
+.repoioExDesc.sapMText { font-size: 0.8125rem; color: #6a6d70; margin-top: 0.125rem; }
