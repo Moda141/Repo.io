@@ -56,11 +56,12 @@
 							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>bc.col.object}"/></Column>
 							<Column minScreenWidth="1500px"><Text text="{i18n>bc.d.format}"/></Column>
 							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>bc.d.schedule}"/></Column>
+							<Column><Text text="{i18n>domains.col.status}"/></Column>
 							<Column minScreenWidth="Desktop" demandPopin="true" hAlign="End"><Text text="{i18n>bc.d.recipients}"/></Column>
 							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>bc.col.last}"/></Column>
+							<Column minScreenWidth="1500px"><Text text="{i18n>bc.col.lastAt}"/></Column>
 							<Column minScreenWidth="1600px"><Text text="{i18n>bc.col.next}"/></Column>
 							<Column minScreenWidth="1500px" hAlign="Center"><Text text="{i18n>domain.owner}"/></Column>
-							<Column><Text text="{i18n>domains.col.status}"/></Column>
 						</columns>
 						<items>
 							<ColumnListItem>
@@ -78,14 +79,12 @@
 									<core:Icon src="sap-icon://attachment-zip-file" visible="{view>zip}" tooltip="{i18n>bc.d.zipText}" class="sapUiTinyMarginBegin"/>
 								</HBox>
 								<Text text="{view>schedText}" wrapping="false"/>
+								<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
 								<Link text="{view>rcpText}" press=".onRecipients"/>
-								<VBox>
-									<ObjectStatus text="{view>lastText}" state="{view>lastState}" icon="{view>lastIcon}" active="{= ${view>last} === 'partial' || ${view>last} === 'failed' }" press=".onLast"/>
-									<Text text="{view>lastRunText}" class="repoioExSub" visible="{= !!${view>lastRun} }"/>
-								</VBox>
+								<ObjectStatus text="{view>lastText}" state="{view>lastState}" icon="{view>lastIcon}" active="{= ${view>last} === 'partial' || ${view>last} === 'failed' }" press=".onLast"/>
+								<Text text="{view>lastRunText}" wrapping="false"/>
 								<Text text="{view>nextRunText}" wrapping="false"/>
 								<rc:PersonLink name="{view>owner}"/>
-								<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
 							</ColumnListItem>
 						</items>
 					</Table>

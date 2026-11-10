@@ -392,6 +392,134 @@ trail.**
   personal, actionable channel (approval needed, request rejected).
   Nothing in Feeds can mutate master data, requests or workflows.
 
+### 2.8 Analytics — reports, studio and broadcasts
+
+> **Status: proposed** (prototype screens exist under
+> `repoio-ui/design-reference/openui5-prototype`, journey J14). The
+> components marked *open* below need an ADR before implementation.
+
+**Decision: reports and stories are governed definitions in the
+control plane; their data is read from the data plane through Trino
+with the caller's own grants; broadcasts are scheduled by Airflow and
+rendered per recipient. The UI sends a definition, never SQL, and
+never defines a measure.**
+
+#### Reports list, analytical list report and Analytics studio (read path)
+
+```
+┌──────────── repoio-ui (OpenUI5) ────────────┐
+│  Reports list   ·   Analytical list (ALP)   │
+│  Analytics studio (story designer, Builder) │
+│  charts: EChart wrapper (Apache ECharts)    │
+└──────┬──────────────────────────┬───────────┘
+       │ definitions (CRUD,       │ query request:
+       │ versions, variants)      │ {report/tile, measure ids, dimension,
+       │                          │  filters, page} — never SQL
+       ▼                          ▼
+┌──────────────────────── repoio-service (Dropwizard) ────────────────────────┐
+│  Reports API                          Query API                             │
+│  · reports, report_versions,          · resolve measure ids → KPI catalog   │
+│    variants, favorites                · compile to SQL over the report's    │
+│  · save on a published story            governed view                       │
+│    = new draft version                · inject the caller's role→domain     │
+│  · retire → pauses its broadcasts       grant predicate (row filter)        │
+│                                       · aggregate in the engine, page rows  │
+│  KPI catalog (read-only to the UI)    · cache per (definition version,      │
+│  · measure formula, unit, owner         grant set), short TTL               │
+└──────┬───────────────────────────────────────┬──────────────────────────────┘
+       │ JDBI3                                 │ JDBC
+       ▼                                       ▼
+┌──────────────── Postgres 15 ───────────┐   ┌──────────── Trino ─────────────┐
+│ control plane:                         │   │ governed views over Iceberg:   │
+│ reports · report_versions · variants   │   │ golden.<entity> · dq.results · │
+│ kpi_catalog · report_favorites         │   │ cr.change_requests · matched.* │
+│ broadcasts · broadcast_runs (below)    │   │ wb.writeback_log · ops.*       │
+└────────────────────────────────────────┘   └───────────────┬────────────────┘
+                                                             ▼
+                                                   Iceberg tables (data plane)
+```
+
+- **Definitions** (layout, tiles, chart type, measure ids, dimension,
+  filters, variants) are versioned control-plane rows. Publishing a
+  story or report follows the same draft → published → retired
+  lifecycle as workflows.
+- **Measures come only from the KPI catalog.** The studio and the ALP
+  pick measure ids; the formula, unit and owner live in the catalog.
+  A screen that computes a KPI locally is wrong (CLAUDE.md §6.6).
+- **Authorization is server-side.** The Query API adds the caller's
+  role→domain grants to every query; the list API filters reports the
+  same way. Hiding rows in the UI is presentation, not authorization.
+- **Read only.** Nothing in Analytics writes master data, requests or
+  workflows. Golden records are never copied into Postgres for
+  reporting (CLAUDE.md §6.12).
+
+#### Broadcasts (scheduled distribution)
+
+```
+┌──── repoio-ui: Broadcasts page ────┐
+│ list · Start now · Pause · Resume  │
+│ new broadcast dialog               │
+└──────────────┬─────────────────────┘
+               │ REST
+               ▼
+┌──────── repoio-service: Broadcasts API ────────┐      ┌──── Postgres ─────────────┐
+│ CRUD · validate recipients against grants      │─────▶│ broadcasts                │
+│ (warn: no grant on the report's domain)        │      │ broadcast_recipients      │
+│ Start now → enqueue a run                      │      │ broadcast_runs (per run + │
+└──────────────┬─────────────────────────────────┘      │  per-recipient outcome)   │
+               │ due schedules (cron, Africa/Cairo)     └───────────────────────────┘
+               ▼
+┌──── Airflow DAG broadcast_dispatch (repoio-airflow-apis) ────┐
+│ picks due broadcasts → calls the service to start a run      │
+│ idempotency key = broadcast id + schedule slot               │
+└──────────────┬───────────────────────────────────────────────┘
+               ▼
+┌──── repoio-service: run (one per recipient) ─────────────────┐
+│ 1. resolve the recipient's grants (Entra ID groups → domains)│
+│    no grant on the report's domain → outcome "skipped"       │
+│ 2. same Query API path, evaluated AS THE RECIPIENT           │
+│    (no shared broadcast identity, no owner's grants)         │
+└──────────────┬───────────────────────────────────────────────┘
+               ▼
+┌──── Export worker (open) ────────────────────┐
+│ XLSX · CSV · PDF (stories: PDF · PPTX) · ZIP │
+│ isolated, no inbound network, platform code  │
+└──────────────┬───────────────────────────────┘
+               │ short-lived private file (object storage, open)
+               ▼
+┌──── Mail adapter (open: SMTP relay or Microsoft Graph) ──────┐
+│ subject + message + attachment + console link                │
+│ the link requires sign-in; no anonymous "view" link          │
+└──────────────┬───────────────────────────────────────────────┘
+               ▼
+ broadcast_runs (sent / skipped / failed per recipient) → audit trail
+ + activity read-model (§2.7) · failures retry at the next slot or
+   with Start now
+```
+
+- **Per-recipient rendering is the rule.** A broadcast never sends data
+  the recipient cannot see in the console; recipients without a grant
+  are skipped and reported in the run (list shows "Sent · N skipped").
+- **Scheduling uses Airflow**, which the platform already runs
+  (`repoio-airflow-apis`); no second scheduler. Pause / resume toggle
+  the schedule; a run that is in flight finishes.
+- **Secrets** for the mail channel are secret-store references, like
+  connection tokens (CLAUDE.md §6.13); hosts and senders are
+  environment placeholders until confirmed.
+
+**Open decisions (need an ADR before M-planning):**
+
+1. Export rendering: where charts are rendered for PDF / PPTX
+   (server-side ECharts in a Node worker vs. a Python renderer) and
+   whether it reuses the isolated worker runtime (`repoio-python-runtime`)
+   as a separate, platform-only pool.
+2. Mail channel: corporate SMTP relay vs. Microsoft Graph with an
+   Entra ID app registration; attachment size limit and the fallback
+   when a file is too large (ZIP, then link-only).
+3. Storage and retention of rendered files and of `broadcast_runs`.
+4. External recipients (outside Entra ID): proposed **not allowed**,
+   since they have no grants to evaluate.
+
 ## 3. Entity coverage (Phase 1)
 
 | Entity              | Owner (Nahdet Misr) | Golden record uses                     |
@@ -473,7 +601,7 @@ repoio-k8s-operator/    CRDs: Repository, Pipeline, IcebergCatalog
 repoio-integration-tests/   Cross-module e2e
 repoio-shaded-deps/     Shaded Elasticsearch / OpenSearch
 repoio-dist/            Assembly · Docker images · Helm
-repoio-airflow-apis/    Pull-ingest DAGs, DQ runs, housekeeping
+repoio-airflow-apis/    Pull-ingest DAGs, DQ runs, housekeeping, broadcast dispatch (proposed, §2.8)
 
 repoio-stream/          NEW · Spark Structured Streaming jobs (Scala/PySpark)
 repoio-catalog/         NEW · Iceberg REST catalog, table DDL, index config

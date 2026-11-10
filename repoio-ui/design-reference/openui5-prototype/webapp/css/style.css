@@ -689,3 +689,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioStBDim { border-inline-start-color: #5fae7c; }
 .repoioStBAdd.sapMBtn, .repoioStBAdd.sapMMenuBtn { align-self: flex-start; width: auto !important; margin-top: 0.125rem; }
 .repoioStBPals { display: flex; gap: 0.25rem; }
+.repoioBcLast { display: flex; gap: 0.5rem; white-space: nowrap; }
+.repoioBcLast .sapMObjStatus { flex: none; }
+.repoioBcLast .sapMObjStatus, .repoioBcLast .sapMText { line-height: 1.5rem; }
+.repoioBcLast .sapMObjStatusText, .repoioBcLast .sapMObjStatusIcon { vertical-align: middle; }

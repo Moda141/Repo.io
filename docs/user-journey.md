@@ -451,6 +451,8 @@ your domains"), not a blank page.
 
 ## J14 — Analyse & broadcast reports
 
+*Architecture: root README §2.8 (proposed).*
+
 1. A user opens **Analytics → Reports**: the same explorer layout as
    the workflows list (collections, facets for type / domain / status
    with counts, full-width table, Previous / Next paging). Only
