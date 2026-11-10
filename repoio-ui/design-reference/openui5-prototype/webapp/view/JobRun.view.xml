@@ -166,7 +166,7 @@
 								<Text text="{view>tgt}" class="repoioMono" wrapping="false"/>
 								<Text text="{view>loadText}"/>
 								<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
-								<Text text="{view>lastText}"/>
+								<Text text="{view>lastText}" wrapping="false"/>
 								<Text text="{view>recText}"/>
 							</ColumnListItem>
 						</items>

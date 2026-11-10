@@ -109,7 +109,7 @@
 						<Column visible="{view>/jr/cols/runAs}" minScreenWidth="Tablet" demandPopin="true" hAlign="Center" width="4.5rem"><Text text="{i18n>jr.col.runAs}"/></Column>
 						<Column visible="{view>/jr/cols/launched}" minScreenWidth="Desktop" demandPopin="true" width="6.5rem"><Text text="{i18n>jr.col.launched}"/></Column>
 						<Column visible="{view>/jr/cols/duration}" width="5.75rem"><Text text="{i18n>jr.col.duration}"/></Column>
-						<Column width="10rem"><Text text="{i18n>jr.col.status}"/></Column>
+						<Column width="11.5rem"><Text text="{i18n>jr.col.status}"/></Column>
 						<Column visible="{view>/jr/cols/error}" minScreenWidth="Tablet" demandPopin="true" width="12rem"><Text text="{i18n>jr.col.error}"/></Column>
 						<Column visible="{view>/jr/cols/params}" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>jr.col.params}"/></Column>
 						<Column hAlign="End" width="4.5rem"><Text text="{i18n>jr.col.actions}" class="sapUiInvisibleText"/></Column>
@@ -117,10 +117,7 @@
 					<items>
 						<ColumnListItem type="Active" press=".onOpenRun" highlight="{view>highlight}">
 							<Link text="{view>startText}" press=".onOpenRun" wrapping="false"/>
-							<VBox>
-								<Link text="{view>title}" press=".onOpenRun" wrapping="true"/>
-								<Text text="{view>job}" class="repoioJrTech" wrapping="false"/>
-							</VBox>
+							<Link text="{view>title}" tooltip="{view>job}" press=".onOpenRun" wrapping="false"/>
 							<HBox alignItems="Center">
 								<core:Icon src="{view>kindIcon}" class="repoioJrKindIcon" decorative="true"/>
 								<Text text="{view>kindText}"/>
