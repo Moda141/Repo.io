@@ -503,9 +503,13 @@ never defines a measure.**
 - **Scheduling uses Airflow**, which the platform already runs
   (`repoio-airflow-apis`); no second scheduler. Pause / resume toggle
   the schedule; a run that is in flight finishes.
-- **Mail goes through the corporate SMTP relay.** Relay host, port,
-  sender and credentials are secret-store references and environment
-  placeholders (CLAUDE.md §6.10, §6.13).
+- **Mail goes through the corporate SMTP relay, configured by an Admin
+  in Administration → System configuration.** The settings are host,
+  port, TLS, sender address, authentication and the maximum message size
+  (default 10 MB). They are control-plane settings, changed with an
+  audit entry; the password is a secret-store reference, never a column
+  (CLAUDE.md §6.13). A "send test email" check validates them. No values
+  are set until the relay details are known (CLAUDE.md §6.10).
 - **Exports are generated, not stored.** Each run renders the file in
   memory from live governed data, attaches it and discards it; there is
   no export file store and no file retention. `broadcast_runs` keeps

@@ -73,8 +73,9 @@ Two runtimes were considered for rendering charts and documents.
 
 ### Part B — attachment size policy (accepted)
 
-1. **Limit.** The limit is set by `BROADCAST_MAX_ATTACHMENT_MB`, which
-   equals the relay's maximum message size. The decided value is
+1. **Limit.** The limit is the relay's maximum message size, an SMTP
+   setting in Administration → System configuration (environment
+   default `BROADCAST_MAX_ATTACHMENT_MB`). The decided value is
    **10 MB**. It is measured on the encoded message: base64 adds about
    37 %, so the raw file cap is about 10 ÷ 1.37 minus room for the body,
    about **7 MB**. If the relay limit changes, only the setting changes.
@@ -121,6 +122,13 @@ Two runtimes were considered for rendering charts and documents.
   - `linkOnly`;
   - `skipped` (no grant);
   - `failed` (relay error; retried at the next slot or with Start now).
-- Still open with IT: whether the relay needs authentication
-  (credentials as a secret-store reference, CLAUDE.md §6.13), and its
-  host and port (environment placeholders until then).
+- The SMTP relay is configured later by an Admin in Administration →
+  System configuration:
+  - host, port and TLS;
+  - sender address;
+  - authentication, with the password as a secret-store reference
+    (CLAUDE.md §6.13);
+  - maximum message size (10 MB).
+
+  Until then broadcasts can be defined but not sent. Start now and
+  scheduled runs report "mail not configured".
