@@ -46,7 +46,7 @@ sap.ui.define([
 				that.viewModel().setProperty("/onto", {
 					name: that.lang() === "ar" ? that._o.nameAr : that._o.nameEn, prefix: that._o.prefix, ns: that._o.ns,
 					versions: that._o.versions, version: that._o.versions[0].key, state: that._o.versions[0].state, editable: true, changes: 0,
-					tab: "concepts", query: "", show: { type: true, subclass: true }, group: true, showIsolated: false, isolatedCount: 0, layout: "force", edgeLabels: true, mode: "schema",
+					tab: "concepts", query: "", show: { type: true, subclass: true }, group: true, showIsolated: false, isolatedCount: 0, layout: "hierarchy", zoom: 100, stats: {}, edgeLabels: true, mode: "schema",
 					rec: { domain: "", type: "", query: "", preview: false, rows: [], domains: [], types: [] },
 					full: false, rtl: that.isRtl(), sel: {}, graph: { nodes: [], edges: [] }, tree: [], types: [], conceptOptions: []
 				});
@@ -93,7 +93,7 @@ sap.ui.define([
 				}).concat(c.props.map(function (p) {
 					return { title: p.name, icon: "sap-icon://text", kind: "prop", ref: c.id, tip: p.type };
 				}));
-				return { title: that._name(c), icon: CAT_ICON[c.cat] || CAT_ICON.master, kind: "node", ref: c.id,
+				return { title: that._name(c), icon: CAT_ICON[c.cat] || CAT_ICON.master, kind: "node", ref: c.id, count: that._recordCount(c.id),
 					tip: that._o.prefix + ":" + c.id, draft: !!c.draft, nodes: kids };
 			}));
 			m.setProperty("/onto/types", rels.filter(function (r) {
@@ -104,6 +104,7 @@ sap.ui.define([
 			}));
 			m.setProperty("/onto/conceptOptions", this._o.concepts.slice().sort(byName).map(function (c) { return { id: c.id, name: that._name(c) }; }));
 			m.setProperty("/onto/changes", Object.keys(this._changes).length);
+			this._stats();
 			if (q) { this.byId("conceptTree").expandToLevel(1); }
 		},
 
@@ -133,9 +134,35 @@ sap.ui.define([
 			m.setProperty("/onto/isolatedCount", isolated.length);
 			var keep = function (c) { return linked[c.id] || m.getProperty("/onto/showIsolated") || c.id === sel.id || c.draft || that._changes["c:" + c.id]; };
 			return {
-				nodes: this._o.concepts.filter(keep).map(function (c) { return { id: c.id, label: that._name(c), cat: c.cat, draft: !!c.draft || !!that._changes["c:" + c.id] }; }),
+				nodes: this._o.concepts.filter(keep).map(function (c) {
+					return { id: c.id, label: that._name(c), cat: c.cat, count: that._recordCount(c.id), draft: !!c.draft || !!that._changes["c:" + c.id] };
+				}),
 				edges: edges
 			};
+		},
+		/* Golden records that are instances of a concept, its sub-concepts included (rdf:type through rdfs:subClassOf). */
+		_recordCount: function (id) {
+			var o = this._o, kids = {}, seen = {}, n = 0;
+			o.concepts.forEach(function (c) { (c.parent || []).forEach(function (p) { (kids[p] = kids[p] || []).push(c.id); }); });
+			var walk = function (x) { if (seen[x]) { return; } seen[x] = true; (kids[x] || []).forEach(walk); };
+			walk(id);
+			(o.records || []).forEach(function (r) { if (seen[r.concept]) { n++; } });
+			return n;
+		},
+		/* Status bar (Studio style): sizes of the model, triples in the Turtle export, and the check result. */
+		_stats: function () {
+			var o = this._o, ttl = this._turtle(), issues = this._checks().length;
+			var triples = ttl.split("\n").filter(function (l) { return !/^@prefix/.test(l) && /( ;| \.)$/.test(l); }).length + (ttl.match(/ , /g) || []).length;
+			this.viewModel().setProperty("/onto/stats", { concepts: o.concepts.length, types: o.relations.filter(function (r) { return r.kind !== "subclass"; }).length,
+				records: (o.records || []).length, links: (o.links || []).length, triples: triples, issues: issues,
+				text: this.text("onto.stat.line", [o.concepts.length, o.relations.filter(function (r) { return r.kind !== "subclass"; }).length, (o.records || []).length, (o.links || []).length]),
+				check: issues ? this.text("onto.stat.issues", [issues]) : this.text("onto.stat.clean"), triplesText: this.text("onto.stat.triples", [triples]) });
+		},
+		onViewport: function (e) { this.viewModel().setProperty("/onto/zoom", Math.round(e.getParameter("zoom") * 100)); },
+		onZoomSlider: function (e) { this.byId("graph").zoomTo(e.getParameter("value") / 100); },
+		onLayoutKey: function (e) {
+			this.viewModel().setProperty("/onto/layout", e.getParameter("item").getKey());
+			this.onLayout();
 		},
 		onGroup: function () { this._expanded = {}; this._refresh(); },
 		onIsolated: function () { this._refresh(); this.byId("graph").fit(); },
@@ -457,6 +484,11 @@ sap.ui.define([
 
 		/* Prototype checks in the spirit of the SHACL shapes the service will run (README §2.3). */
 		onValidate: function () {
+			var msgs = this._checks(), shapes = this._o.concepts.length + this._o.relations.length;
+			if (!msgs.length) { MessageBox.success(this.text("onto.v.ok", [shapes])); return; }
+			MessageBox.warning(this.text("onto.v.found", [msgs.length, shapes]), { details: "<ul><li>" + msgs.join("</li><li>") + "</li></ul>" });
+		},
+		_checks: function () {
 			var that = this, msgs = [];
 			this._o.concepts.forEach(function (c) {
 				if (!(c.descEn || "").trim() && !(c.descAr || "").trim()) { msgs.push(that.text("onto.v.noDesc", [that._name(c)])); }
@@ -466,9 +498,7 @@ sap.ui.define([
 			this._o.relations.forEach(function (r) {
 				if (r.kind !== "semantic" && !r.inverse) { msgs.push(that.text("onto.v.noInverse", [that._label(r)])); }
 			});
-			var shapes = this._o.concepts.length + this._o.relations.length;
-			if (!msgs.length) { MessageBox.success(this.text("onto.v.ok", [shapes])); return; }
-			MessageBox.warning(this.text("onto.v.found", [msgs.length, shapes]), { details: "<ul><li>" + msgs.join("</li><li>") + "</li></ul>" });
+			return msgs;
 		},
 
 		/* ---------- new concept / new relationship type (steward actions into the draft) ---------- */

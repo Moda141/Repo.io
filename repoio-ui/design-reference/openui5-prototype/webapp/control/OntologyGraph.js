@@ -9,58 +9,69 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/ResizeHandler",
-	"repoio/proto/thirdparty/cytoscape.min"
+	"repoio/proto/thirdparty/cytoscape.min",
+	"repoio/proto/thirdparty/cytoscape-dagre.bundle"
 ], function (Control, ResizeHandler) {
 	"use strict";
 
 	var cytoscapeLib = window.cytoscape;
+	// Hierarchical layout (dagre), registered once with Cytoscape.
+	if (cytoscapeLib && window.cytoscapeDagre && !cytoscapeLib.__repoioDagre) { cytoscapeLib.use(window.cytoscapeDagre); cytoscapeLib.__repoioDagre = true; }
 	var FONT = "Arial, Helvetica, sans-serif";
 	var MIN_READABLE = 0.7, MAX_FIT = 1.15;
 
-	/* Quiet Quartz Light tints: light fills, one blue for selection, governed links in muted blue. */
+	/*
+	 * "Studio" look (reference: Ontology Studio), on the Quartz Light theme: a light canvas, concepts as white
+	 * label-sized cards with a coloured border per category, records as small filled circles, relationship
+	 * types in teal, is-a in dashed violet, one blue for selection.
+	 */
+	var C = { master: "#e8955a", abstract: "#8b83d6", governance: "#8a9aaa", asset: "#2f9e7a", business: "#c99a2e",
+		type: "#1d9e75", subclass: "#7f77dd", system: "#5b8fd6", sel: "#2563eb", draft: "#e9730c", ink: "#1f2937", muted: "#6b7280", canvas: "#f4f6fa" };
 	var STYLE = [
 		{ selector: "node", style: {
-			"width": 34, "height": 34, "background-color": "#d6e9f8", "border-width": 1, "border-color": "#9cc5ea",
-			"label": "data(label)", "font-family": FONT, "font-size": 11, "color": "#32363a",
-			"text-valign": "bottom", "text-halign": "center", "text-margin-y": 4, "text-wrap": "wrap", "text-max-width": 90,
-			"text-background-color": "#ffffff", "text-background-opacity": 0.75, "text-background-padding": 1,
-			"overlay-opacity": 0 } },
-		{ selector: "node[cat = 'abstract']", style: { "background-color": "#ffffff", "border-style": "dashed", "border-color": "#6a8bad", "border-width": 1.5 } },
-		{ selector: "node[cat = 'governance']", style: { "background-color": "#dfe6ee", "border-color": "#a9b6c4" } },
-		{ selector: "node[cat = 'asset']", style: { "background-color": "#e3efe8", "border-color": "#a8c8b4" } },
-		{ selector: "node[cat = 'business']", style: { "background-color": "#f3ece0", "border-color": "#d2bf9c" } },
-		/* Golden records (instance level): rounded squares with code and name. */
-		{ selector: "node[cat ^= 'rec-']", style: { "shape": "round-rectangle", "width": 28, "height": 22, "text-max-width": 130, "font-size": 10 } },
-		{ selector: "node[cat = 'rec-customer']", style: { "background-color": "#d6e9f8", "border-color": "#7fa7d4" } },
-		{ selector: "node[cat = 'rec-vendor']", style: { "background-color": "#f3ece0", "border-color": "#c9b48d" } },
-		{ selector: "node[cat = 'rec-product']", style: { "background-color": "#e3efe8", "border-color": "#93bba2" } },
-		{ selector: "node[?hit]", style: { "border-width": 2.5, "border-color": "#0a6ed1" } },
-		{ selector: "edge[?draft][kind != 'subclass']", style: { "line-style": "dashed" } },
-		{ selector: "node[?draft]", style: { "border-style": "dashed", "border-color": "#e9730c", "border-width": 1.5 } },
-		{ selector: "node:selected", style: { "border-width": 3, "border-color": "#0a6ed1", "font-weight": "bold" } },
+			"shape": "round-rectangle", "width": "label", "height": "label", "padding": 11, "background-color": "#ffffff",
+			"border-width": 2, "border-color": C.master, "label": "data(label)", "font-family": FONT, "font-size": 12, "color": C.ink,
+			"text-valign": "center", "text-halign": "center", "text-wrap": "ellipsis", "text-max-width": 150, "min-width": 48,
+			"overlay-opacity": 0, "transition-property": "border-color border-width opacity", "transition-duration": "0.15s" } },
+		{ selector: "node[cat = 'abstract']", style: { "border-style": "dashed", "border-color": C.abstract, "color": "#4b4f8a" } },
+		{ selector: "node[cat = 'governance']", style: { "border-color": C.governance } },
+		{ selector: "node[cat = 'asset']", style: { "border-color": C.asset } },
+		{ selector: "node[cat = 'business']", style: { "border-color": C.business } },
+		/* Golden records (instance level): filled circles with the code and name underneath. */
+		{ selector: "node[cat ^= 'rec-']", style: { "shape": "ellipse", "width": 26, "height": 26, "padding": 0, "min-width": 26, "border-width": 2,
+			"text-valign": "bottom", "text-margin-y": 5, "text-wrap": "wrap", "text-max-width": 120, "font-size": 10, "color": "#374151",
+			"text-background-color": C.canvas, "text-background-opacity": 0.85, "text-background-padding": 1 } },
+		{ selector: "node[cat = 'rec-customer']", style: { "background-color": "#60a5fa", "border-color": "#3b82f6" } },
+		{ selector: "node[cat = 'rec-vendor']", style: { "background-color": "#f5a470", "border-color": "#e8955a" } },
+		{ selector: "node[cat = 'rec-product']", style: { "background-color": "#5fc7a0", "border-color": "#1d9e75" } },
+		{ selector: "node[?hit]", style: { "border-width": 3, "border-color": C.sel } },
+		{ selector: "node[?draft]", style: { "border-style": "dashed", "border-color": C.draft } },
+		{ selector: "node:selected", style: { "border-width": 3, "border-color": C.sel, "background-color": "#eff6ff", "font-weight": "bold" } },
+		{ selector: "node[cat ^= 'rec-']:selected", style: { "background-color": "#2563eb" } },
 		{ selector: "edge", style: {
-			"width": 1, "line-color": "#b4bcc4", "curve-style": "bezier", "target-arrow-shape": "triangle",
-			"target-arrow-color": "#b4bcc4", "arrow-scale": 0.8, "label": "data(label)", "font-family": FONT, "font-size": 9,
-			"color": "#6a6d70", "text-rotation": "autorotate", "text-background-color": "#ffffff", "text-background-opacity": 0.85,
-			"text-background-padding": 1, "control-point-step-size": 36, "overlay-opacity": 0, "loop-sweep": -40 } },
-		{ selector: "edge[kind = 'type']", style: { "line-color": "#7fa7d4", "target-arrow-color": "#7fa7d4", "width": 1.25 } },
-		{ selector: "edge[kind = 'system']", style: { "line-style": "dotted", "line-color": "#8a9aaa", "target-arrow-color": "#8a9aaa" } },
-		{ selector: "edge[kind = 'subclass']", style: { "line-style": "dashed", "target-arrow-shape": "triangle", "target-arrow-fill": "hollow", "line-color": "#c3c9cf", "target-arrow-color": "#9aa3ab", "label": "" } },
-		/* Grouped parallel relationships: one thicker line with a count; no arrow when they run both ways. */
-		{ selector: "edge[kind = 'bundle']", style: { "width": 2.5, "line-color": "#7fa7d4", "target-arrow-color": "#7fa7d4", "color": "#0a6ed1",
-			"font-size": 10, "font-weight": "bold", "text-rotation": "none", "text-background-color": "#eef5fc", "text-background-opacity": 1, "text-background-padding": 2,
-			"text-background-shape": "roundrectangle", "text-border-width": 1, "text-border-color": "#b9d4ef", "text-border-opacity": 1 } },
+			"width": 1.5, "line-color": C.type, "curve-style": "bezier", "control-point-step-size": 30, "target-arrow-shape": "triangle",
+			"target-arrow-color": C.type, "arrow-scale": 0.9, "source-distance-from-node": 2, "target-distance-from-node": 2,
+			"label": "data(label)", "font-family": FONT, "font-size": 9, "color": C.type, "text-rotation": "autorotate",
+			"text-background-color": C.canvas, "text-background-opacity": 0.9, "text-background-padding": 2, "overlay-opacity": 0, "loop-sweep": -40 } },
+		{ selector: "edge[kind = 'system']", style: { "line-style": "dotted", "line-color": C.system, "target-arrow-color": C.system, "color": C.system, "width": 1.25 } },
+		{ selector: "edge[kind = 'subclass']", style: { "line-style": "dashed", "line-dash-pattern": [6, 4], "line-color": C.subclass, "target-arrow-color": C.subclass,
+			"target-arrow-shape": "triangle-backcurve", "label": "" } },
+		/* Grouped parallel relationships: one thicker line with a count pill; no arrow when they run both ways. */
+		{ selector: "edge[kind = 'bundle']", style: { "width": 2.5, "color": "#0f6e54", "font-size": 10, "font-weight": "bold", "text-rotation": "none",
+			"text-background-color": "#e7f6f0", "text-background-opacity": 1, "text-background-padding": 3, "text-background-shape": "roundrectangle",
+			"text-border-width": 1, "text-border-color": "#9fd8c3", "text-border-opacity": 1 } },
 		{ selector: "edge[kind = 'bundle'][?mixed]", style: { "target-arrow-shape": "none" } },
-		{ selector: "edge[?draft]", style: { "line-color": "#e9730c", "target-arrow-color": "#e9730c" } },
-		{ selector: "edge:selected", style: { "width": 2.5, "line-color": "#0a6ed1", "target-arrow-color": "#0a6ed1", "color": "#0a6ed1", "font-weight": "bold" } },
-		{ selector: ".faded", style: { "opacity": 0.22 } },
+		{ selector: "edge[?draft]", style: { "line-style": "dashed", "line-color": C.draft, "target-arrow-color": C.draft, "color": C.draft } },
+		{ selector: "edge:selected", style: { "width": 3, "line-color": C.sel, "target-arrow-color": C.sel, "color": C.sel, "font-weight": "bold" } },
+		{ selector: ".faded", style: { "opacity": 0.18 } },
 		{ selector: ".nolabel", style: { "label": "" } }
 	];
 
 	var LAYOUTS = {
+		hierarchy: window.cytoscapeDagre ? { name: "dagre", rankDir: "TB", nodeSep: 26, rankSep: 64, edgeSep: 12, padding: 30, animate: false, nodeDimensionsIncludeLabels: true }
+			: { name: "breadthfirst", directed: true, spacingFactor: 1.05, padding: 30, animate: false },
 		force: { name: "cose", animate: false, randomize: false, nodeRepulsion: function () { return 160000; }, idealEdgeLength: function () { return 90; },
 			edgeElasticity: function () { return 100; }, nodeOverlap: 30, gravity: 20, nestingFactor: 1.2, numIter: 2500, padding: 30, componentSpacing: 50 },
-		hierarchy: { name: "breadthfirst", directed: true, spacingFactor: 1.05, padding: 30, animate: false },
 		circle: { name: "concentric", padding: 30, animate: false, minNodeSpacing: 34,
 			concentric: function (n) { return n.degree(); }, levelWidth: function () { return 3; } }
 	};
@@ -69,14 +80,16 @@ sap.ui.define([
 		metadata: {
 			properties: {
 				elements: { type: "object" },
-				layout: { type: "string", defaultValue: "force" },
+				layout: { type: "string", defaultValue: "hierarchy" },
 				edgeLabels: { type: "boolean", defaultValue: true },
 				height: { type: "sap.ui.core.CSSSize", defaultValue: "100%" },
 				ariaLabel: { type: "string", defaultValue: "" }
 			},
 			events: {
 				/* kind: "node" | "edge" | "" (background tap clears the selection) */
-				select: { parameters: { kind: { type: "string" }, id: { type: "string" } } }
+				select: { parameters: { kind: { type: "string" }, id: { type: "string" } } },
+				/* The zoom level changed (wheel, pinch, fit, buttons); drives the zoom slider. */
+				viewport: { parameters: { zoom: { type: "float" } } }
 			}
 		},
 
@@ -129,9 +142,10 @@ sap.ui.define([
 				if (cy.zoom() > MAX_FIT) { cy.zoom(MAX_FIT); cy.center(hood); }
 			} else if (bCenter) { cy.animate({ center: { eles: el }, duration: 250 }); }
 		},
-		zoomBy: function (f) {
+		zoomBy: function (f) { var cy = this._cy; if (cy) { this.zoomTo(cy.zoom() * f); } },
+		zoomTo: function (z) {
 			var cy = this._cy; if (!cy) { return; }
-			cy.zoom({ level: cy.zoom() * f, renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } });
+			cy.zoom({ level: Math.max(cy.minZoom(), Math.min(cy.maxZoom(), z)), renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } });
 		},
 		/* Fit the whole graph, but never below a zoom where labels stay legible; centre instead. */
 		/* Lay the current elements out again (used when the record filter changes the node set). */
@@ -170,6 +184,12 @@ sap.ui.define([
 				this.fireSelect({ kind: el.isNode() ? "node" : "edge", id: el.id() });
 			}.bind(this));
 			this._cy.on("dragfree", "node", function (e) { this._positions[e.target.id()] = Object.assign({}, e.target.position()); }.bind(this));
+			this._cy.on("zoom", function () { this.fireViewport({ zoom: this._cy.zoom() }); }.bind(this));
+			// Count pills on concept cards (records of that concept), kept in a DOM layer above the canvas.
+			this._badgeLayer = document.createElement("div");
+			this._badgeLayer.className = "repoioGraphBadges";
+			oDom.appendChild(this._badgeLayer);
+			this._cy.on("render", this._queueBadges.bind(this));
 			this._load(true);
 			this._resizeId = ResizeHandler.register(this, function () { if (this._cy) { this._cy.resize(); } }.bind(this));
 		},
@@ -204,6 +224,24 @@ sap.ui.define([
 			if (this._pendingSelect !== undefined) { this.selectElement(this._pendingSelect, false); this._pendingSelect = undefined; }
 		},
 
+		_queueBadges: function () {
+			if (this._badgeFrame) { return; }
+			this._badgeFrame = window.requestAnimationFrame(function () { this._badgeFrame = null; this._drawBadges(); }.bind(this));
+		},
+		_drawBadges: function () {
+			var cy = this._cy, layer = this._badgeLayer; if (!cy || !layer) { return; }
+			var html = [], rtl = document.documentElement.dir === "rtl", z = cy.zoom();
+			if (z >= 0.45) {
+				cy.nodes().forEach(function (n) {
+					var c = n.data("count"); if (!c || n.style("display") === "none") { return; }
+					var bb = n.renderedBoundingBox({ includeLabels: false }), x = rtl ? bb.x1 : bb.x2;
+					html.push('<span class="repoioGraphBadge' + (n.hasClass("faded") ? " repoioGraphBadgeFaded" : "") + '" style="left:' + Math.round(x) + "px;top:" +
+						Math.round(bb.y1) + 'px">' + c + "</span>");
+				});
+			}
+			layer.innerHTML = html.join("");
+		},
+
 		/* Several self-relations on one concept (Customer → Customer …) fan out instead of overlapping. */
 		_spreadLoops: function () {
 			var byNode = {};
@@ -218,6 +256,8 @@ sap.ui.define([
 		},
 
 		_dispose: function () {
+			if (this._badgeFrame) { window.cancelAnimationFrame(this._badgeFrame); this._badgeFrame = null; }
+			this._badgeLayer = null;
 			if (this._resizeId) { ResizeHandler.deregister(this._resizeId); this._resizeId = null; }
 			if (this._cy) {
 				this._positions = this._positions || {};

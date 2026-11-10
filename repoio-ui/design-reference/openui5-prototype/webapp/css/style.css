@@ -445,3 +445,49 @@
 	.repoioAttention { gap: 0.5rem; }
 	.repoioAttention .sapMGT.repoioAttnTile { width: calc(50% - 0.25rem); height: 9rem; }
 }
+/* ---- Ontology explorer: Ontology Studio spirit on Quartz Light ---- */
+.repoioOntoCanvas, .repoioGraph { background: radial-gradient(circle, #dfe3ea 1px, transparent 1px) 0 0 / 1.375rem 1.375rem, #f4f6fa; }
+.repoioOntoGraphBar { background: #fff; }
+.repoioOntoStage { flex: 1 1 auto; position: relative; display: flex; flex-direction: column; min-height: 0; }
+.repoioOntoStage .repoioOntoGraph { flex: 1 1 auto; }
+/* Floating control pill at the bottom of the canvas */
+.repoioOntoDock { position: absolute; bottom: 0.875rem; left: 50%; transform: translateX(-50%); z-index: 2; gap: 0.125rem; padding: 0.25rem 0.625rem;
+	background: #fff; border: 1px solid #e3e6ec; border-radius: 0.875rem; box-shadow: 0 4px 14px rgba(17, 24, 39, 0.08); white-space: nowrap; }
+.repoioOntoDockSep { width: 1px; height: 1.25rem; background: #e5e7eb; margin: 0 0.25rem; }
+.repoioOntoDock .repoioOntoDockSeg .sapMSegBBtn { min-width: 2rem; }
+.repoioOntoDock .repoioOntoZoom { padding: 0 0.25rem; }
+.repoioOntoZoomPct.sapMText { font-family: "72Mono", "JetBrains Mono", Consolas, monospace; font-size: 0.75rem; color: #6b7280; min-width: 2.5rem; text-align: end; }
+/* Record-count pills on concept cards */
+.repoioGraphBadges { position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+.repoioGraphBadge { position: absolute; transform: translate(-55%, -55%); min-width: 1.125rem; height: 1.125rem; padding: 0 0.3rem; box-sizing: border-box;
+	border-radius: 0.5625rem; background: #3b82f6; color: #fff; font-size: 0.6875rem; font-weight: 600; line-height: 1.125rem; text-align: center;
+	box-shadow: 0 0 0 2px #f4f6fa; }
+[dir="rtl"] .repoioGraphBadge { transform: translate(-45%, -55%); }
+.repoioGraphBadgeFaded { opacity: 0.25; }
+/* Concept tree: record counts as blue pills */
+.repoioOntoTree .sapMLIBCounter { background: #e8f0fe; color: #2563eb; border-radius: 0.625rem; padding: 0 0.4rem; min-width: 1rem; text-align: center;
+	font-size: 0.6875rem; font-weight: 600; line-height: 1.125rem; margin-inline: 0.5rem; }
+/* Status bar */
+.repoioOntoStatus { flex: none; height: 1.75rem; padding: 0 1rem; gap: 1rem; border-top: 1px solid #e5e7eb; background: #fafbfc; justify-content: space-between; }
+.repoioOntoStatusEnd { gap: 1rem; }
+.repoioOntoStatus .repoioOntoStatusText.sapMText, .repoioOntoStatus .repoioOntoStatusCheck.sapMLnk {
+	font-family: "72Mono", "JetBrains Mono", Consolas, monospace; font-size: 0.6875rem; color: #6b7280; }
+.repoioOntoStatus .repoioOntoStatusCheck.sapMLnk { color: #1d9e75; }
+/* Legend keys follow the canvas */
+.repoioOntoLegend { background: #fff; }
+.repoioDot { border-radius: 0.25rem; width: 1rem; height: 0.625rem; background: #fff; border-width: 2px; border-style: solid; }
+.repoioDotMaster { background: #fff; border-color: #e8955a; }
+.repoioDotAbstract { background: #fff; border: 2px dashed #8b83d6; }
+.repoioDotGov { background: #fff; border-color: #8a9aaa; }
+.repoioDotAsset { background: #fff; border-color: #2f9e7a; }
+.repoioDotBiz { background: #fff; border-color: #c99a2e; }
+.repoioDotDraft { background: #fff; border: 2px dashed #e9730c; }
+.repoioLine, .repoioLineType { border-top: 2px solid #1d9e75; }
+.repoioLineSys { border-top: 2px dotted #5b8fd6; }
+.repoioLineSub { border-top: 2px dashed #7f77dd; }
+.repoioLine.repoioLineBundle { border-top: 3px solid #1d9e75; }
+.repoioSqCus, .repoioSqVen, .repoioSqPro { border-radius: 50%; }
+.repoioSqCus { background: #60a5fa; border-color: #3b82f6; }
+.repoioSqVen { background: #f5a470; border-color: #e8955a; }
+.repoioSqPro { background: #5fc7a0; border-color: #1d9e75; }
+.repoioLine.repoioLinePending { border-top: 2px dashed #e9730c; }

@@ -39,7 +39,7 @@
 					<ScrollContainer vertical="true" horizontal="false" class="repoioOntoSideScroll" visible="{= ${view>/onto/tab} === 'concepts' }">
 						<Tree id="conceptTree" items="{path: 'view>/onto/tree', parameters: {arrayNames: ['nodes']}}" mode="SingleSelectMaster"
 							selectionChange=".onTreeSelect" noDataText="{i18n>onto.noMatch}" class="repoioOntoTree">
-							<StandardTreeItem title="{view>title}" icon="{view>icon}" tooltip="{view>tip}" app:kind="{view>kind}" app:ref="{view>ref}"
+							<StandardTreeItem title="{view>title}" icon="{view>icon}" tooltip="{view>tip}" app:kind="{view>kind}" app:ref="{view>ref}" counter="{view>count}"
 								highlight="{= ${view>draft} ? 'Warning' : 'None' }"/>
 						</Tree>
 					</ScrollContainer>
@@ -94,16 +94,6 @@
 							visible="{= ${view>/onto/mode} === 'records' }">
 							<layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData>
 						</ToggleButton>
-						<ToolbarSeparator/>
-						<Select selectedKey="{view>/onto/layout}" change=".onLayout" width="8rem" tooltip="{i18n>onto.layout}">
-							<core:Item key="force" text="{i18n>onto.layout.force}"/>
-							<core:Item key="hierarchy" text="{i18n>onto.layout.hierarchy}"/>
-							<core:Item key="circle" text="{i18n>onto.layout.circle}"/>
-						</Select>
-						<ToggleButton icon="sap-icon://text" pressed="{view>/onto/edgeLabels}" tooltip="{i18n>onto.edgeLabels}" type="Transparent"/>
-						<Button icon="sap-icon://zoom-in" type="Transparent" tooltip="{i18n>onto.zoomIn}" press=".onZoomIn"><layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData></Button>
-						<Button icon="sap-icon://zoom-out" type="Transparent" tooltip="{i18n>onto.zoomOut}" press=".onZoomOut"><layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData></Button>
-						<Button icon="sap-icon://popup-window" type="Transparent" tooltip="{i18n>onto.fit}" press=".onFit"><layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData></Button>
 						<ToggleButton icon="{= ${view>/onto/full} ? 'sap-icon://exit-full-screen' : 'sap-icon://full-screen' }" pressed="{view>/onto/full}"
 							tooltip="{i18n>onto.focus}" type="Transparent"/>
 					</OverflowToolbar>
@@ -112,8 +102,30 @@
 						<Text text="{view>/onto/rec/crumb}" class="repoioOntoCrumbText"/>
 						<ObjectNumber number="{view>/onto/rec/count}" unit="{i18n>onto.rec.links}" class="repoioOntoCrumbCount"/>
 					</HBox>
-					<rc:OntologyGraph id="graph" elements="{view>/onto/graph}" layout="{view>/onto/layout}" edgeLabels="{view>/onto/edgeLabels}"
-						select=".onGraphSelect" ariaLabel="{i18n>onto.graphAria}" class="repoioOntoGraph"/>
+					<!-- Canvas with floating controls (Ontology Studio style): fit, layout, labels and zoom in one pill at the bottom. -->
+					<VBox class="repoioOntoStage" renderType="Bare">
+						<rc:OntologyGraph id="graph" elements="{view>/onto/graph}" layout="{view>/onto/layout}" edgeLabels="{view>/onto/edgeLabels}"
+							select=".onGraphSelect" viewport=".onViewport" ariaLabel="{i18n>onto.graphAria}" class="repoioOntoGraph"/>
+						<HBox class="repoioOntoDock" renderType="Bare" alignItems="Center">
+							<Button icon="sap-icon://popup-window" type="Transparent" tooltip="{i18n>onto.fit}" press=".onFit"/>
+							<HBox renderType="Bare" class="repoioOntoDockSep"/>
+							<SegmentedButton selectedKey="{path: 'view>/onto/layout', mode: 'OneWay'}" selectionChange=".onLayoutKey" class="repoioOntoDockSeg">
+								<items>
+									<SegmentedButtonItem key="hierarchy" icon="sap-icon://org-chart" tooltip="{i18n>onto.layout.hierarchy}"/>
+									<SegmentedButtonItem key="force" icon="sap-icon://overview-chart" tooltip="{i18n>onto.layout.force}"/>
+									<SegmentedButtonItem key="circle" icon="sap-icon://circle-task-2" tooltip="{i18n>onto.layout.circle}"/>
+								</items>
+							</SegmentedButton>
+							<ToggleButton icon="sap-icon://text" pressed="{view>/onto/edgeLabels}" tooltip="{i18n>onto.edgeLabels}" type="Transparent"/>
+							<HBox renderType="Bare" class="repoioOntoDockSep"/>
+							<Button icon="sap-icon://less" type="Transparent" tooltip="{i18n>onto.zoomOut}" press=".onZoomOut"/>
+							<Slider value="{path: 'view>/onto/zoom', mode: 'OneWay'}" min="25" max="300" step="5" width="7rem" liveChange=".onZoomSlider"
+								class="repoioOntoZoom" ariaLabelledBy="zoomLabel"/>
+							<Button icon="sap-icon://add" type="Transparent" tooltip="{i18n>onto.zoomIn}" press=".onZoomIn"/>
+							<Text text="{view>/onto/zoom}%" class="repoioOntoZoomPct"/>
+							<core:InvisibleText id="zoomLabel" text="{i18n>onto.zoom}"/>
+						</HBox>
+					</VBox>
 					<HBox class="repoioOntoLegend" renderType="Bare" wrap="Wrap" visible="{= ${view>/onto/mode} === 'records' }">
 						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioSq repoioSqCus"/><Text text="{i18n>onto.rec.legCustomer}"/></HBox>
 						<HBox renderType="Bare" class="repoioLegItem"><HBox renderType="Bare" class="repoioSq repoioSqVen"/><Text text="{i18n>onto.rec.legVendor}"/></HBox>
@@ -168,7 +180,7 @@
 				<!-- Right: details of the selected concept or relationship -->
 				<VBox class="repoioOntoDetail" renderType="Bare" visible="{= !!${view>/onto/sel/kind} }">
 					<HBox class="repoioOntoDetailHead" renderType="Bare" alignItems="Center">
-						<core:Icon src="{= ${view>/onto/sel/kind} === 'node' ? 'sap-icon://circle-task' : ${view>/onto/sel/kind} === 'record' ? 'sap-icon://customer' : 'sap-icon://chain-link' }" color="#ffffff" decorative="true"/>
+						<core:Icon src="{= ${view>/onto/sel/kind} === 'node' ? 'sap-icon://dimension' : ${view>/onto/sel/kind} === 'record' ? 'sap-icon://customer' : 'sap-icon://chain-link' }" color="#ffffff" decorative="true"/>
 						<Text text="{= ${view>/onto/sel/kind} === 'node' ? ${i18n>onto.concept} : ${view>/onto/sel/kind} === 'record' ? ${i18n>onto.rec.golden} : ${view>/onto/sel/kind} === 'link' ? ${i18n>onto.rec.link} : ${i18n>onto.relationship} }" class="repoioOntoDetailKind"/>
 						<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>common.close}" press=".onCloseDetail" class="repoioOntoDetailClose"/>
 					</HBox>
@@ -297,6 +309,15 @@
 						</VBox>
 					</ScrollContainer>
 				</VBox>
+			</HBox>
+			<!-- Status bar (Ontology Studio style): model size, Turtle triples, and the checks result. -->
+			<HBox class="repoioOntoStatus" renderType="Bare" alignItems="Center">
+				<Text text="{view>/onto/stats/text}" class="repoioOntoStatusText"/>
+				<HBox renderType="Bare" class="repoioOntoStatusEnd" alignItems="Center">
+					<Link text="{= ${view>/onto/stats/issues} ? '⚠ ' + ${view>/onto/stats/check} : '● ' + ${view>/onto/stats/check} }" press=".onValidate"
+						class="repoioOntoStatusCheck"/>
+					<Text text="{view>/onto/stats/triplesText}" class="repoioOntoStatusText"/>
+				</HBox>
 			</HBox>
 		</VBox>
 	</Page>
