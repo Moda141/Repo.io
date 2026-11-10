@@ -71,6 +71,10 @@
 			"home": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/home.json"
+			},
+			"runs": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/runs.json"
 			}
 		},
 		"resources": {
@@ -120,6 +124,16 @@
 					"target": "workflow"
 				},
 				{
+					"name": "jobs",
+					"pattern": "jobs/runs",
+					"target": "jobs"
+				},
+				{
+					"name": "jobRun",
+					"pattern": "jobs/runs/{runId}",
+					"target": "jobRun"
+				},
+				{
 					"name": "page",
 					"pattern": "page/{key}",
 					"target": "placeholder"
@@ -155,6 +169,16 @@
 					"id": "connections",
 					"name": "Connections",
 					"level": 1
+				},
+				"jobs": {
+					"id": "jobs",
+					"name": "JobRuns",
+					"level": 2
+				},
+				"jobRun": {
+					"id": "jobRun",
+					"name": "JobRun",
+					"level": 3
 				}
 			}
 		}

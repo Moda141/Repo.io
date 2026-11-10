@@ -491,3 +491,72 @@
 .repoioSqVen { background: #f5a470; border-color: #e8955a; }
 .repoioSqPro { background: #5fc7a0; border-color: #1d9e75; }
 .repoioLine.repoioLinePending { border-top: 2px dashed #e9730c; }
+
+/* Dense tables: smaller values (Connections, job runs). Headers keep the theme size. */
+.repoioDenseTable .sapMListTblCell .sapMText,
+.repoioDenseTable .sapMListTblCell .sapMLnk,
+.repoioDenseTable .sapMListTblCell .sapMObjStatusText,
+.repoioDenseTable .sapMListTblCell .sapMLabel { font-size: 0.8125rem; }
+.repoioDenseTable .sapMListTblCell .sapMObjStatusIcon .sapUiIcon { font-size: 0.8125rem; }
+.repoioDenseTable .sapMListTblCell .repoioMono.sapMText,
+.repoioDenseTable .sapMListTblCell .repoioMono .sapMText { font-size: 0.75rem; }
+.repoioMonoLink.sapMLnk { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 0.75rem; direction: ltr; unicode-bidi: isolate; }
+
+/* Job runs list (J10, Databricks "Runs" tab). */
+.repoioJrFilters { gap: 0.5rem 1rem; }
+.repoioJrFilters .sapMLabel { font-size: 0.75rem; }
+.repoioJrClear { margin-bottom: 0.5rem; }
+.repoioJrOverview { gap: 1rem; padding-bottom: 1rem; }
+.repoioJrPanel { background: #fff; border-radius: 0.5rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.06); padding: 0.75rem 1rem 0.5rem; }
+.repoioJrChartPanel { flex: 2 1 30rem; min-width: 0; }
+.repoioJrTopPanel { flex: 1 1 20rem; min-width: 0; }
+.repoioJrTop.sapMList { margin-top: 0.25rem; }
+.repoioJrTop .sapMListTblHeaderCell { background: transparent; }
+.repoioJrHint.sapMText { font-size: 0.75rem; color: #6a6d70; }
+.repoioJrTech.sapMText { font-size: 0.6875rem !important; color: #6a6d70; font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; direction: ltr; unicode-bidi: isolate; }
+.repoioJrKindIcon { margin-inline-end: 0.375rem; color: #6a6d70; font-size: 0.875rem; }
+.repoioJrOverdue { margin-inline-start: 0.375rem; }
+.repoioJrParams.sapMText { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 0.6875rem !important; color: #6a6d70; direction: ltr; unicode-bidi: isolate; }
+.repoioJrBucket.sapMBtn .sapMBtnInner { border-radius: 1rem; background: #eaf1fa; border-color: #c9dbf0; }
+
+/* Run details (J10, Datasphere Data Integration Monitor). */
+.repoioJdSplit { background: #f7f7f7; }
+.repoioJdLeft, .repoioJdRight { display: flex; flex-direction: column; height: 100%; background: #fff; }
+.repoioJdRight { background: #f7f7f7; }
+.repoioJdBar.sapMTB { flex: none; background: #fff; border-bottom: 1px solid #e5e5e5; height: 2.75rem; }
+.repoioJdLeftScroll, .repoioJdRightScroll { flex: 1 1 0; min-height: 0; height: auto !important; }
+.repoioJdFacts { padding: 0.75rem 1rem; border-bottom: 1px solid #eee; }
+.repoioJdFacts .sapMLabel { font-size: 0.75rem; color: #6a6d70; margin-top: 0.5rem; }
+.repoioJdFacts .sapMText { font-size: 0.8125rem; }
+.repoioJdFacts > .sapMTitle { margin-bottom: 0.125rem; }
+.repoioJdSub.sapMText { color: #6a6d70; font-size: 0.75rem !important; }
+.repoioJdBig .sapMObjStatusText { font-size: 0.9375rem; font-weight: bold; }
+.repoioJdRuns { padding: 0.5rem 0.5rem 1rem; }
+.repoioJdMiniLbl.sapMLabel { font-size: 0.75rem; color: #6a6d70; padding-inline-start: 0.5rem; }
+.repoioJdRunTable .sapMListTblHeaderCell { background: #fafafa; }
+.repoioJdHead { gap: 0.75rem 2rem; padding: 0.875rem 1.25rem; background: #fff; border-bottom: 1px solid #e5e5e5; }
+.repoioJdFact .sapMLabel { font-size: 0.75rem; color: #6a6d70; }
+.repoioJdFact .sapMText { font-size: 0.8125rem; }
+.repoioJdStrip.sapMMsgStrip { margin: 0.75rem 1rem 0; }
+.repoioJdSection { margin: 0.75rem 1rem 0; padding: 0.625rem 0.75rem; background: #fff; border-radius: 0.5rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.06); }
+.repoioJdTasks { gap: 0.25rem 0; padding-top: 0.5rem; }
+.repoioJdArrow { color: #b4bac0; margin: 0 0.25rem; font-size: 0.75rem; }
+html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
+.repoioJdTask.sapMBtn .sapMBtnInner { border-radius: 1rem; font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 0.75rem; height: 1.75rem; }
+.repoioJdTask.sapMBtn .sapMBtnInner .sapMBtnContent bdi { direction: ltr; unicode-bidi: isolate; }
+.repoioJdTask[data-st="succeeded"] .sapMBtnInner { background: #f1f8f3; border-color: #a8d5b6; }
+.repoioJdTask[data-st="succeeded"] .sapMBtnIcon { color: #3c8d57; }
+.repoioJdTask[data-st="failed"] .sapMBtnInner, .repoioJdTask[data-st="upstreamFailed"] .sapMBtnInner { background: #fdf1f1; border-color: #eab3b3; }
+.repoioJdTask[data-st="failed"] .sapMBtnIcon, .repoioJdTask[data-st="upstreamFailed"] .sapMBtnIcon { color: #c0504d; }
+.repoioJdTask[data-st="running"] .sapMBtnInner { background: #eef4fb; border-color: #a9c7ea; }
+.repoioJdTask[data-st="running"] .sapMBtnIcon { color: #2f6db5; }
+.repoioJdTask[data-st="pending"] .sapMBtnInner, .repoioJdTask[data-st="skipped"] .sapMBtnInner, .repoioJdTask[data-st="canceled"] .sapMBtnInner { background: #f5f6f7; border-style: dashed; }
+.repoioJdTabs { width: calc(100% - 2rem) !important; margin: 0.75rem 1rem 1rem; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 0 0 1px rgba(0,0,0,0.06); background: #fff; }
+.repoioJdTabs .sapMITBContent { background: #fff; }
+.repoioJdMetrics { padding: 0.75rem 1rem 1rem; }
+.repoioJdMetrics .sapMTitle[aria-level="4"], .repoioJdMetrics h4.sapMTitle { font-size: 0.875rem; margin-bottom: 0.25rem; }
+.repoioJdMetrics .sapMLabel { font-size: 0.75rem; color: #6a6d70; }
+.repoioJdMetrics .sapMText { font-size: 0.8125rem; }
+.repoioJdBox.sapMText { display: inline-block; border: 1px solid #d9d9d9; border-radius: 0.25rem; padding: 0 0.375rem; }
+.repoioJdDetail.sapMText { font-size: 0.75rem !important; padding: 1rem; display: block; text-align: left; background: #fafafa; }
+

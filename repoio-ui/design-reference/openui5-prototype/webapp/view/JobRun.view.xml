@@ -1,0 +1,274 @@
+<mvc:View controllerName="repoio.proto.controller.JobRun"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:rc="repoio.proto.control"
+	height="100%">
+	<!-- J10: run details, laid out like the SAP Datasphere Data Integration Monitor: the job and its
+	     runs on the left, the selected run on the right (header facts, tasks, objects, messages / metrics /
+	     data quality). Airflow-orchestrated runs link to the DAG run and to each task in Airflow. -->
+	<l:Splitter id="jrSplit" height="100%" class="repoioJdSplit">
+		<VBox id="jdLeft" class="repoioJdLeft" height="100%" renderType="Bare">
+			<layoutData><l:SplitterLayoutData size="22rem" minSize="240"/></layoutData>
+			<OverflowToolbar class="repoioJdBar">
+				<Button icon="sap-icon://nav-back" type="Transparent" tooltip="{i18n>jr.a.back}" press=".onBack"/>
+				<Title text="{view>/jd/job/title}" level="H2" wrapping="false" tooltip="{view>/jd/job/id}"/>
+				<ToolbarSpacer/>
+				<MenuButton text="{i18n>jr.a.run}" type="Transparent">
+					<menu>
+						<Menu>
+							<MenuItem text="{i18n>jr.a.runNow}" icon="sap-icon://media-play" press=".onRunNow" enabled="{= ${view>/jd/job/kind} !== 'stream' }"/>
+							<MenuItem text="{i18n>jr.a.replay}" icon="sap-icon://replay" press=".onReplay" enabled="{view>/jd/run/finished}"/>
+							<MenuItem text="{i18n>jr.a.stop}" icon="sap-icon://stop" press=".onStop" enabled="{= !${view>/jd/run/finished} }"/>
+						</Menu>
+					</menu>
+				</MenuButton>
+				<MenuButton text="{i18n>jr.a.schedule}" type="Transparent" enabled="{= !!${view>/jd/job/cron} }">
+					<menu>
+						<Menu>
+							<MenuItem text="{i18n>jr.a.editSchedule}" icon="sap-icon://edit" press=".onEditSchedule"/>
+							<MenuItem text="{i18n>jr.a.pauseSchedule}" icon="sap-icon://pause" press=".onPauseSchedule"/>
+						</Menu>
+					</menu>
+				</MenuButton>
+				<Button icon="sap-icon://refresh" type="Transparent" tooltip="{i18n>jr.a.refresh}" press=".onRefresh"/>
+				<Button icon="sap-icon://popup-window" type="Transparent" tooltip="{i18n>jr.a.airflow}" visible="{view>/jd/job/airflow}" press=".onAirflow"/>
+			</OverflowToolbar>
+			<ScrollContainer vertical="true" height="100%" class="repoioJdLeftScroll">
+				<VBox class="repoioJdFacts">
+					<Label text="{i18n>jr.d.status}"/>
+					<ObjectStatus text="{view>/jd/job/statusText}" state="{view>/jd/job/statusState}" class="repoioJdBig"/>
+					<HBox class="repoioJdGap"/>
+					<Label text="{i18n>jr.d.delta}" visible="{= !!${view>/jd/job/delta} }"/>
+					<Text text="{view>/jd/job/delta}" visible="{= !!${view>/jd/job/delta} }" textDirection="LTR"/>
+					<Label text="{i18n>jr.d.source}"/>
+					<HBox alignItems="Center" wrap="Wrap">
+						<Text text="{view>/jd/job/source}"/>
+						<Link text="{view>/jd/job/conn}" visible="{= !!${view>/jd/job/conn} }" press=".onOpenConnection" class="sapUiTinyMarginBegin repoioMonoLink"/>
+					</HBox>
+					<Text text="{view>/jd/job/srcObj}" class="repoioMono repoioJdSub"/>
+					<Label text="{i18n>jr.d.target}"/>
+					<Text text="{view>/jd/job/target}" class="repoioMono"/>
+					<Label text="{i18n>jr.d.orch}"/>
+					<Text text="{view>/jd/job/orchText}"/>
+					<Label text="{i18n>jr.d.owner}"/>
+					<HBox alignItems="Center"><rc:PersonLink name="{view>/jd/job/owner}"/><Text text="{view>/jd/job/ownerText}" class="sapUiTinyMarginBegin"/></HBox>
+				</VBox>
+				<VBox class="repoioJdFacts repoioJdSched">
+					<Title text="{i18n>jr.d.schedule}" level="H3"/>
+					<Label text="{i18n>jr.d.freq}"/>
+					<Text text="{view>/jd/job/freq}"/>
+					<Label text="{i18n>jr.d.latest}"/>
+					<Text text="{view>/jd/job/latest}"/>
+					<Label text="{i18n>jr.d.next}"/>
+					<Text text="{view>/jd/job/next}"/>
+				</VBox>
+				<VBox class="repoioJdRuns">
+					<Label text="{i18n>jr.d.durations}" class="repoioJdMiniLbl"/>
+					<rc:EChart id="jdBars" height="4.5rem" ariaLabel="{i18n>jr.d.durations}" select=".onBarSelect"/>
+					<Table id="jdRunList" items="{view>/jd/runs}" mode="SingleSelectMaster" selectionChange=".onRunSelect" class="repoioDenseTable repoioJdRunTable">
+						<headerToolbar>
+							<OverflowToolbar style="Clear">
+								<Title text="{i18n>jr.d.runs}" level="H3"/>
+								<ToolbarSpacer/>
+								<Button icon="sap-icon://sort" type="Transparent" tooltip="{= ${view>/jd/asc} ? ${i18n>jr.d.sortDesc} : ${i18n>jr.d.sortAsc} }" press=".onSortRuns"/>
+								<MenuButton icon="sap-icon://filter" type="Transparent" tooltip="{i18n>jr.f.status}" buttonMode="Regular">
+									<menu>
+										<Menu itemSelected=".onFilterRuns">
+											<MenuItem key="" text="{i18n>common.all}"/>
+											<MenuItem key="failed" text="{i18n>jr.st.failed}"/>
+											<MenuItem key="succeeded" text="{i18n>jr.st.succeeded}"/>
+											<MenuItem key="running" text="{i18n>jr.st.running}"/>
+										</Menu>
+									</menu>
+								</MenuButton>
+							</OverflowToolbar>
+						</headerToolbar>
+						<columns>
+							<Column><Text text="{i18n>jr.col.start}"/></Column>
+							<Column width="45%"><Text text="{i18n>jr.col.status}"/></Column>
+						</columns>
+						<items>
+							<ColumnListItem selected="{view>sel}" type="Active">
+								<Text text="{view>startText}" wrapping="false"/>
+								<ObjectStatus text="{view>statusText}" state="{view>statusState}"/>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</VBox>
+			</ScrollContainer>
+		</VBox>
+
+		<VBox class="repoioJdRight" height="100%" renderType="Bare">
+			<layoutData><l:SplitterLayoutData size="auto"/></layoutData>
+			<OverflowToolbar class="repoioJdBar">
+				<Title text="{i18n>jr.d.runDetails}" level="H2"/>
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://download" type="Transparent" tooltip="{i18n>jr.a.download}" press=".onDownload"/>
+				<Button icon="{= ${view>/jd/full} ? 'sap-icon://exit-full-screen' : 'sap-icon://full-screen' }" type="Transparent"
+					tooltip="{= ${view>/jd/full} ? ${i18n>jr.a.exitFull} : ${i18n>jr.a.full} }" press=".onToggleFull"/>
+				<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>jr.a.close}" press=".onBack"/>
+			</OverflowToolbar>
+			<ScrollContainer vertical="true" height="100%" class="repoioJdRightScroll">
+				<FlexBox wrap="Wrap" class="repoioJdHead">
+					<VBox class="repoioJdFact">
+						<Label text="{i18n>jr.d.status}"/>
+						<ObjectStatus text="{view>/jd/run/statusText}" state="{view>/jd/run/statusState}" icon="{view>/jd/run/statusIcon}" class="repoioJdBig"/>
+					</VBox>
+					<VBox class="repoioJdFact"><Label text="{i18n>jr.d.duration}"/><Text text="{view>/jd/run/durText}"/></VBox>
+					<VBox class="repoioJdFact"><Label text="{i18n>jr.d.startDate}"/><Text text="{view>/jd/run/startText}"/></VBox>
+					<VBox class="repoioJdFact"><Label text="{i18n>jr.d.endDate}"/><Text text="{view>/jd/run/endText}"/></VBox>
+					<VBox class="repoioJdFact"><Label text="{i18n>jr.d.runBy}"/>
+						<HBox alignItems="Center"><rc:PersonLink name="{view>/jd/run/runAs}"/><Text text="{view>/jd/run/runAsText}" class="sapUiTinyMarginBegin"/></HBox>
+					</VBox>
+					<VBox class="repoioJdFact"><Label text="{i18n>jr.d.runType}"/><Text text="{view>/jd/run/runTypeText}"/></VBox>
+					<VBox class="repoioJdFact"><Label text="{i18n>jr.d.launched}"/><Text text="{view>/jd/run/launchedText}"/></VBox>
+					<VBox class="repoioJdFact"><Label text="{i18n>jr.d.runId}"/><Text text="{view>/jd/run/id}" class="repoioMono"/></VBox>
+					<VBox class="repoioJdFact" visible="{view>/jd/job/airflow}"><Label text="{i18n>jr.d.airflowRun}"/>
+						<Link text="{view>/jd/run/dagRunId}" press=".onAirflow" wrapping="true" class="repoioMonoLink"/>
+					</VBox>
+					<VBox class="repoioJdFact" visible="{= ${view>/jd/run/runType} === 'permanent' }"><Label text="{i18n>jr.d.progress}"/>
+						<Text text="100.00 (1/1)"/>
+					</VBox>
+				</FlexBox>
+				<MessageStrip text="{view>/jd/run/errorText}" type="Error" showIcon="true" visible="{= !!${view>/jd/run/errorText} }" class="repoioJdStrip"/>
+
+				<VBox class="repoioJdSection">
+					<HBox alignItems="Center" justifyContent="SpaceBetween">
+						<Title text="{i18n>jr.d.tasks}" level="H3"/>
+						<Text text="{i18n>jr.d.tasksHint}" class="repoioJrHint" visible="{view>/jd/job/airflow}"/>
+					</HBox>
+					<HBox items="{view>/jd/run/tasks}" wrap="Wrap" alignItems="Center" class="repoioJdTasks">
+						<HBox alignItems="Center" class="repoioJdTaskWrap">
+							<core:Icon src="sap-icon://navigation-right-arrow" class="repoioJdArrow" visible="{= !${view>first} }" decorative="true"/>
+							<Button text="{view>id}" icon="{view>icon}" tooltip="{view>tip}" press=".onTask" class="repoioJdTask">
+								<customData><core:CustomData key="st" value="{view>status}" writeToDom="true"/></customData>
+							</Button>
+						</HBox>
+					</HBox>
+				</VBox>
+
+				<VBox class="repoioJdSection">
+					<Table id="jdObjects" items="{view>/jd/run/objects}" mode="SingleSelectMaster" selectionChange=".onObjectSelect" class="repoioDenseTable">
+						<headerToolbar>
+							<OverflowToolbar style="Clear">
+								<Title text="{path: 'view>/jd/run/objects', formatter: '.objectsTitle'}" level="H3"/>
+							</OverflowToolbar>
+						</headerToolbar>
+						<columns>
+							<Column><Text text="{i18n>jr.d.srcObj}"/></Column>
+							<Column><Text text="{i18n>jr.d.tgtObj}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>jr.d.loadType}"/></Column>
+							<Column><Text text="{i18n>jr.col.status}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>jr.d.lastTransfer}"/></Column>
+							<Column minScreenWidth="Desktop" demandPopin="true" hAlign="End"><Text text="{i18n>jr.d.records}"/></Column>
+						</columns>
+						<items>
+							<ColumnListItem selected="{view>sel}">
+								<Text text="{view>src}" class="repoioMono" wrapping="false"/>
+								<Text text="{view>tgt}" class="repoioMono" wrapping="false"/>
+								<Text text="{view>loadText}"/>
+								<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+								<Text text="{view>lastText}"/>
+								<Text text="{view>recText}"/>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</VBox>
+
+				<IconTabBar id="jdTabs" selectedKey="{view>/jd/tab}" expandable="false" headerMode="Inline" class="repoioJdTabs" applyContentPadding="false">
+					<items>
+						<IconTabFilter key="msg" text="{path: 'view>/jd/run/messages', formatter: '.messagesTitle'}">
+							<Table items="{view>/jd/msgs}" class="repoioDenseTable" noDataText="{i18n>jr.d.noMessages}" growing="true" growingThreshold="50">
+								<headerToolbar>
+									<OverflowToolbar style="Clear">
+										<Title text="{i18n>jr.d.message}" level="H3"/>
+										<ToolbarSpacer/>
+										<SearchField width="12rem" value="{view>/jd/mq}" liveChange=".onMsgFilter" placeholder="{i18n>common.search}"/>
+										<Button icon="sap-icon://sort" type="Transparent" tooltip="{= ${view>/jd/masc} ? ${i18n>jr.d.sortDesc} : ${i18n>jr.d.sortAsc} }" press=".onMsgSort"/>
+										<Select selectedKey="{view>/jd/mcat}" change=".onMsgFilter" width="10rem">
+											<core:Item key="" text="{i18n>jr.d.allCats}"/>
+											<core:Item key="info" text="{i18n>jr.cat.info}"/>
+											<core:Item key="warning" text="{i18n>jr.cat.warning}"/>
+											<core:Item key="error" text="{i18n>jr.cat.error}"/>
+										</Select>
+									</OverflowToolbar>
+								</headerToolbar>
+								<columns>
+									<Column width="11rem"><Text text="{i18n>jr.d.timestamp}"/></Column>
+									<Column width="8rem"><Text text="{i18n>jr.d.category}"/></Column>
+									<Column><Text text="{i18n>jr.d.message}"/></Column>
+									<Column width="7rem" hAlign="End"><Text text="{i18n>jr.d.viewDetails}" class="sapUiInvisibleText"/></Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<Text text="{view>tsText}" wrapping="false"/>
+										<ObjectStatus text="{view>catText}" state="{view>catState}" icon="{view>catIcon}"/>
+										<Text text="{view>text}"/>
+										<Link text="{i18n>jr.d.viewDetails}" visible="{= !!${view>detail} }" press=".onMsgDetail"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</IconTabFilter>
+						<IconTabFilter key="metrics" text="{i18n>jr.d.metrics}">
+							<VBox class="repoioJdMetrics">
+								<Title text="{view>/jd/m/title}" level="H3" class="sapUiSmallMarginBottom"/>
+								<l:Grid defaultSpan="XL4 L4 M6 S12" vSpacing="0.5">
+									<VBox>
+										<Title text="{i18n>jr.m.duration}" level="H4"/>
+										<Label text="{view>/jd/m/durLabel}"/><Text text="{view>/jd/m/dur}"/>
+										<Label text="{i18n>jr.m.startTime}" class="sapUiSmallMarginTop"/><Text text="{view>/jd/m/start}"/>
+										<Label text="{i18n>jr.m.state}" class="sapUiSmallMarginTop"/><Text text="{view>/jd/m/state}" class="repoioJdBox"/>
+									</VBox>
+									<VBox>
+										<Title text="{i18n>jr.m.ops}" level="H4"/>
+										<Label text="{i18n>jr.m.initOps}"/><Text text="{view>/jd/m/initOps}"/>
+										<Label text="{i18n>jr.m.deltaOps}"/><Text text="{view>/jd/m/deltaOps}"/>
+										<Label text="{i18n>jr.m.endTime}" class="sapUiSmallMarginTop"/><Text text="{view>/jd/m/end}"/>
+										<Label text="{i18n>jr.m.threads}" class="sapUiSmallMarginTop"/><Text text="{view>/jd/m/threads}"/>
+									</VBox>
+									<VBox>
+										<Title text="{i18n>jr.m.parts}" level="H4"/>
+										<Label text="{i18n>jr.m.partsN}"/><Text text="{view>/jd/m/parts}"/>
+										<Label text="{i18n>jr.m.partsDone}"/><Text text="{view>/jd/m/partsDone}"/>
+										<Label text="{i18n>jr.m.partsErr}"/><ObjectStatus text="{view>/jd/m/partsErr}" state="{= ${view>/jd/m/partsErr} > 0 ? 'Error' : 'None' }"/>
+										<VBox visible="{view>/jd/m/isStream}" class="sapUiSmallMarginTop">
+											<Title text="{i18n>jr.m.stream}" level="H4"/>
+											<Label text="{i18n>jr.mt.lag}"/><Text text="{view>/jd/m/lag}"/>
+											<Label text="{i18n>jr.mt.checkpoint}"/><Text text="{view>/jd/m/checkpoint}"/>
+										</VBox>
+									</VBox>
+								</l:Grid>
+							</VBox>
+						</IconTabFilter>
+						<IconTabFilter key="dq" text="{path: 'view>/jd/run/dq', formatter: '.dqTitle'}" visible="{view>/jd/run/hasDq}">
+							<VBox class="repoioJdMetrics">
+								<MessageStrip text="{view>/jd/run/qText}" type="Warning" showIcon="true" visible="{= ${view>/jd/run/quarantined} > 0 }" class="sapUiSmallMarginBottom">
+									<link><Link text="{i18n>jr.dq.openQuarantine}" press=".onQuarantine"/></link>
+								</MessageStrip>
+								<Table items="{view>/jd/run/dq}" class="repoioDenseTable" noDataText="{i18n>jr.dq.none}">
+									<headerToolbar><OverflowToolbar style="Clear"><Title text="{i18n>jr.dq.title}" level="H3"/></OverflowToolbar></headerToolbar>
+									<columns>
+										<Column width="40%"><Text text="{i18n>jr.dq.exp}"/></Column>
+										<Column><Text text="{i18n>jr.dq.col}"/></Column>
+										<Column hAlign="End"><Text text="{i18n>jr.dq.evaluated}"/></Column>
+										<Column hAlign="End"><Text text="{i18n>jr.dq.unexpected}"/></Column>
+										<Column hAlign="End"><Text text="{i18n>jr.dq.success}"/></Column>
+										<Column><Text text="{i18n>jr.dq.result}"/></Column>
+									</columns>
+									<items>
+										<ColumnListItem>
+											<Text text="{view>exp}" class="repoioMono" wrapping="true"/>
+											<Text text="{view>col}" class="repoioMono"/>
+											<Text text="{path: 'view>evaluated', formatter: '.fmt.num'}"/>
+											<Text text="{path: 'view>unexpected', formatter: '.fmt.num'}"/>
+											<Text text="{view>pctText}"/>
+											<ObjectStatus text="{view>resText}" state="{= ${view>ok} ? 'Success' : 'Error' }" icon="{= ${view>ok} ? 'sap-icon://sys-enter-2' : 'sap-icon://error' }"/>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</VBox>
+						</IconTabFilter>
+					</items>
+				</IconTabBar>
+			</ScrollContainer>
+		</VBox>
+	</l:Splitter>
+</mvc:View>

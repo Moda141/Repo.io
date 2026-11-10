@@ -344,6 +344,13 @@ workflow → deletion blocked, deprecate instead.
    dropped silently, never blocking the whole stream.
 4. DQ suites and results are inspectable per run (Great Expectations
    results surfaced, not summarized away).
+5. The runs list filters by job, type, run-as user, time range, status,
+   run ID and error code, and shows finished runs over time and the top
+   error types. A run opens a monitor view: the job and its runs on one
+   side, the run's tasks, objects, messages and metrics on the other.
+6. Airflow-orchestrated runs (pull ingest, DQ runs, housekeeping) link
+   to the DAG run and to each task in Airflow. The link base comes from
+   the Airflow connection; Airflow applies its own access rules.
 
 *Edge cases:* DLQ growth alert leads here; replaying a batch is an
 explicit governed action with an idempotency guarantee, not a button

@@ -1,0 +1,147 @@
+<mvc:View controllerName="repoio.proto.controller.JobRuns"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- J10: job runs list, laid out like the Databricks "Runs" tab (filters, finished-runs chart,
+	     top error types, runs table with column chooser). Run details open the monitor page. -->
+	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="false" class="repoioJrPage">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading><Title text="{i18n>jr.title}" level="H1"/></f:heading>
+				<f:expandedContent><Text text="{i18n>jr.subtitle}"/></f:expandedContent>
+				<f:actions>
+					<Button icon="sap-icon://refresh" type="Transparent" tooltip="{i18n>jr.a.refresh}" press=".onRefresh"/>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader pinnable="false">
+				<FlexBox wrap="Wrap" alignItems="End" class="repoioJrFilters">
+					<VBox>
+						<Label text="{i18n>jr.f.name}" labelFor="jrName"/>
+						<SearchField id="jrName" width="14rem" value="{view>/jr/f/name}" liveChange=".onFilter" search=".onFilter"/>
+					</VBox>
+					<VBox>
+						<Label text="{i18n>jr.col.type}"/>
+						<Select selectedKey="{view>/jr/f/kind}" change=".onFilter" width="11rem">
+							<core:Item key="all" text="{i18n>jr.kind.all}"/>
+							<core:Item key="ingest" text="{i18n>jr.kind.ingest}"/>
+							<core:Item key="stream" text="{i18n>jr.kind.stream}"/>
+							<core:Item key="dq" text="{i18n>jr.kind.dq}"/>
+							<core:Item key="hk" text="{i18n>jr.kind.hk}"/>
+						</Select>
+					</VBox>
+					<VBox>
+						<Label text="{i18n>jr.f.runAs}"/>
+						<Select selectedKey="{view>/jr/f/runAs}" change=".onFilter" width="8rem">
+							<core:Item key="all" text="{i18n>jr.f.everyone}"/>
+							<core:Item key="me" text="{i18n>jr.f.me}"/>
+						</Select>
+					</VBox>
+					<VBox>
+						<Label text="{i18n>jr.f.time}"/>
+						<Select selectedKey="{view>/jr/f/range}" change=".onRange" width="9.5rem">
+							<core:Item key="24" text="{i18n>jr.f.h24}"/>
+							<core:Item key="48" text="{i18n>jr.f.h48}"/>
+							<core:Item key="168" text="{i18n>jr.f.d7}"/>
+						</Select>
+					</VBox>
+					<VBox>
+						<Label text="{i18n>jr.f.status}"/>
+						<MultiComboBox selectedKeys="{view>/jr/f/status}" selectionFinish=".onFilter" width="12rem" items="{view>/jr/statuses}">
+							<core:Item key="{view>key}" text="{view>text}"/>
+						</MultiComboBox>
+					</VBox>
+					<VBox>
+						<Label text="{i18n>jr.f.runId}"/>
+						<Input value="{view>/jr/f/runId}" liveChange=".onFilter" width="7rem" placeholder="R-5669"/>
+					</VBox>
+					<VBox>
+						<Label text="{i18n>jr.f.error}"/>
+						<Select selectedKey="{view>/jr/f/error}" change=".onFilter" width="13rem" items="{view>/jr/errorCodes}">
+							<core:Item key="{view>key}" text="{view>text}"/>
+						</Select>
+					</VBox>
+					<Link text="{i18n>jr.f.clear}" press=".onClearFilters" class="repoioJrClear"/>
+				</FlexBox>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<VBox>
+				<FlexBox wrap="Wrap" class="repoioJrOverview">
+					<VBox class="repoioJrPanel repoioJrChartPanel">
+						<HBox alignItems="Center" justifyContent="SpaceBetween">
+							<Title text="{i18n>jr.chart.title}" level="H3"/>
+							<Text text="{i18n>jr.chart.hint}" class="repoioJrHint"/>
+						</HBox>
+						<rc:EChart id="jrChart" height="10.5rem" ariaLabel="{i18n>jr.chart.title}" select=".onChartSelect"/>
+					</VBox>
+					<VBox class="repoioJrPanel repoioJrTopPanel">
+						<Title text="{i18n>jr.top.title}" level="H3"/>
+						<Table items="{view>/jr/top}" noDataText="{i18n>jr.top.none}" class="repoioDenseTable repoioJrTop">
+							<columns>
+								<Column><Text text="{i18n>jr.col.error}"/></Column>
+								<Column hAlign="End" width="3.5rem"><Text text="{i18n>jr.top.count}"/></Column>
+								<Column width="10.5rem"><Text text="{i18n>jr.top.last}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem type="Active" press=".onTopPress">
+									<Link text="{view>code}" press=".onTopPress" class="repoioMonoLink"/>
+									<Text text="{view>count}"/>
+									<Text text="{view>last}" wrapping="false"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</VBox>
+				</FlexBox>
+				<Table id="jrTable" items="{view>/jr/rows}" class="repoioDenseTable repoioJrTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar"
+					growing="true" growingThreshold="25" noDataText="{i18n>jr.noData}">
+					<headerToolbar>
+						<OverflowToolbar>
+							<Title text="{path: 'view>/jr/count', formatter: '.listTitle'}" level="H2"/>
+							<Button text="{view>/jr/bucketText}" icon="sap-icon://decline" iconFirst="false" visible="{= !!${view>/jr/bucket} }" press=".onClearBucket" class="repoioJrBucket"/>
+							<ToolbarSpacer/>
+							<Button icon="sap-icon://table-column" type="Transparent" tooltip="{i18n>jr.columns}" press=".onColumns"/>
+						</OverflowToolbar>
+					</headerToolbar>
+					<columns>
+						<Column width="10rem"><Text text="{i18n>jr.col.start}"/></Column>
+						<Column><Text text="{i18n>jr.col.job}"/></Column>
+						<Column visible="{view>/jr/cols/type}" minScreenWidth="Tablet" demandPopin="true" width="7.5rem"><Text text="{i18n>jr.col.type}"/></Column>
+						<Column visible="{view>/jr/cols/runAs}" minScreenWidth="Tablet" demandPopin="true" hAlign="Center" width="4.5rem"><Text text="{i18n>jr.col.runAs}"/></Column>
+						<Column visible="{view>/jr/cols/launched}" minScreenWidth="Desktop" demandPopin="true" width="6.5rem"><Text text="{i18n>jr.col.launched}"/></Column>
+						<Column visible="{view>/jr/cols/duration}" width="5.75rem"><Text text="{i18n>jr.col.duration}"/></Column>
+						<Column width="10rem"><Text text="{i18n>jr.col.status}"/></Column>
+						<Column visible="{view>/jr/cols/error}" minScreenWidth="Tablet" demandPopin="true" width="12rem"><Text text="{i18n>jr.col.error}"/></Column>
+						<Column visible="{view>/jr/cols/params}" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>jr.col.params}"/></Column>
+						<Column hAlign="End" width="4.5rem"><Text text="{i18n>jr.col.actions}" class="sapUiInvisibleText"/></Column>
+					</columns>
+					<items>
+						<ColumnListItem type="Active" press=".onOpenRun" highlight="{view>highlight}">
+							<Link text="{view>startText}" press=".onOpenRun" wrapping="false"/>
+							<VBox>
+								<Link text="{view>title}" press=".onOpenRun" wrapping="true"/>
+								<Text text="{view>job}" class="repoioJrTech" wrapping="false"/>
+							</VBox>
+							<HBox alignItems="Center">
+								<core:Icon src="{view>kindIcon}" class="repoioJrKindIcon" decorative="true"/>
+								<Text text="{view>kindText}"/>
+							</HBox>
+							<rc:PersonLink name="{view>runAs}"/>
+							<Text text="{view>launchedText}"/>
+							<HBox alignItems="Center">
+								<Text text="{view>durText}" wrapping="false"/>
+								<core:Icon src="sap-icon://alert" color="Critical" visible="{view>overdue}" tooltip="{view>overdueText}" class="repoioJrOverdue"/>
+							</HBox>
+							<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+							<Text text="{view>error}" class="repoioMono" wrapping="false"/>
+							<Text text="{view>paramText}" class="repoioJrParams" maxLines="2" tooltip="{view>paramText}"/>
+							<HBox justifyContent="End" alignItems="Center">
+								<Button icon="sap-icon://stop" type="Transparent" visible="{view>active}" tooltip="{i18n>jr.a.stop}" press=".onStop"/>
+								<Button icon="sap-icon://overflow" type="Transparent" tooltip="{i18n>jr.col.actions}" press=".onRowMenu"/>
+							</HBox>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</VBox>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

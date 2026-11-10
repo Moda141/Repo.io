@@ -31,10 +31,11 @@ sap.ui.define([
 					return !q || fnText(n.key).toLowerCase().indexOf(q) > -1 ||
 						(n.items || []).some(fnMatch);
 				},
+				that = this,
 				fnItem = function (n) {
 					var oItem = new NavigationListItem({
 						key: n.key, text: fnText(n.key), icon: n.icon || "",
-						expanded: !!q || n.key === "favorites",
+						expanded: !!q || n.key === "favorites" || (n.items || []).some(function (c) { return c.key === that._sSelectedKey; }),
 						selectable: !n.items
 					});
 					(n.items || []).filter(fnMatch).forEach(function (c) {
@@ -69,6 +70,7 @@ sap.ui.define([
 			else if (sKey === "domains" || sKey === "connections") { oRouter.navTo(sKey); }
 			else if (sKey === "ontologyExplorer") { oRouter.navTo("ontology"); }
 			else if (sKey === "newWorkflow") { oRouter.navTo("workflow"); }
+			else if (sKey === "dataJobs") { oRouter.navTo("jobs"); }
 			else { oRouter.navTo("page", { key: sKey }); }
 			if (this.getOwnerComponent().getModel("device").getProperty("/system/phone")) {
 				this.byId("toolPage").setSideExpanded(false);
@@ -79,9 +81,22 @@ sap.ui.define([
 			var sRoute = oEvent.getParameter("name"),
 				sKey = sRoute === "page" ? oEvent.getParameter("arguments").key :
 					sRoute === "home" ? "home" : sRoute === "connections" ? "connections" :
-					sRoute === "ontology" ? "ontologyExplorer" : sRoute === "workflow" ? "newWorkflow" : "domains";
+					sRoute === "ontology" ? "ontologyExplorer" : sRoute === "workflow" ? "newWorkflow" :
+					sRoute === "jobs" || sRoute === "jobRun" ? "dataJobs" : "domains";
 			this._sSelectedKey = sKey;
-			if (this.byId("navList").getItems().length) { this.byId("sideNavigation").setSelectedKey(sKey); }
+			if (this.byId("navList").getItems().length) { this._expandTo(sKey); this.byId("sideNavigation").setSelectedKey(sKey); }
+		},
+
+		/* A child page (e.g. Data jobs) can only be selected when its parent item is expanded. */
+		_expandTo: function (sKey) {
+			var fnWalk = function (aItems) {
+				aItems.forEach(function (it) {
+					var aSub = it.getItems ? it.getItems() : [];
+					if (it.isA("sap.tnt.NavigationListItem") && aSub.some(function (c) { return c.getKey && c.getKey() === sKey; })) { it.setExpanded(true); }
+					fnWalk(aSub);
+				});
+			};
+			fnWalk(this.byId("navList").getItems());
 		},
 
 		onToggleSide: function () {

@@ -11,7 +11,7 @@
 		<f:content>
 			<Table id="connTable" items="{path: 'view>/conn/items', sorter: {path: 'changed', descending: true}}" mode="MultiSelect"
 				selectionChange=".onSelect" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" growing="true" growingThreshold="20"
-				noDataText="{i18n>conn.noData}">
+				noDataText="{i18n>conn.noData}" class="repoioDenseTable">
 				<headerToolbar>
 					<OverflowToolbar>
 						<Title text="{i18n>nav.connections} ({view>/conn/count})" level="H2"/>

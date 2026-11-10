@@ -1,0 +1,6796 @@
+{
+ "_comment": "Illustrative sample data for the job runs prototype (J10). In the product this comes from the runs API (Airflow, Spark and push-ingest metadata). Do not copy into repoio-ui.",
+ "now": "2026-11-10 12:30:00",
+ "jobs": [
+  {
+   "id": "c4c_customer_pull",
+   "kind": "ingest",
+   "orch": "airflow",
+   "entity": "customer",
+   "title_en": "C4C customers pull",
+   "title_ar": "سحب عملاء C4C",
+   "source": "SAP Cloud for Customer",
+   "conn": "C4C_PROD",
+   "srcObj": "CustomerCollection",
+   "target": "raw.customer",
+   "topic": "raw.customer",
+   "cron": "0 */3 * * *",
+   "freq_en": "Every 3 hours",
+   "freq_ar": "كل 3 ساعات",
+   "delta": "03:00",
+   "owner": "أحمد ناصر",
+   "exp": 420,
+   "dagId": "c4c_customer_pull"
+  },
+  {
+   "id": "erp_vendor_pull",
+   "kind": "ingest",
+   "orch": "airflow",
+   "entity": "vendor",
+   "title_en": "ERP vendors pull",
+   "title_ar": "سحب موردي ERP",
+   "source": "SAP S/4HANA",
+   "conn": "S4_HANA",
+   "srcObj": "LFA1 / LFB1",
+   "target": "raw.vendor",
+   "topic": "raw.vendor",
+   "cron": "15 */4 * * *",
+   "freq_en": "Every 4 hours",
+   "freq_ar": "كل 4 ساعات",
+   "delta": "04:00",
+   "owner": "أحمد ناصر",
+   "exp": 300,
+   "dagId": "erp_vendor_pull"
+  },
+  {
+   "id": "sqlsrv_product_pull",
+   "kind": "ingest",
+   "orch": "airflow",
+   "entity": "product",
+   "title_en": "Books catalogue pull (SQL Server)",
+   "title_ar": "سحب كتالوج الكتب (SQL Server)",
+   "source": "Microsoft SQL Server",
+   "conn": "SQL_PUBLISHING",
+   "srcObj": "dbo.Titles",
+   "target": "raw.product",
+   "topic": "raw.product",
+   "cron": "30 1 * * *",
+   "freq_en": "Daily at 01:30",
+   "freq_ar": "يوميًا 01:30",
+   "delta": "24:00",
+   "owner": "كريم فوزي",
+   "exp": 900,
+   "dagId": "sqlsrv_product_pull"
+  },
+  {
+   "id": "author_sheet_push",
+   "kind": "push",
+   "orch": "fastapi",
+   "entity": "author",
+   "title_en": "Authors sheet upload",
+   "title_ar": "رفع ملف المؤلفين",
+   "source": "CSV / Excel",
+   "conn": "FILE_UPLOADS",
+   "srcObj": "authors_2026-11.xlsx",
+   "target": "raw.author",
+   "topic": "raw.author",
+   "cron": "",
+   "freq_en": "On upload",
+   "freq_ar": "عند الرفع",
+   "delta": "",
+   "owner": "كريم فوزي",
+   "exp": 60
+  },
+  {
+   "id": "mdm_customer_stream",
+   "kind": "stream",
+   "orch": "spark",
+   "entity": "customer",
+   "title_en": "Customer MDM stream",
+   "title_ar": "تدفق MDM للعملاء",
+   "source": "Kafka",
+   "conn": "",
+   "srcObj": "raw.customer",
+   "target": "golden.customer",
+   "topic": "golden.customer",
+   "cron": "",
+   "freq_en": "Continuous",
+   "freq_ar": "مستمر",
+   "delta": "00:01",
+   "owner": "سارة عادل",
+   "exp": null
+  },
+  {
+   "id": "mdm_vendor_stream",
+   "kind": "stream",
+   "orch": "spark",
+   "entity": "vendor",
+   "title_en": "Vendor MDM stream",
+   "title_ar": "تدفق MDM للموردين",
+   "source": "Kafka",
+   "conn": "",
+   "srcObj": "raw.vendor",
+   "target": "golden.vendor",
+   "topic": "golden.vendor",
+   "cron": "",
+   "freq_en": "Continuous",
+   "freq_ar": "مستمر",
+   "delta": "00:01",
+   "owner": "هالة سمير",
+   "exp": null
+  },
+  {
+   "id": "dq_nightly_suite",
+   "kind": "dq",
+   "orch": "airflow",
+   "entity": "customer",
+   "title_en": "Nightly data quality suite",
+   "title_ar": "فحص الجودة الليلي",
+   "source": "Iceberg",
+   "conn": "",
+   "srcObj": "staged.*",
+   "target": "dq.results",
+   "topic": "",
+   "cron": "0 2 * * *",
+   "freq_en": "Daily at 02:00",
+   "freq_ar": "يوميًا 02:00",
+   "delta": "",
+   "owner": "سارة عادل",
+   "exp": 1200,
+   "dagId": "dq_nightly_suite"
+  },
+  {
+   "id": "iceberg_housekeeping",
+   "kind": "hk",
+   "orch": "airflow",
+   "entity": "",
+   "title_en": "Iceberg housekeeping",
+   "title_ar": "صيانة جداول Iceberg",
+   "source": "Iceberg",
+   "conn": "",
+   "srcObj": "mdm.*",
+   "target": "mdm.*",
+   "topic": "",
+   "cron": "0 4 * * *",
+   "freq_en": "Daily at 04:00",
+   "freq_ar": "يوميًا 04:00",
+   "delta": "",
+   "owner": "أحمد ناصر",
+   "exp": 600,
+   "dagId": "iceberg_housekeeping"
+  }
+ ],
+ "runs": [
+  {
+   "id": "R-5731",
+   "job": "erp_vendor_pull",
+   "start": "2026-11-10 12:28:00",
+   "end": "",
+   "sec": 0,
+   "status": "queued",
+   "launched": "manual",
+   "runAs": "محمد",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-10T08:15"
+   },
+   "dagRunId": "manual__2026-11-10T12:28:00+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "pending",
+     "start": "",
+     "sec": 0
+    },
+    {
+     "id": "validate_schema",
+     "status": "pending",
+     "start": "",
+     "sec": 0
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "pending",
+     "start": "",
+     "sec": 0
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "pending",
+     "start": "",
+     "sec": 0
+    }
+   ],
+   "objects": [
+    {
+     "src": "LFA1 / LFB1",
+     "tgt": "raw.vendor",
+     "load": "delta",
+     "status": "pending",
+     "last": "",
+     "initOps": 0,
+     "deltaOps": 0,
+     "parts": 4,
+     "partsDone": 2,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-10 12:28:00",
+     "cat": "info",
+     "key": "jr.m.queued",
+     "args": [
+      "1"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5757",
+   "job": "author_sheet_push",
+   "start": "2026-11-10 10:48:40",
+   "end": "2026-11-10 10:49:24",
+   "sec": 44,
+   "status": "succeededWithFailures",
+   "launched": "api",
+   "runAs": "كريم فوزي",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "file": "authors_2026-11b.xlsx",
+    "batch": "B-1190"
+   },
+   "dagRunId": "",
+   "tasks": [
+    {
+     "id": "receive_batch",
+     "status": "succeeded",
+     "start": "2026-11-10 10:48:40",
+     "sec": 7
+    },
+    {
+     "id": "validate_rows",
+     "status": "succeeded",
+     "start": "2026-11-10 10:48:47",
+     "sec": 12
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-10 10:48:59",
+     "sec": 10
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-10 10:49:09",
+     "sec": 11
+    }
+   ],
+   "objects": [
+    {
+     "src": "authors_2026-11.xlsx",
+     "tgt": "raw.author",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-10 10:49:24",
+     "initOps": 1611,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 1611
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-10 10:48:40",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5757"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 10:48:40",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "3270e4faabae4f43bcae8081"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 10:48:41",
+     "cat": "info",
+     "key": "jr.m.batch",
+     "args": [
+      "B-5757",
+      "1611",
+      "authors_2026-11.xlsx"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 10:48:44",
+     "cat": "warning",
+     "key": "jr.m.rows",
+     "args": [
+      "1608",
+      "3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 10:49:21",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "1608",
+      "raw.author",
+      "818449271560994127"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 10:49:23",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "1608",
+      "raw.author"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 10:49:24",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:00:44"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 5943,
+     "unexpected": 8,
+     "pct": 99.87,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 5720,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 7491,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 5644,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 3943,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 3
+  },
+  {
+   "id": "R-5677",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-10 10:01:04",
+   "end": "",
+   "sec": 8936,
+   "status": "running",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-10T07:00"
+   },
+   "dagRunId": "scheduled__2026-11-10T10:01:04+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-10 10:01:04",
+     "sec": 2311
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-10 10:39:35",
+     "sec": 1803
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "running",
+     "start": "2026-11-10 11:09:38",
+     "sec": 1711
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "pending",
+     "start": "",
+     "sec": 0
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "running",
+     "last": "",
+     "initOps": 0,
+     "deltaOps": 2057,
+     "parts": 4,
+     "partsDone": 2,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 2057
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-10 10:01:04",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5677"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 10:01:04",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "3e3511287900f7f993829b43"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 10:01:06",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 10:01:07",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 10:01:19",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "2057",
+      "CustomerCollection",
+      "2026-11-10T07:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 10:01:23",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 10:01:29",
+     "cat": "info",
+     "key": "jr.m.landing",
+     "args": [
+      "raw.customer"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5745",
+   "job": "sqlsrv_product_pull",
+   "start": "2026-11-10 09:42:23",
+   "end": "2026-11-10 09:43:58",
+   "sec": 95,
+   "status": "canceled",
+   "launched": "manual",
+   "runAs": "كريم فوزي",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T01:30"
+   },
+   "dagRunId": "manual__2026-11-10T09:42:23+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-10 09:42:23",
+     "sec": 20
+    },
+    {
+     "id": "validate_schema",
+     "status": "canceled",
+     "start": "2026-11-10 09:42:43",
+     "sec": 26
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "pending",
+     "start": "",
+     "sec": 0
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "pending",
+     "start": "",
+     "sec": 0
+    }
+   ],
+   "objects": [
+    {
+     "src": "dbo.Titles",
+     "tgt": "raw.product",
+     "load": "delta",
+     "status": "canceled",
+     "last": "2026-11-10 09:43:58",
+     "initOps": 0,
+     "deltaOps": 404,
+     "parts": 4,
+     "partsDone": 2,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 404
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-10 09:42:23",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5745"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 09:42:23",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "475287aa5408f9ac6601ddd0"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 09:42:25",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "Microsoft SQL Server",
+      "SQL_PUBLISHING"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 09:42:26",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/sql_publishing"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 09:42:38",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "404",
+      "dbo.Titles",
+      "2026-11-09T01:30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 09:42:42",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "product v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 09:43:58",
+     "cat": "warning",
+     "key": "jr.m.canceled",
+     "args": [
+      "كريم فوزي"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5728",
+   "job": "erp_vendor_pull",
+   "start": "2026-11-10 08:15:53",
+   "end": "2026-11-10 08:19:34",
+   "sec": 221,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-10T04:15"
+   },
+   "dagRunId": "scheduled__2026-11-10T08:15:53+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-10 08:15:53",
+     "sec": 47
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-10 08:16:40",
+     "sec": 42
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-10 08:17:22",
+     "sec": 65
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-10 08:18:27",
+     "sec": 43
+    }
+   ],
+   "objects": [
+    {
+     "src": "LFA1 / LFB1",
+     "tgt": "raw.vendor",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-10 08:19:34",
+     "initOps": 0,
+     "deltaOps": 159,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 159
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-10 08:15:53",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5728"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 08:15:53",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "6d7ce3c9b4a69f3c8d3aed99"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 08:15:55",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP S/4HANA",
+      "S4_HANA"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 08:15:56",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/s4_hana"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 08:16:08",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "159",
+      "LFA1 / LFB1",
+      "2026-11-10T04:15"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 08:16:12",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "vendor v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 08:19:14",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "159",
+      "raw.vendor",
+      "186750256731243592"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 08:19:29",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "159",
+      "raw.vendor"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 08:19:34",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:03:41"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5672",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-10 07:00:15",
+   "end": "2026-11-10 07:05:14",
+   "sec": 299,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-10T04:00"
+   },
+   "dagRunId": "scheduled__2026-11-10T07:00:15+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-10 07:00:15",
+     "sec": 53
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-10 07:01:08",
+     "sec": 73
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-10 07:02:21",
+     "sec": 74
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-10 07:03:35",
+     "sec": 52
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-10 07:05:14",
+     "initOps": 0,
+     "deltaOps": 396,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 396
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-10 07:00:15",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5672"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 07:00:15",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "3a9bedd40f1259e0a18ff6b6"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 07:00:17",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 07:00:18",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 07:00:30",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "396",
+      "CustomerCollection",
+      "2026-11-10T04:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 07:00:34",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 07:04:54",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "396",
+      "raw.customer",
+      "136216675662142246"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 07:05:09",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "396",
+      "raw.customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 07:05:14",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:04:59"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5769",
+   "job": "mdm_vendor_stream",
+   "start": "2026-11-10 06:26:55",
+   "end": "",
+   "sec": 21785,
+   "status": "running",
+   "launched": "manual",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "permanent",
+   "params": {
+    "checkpoint": "abfss://…/chk/vendor"
+   },
+   "dagRunId": "",
+   "tasks": [
+    {
+     "id": "standardise",
+     "status": "running",
+     "start": "2026-11-10 06:26:55",
+     "sec": 5103
+    },
+    {
+     "id": "data_quality",
+     "status": "running",
+     "start": "2026-11-10 07:51:58",
+     "sec": 3700
+    },
+    {
+     "id": "match_splink",
+     "status": "running",
+     "start": "2026-11-10 08:53:38",
+     "sec": 3899
+    },
+    {
+     "id": "survivorship",
+     "status": "running",
+     "start": "2026-11-10 09:58:37",
+     "sec": 4992
+    },
+    {
+     "id": "publish_golden",
+     "status": "running",
+     "start": "2026-11-10 11:21:49",
+     "sec": 4870
+    }
+   ],
+   "objects": [
+    {
+     "src": "raw.vendor",
+     "tgt": "staged.vendor",
+     "load": "initialDelta",
+     "status": "running",
+     "last": "2026-11-10 12:30:00",
+     "initOps": 19726,
+     "deltaOps": 1066,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "transferDelta",
+     "threads": 1,
+     "records": 1023
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "golden.vendor",
+     "load": "delta",
+     "status": "running",
+     "last": "2026-11-10 12:30:00",
+     "initOps": 0,
+     "deltaOps": 565,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "transferDelta",
+     "threads": 1,
+     "records": 1023
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-10 06:26:55",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5769"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 06:26:55",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "8bcf53a1bc10fa52bf5d2fdf"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 06:26:57",
+     "cat": "info",
+     "key": "jr.m.subscribe",
+     "args": [
+      "raw.vendor",
+      "mdm-vendor"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 06:27:55",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4001",
+      "269",
+      "268",
+      "34"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 06:36:21",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4002",
+      "268",
+      "268",
+      "49"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 06:43:05",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4003",
+      "227",
+      "226",
+      "59"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 06:46:15",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4004",
+      "293",
+      "293",
+      "50"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 06:57:21",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4005",
+      "33",
+      "33",
+      "10"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 07:05:39",
+     "cat": "info",
+     "key": "jr.m.match",
+     "args": [
+      "677",
+      "75",
+      "16"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 07:05:41",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_match_regex",
+      "phone",
+      "32",
+      "99%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 07:05:42",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "32"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 07:05:44",
+     "cat": "info",
+     "key": "jr.m.surv",
+     "args": [
+      "133",
+      "3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 07:05:45",
+     "cat": "info",
+     "key": "jr.m.lag",
+     "args": [
+      "raw.vendor",
+      "266"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 07:05:46",
+     "cat": "info",
+     "key": "jr.m.checkpoint",
+     "args": [
+      "229689"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 6155,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 7011,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 7706,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2141,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 1653,
+     "unexpected": 23,
+     "pct": 98.61,
+     "ok": false
+    }
+   ],
+   "quarantined": 32
+  },
+  {
+   "id": "R-5727",
+   "job": "erp_vendor_pull",
+   "start": "2026-11-10 04:15:18",
+   "end": "2026-11-10 04:19:48",
+   "sec": 270,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-10T00:15"
+   },
+   "dagRunId": "scheduled__2026-11-10T04:15:18+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-10 04:15:18",
+     "sec": 54
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-10 04:16:12",
+     "sec": 68
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-10 04:17:20",
+     "sec": 56
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-10 04:18:16",
+     "sec": 63
+    }
+   ],
+   "objects": [
+    {
+     "src": "LFA1 / LFB1",
+     "tgt": "raw.vendor",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-10 04:19:48",
+     "initOps": 0,
+     "deltaOps": 498,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 498
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-10 04:15:18",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5727"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:15:18",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "0d01280fd89a40c0e87d1c78"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:15:20",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP S/4HANA",
+      "S4_HANA"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:15:21",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/s4_hana"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:15:33",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "498",
+      "LFA1 / LFB1",
+      "2026-11-10T00:15"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:15:37",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "vendor v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:19:28",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "498",
+      "raw.vendor",
+      "588349616914331427"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:19:43",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "498",
+      "raw.vendor"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:19:48",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:04:30"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5666",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-10 04:00:16",
+   "end": "2026-11-10 04:06:18",
+   "sec": 362,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-10T01:00"
+   },
+   "dagRunId": "scheduled__2026-11-10T04:00:16+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-10 04:00:16",
+     "sec": 106
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-10 04:02:02",
+     "sec": 105
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-10 04:03:47",
+     "sec": 97
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-10 04:05:24",
+     "sec": 94
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-10 04:06:18",
+     "initOps": 0,
+     "deltaOps": 1649,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 1649
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-10 04:00:16",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5666"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:00:16",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "fec21bbe66245bfa4fcca39a"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:00:18",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:00:19",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:00:31",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "1649",
+      "CustomerCollection",
+      "2026-11-10T01:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:00:35",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:05:58",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "1649",
+      "raw.customer",
+      "620528082625354164"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:06:13",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "1649",
+      "raw.customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 04:06:18",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:06:02"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5792",
+   "job": "iceberg_housekeeping",
+   "start": "2026-11-10 04:00:01",
+   "end": "2026-11-10 04:00:02",
+   "sec": 1,
+   "status": "skipped",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "older_than_days": 7
+   },
+   "dagRunId": "scheduled__2026-11-10T04:00:01+02:00",
+   "tasks": [
+    {
+     "id": "expire_snapshots",
+     "status": "skipped",
+     "start": "",
+     "sec": 0
+    },
+    {
+     "id": "rewrite_data_files",
+     "status": "skipped",
+     "start": "",
+     "sec": 0
+    },
+    {
+     "id": "remove_orphan_files",
+     "status": "skipped",
+     "start": "",
+     "sec": 0
+    }
+   ],
+   "objects": [
+    {
+     "src": "mdm.golden_customer",
+     "tgt": "mdm.golden_customer",
+     "load": "maintenance",
+     "status": "pending",
+     "last": "2026-11-10 04:00:02",
+     "initOps": 0,
+     "deltaOps": 0,
+     "parts": 0,
+     "partsDone": 0,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 0
+    },
+    {
+     "src": "mdm.golden_vendor",
+     "tgt": "mdm.golden_vendor",
+     "load": "maintenance",
+     "status": "pending",
+     "last": "2026-11-10 04:00:02",
+     "initOps": 0,
+     "deltaOps": 0,
+     "parts": 0,
+     "partsDone": 0,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 0
+    },
+    {
+     "src": "mdm.change_log",
+     "tgt": "mdm.change_log",
+     "load": "maintenance",
+     "status": "pending",
+     "last": "2026-11-10 04:00:02",
+     "initOps": 0,
+     "deltaOps": 0,
+     "parts": 0,
+     "partsDone": 0,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-10 04:00:01",
+     "cat": "warning",
+     "key": "jr.m.skipped",
+     "args": [
+      "1"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5776",
+   "job": "dq_nightly_suite",
+   "start": "2026-11-10 02:00:02",
+   "end": "2026-11-10 02:12:17",
+   "sec": 735,
+   "status": "succeededWithFailures",
+   "launched": "schedule",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "suite": "mdm_staged_suite"
+   },
+   "dagRunId": "scheduled__2026-11-10T02:00:02+02:00",
+   "tasks": [
+    {
+     "id": "load_suite",
+     "status": "succeeded",
+     "start": "2026-11-10 02:00:02",
+     "sec": 181
+    },
+    {
+     "id": "run_expectations",
+     "status": "succeeded",
+     "start": "2026-11-10 02:03:03",
+     "sec": 212
+    },
+    {
+     "id": "publish_results",
+     "status": "succeeded",
+     "start": "2026-11-10 02:06:35",
+     "sec": 163
+    },
+    {
+     "id": "route_failures",
+     "status": "succeeded",
+     "start": "2026-11-10 02:09:18",
+     "sec": 215
+    }
+   ],
+   "objects": [
+    {
+     "src": "staged.customer",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-10 02:12:17",
+     "initOps": 27845,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-10 02:12:17",
+     "initOps": 14882,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.product",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-10 02:12:17",
+     "initOps": 27421,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-10 02:00:02",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5776"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 02:00:02",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "b0cc1b3b9793b9b413748146"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 02:00:05",
+     "cat": "info",
+     "key": "jr.m.suite",
+     "args": [
+      "mdm_staged_suite",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 02:11:17",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_not_be_null",
+      "tax_id",
+      "16",
+      "98%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 02:12:07",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "16"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 02:12:17",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:12:15"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 2783,
+     "unexpected": 37,
+     "pct": 98.67,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 1472,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 7818,
+     "unexpected": 5,
+     "pct": 99.94,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 6390,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 7682,
+     "unexpected": 7,
+     "pct": 99.91,
+     "ok": false
+    }
+   ],
+   "quarantined": 16
+  },
+  {
+   "id": "R-5739",
+   "job": "sqlsrv_product_pull",
+   "start": "2026-11-10 01:30:03",
+   "end": "2026-11-10 01:30:44",
+   "sec": 41,
+   "status": "failed",
+   "launched": "schedule",
+   "runAs": "كريم فوزي",
+   "error": "SCHEMA_DRIFT",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T01:30"
+   },
+   "dagRunId": "scheduled__2026-11-10T01:30:03+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-10 01:30:03",
+     "sec": 11
+    },
+    {
+     "id": "validate_schema",
+     "status": "failed",
+     "start": "2026-11-10 01:30:14",
+     "sec": 7
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "upstreamFailed",
+     "start": "",
+     "sec": 0
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "upstreamFailed",
+     "start": "",
+     "sec": 0
+    }
+   ],
+   "objects": [
+    {
+     "src": "dbo.Titles",
+     "tgt": "raw.product",
+     "load": "delta",
+     "status": "failed",
+     "last": "2026-11-10 01:30:44",
+     "initOps": 0,
+     "deltaOps": 2005,
+     "parts": 4,
+     "partsDone": 2,
+     "partsErr": 1,
+     "state": "",
+     "threads": 1,
+     "records": 2005
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-10 01:30:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5739"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 01:30:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "eb1fa9f2d10bd1d033173470"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 01:30:05",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "Microsoft SQL Server",
+      "SQL_PUBLISHING"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 01:30:06",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/sql_publishing"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 01:30:18",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "2005",
+      "dbo.Titles",
+      "2026-11-09T01:30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 01:30:21",
+     "cat": "error",
+     "key": "jr.m.schemaDrift",
+     "args": [
+      "SeriesISSN",
+      "product v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 01:30:22",
+     "cat": "error",
+     "key": "jr.m.failed",
+     "args": [
+      "validate_schema",
+      "SCHEMA_DRIFT"
+     ],
+     "detail": "Source dbo.Titles has column SeriesISSN (nvarchar(9)) not present in model product v3.\nRows were not landed. Map the column in a new model version or exclude it in the connection."
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5659",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-10 01:00:15",
+   "end": "2026-11-10 01:07:31",
+   "sec": 436,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T22:00"
+   },
+   "dagRunId": "scheduled__2026-11-10T01:00:15+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-10 01:00:15",
+     "sec": 80
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-10 01:01:35",
+     "sec": 102
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-10 01:03:17",
+     "sec": 80
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-10 01:04:37",
+     "sec": 117
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-10 01:07:31",
+     "initOps": 0,
+     "deltaOps": 2066,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 2066
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-10 01:00:15",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5659"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 01:00:15",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "a8e56e0c20de435d2031d750"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 01:00:17",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 01:00:18",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 01:00:30",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "2066",
+      "CustomerCollection",
+      "2026-11-09T22:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 01:00:34",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 01:07:11",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "2066",
+      "raw.customer",
+      "733880393193663692"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 01:07:26",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "2066",
+      "raw.customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 01:07:31",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:07:16"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5721",
+   "job": "erp_vendor_pull",
+   "start": "2026-11-10 00:15:00",
+   "end": "2026-11-10 00:19:40",
+   "sec": 280,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T20:15"
+   },
+   "dagRunId": "scheduled__2026-11-10T00:15:00+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-10 00:15:00",
+     "sec": 59
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-10 00:15:59",
+     "sec": 72
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-10 00:17:11",
+     "sec": 81
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-10 00:18:32",
+     "sec": 53
+    }
+   ],
+   "objects": [
+    {
+     "src": "LFA1 / LFB1",
+     "tgt": "raw.vendor",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-10 00:19:40",
+     "initOps": 0,
+     "deltaOps": 2386,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 2386
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-10 00:15:00",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5721"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 00:15:00",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "be0f051b1b66b5a9e3c43657"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 00:15:02",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP S/4HANA",
+      "S4_HANA"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 00:15:03",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/s4_hana"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 00:15:15",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "2386",
+      "LFA1 / LFB1",
+      "2026-11-09T20:15"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 00:15:19",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "vendor v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 00:19:20",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "2386",
+      "raw.vendor",
+      "413996113261326122"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 00:19:35",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "2386",
+      "raw.vendor"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 00:19:40",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:04:40"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5657",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-09 22:00:23",
+   "end": "2026-11-09 22:07:15",
+   "sec": 412,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T19:00"
+   },
+   "dagRunId": "scheduled__2026-11-09T22:00:23+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-09 22:00:23",
+     "sec": 121
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-09 22:02:24",
+     "sec": 119
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-09 22:04:23",
+     "sec": 119
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-09 22:06:22",
+     "sec": 102
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-09 22:07:15",
+     "initOps": 0,
+     "deltaOps": 1606,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 1606
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 22:00:23",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5657"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 22:00:23",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "edd968311ca35cfb04fc6d82"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 22:00:25",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 22:00:26",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 22:00:38",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "1606",
+      "CustomerCollection",
+      "2026-11-09T19:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 22:00:42",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 22:06:55",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "1606",
+      "raw.customer",
+      "376069723034697471"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 22:07:10",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "1606",
+      "raw.customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 22:07:15",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:06:52"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5768",
+   "job": "mdm_vendor_stream",
+   "start": "2026-11-09 21:04:10",
+   "end": "2026-11-10 06:24:44",
+   "sec": 33634,
+   "status": "failed",
+   "launched": "manual",
+   "runAs": "هالة سمير",
+   "error": "SPARK_EXECUTOR_LOST",
+   "runType": "permanent",
+   "params": {
+    "checkpoint": "abfss://…/chk/vendor"
+   },
+   "dagRunId": "",
+   "tasks": [
+    {
+     "id": "standardise",
+     "status": "succeeded",
+     "start": "2026-11-09 21:04:10",
+     "sec": 4877
+    },
+    {
+     "id": "data_quality",
+     "status": "succeeded",
+     "start": "2026-11-09 22:25:27",
+     "sec": 5546
+    },
+    {
+     "id": "match_splink",
+     "status": "failed",
+     "start": "2026-11-09 23:57:53",
+     "sec": 7562
+    },
+    {
+     "id": "survivorship",
+     "status": "upstreamFailed",
+     "start": "",
+     "sec": 0
+    },
+    {
+     "id": "publish_golden",
+     "status": "upstreamFailed",
+     "start": "",
+     "sec": 0
+    }
+   ],
+   "objects": [
+    {
+     "src": "raw.vendor",
+     "tgt": "staged.vendor",
+     "load": "initialDelta",
+     "status": "failed",
+     "last": "2026-11-10 06:24:44",
+     "initOps": 13942,
+     "deltaOps": 1147,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "transferDelta",
+     "threads": 1,
+     "records": 1419
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "golden.vendor",
+     "load": "delta",
+     "status": "failed",
+     "last": "2026-11-10 06:24:44",
+     "initOps": 0,
+     "deltaOps": 492,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "transferDelta",
+     "threads": 1,
+     "records": 1419
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 21:04:10",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5768"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 21:04:10",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "8f15ba58fce6850487f8424d"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 21:04:12",
+     "cat": "info",
+     "key": "jr.m.subscribe",
+     "args": [
+      "raw.vendor",
+      "mdm-vendor"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 21:05:10",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4001",
+      "246",
+      "243",
+      "70"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 21:13:46",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4002",
+      "101",
+      "98",
+      "28"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 21:19:11",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4003",
+      "146",
+      "144",
+      "33"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 21:28:27",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4004",
+      "142",
+      "140",
+      "28"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 21:30:46",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4005",
+      "166",
+      "165",
+      "17"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 21:37:29",
+     "cat": "info",
+     "key": "jr.m.match",
+     "args": [
+      "1054",
+      "117",
+      "26"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 21:37:31",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_match_regex",
+      "phone",
+      "37",
+      "99%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 21:37:32",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "37"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 21:37:34",
+     "cat": "info",
+     "key": "jr.m.surv",
+     "args": [
+      "81",
+      "6"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 21:37:59",
+     "cat": "warning",
+     "key": "jr.m.executorLost",
+     "args": [
+      "3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 21:38:59",
+     "cat": "warning",
+     "key": "jr.m.executorLost",
+     "args": [
+      "5"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-10 06:24:43",
+     "cat": "error",
+     "key": "jr.m.failed",
+     "args": [
+      "match_splink",
+      "SPARK_EXECUTOR_LOST"
+     ],
+     "detail": "org.apache.spark.SparkException: Job aborted due to stage failure: Task 12 in stage 418.0 failed 4 times\nExecutorLostFailure (executor 5 exited caused by one of the running tasks) Reason: Container killed on request. Exit code is 137\nCheckpoint kept at offset 182344; the restart resumes from it."
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 3303,
+     "unexpected": 5,
+     "pct": 99.85,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 7597,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 8433,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 4188,
+     "unexpected": 25,
+     "pct": 99.4,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 1120,
+     "unexpected": 37,
+     "pct": 96.7,
+     "ok": false
+    }
+   ],
+   "quarantined": 37
+  },
+  {
+   "id": "R-5712",
+   "job": "erp_vendor_pull",
+   "start": "2026-11-09 20:15:13",
+   "end": "2026-11-09 20:19:28",
+   "sec": 255,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T16:15"
+   },
+   "dagRunId": "scheduled__2026-11-09T20:15:13+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-09 20:15:13",
+     "sec": 74
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-09 20:16:27",
+     "sec": 72
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-09 20:17:39",
+     "sec": 72
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-09 20:18:51",
+     "sec": 56
+    }
+   ],
+   "objects": [
+    {
+     "src": "LFA1 / LFB1",
+     "tgt": "raw.vendor",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-09 20:19:28",
+     "initOps": 0,
+     "deltaOps": 1359,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 1359
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 20:15:13",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5712"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 20:15:13",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "8b10550cd5704f32702cdd20"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 20:15:15",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP S/4HANA",
+      "S4_HANA"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 20:15:16",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/s4_hana"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 20:15:28",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "1359",
+      "LFA1 / LFB1",
+      "2026-11-09T16:15"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 20:15:32",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "vendor v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 20:19:08",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "1359",
+      "raw.vendor",
+      "709827101904403942"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 20:19:23",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "1359",
+      "raw.vendor"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 20:19:28",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:04:15"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5648",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-09 19:01:10",
+   "end": "2026-11-09 19:06:57",
+   "sec": 347,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T16:00"
+   },
+   "dagRunId": "scheduled__2026-11-09T19:01:10+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-09 19:01:10",
+     "sec": 102
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-09 19:02:52",
+     "sec": 93
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-09 19:04:25",
+     "sec": 82
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-09 19:05:47",
+     "sec": 65
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-09 19:06:57",
+     "initOps": 0,
+     "deltaOps": 2199,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 2199
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 19:01:10",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5648"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 19:01:10",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "a39231a7d777a4774c66e0a8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 19:01:12",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 19:01:13",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 19:01:25",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "2199",
+      "CustomerCollection",
+      "2026-11-09T16:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 19:01:29",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 19:06:37",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "2199",
+      "raw.customer",
+      "329328888032229575"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 19:06:52",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "2199",
+      "raw.customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 19:06:57",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:05:47"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5709",
+   "job": "erp_vendor_pull",
+   "start": "2026-11-09 16:15:25",
+   "end": "2026-11-09 16:18:44",
+   "sec": 199,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T12:15"
+   },
+   "dagRunId": "scheduled__2026-11-09T16:15:25+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-09 16:15:25",
+     "sec": 46
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-09 16:16:11",
+     "sec": 57
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-09 16:17:08",
+     "sec": 58
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-09 16:18:06",
+     "sec": 35
+    }
+   ],
+   "objects": [
+    {
+     "src": "LFA1 / LFB1",
+     "tgt": "raw.vendor",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-09 16:18:44",
+     "initOps": 0,
+     "deltaOps": 529,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 529
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 16:15:25",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5709"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:15:25",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "ff002d4d902059e4ff9ab5c2"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:15:27",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP S/4HANA",
+      "S4_HANA"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:15:28",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/s4_hana"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:15:40",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "529",
+      "LFA1 / LFB1",
+      "2026-11-09T12:15"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:15:44",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "vendor v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:18:24",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "529",
+      "raw.vendor",
+      "719850264588924640"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:18:39",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "529",
+      "raw.vendor"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:18:44",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:03:19"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5643",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-09 16:01:33",
+   "end": "2026-11-09 16:06:37",
+   "sec": 304,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T13:00"
+   },
+   "dagRunId": "scheduled__2026-11-09T16:01:33+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-09 16:01:33",
+     "sec": 85
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-09 16:02:58",
+     "sec": 53
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-09 16:03:51",
+     "sec": 80
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-09 16:05:11",
+     "sec": 79
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-09 16:06:37",
+     "initOps": 0,
+     "deltaOps": 1513,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 1513
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 16:01:33",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5643"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:01:33",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "c4c2e2e3444ea7c8c0398710"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:01:35",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:01:36",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:01:48",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "1513",
+      "CustomerCollection",
+      "2026-11-09T13:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:01:52",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:06:17",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "1513",
+      "raw.customer",
+      "438382606667001577"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:06:32",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "1513",
+      "raw.customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 16:06:37",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:05:04"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5750",
+   "job": "author_sheet_push",
+   "start": "2026-11-09 14:05:11",
+   "end": "2026-11-09 14:05:49",
+   "sec": 38,
+   "status": "succeeded",
+   "launched": "api",
+   "runAs": "كريم فوزي",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "file": "authors_2026-11.xlsx",
+    "batch": "B-1182"
+   },
+   "dagRunId": "",
+   "tasks": [
+    {
+     "id": "receive_batch",
+     "status": "succeeded",
+     "start": "2026-11-09 14:05:11",
+     "sec": 8
+    },
+    {
+     "id": "validate_rows",
+     "status": "succeeded",
+     "start": "2026-11-09 14:05:19",
+     "sec": 9
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-09 14:05:28",
+     "sec": 9
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-09 14:05:37",
+     "sec": 10
+    }
+   ],
+   "objects": [
+    {
+     "src": "authors_2026-11.xlsx",
+     "tgt": "raw.author",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-09 14:05:49",
+     "initOps": 1189,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 1189
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 14:05:11",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5750"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 14:05:11",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "1d8709660710d430f071d879"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 14:05:12",
+     "cat": "info",
+     "key": "jr.m.batch",
+     "args": [
+      "B-5750",
+      "1189",
+      "authors_2026-11.xlsx"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 14:05:15",
+     "cat": "warning",
+     "key": "jr.m.rows",
+     "args": [
+      "1188",
+      "1"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 14:05:46",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "1188",
+      "raw.author",
+      "406061881998178426"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 14:05:48",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "1188",
+      "raw.author"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 14:05:49",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:00:38"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 1426,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 7919,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 5939,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2694,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 3914,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 1
+  },
+  {
+   "id": "R-5634",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-09 13:00:08",
+   "end": "2026-11-09 13:06:07",
+   "sec": 359,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T10:00"
+   },
+   "dagRunId": "scheduled__2026-11-09T13:00:08+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-09 13:00:08",
+     "sec": 96
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-09 13:01:44",
+     "sec": 101
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-09 13:03:25",
+     "sec": 69
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-09 13:04:34",
+     "sec": 70
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-09 13:06:07",
+     "initOps": 0,
+     "deltaOps": 1696,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 1696
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 13:00:08",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5634"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 13:00:08",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "10435a1098ae43346c12ace8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 13:00:10",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 13:00:11",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 13:00:23",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "1696",
+      "CustomerCollection",
+      "2026-11-09T10:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 13:00:27",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 13:05:47",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "1696",
+      "raw.customer",
+      "787012576486346018"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 13:06:02",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "1696",
+      "raw.customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 13:06:07",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:05:59"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5704",
+   "job": "erp_vendor_pull",
+   "start": "2026-11-09 12:15:56",
+   "end": "2026-11-09 12:20:21",
+   "sec": 265,
+   "status": "succeeded",
+   "launched": "manual",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T08:15",
+    "full": true
+   },
+   "dagRunId": "manual__2026-11-09T12:15:56+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-09 12:15:56",
+     "sec": 66
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-09 12:17:02",
+     "sec": 60
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-09 12:18:02",
+     "sec": 65
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-09 12:19:07",
+     "sec": 63
+    }
+   ],
+   "objects": [
+    {
+     "src": "LFA1 / LFB1",
+     "tgt": "raw.vendor",
+     "load": "initialDelta",
+     "status": "completed",
+     "last": "2026-11-09 12:20:21",
+     "initOps": 1406,
+     "deltaOps": 0,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 1406
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 12:15:56",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5704"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 12:15:56",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "ab73295b344a54b842c18a62"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 12:15:58",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP S/4HANA",
+      "S4_HANA"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 12:15:59",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/s4_hana"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 12:16:11",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "1406",
+      "LFA1 / LFB1",
+      "2026-11-09T08:15"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 12:16:15",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "vendor v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 12:20:01",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "1406",
+      "raw.vendor",
+      "406232685353403869"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 12:20:16",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "1406",
+      "raw.vendor"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 12:20:21",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:04:25"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5632",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-09 10:01:09",
+   "end": "2026-11-09 10:02:24",
+   "sec": 75,
+   "status": "timedOut",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "SOURCE_TIMEOUT",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T07:00"
+   },
+   "dagRunId": "scheduled__2026-11-09T10:01:09+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "failed",
+     "start": "2026-11-09 10:01:09",
+     "sec": 14
+    },
+    {
+     "id": "validate_schema",
+     "status": "upstreamFailed",
+     "start": "",
+     "sec": 0
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "upstreamFailed",
+     "start": "",
+     "sec": 0
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "upstreamFailed",
+     "start": "",
+     "sec": 0
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "failed",
+     "last": "2026-11-09 10:02:24",
+     "initOps": 0,
+     "deltaOps": 1602,
+     "parts": 4,
+     "partsDone": 2,
+     "partsErr": 1,
+     "state": "",
+     "threads": 1,
+     "records": 1602
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 10:01:09",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5632"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 10:01:09",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "663f1c97956269f0e5d7b875"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 10:01:11",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 10:01:12",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 10:01:29",
+     "cat": "warning",
+     "key": "jr.m.timeout",
+     "args": [
+      "SAP Cloud for Customer",
+      "60",
+      "1",
+      "3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 10:01:30",
+     "cat": "info",
+     "key": "jr.m.retry",
+     "args": [
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 10:01:49",
+     "cat": "warning",
+     "key": "jr.m.timeout",
+     "args": [
+      "SAP Cloud for Customer",
+      "60",
+      "2",
+      "3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 10:01:50",
+     "cat": "info",
+     "key": "jr.m.retry",
+     "args": [
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 10:02:09",
+     "cat": "warning",
+     "key": "jr.m.timeout",
+     "args": [
+      "SAP Cloud for Customer",
+      "60",
+      "3",
+      "3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 10:02:23",
+     "cat": "error",
+     "key": "jr.m.failed",
+     "args": [
+      "extract_source",
+      "SOURCE_TIMEOUT"
+     ],
+     "detail": "GET /sap/c4c/odata/v1/c4codataapi/CustomerCollection?$filter=LastChangeDateTime ge datetimeoffset'2026-11-09T06:00:00Z'&$top=1000\nReadTimeout: HTTPSConnectionPool read timed out. (read timeout=60)\nattempt 3/3, backoff 30s"
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5703",
+   "job": "erp_vendor_pull",
+   "start": "2026-11-09 08:15:10",
+   "end": "2026-11-09 08:15:18",
+   "sec": 8,
+   "status": "failed",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "AUTH_TOKEN_EXPIRED",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T04:15"
+   },
+   "dagRunId": "scheduled__2026-11-09T08:15:10+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "failed",
+     "start": "2026-11-09 08:15:10",
+     "sec": 2
+    },
+    {
+     "id": "validate_schema",
+     "status": "upstreamFailed",
+     "start": "",
+     "sec": 0
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "upstreamFailed",
+     "start": "",
+     "sec": 0
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "upstreamFailed",
+     "start": "",
+     "sec": 0
+    }
+   ],
+   "objects": [
+    {
+     "src": "LFA1 / LFB1",
+     "tgt": "raw.vendor",
+     "load": "delta",
+     "status": "failed",
+     "last": "2026-11-09 08:15:18",
+     "initOps": 0,
+     "deltaOps": 611,
+     "parts": 4,
+     "partsDone": 2,
+     "partsErr": 1,
+     "state": "",
+     "threads": 1,
+     "records": 611
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 08:15:10",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5703"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 08:15:10",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "675dd5af3c365296dca02eec"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 08:15:12",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP S/4HANA",
+      "S4_HANA"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 08:15:13",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/s4_hana"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 08:15:15",
+     "cat": "error",
+     "key": "jr.m.authExpired",
+     "args": [
+      "S4_HANA"
+     ],
+     "detail": "HTTP 401 Unauthorized\nWWW-Authenticate: Bearer error=\"invalid_token\", error_description=\"The access token expired\"\nconnection=S4_HANA  secret_ref=kv://repoio/s4_hana"
+    },
+    {
+     "ts": "2026-11-09 08:15:16",
+     "cat": "error",
+     "key": "jr.m.failed",
+     "args": [
+      "extract_source",
+      "AUTH_TOKEN_EXPIRED"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5627",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-09 07:00:14",
+   "end": "2026-11-09 07:07:18",
+   "sec": 424,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T04:00"
+   },
+   "dagRunId": "scheduled__2026-11-09T07:00:14+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-09 07:00:14",
+     "sec": 95
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-09 07:01:49",
+     "sec": 77
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-09 07:03:06",
+     "sec": 122
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-09 07:05:08",
+     "sec": 104
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-09 07:07:18",
+     "initOps": 0,
+     "deltaOps": 2164,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 2164
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 07:00:14",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5627"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 07:00:14",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "a7cad415366eb16f508ebad7"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 07:00:16",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 07:00:17",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 07:00:29",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "2164",
+      "CustomerCollection",
+      "2026-11-09T04:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 07:00:33",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 07:06:58",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "2164",
+      "raw.customer",
+      "841157749712210533"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 07:07:13",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "2164",
+      "raw.customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 07:07:18",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:07:04"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5702",
+   "job": "erp_vendor_pull",
+   "start": "2026-11-09 04:15:31",
+   "end": "2026-11-09 04:18:54",
+   "sec": 203,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T00:15"
+   },
+   "dagRunId": "scheduled__2026-11-09T04:15:31+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-09 04:15:31",
+     "sec": 41
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-09 04:16:12",
+     "sec": 37
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-09 04:16:49",
+     "sec": 54
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-09 04:17:43",
+     "sec": 37
+    }
+   ],
+   "objects": [
+    {
+     "src": "LFA1 / LFB1",
+     "tgt": "raw.vendor",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-09 04:18:54",
+     "initOps": 0,
+     "deltaOps": 2072,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 2072
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 04:15:31",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5702"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:15:31",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "958ca9ba0cd620c20ea2622b"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:15:33",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP S/4HANA",
+      "S4_HANA"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:15:34",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/s4_hana"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:15:46",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "2072",
+      "LFA1 / LFB1",
+      "2026-11-09T00:15"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:15:50",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "vendor v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:18:34",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "2072",
+      "raw.vendor",
+      "712346749617166794"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:18:49",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "2072",
+      "raw.vendor"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:18:54",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:03:23"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5621",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-09 04:01:44",
+   "end": "2026-11-09 04:09:12",
+   "sec": 448,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-09T01:00"
+   },
+   "dagRunId": "scheduled__2026-11-09T04:01:44+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-09 04:01:44",
+     "sec": 112
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-09 04:03:36",
+     "sec": 87
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-09 04:05:03",
+     "sec": 119
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-09 04:07:02",
+     "sec": 87
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-09 04:09:12",
+     "initOps": 0,
+     "deltaOps": 1019,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 1019
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 04:01:44",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5621"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:01:44",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "ece66fa2fd5166e6451b4cf3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:01:46",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:01:47",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:01:59",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "1019",
+      "CustomerCollection",
+      "2026-11-09T01:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:02:03",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:08:52",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "1019",
+      "raw.customer",
+      "473872538075455791"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:09:07",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "1019",
+      "raw.customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:09:12",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:07:28"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5783",
+   "job": "iceberg_housekeeping",
+   "start": "2026-11-09 04:00:06",
+   "end": "2026-11-09 04:08:14",
+   "sec": 488,
+   "status": "failed",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "ICEBERG_COMMIT_CONFLICT",
+   "runType": "direct",
+   "params": {
+    "older_than_days": 7
+   },
+   "dagRunId": "scheduled__2026-11-09T04:00:06+02:00",
+   "tasks": [
+    {
+     "id": "expire_snapshots",
+     "status": "succeeded",
+     "start": "2026-11-09 04:00:06",
+     "sec": 192
+    },
+    {
+     "id": "rewrite_data_files",
+     "status": "succeeded",
+     "start": "2026-11-09 04:03:18",
+     "sec": 165
+    },
+    {
+     "id": "remove_orphan_files",
+     "status": "failed",
+     "start": "2026-11-09 04:06:03",
+     "sec": 181
+    }
+   ],
+   "objects": [
+    {
+     "src": "mdm.golden_customer",
+     "tgt": "mdm.golden_customer",
+     "load": "maintenance",
+     "status": "failed",
+     "last": "2026-11-09 04:08:14",
+     "initOps": 0,
+     "deltaOps": 0,
+     "parts": 0,
+     "partsDone": 0,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 0
+    },
+    {
+     "src": "mdm.golden_vendor",
+     "tgt": "mdm.golden_vendor",
+     "load": "maintenance",
+     "status": "failed",
+     "last": "2026-11-09 04:08:14",
+     "initOps": 0,
+     "deltaOps": 0,
+     "parts": 0,
+     "partsDone": 0,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 0
+    },
+    {
+     "src": "mdm.change_log",
+     "tgt": "mdm.change_log",
+     "load": "maintenance",
+     "status": "failed",
+     "last": "2026-11-09 04:08:14",
+     "initOps": 0,
+     "deltaOps": 0,
+     "parts": 0,
+     "partsDone": 0,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 04:00:06",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5783"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:00:06",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "2d174fc96f7c15ea272a6d8e"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:00:16",
+     "cat": "info",
+     "key": "jr.m.expire",
+     "args": [
+      "54",
+      "7",
+      "mdm.golden_customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:03:26",
+     "cat": "warning",
+     "key": "jr.m.commitConflict",
+     "args": [
+      "mdm.golden_customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 04:08:13",
+     "cat": "error",
+     "key": "jr.m.failed",
+     "args": [
+      "rewrite_data_files",
+      "ICEBERG_COMMIT_CONFLICT"
+     ],
+     "detail": "org.apache.iceberg.exceptions.CommitFailedException: Cannot commit: stale table metadata (base snapshot 7713... replaced by 7714... from survivorship MERGE)\nRetried 3 times; housekeeping yields to the stream and runs again tonight."
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5771",
+   "job": "dq_nightly_suite",
+   "start": "2026-11-09 02:00:03",
+   "end": "2026-11-09 02:14:17",
+   "sec": 854,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "suite": "mdm_staged_suite"
+   },
+   "dagRunId": "scheduled__2026-11-09T02:00:03+02:00",
+   "tasks": [
+    {
+     "id": "load_suite",
+     "status": "succeeded",
+     "start": "2026-11-09 02:00:03",
+     "sec": 232
+    },
+    {
+     "id": "run_expectations",
+     "status": "succeeded",
+     "start": "2026-11-09 02:03:55",
+     "sec": 219
+    },
+    {
+     "id": "publish_results",
+     "status": "succeeded",
+     "start": "2026-11-09 02:07:34",
+     "sec": 229
+    },
+    {
+     "id": "route_failures",
+     "status": "succeeded",
+     "start": "2026-11-09 02:11:23",
+     "sec": 250
+    }
+   ],
+   "objects": [
+    {
+     "src": "staged.customer",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-09 02:14:17",
+     "initOps": 9136,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-09 02:14:17",
+     "initOps": 20517,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.product",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-09 02:14:17",
+     "initOps": 26936,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5771"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "9f0fda8d05379ff6d6d7b3b8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:06",
+     "cat": "info",
+     "key": "jr.m.suite",
+     "args": [
+      "mdm_staged_suite",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:13:17",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_not_be_null",
+      "tax_id",
+      "25",
+      "98%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:07",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "25"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:17",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:14:14"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 2674,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 4371,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 4998,
+     "unexpected": 11,
+     "pct": 99.78,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2676,
+     "unexpected": 11,
+     "pct": 99.59,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 5896,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 25
+  },
+  {
+   "id": "R-5736",
+   "job": "sqlsrv_product_pull",
+   "start": "2026-11-09 01:30:02",
+   "end": "2026-11-09 01:44:39",
+   "sec": 877,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "كريم فوزي",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-08T01:30"
+   },
+   "dagRunId": "scheduled__2026-11-09T01:30:02+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-09 01:30:02",
+     "sec": 248
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-09 01:34:10",
+     "sec": 260
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-09 01:38:30",
+     "sec": 242
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-09 01:42:32",
+     "sec": 250
+    }
+   ],
+   "objects": [
+    {
+     "src": "dbo.Titles",
+     "tgt": "raw.product",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-09 01:44:39",
+     "initOps": 0,
+     "deltaOps": 1480,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 1480
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 01:30:02",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5736"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:30:02",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "ecab3301bc8f7d292dea9493"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:30:04",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "Microsoft SQL Server",
+      "SQL_PUBLISHING"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:30:05",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/sql_publishing"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:30:17",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "1480",
+      "dbo.Titles",
+      "2026-11-08T01:30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:30:21",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "product v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:44:19",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "1480",
+      "raw.product",
+      "407606039841727330"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:44:34",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "1480",
+      "raw.product"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:44:39",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:14:37"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5619",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-09 01:00:49",
+   "end": "2026-11-09 01:06:01",
+   "sec": 312,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-08T22:00"
+   },
+   "dagRunId": "scheduled__2026-11-09T01:00:49+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-09 01:00:49",
+     "sec": 87
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-09 01:02:16",
+     "sec": 88
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-09 01:03:44",
+     "sec": 69
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-09 01:04:53",
+     "sec": 72
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-09 01:06:01",
+     "initOps": 0,
+     "deltaOps": 1575,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 1575
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 01:00:49",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5619"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:00:49",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "5ec42e0829a3b2e95d65a441"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:00:51",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:00:52",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:01:04",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "1575",
+      "CustomerCollection",
+      "2026-11-08T22:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:01:08",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:05:41",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "1575",
+      "raw.customer",
+      "872659369000190126"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:05:56",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "1575",
+      "raw.customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 01:06:01",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:05:12"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5697",
+   "job": "erp_vendor_pull",
+   "start": "2026-11-09 00:15:57",
+   "end": "2026-11-09 00:19:05",
+   "sec": 188,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-08T20:15"
+   },
+   "dagRunId": "scheduled__2026-11-09T00:15:57+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-09 00:15:57",
+     "sec": 32
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-09 00:16:29",
+     "sec": 42
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-09 00:17:11",
+     "sec": 54
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-09 00:18:05",
+     "sec": 51
+    }
+   ],
+   "objects": [
+    {
+     "src": "LFA1 / LFB1",
+     "tgt": "raw.vendor",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-09 00:19:05",
+     "initOps": 0,
+     "deltaOps": 2396,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 2396
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 00:15:57",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5697"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 00:15:57",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "f512c4c3b253d2186c4a37ea"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 00:15:59",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP S/4HANA",
+      "S4_HANA"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 00:16:00",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/s4_hana"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 00:16:12",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "2396",
+      "LFA1 / LFB1",
+      "2026-11-08T20:15"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 00:16:16",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "vendor v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 00:18:45",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "2396",
+      "raw.vendor",
+      "928268348338890209"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 00:19:00",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "2396",
+      "raw.vendor"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 00:19:05",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:03:08"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5617",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-08 22:02:07",
+   "end": "2026-11-08 22:09:43",
+   "sec": 456,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-08T19:00"
+   },
+   "dagRunId": "scheduled__2026-11-08T22:02:07+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-08 22:02:07",
+     "sec": 84
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-08 22:03:31",
+     "sec": 96
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-08 22:05:07",
+     "sec": 115
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-08 22:07:02",
+     "sec": 130
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-08 22:09:43",
+     "initOps": 0,
+     "deltaOps": 404,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 404
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-08 22:02:07",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5617"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 22:02:07",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "b45ed1f03139d32c93cd59bf"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 22:02:09",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 22:02:10",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 22:02:22",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "404",
+      "CustomerCollection",
+      "2026-11-08T19:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 22:02:26",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 22:09:23",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "404",
+      "raw.customer",
+      "862384702718551449"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 22:09:38",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "404",
+      "raw.customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 22:09:43",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:07:36"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5690",
+   "job": "erp_vendor_pull",
+   "start": "2026-11-08 20:15:03",
+   "end": "2026-11-08 20:19:40",
+   "sec": 277,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-08T16:15"
+   },
+   "dagRunId": "scheduled__2026-11-08T20:15:03+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-08 20:15:03",
+     "sec": 77
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-08 20:16:20",
+     "sec": 82
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-08 20:17:42",
+     "sec": 80
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-08 20:19:02",
+     "sec": 77
+    }
+   ],
+   "objects": [
+    {
+     "src": "LFA1 / LFB1",
+     "tgt": "raw.vendor",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-08 20:19:40",
+     "initOps": 0,
+     "deltaOps": 995,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 995
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-08 20:15:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5690"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 20:15:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "7b3a4e3e7c52fa17680ac07a"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 20:15:05",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP S/4HANA",
+      "S4_HANA"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 20:15:06",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/s4_hana"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 20:15:18",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "995",
+      "LFA1 / LFB1",
+      "2026-11-08T16:15"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 20:15:22",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "vendor v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 20:19:20",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "995",
+      "raw.vendor",
+      "562367973455805041"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 20:19:35",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "995",
+      "raw.vendor"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 20:19:40",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:04:37"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5610",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-08 19:01:21",
+   "end": "2026-11-08 19:06:31",
+   "sec": 310,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-08T16:00"
+   },
+   "dagRunId": "scheduled__2026-11-08T19:01:21+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-08 19:01:21",
+     "sec": 91
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-08 19:02:52",
+     "sec": 67
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-08 19:03:59",
+     "sec": 57
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-08 19:04:56",
+     "sec": 57
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-08 19:06:31",
+     "initOps": 0,
+     "deltaOps": 297,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 297
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-08 19:01:21",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5610"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 19:01:21",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "43b7a3a69a8dca03580d7b71"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 19:01:23",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 19:01:24",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 19:01:36",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "297",
+      "CustomerCollection",
+      "2026-11-08T16:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 19:01:40",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 19:06:11",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "297",
+      "raw.customer",
+      "629680822053090256"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 19:06:26",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "297",
+      "raw.customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 19:06:31",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:05:10"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5681",
+   "job": "erp_vendor_pull",
+   "start": "2026-11-08 16:15:46",
+   "end": "2026-11-08 16:19:36",
+   "sec": 230,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-08T12:15"
+   },
+   "dagRunId": "scheduled__2026-11-08T16:15:46+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-08 16:15:46",
+     "sec": 47
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-08 16:16:33",
+     "sec": 45
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-08 16:17:18",
+     "sec": 53
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-08 16:18:11",
+     "sec": 52
+    }
+   ],
+   "objects": [
+    {
+     "src": "LFA1 / LFB1",
+     "tgt": "raw.vendor",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-08 16:19:36",
+     "initOps": 0,
+     "deltaOps": 428,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 428
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-08 16:15:46",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5681"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:15:46",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "dfde4fbf3ff350bf766ecb15"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:15:48",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP S/4HANA",
+      "S4_HANA"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:15:49",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/s4_hana"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:16:01",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "428",
+      "LFA1 / LFB1",
+      "2026-11-08T12:15"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:16:05",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "vendor v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:19:16",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "428",
+      "raw.vendor",
+      "212881080161410723"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:19:31",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "428",
+      "raw.vendor"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:19:36",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:03:50"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5606",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-08 16:00:14",
+   "end": "2026-11-08 16:06:12",
+   "sec": 358,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-08T13:00"
+   },
+   "dagRunId": "scheduled__2026-11-08T16:00:14+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-08 16:00:14",
+     "sec": 87
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-08 16:01:41",
+     "sec": 94
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-08 16:03:15",
+     "sec": 94
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-08 16:04:49",
+     "sec": 81
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-08 16:06:12",
+     "initOps": 0,
+     "deltaOps": 146,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 146
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-08 16:00:14",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5606"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:00:14",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "cf36d58b4737819096da1dac"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:00:16",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:00:17",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:00:29",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "146",
+      "CustomerCollection",
+      "2026-11-08T13:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:00:33",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:05:52",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "146",
+      "raw.customer",
+      "904899923045609156"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:06:07",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "146",
+      "raw.customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 16:06:12",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:05:58"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5605",
+   "job": "c4c_customer_pull",
+   "start": "2026-11-08 13:02:07",
+   "end": "2026-11-08 13:06:24",
+   "sec": 257,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-08T10:00"
+   },
+   "dagRunId": "scheduled__2026-11-08T13:02:07+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-08 13:02:07",
+     "sec": 52
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-08 13:02:59",
+     "sec": 49
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-08 13:03:48",
+     "sec": 48
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-08 13:04:36",
+     "sec": 68
+    }
+   ],
+   "objects": [
+    {
+     "src": "CustomerCollection",
+     "tgt": "raw.customer",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-08 13:06:24",
+     "initOps": 0,
+     "deltaOps": 250,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 250
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-08 13:02:07",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5605"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 13:02:07",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "6c031199972a846916419f82"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 13:02:09",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP Cloud for Customer",
+      "C4C_PROD"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 13:02:10",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/c4c_prod"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 13:02:22",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "250",
+      "CustomerCollection",
+      "2026-11-08T10:00"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 13:02:26",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "customer v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 13:06:04",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "250",
+      "raw.customer",
+      "208023259460586094"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 13:06:19",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "250",
+      "raw.customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 13:06:24",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:04:17"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5679",
+   "job": "erp_vendor_pull",
+   "start": "2026-11-08 12:15:51",
+   "end": "2026-11-08 12:19:52",
+   "sec": 241,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "أحمد ناصر",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-08T08:15"
+   },
+   "dagRunId": "scheduled__2026-11-08T12:15:51+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-08 12:15:51",
+     "sec": 45
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-08 12:16:36",
+     "sec": 55
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-08 12:17:31",
+     "sec": 54
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-08 12:18:25",
+     "sec": 56
+    }
+   ],
+   "objects": [
+    {
+     "src": "LFA1 / LFB1",
+     "tgt": "raw.vendor",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-08 12:19:52",
+     "initOps": 0,
+     "deltaOps": 523,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 523
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-08 12:15:51",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5679"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 12:15:51",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "a748dbcfac619e630dde29a6"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 12:15:53",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "SAP S/4HANA",
+      "S4_HANA"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 12:15:54",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/s4_hana"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 12:16:06",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "523",
+      "LFA1 / LFB1",
+      "2026-11-08T08:15"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 12:16:10",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "vendor v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 12:19:32",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "523",
+      "raw.vendor",
+      "564190732648075247"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 12:19:47",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "523",
+      "raw.vendor"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 12:19:52",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:04:01"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5732",
+   "job": "sqlsrv_product_pull",
+   "start": "2026-11-08 01:30:04",
+   "end": "2026-11-08 01:45:48",
+   "sec": 944,
+   "status": "succeeded",
+   "launched": "schedule",
+   "runAs": "كريم فوزي",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "since": "2026-11-07T01:30"
+   },
+   "dagRunId": "scheduled__2026-11-08T01:30:04+02:00",
+   "tasks": [
+    {
+     "id": "extract_source",
+     "status": "succeeded",
+     "start": "2026-11-08 01:30:04",
+     "sec": 271
+    },
+    {
+     "id": "validate_schema",
+     "status": "succeeded",
+     "start": "2026-11-08 01:34:35",
+     "sec": 189
+    },
+    {
+     "id": "land_raw_iceberg",
+     "status": "succeeded",
+     "start": "2026-11-08 01:37:44",
+     "sec": 194
+    },
+    {
+     "id": "publish_raw_kafka",
+     "status": "succeeded",
+     "start": "2026-11-08 01:40:58",
+     "sec": 177
+    }
+   ],
+   "objects": [
+    {
+     "src": "dbo.Titles",
+     "tgt": "raw.product",
+     "load": "delta",
+     "status": "completed",
+     "last": "2026-11-08 01:45:48",
+     "initOps": 0,
+     "deltaOps": 1784,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "",
+     "threads": 1,
+     "records": 1784
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-08 01:30:04",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5732"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 01:30:04",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "dfed2c43e256a6dc8f5486b7"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 01:30:06",
+     "cat": "info",
+     "key": "jr.m.connect",
+     "args": [
+      "Microsoft SQL Server",
+      "SQL_PUBLISHING"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 01:30:07",
+     "cat": "info",
+     "key": "jr.m.secret",
+     "args": [
+      "kv://repoio/sql_publishing"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 01:30:19",
+     "cat": "info",
+     "key": "jr.m.extract",
+     "args": [
+      "1784",
+      "dbo.Titles",
+      "2026-11-07T01:30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 01:30:23",
+     "cat": "info",
+     "key": "jr.m.schemaOk",
+     "args": [
+      "product v3"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 01:45:28",
+     "cat": "info",
+     "key": "jr.m.land",
+     "args": [
+      "1784",
+      "raw.product",
+      "815573999879152132"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 01:45:43",
+     "cat": "info",
+     "key": "jr.m.publish",
+     "args": [
+      "1784",
+      "raw.product"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-08 01:45:48",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:15:44"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [],
+   "quarantined": 0
+  },
+  {
+   "id": "R-5760",
+   "job": "mdm_customer_stream",
+   "start": "2026-11-06 12:18:32",
+   "end": "",
+   "sec": 346288,
+   "status": "running",
+   "launched": "manual",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "permanent",
+   "params": {
+    "checkpoint": "abfss://…/chk/customer"
+   },
+   "dagRunId": "",
+   "tasks": [
+    {
+     "id": "standardise",
+     "status": "running",
+     "start": "2026-11-06 12:18:32",
+     "sec": 69794
+    },
+    {
+     "id": "data_quality",
+     "status": "running",
+     "start": "2026-11-07 07:41:46",
+     "sec": 58901
+    },
+    {
+     "id": "match_splink",
+     "status": "running",
+     "start": "2026-11-08 00:03:27",
+     "sec": 67454
+    },
+    {
+     "id": "survivorship",
+     "status": "running",
+     "start": "2026-11-08 18:47:41",
+     "sec": 48494
+    },
+    {
+     "id": "publish_golden",
+     "status": "running",
+     "start": "2026-11-09 08:15:55",
+     "sec": 58415
+    }
+   ],
+   "objects": [
+    {
+     "src": "raw.customer",
+     "tgt": "staged.customer",
+     "load": "initialDelta",
+     "status": "retrying",
+     "last": "2026-11-10 12:30:00",
+     "initOps": 23923,
+     "deltaOps": 1897,
+     "parts": 4,
+     "partsDone": 3,
+     "partsErr": 0,
+     "state": "transferDelta",
+     "threads": 1,
+     "records": 1439
+    },
+    {
+     "src": "staged.customer",
+     "tgt": "golden.customer",
+     "load": "delta",
+     "status": "running",
+     "last": "2026-11-10 12:30:00",
+     "initOps": 0,
+     "deltaOps": 744,
+     "parts": 4,
+     "partsDone": 4,
+     "partsErr": 0,
+     "state": "transferDelta",
+     "threads": 1,
+     "records": 1439
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-06 12:18:32",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5760"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-06 12:18:32",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "9b4e2c249479e1e6c9277d9b"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-06 12:18:34",
+     "cat": "info",
+     "key": "jr.m.subscribe",
+     "args": [
+      "raw.customer",
+      "mdm-customer"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-06 12:19:32",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4001",
+      "258",
+      "255",
+      "56"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-06 12:32:03",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4002",
+      "129",
+      "126",
+      "10"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-06 12:44:17",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4003",
+      "63",
+      "61",
+      "16"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-06 12:56:36",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4004",
+      "191",
+      "191",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-06 13:09:04",
+     "cat": "info",
+     "key": "jr.m.microbatch",
+     "args": [
+      "4005",
+      "178",
+      "177",
+      "51"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-06 13:13:27",
+     "cat": "info",
+     "key": "jr.m.match",
+     "args": [
+      "701",
+      "77",
+      "17"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-06 13:13:29",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_match_regex",
+      "phone",
+      "4",
+      "99%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-06 13:13:30",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "4"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-06 13:13:32",
+     "cat": "info",
+     "key": "jr.m.surv",
+     "args": [
+      "63",
+      "9"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-06 13:13:33",
+     "cat": "info",
+     "key": "jr.m.lag",
+     "args": [
+      "raw.customer",
+      "486"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-06 13:13:34",
+     "cat": "info",
+     "key": "jr.m.checkpoint",
+     "args": [
+      "189545"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 3985,
+     "unexpected": 25,
+     "pct": 99.37,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 8899,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 3217,
+     "unexpected": 1,
+     "pct": 99.97,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2546,
+     "unexpected": 15,
+     "pct": 99.41,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 3681,
+     "unexpected": 34,
+     "pct": 99.08,
+     "ok": false
+    }
+   ],
+   "quarantined": 4
+  }
+ ]
+}
