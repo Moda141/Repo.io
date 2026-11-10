@@ -2,7 +2,7 @@
 	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
 	<!-- J10: job runs list, laid out like the Databricks "Runs" tab (filters, finished-runs chart,
 	     top error types, runs table with column chooser). Run details open the monitor page. -->
-	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="true" class="repoioJrPage">
+	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="true" class="repoioJrPage repoioEdge">
 		<f:title>
 			<f:DynamicPageTitle>
 				<f:heading><Title text="{i18n>jr.title}" level="H1"/></f:heading>
