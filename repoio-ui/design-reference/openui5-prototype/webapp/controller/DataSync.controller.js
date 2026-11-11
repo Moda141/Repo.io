@@ -103,22 +103,50 @@ sap.ui.define([
 		onDirty: function () { this._dirty(); },
 
 		/* ---------- source / target ---------- */
+		/* Compact picker: connection, then its container (Datasphere "Select Source Connection"). */
 		onPickConn: function () {
-			var that = this, conns = this.data().getProperty("/connections") || [];
-			var oDlg = new SelectDialog({ title: this.text("ds.pickConn"),
-				items: conns.map(function (c) { return new StandardListItem({ title: S.connText(that, c), description: that.text("ds.ct." + c.type), icon: S.logo(c) || "sap-icon://connected", info: c.id }); }),
-				confirm: function (e) {
-					var c = conns[e.getParameter("selectedItem").getParent().indexOfItem(e.getParameter("selectedItem"))];
-					that._f.conn = c.id;
-					that._f.container = { c4c: "c4codataapi", hana: "SAPHANADB", mssql: "dbo", file: "/uploads" }[c.type];
-					if (c.type === "file") { that._f.interval = "upload"; } else if (that._f.interval === "upload") { that._f.interval = "1h"; }
-					that._dirty();
-				},
-				cancel: function () { if (!that._f.conn) { that.onBack(); } }
+			var that = this, vm = this.viewModel();
+			vm.setProperty("/sp", { q: "", sel: "", container: "", containers: [] });
+			this._spFilter();
+			this._spOk = false;
+			var open = function (d) { that.byId("spList").removeSelections(true); d.open(); };
+			if (this._sp) { open(this._sp); return; }
+			Fragment.load({ id: this.getView().getId(), name: "repoio.proto.fragment.SourcePicker", controller: this }).then(function (d) {
+				that._sp = d; that.getView().addDependent(d); open(d);
 			});
-			this.getView().addDependent(oDlg);
-			oDlg.open();
 		},
+		_spFilter: function () {
+			var that = this, vm = this.viewModel(), q = (vm.getProperty("/sp/q") || "").toLowerCase(),
+				st = { active: ["Success", "sap-icon://status-positive", "jr.st.succeeded"] };
+			vm.setProperty("/sp/rows", (this.data().getProperty("/connections") || []).filter(function (c) {
+				return !q || [c.id, c.name, c.nameEn, that.text("ds.ct." + c.type)].join(" ").toLowerCase().indexOf(q) > -1;
+			}).map(function (c) {
+				var ok = c.state === "active";
+				return { id: c.id, name: S.connText(that, c), sub: that.text("ds.ct." + c.type) + " · " + c.id, logo: S.logo(c),
+					state: ok ? "Success" : "Warning", stateIcon: ok ? "sap-icon://status-positive" : "sap-icon://status-critical",
+					stateText: that.text(ok ? "ds.sp.ok" : "ds.sp.attention") };
+			}));
+			return st;
+		},
+		onSpSearch: function () { this._spFilter(); },
+		onSpSelect: function (oEvent) {
+			var vm = this.viewModel(), id = oEvent.getParameter("listItem").getBindingContext("view").getProperty("id"),
+				conts = this._sync.containers[id] || [];
+			vm.setProperty("/sp/sel", id);
+			vm.setProperty("/sp/containers", conts.map(function (k) { return { key: k[0], text: k[1] }; }));
+			vm.setProperty("/sp/container", conts.length ? conts[0][0] : "");
+		},
+		onSpConfirm: function () {
+			var vm = this.viewModel(), c = S.conn(this, vm.getProperty("/sp/sel"));
+			this._f.conn = c.id;
+			this._f.container = vm.getProperty("/sp/container");
+			if (c.type === "file") { this._f.interval = "upload"; } else if (this._f.interval === "upload") { this._f.interval = "1h"; }
+			this._spOk = true;
+			this._sp.close();
+			this._dirty();
+		},
+		onSpCancel: function () { this._sp.close(); },
+		onSpAfterClose: function () { if (!this._spOk && !this._f.conn) { this.onBack(); } },
 		onRepo: function () { this._dirty(); },
 		onConn: function () { this.router().navTo("connections", { conn: this._f.conn }); },
 		onFlowSettings: function () { this.byId("sfObjects").removeSelections(true); this.viewModel().setProperty("/sf/selIdx", -1); },

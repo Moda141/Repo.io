@@ -1383,6 +1383,52 @@
    "dbo.Editions"
   ]
  },
+ "containers": {
+  "C4C_PROD": [
+   [
+    "c4codataapi",
+    "OData service · customers, contacts"
+   ],
+   [
+    "c4codata/marketing",
+    "OData service · marketing"
+   ]
+  ],
+  "S4_HANA": [
+   [
+    "SAPHANADB",
+    "Database schema · ERP tables"
+   ],
+   [
+    "CDS",
+    "CDS views"
+   ]
+  ],
+  "SQL_LEGACY_SALES": [
+   [
+    "dbo",
+    "Schema · sales"
+   ],
+   [
+    "archive",
+    "Schema · archive"
+   ]
+  ],
+  "FILE_UPLOADS": [
+   [
+    "/uploads/schools",
+    "Folder"
+   ],
+   [
+    "/uploads/authors",
+    "Folder"
+   ],
+   [
+    "/uploads/customers",
+    "Folder"
+   ]
+  ]
+ },
  "entitiesByDomain": {
   "customers": [
    "customer",

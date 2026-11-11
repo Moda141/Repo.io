@@ -89,7 +89,13 @@ catalog = {
  "FILE_UPLOADS": ["school_list", "authors_csv"],
  "SQL_LEGACY_SALES": ["dbo.Titles", "dbo.Editions"],
 }
+containers = {
+ "C4C_PROD": [["c4codataapi", "OData service · customers, contacts"], ["c4codata/marketing", "OData service · marketing"]],
+ "S4_HANA": [["SAPHANADB", "Database schema · ERP tables"], ["CDS", "CDS views"]],
+ "SQL_LEGACY_SALES": [["dbo", "Schema · sales"], ["archive", "Schema · archive"]],
+ "FILE_UPLOADS": [["/uploads/schools", "Folder"], ["/uploads/authors", "Folder"], ["/uploads/customers", "Folder"]],
+}
 ent_of_domain = {"customers": ["customer", "customer_address", "customer_contact"], "vendors": ["vendor"], "products": ["product"], "authors": ["author"]}
-json.dump(dict(flows=flows, source=dict((k, src(k)) for k in SRC), entities=ENT, catalog=catalog, entitiesByDomain=ent_of_domain),
+json.dump(dict(flows=flows, source=dict((k, src(k)) for k in SRC), entities=ENT, catalog=catalog, containers=containers, entitiesByDomain=ent_of_domain),
           open(OUT, "w"), ensure_ascii=False, indent=1)
 print(len(flows))

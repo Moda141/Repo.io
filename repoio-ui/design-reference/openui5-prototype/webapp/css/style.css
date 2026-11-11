@@ -711,3 +711,9 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioRfNote.sapMMsgStrip { margin: 0.75rem 1rem 1rem; }
 .repoioPjTabs.sapMITB { height: 100%; }
 .repoioPjTabs .sapMITBContent { padding: 0.75rem 1rem; }
+.repoioSpList .sapMLIB { min-height: 3rem; }
+.repoioSpItem { width: 100%; gap: 0.75rem; padding: 0.375rem 1rem; box-sizing: border-box; }
+.repoioSpLogo { flex: none; object-fit: contain; }
+.repoioSpText { flex: 1 1 auto; min-width: 0; }
+.repoioSpName.sapMText { font-weight: bold; }
+.repoioSpContainer { padding: 0.75rem 1rem 1rem; border-top: 1px solid #e5e5e5; }
