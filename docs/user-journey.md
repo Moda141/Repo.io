@@ -493,32 +493,47 @@ system (J9); sync = what to bring and when; job run = each execution (J10).*
 1. The Data Engineer opens **Integration hub → Data sync**: the explorer
    list of replication flows (facets: source connection, target domain,
    status; last run; delta interval).
-2. **New replication flow:** pick the source connection from the
-   connections registry (credentials are never shown), then the target
-   **repository**. Its domain and model version define the target
-   entities and fields.
-3. **Add source objects** from the connection's container (C4C OData
-   collections, S/4HANA tables, SQL Server schema, upload folder). Each
-   object maps to one target entity of the domain (closed list; no
-   renaming or new tables, unlike Datasphere).
-4. Per object:
-   - **Load type:** initial only, or initial and delta. Change detection
-     comes from the source type: a watermark column, change data capture,
-     or each upload as a full load.
-   - **Reload:** re-runs the initial load into raw. It never deletes
-     golden records; rows missing from the source are flagged for
-     stewards.
-   - **Projection:** row filters, and the mapping of source columns to
-     model fields (the field mapper, with auto-map). Required and key
-     fields must be mapped.
-5. Flow settings: the **delta interval** (15 min, hourly, daily at a
-   time; "on each upload" for files).
-6. **Validate** lists the errors and warnings. **Deploy** is blocked while
-   errors remain; it creates the ingest job (an Airflow pull DAG, or a
-   push endpoint for uploads). **Run** starts a run, and **Open in Job
-   runs** shows that job's runs.
-7. Editing a deployed flow marks it "Changes not deployed". The running
-   job keeps the deployed version until the next deploy.
+2. **New replication flow** opens an empty canvas with a Source panel and
+   a Target panel, following the Datasphere steps:
+   - **Select Source Connection:** a compact picker over the connections
+     registry, showing health. Credentials are never shown.
+   - **Select Source Container:** a C4C OData service, an S/4HANA schema
+     or CDS, a SQL Server schema, or an upload folder.
+   - **Select Target:** a Repo.io repository. Its model version is the
+     target container (in Datasphere this is the space).
+   - **Add Source Objects:** browse the container, select objects, **Next**
+     to review the target entity proposed for each, then **Add
+     Selection**.
+3. Each replication object is a row: source object → target entity.
+   - The row's additional options (…) can map it to another entity of the
+     domain.
+   - **Rename is disabled**, since targets are model entities.
+4. Selecting an object opens the **Projections** and **Settings** tabs.
+   - **Projections:** one projection per object, with row filters and
+     the mapping of source columns to model fields (field mapper with
+     auto-map). Without a projection, columns map by name.
+   - **Settings:**
+     - **Load type** is "Initial only" or "Initial and delta". Change
+       detection comes from the source type: a watermark column, change
+       data capture, or a full load per upload.
+     - **Truncate** reloads raw. It never deletes golden records; rows
+       missing from the source are flagged for stewards.
+5. The properties panel shows:
+   - **General:** business name, technical name, status, owner.
+   - **Run settings:** delta load interval in hours and minutes, or "On
+     each upload" for files.
+   - For a selected object: its last-run record counts (initial, delta,
+     rejected).
+   - The target settings icon shows the fixed target behaviour: delta
+     capture in raw, and rejected rows go to Quarantine.
+6. Saving a new flow asks for its business and technical name; the
+   technical name is fixed after that.
+7. **Validate** lists the errors and warnings. **Deploy** is blocked while
+   errors remain; it creates the ingest job (an Airflow pull DAG, or an
+   upload endpoint). **Run** starts a run, and the monitor button opens
+   that job's runs in Job runs.
+8. Editing a deployed flow marks it "Changes not deployed". The job keeps
+   the deployed version until the next deploy.
 
 *Edge cases:*
 - Rows land in `raw.<entity>` exactly as delivered. Transformations and

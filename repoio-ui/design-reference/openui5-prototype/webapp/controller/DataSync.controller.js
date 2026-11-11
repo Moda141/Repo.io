@@ -1,23 +1,36 @@
 sap.ui.define([
 	"repoio/proto/controller/BaseController",
 	"repoio/proto/util/sync",
+	"repoio/proto/util/people",
 	"sap/ui/core/Fragment",
 	"sap/m/MessagePopover",
 	"sap/m/MessageItem",
-	"sap/m/SelectDialog",
-	"sap/m/StandardListItem",
+	"sap/m/Menu",
+	"sap/m/MenuItem",
+	"sap/m/Dialog",
+	"sap/m/Button",
+	"sap/m/Label",
+	"sap/m/Input",
+	"sap/m/Text",
+	"sap/m/Switch",
+	"sap/m/MessageStrip",
+	"sap/ui/layout/form/SimpleForm",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox"
-], function (BaseController, S, Fragment, MessagePopover, MessageItem, SelectDialog, StandardListItem, MessageToast, MessageBox) {
+], function (BaseController, S, people, Fragment, MessagePopover, MessageItem, Menu, MenuItem, Dialog, Button, Label, Input, Text, Switch, MessageStrip,
+	SimpleForm, MessageToast, MessageBox) {
 	"use strict";
 
-	var NOW = "2026-11-11 13:50";
+	var NOW = "2026-11-11 14:10",
+		CONTAINER_TYPE = { c4c: "sap-icon://cloud", hana: "sap-icon://database", mssql: "sap-icon://database", file: "sap-icon://folder-blank" };
 
-	/* J9b: replication flow editor. The flow is a control-plane definition; Deploy creates the ingest job
-	   (Airflow pull DAG or push endpoint) that writes source rows to raw.<entity>. Nothing here touches golden records. */
+	function techName(s) { return "SYNC_" + String(s || "").toUpperCase().replace(/[^A-Z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 40); }
+
+	/* J15: replication flow editor following the SAP Datasphere steps. The flow is a control-plane definition;
+	   Deploy creates the ingest job (Airflow pull DAG or upload endpoint) that writes to raw.<entity>. */
 	return BaseController.extend("repoio.proto.controller.DataSync", {
 		onInit: function () {
-			this.viewModel().setProperty("/sf", { selIdx: -1, msgs: [], dirty: false });
+			this.viewModel().setProperty("/sf", { selIdx: -1, msgs: [], dirty: false, tab: "projections" });
 			this.router().getRoute("dataSyncFlow").attachPatternMatched(this._onMatched, this);
 		},
 
@@ -27,88 +40,101 @@ sap.ui.define([
 				that._sync = oM.getData();
 				that._orig = id === "new" ? null : that._sync.flows.filter(function (f) { return f.id === id; })[0];
 				that._f = that._orig ? JSON.parse(JSON.stringify(that._orig)) :
-					{ id: "SYNC_NEW_" + (that._sync.flows.length + 1), en: "", ar: "", conn: "", container: "", repo: "customer-master", status: "draft", interval: "1h", at: "02:00",
+					{ id: "", en: "", ar: "", conn: "", container: "", repo: "", status: "draft", interval: "1h", at: "02:00",
 						owner: "محمد", changed: NOW, job: "", lastRun: "", lastState: "", objects: [] };
 				var vm = that.viewModel();
 				vm.setProperty("/sf/isNew", !that._orig);
 				vm.setProperty("/sf/dirty", false);
 				vm.setProperty("/sf/msgs", []);
 				vm.setProperty("/sf/selIdx", -1);
-				vm.setProperty("/sf/lang", that.lang());
-				vm.setProperty("/sf/rtl", that.isRtl());
-				vm.setProperty("/sf/repos", Object.keys(that.data().getProperty("/repos")).map(function (k) {
-					var r = S.repo(that, k), d = S.dom(that, r.domainId);
-					return { key: k, text: r.name + " · " + r.model, icon: d ? d.icon : "" };
-				}));
 				that.byId("sfObjects").removeSelections(true);
 				that._refresh();
-				if (!that._orig) { that.onPickConn(); }
 			});
 		},
 
 		/* ---------- model → view ---------- */
 		_refresh: function () {
 			var that = this, vm = this.viewModel(), f = this._f, ar = this.lang() === "ar", conn = f.conn ? S.conn(this, f.conn) : null,
-				repo = S.repo(this, f.repo), d = S.dom(this, repo.domainId), ents = this._sync.entities, dirty = vm.getProperty("/sf/dirty");
+				repo = f.repo ? S.repo(this, f.repo) : null, d = repo ? S.dom(this, repo.domainId) : null, ents = this._sync.entities, dirty = vm.getProperty("/sf/dirty");
 			vm.setProperty("/sf/f", f);
 			vm.setProperty("/sf/status", f.status);
 			vm.setProperty("/sf/lastRun", f.lastRun);
-			var name = (ar ? f.ar : f.en) || f.en || f.ar || this.text("ds.untitled");
-			vm.setProperty("/sf/titleText", name + (dirty ? "*" : ""));
+			var name = (ar ? f.ar : f.en) || f.en || f.ar;
+			vm.setProperty("/sf/name", name);
+			vm.setProperty("/sf/titleText", (name || this.text("ds.untitled")) + (dirty ? "*" : ""));
 			var st = S.STATUS[f.status];
 			vm.setProperty("/sf/statusText", this.text("ds.st." + f.status));
 			vm.setProperty("/sf/statusState", st[0]);
 			vm.setProperty("/sf/statusIcon", st[1]);
+			var pp = people.get(f.owner);
+			vm.setProperty("/sf/ownerText", pp && !ar ? pp.en : f.owner);
 			vm.setProperty("/sf/connText", conn ? S.connText(this, conn) : "");
 			vm.setProperty("/sf/connType", conn ? this.text("ds.ct." + conn.type) : "");
 			vm.setProperty("/sf/logo", conn ? S.logo(conn) : "");
 			vm.setProperty("/sf/delta", conn ? S.deltaMethod(conn) : "");
-			vm.setProperty("/sf/repoText", repo.name);
-			vm.setProperty("/sf/repoSub", this.text("ds.repoSub", [d ? this.domainName(d) : "", repo.model]));
+			vm.setProperty("/sf/repoText", repo ? repo.name : "");
+			vm.setProperty("/sf/domText", d ? this.domainName(d) : "");
 			vm.setProperty("/sf/domIcon", d ? d.icon : "sap-icon://database");
-			var ents2 = f.objects.map(function (o) { return o.entity; }).filter(function (e, i, a) { return a.indexOf(e) === i; });
-			vm.setProperty("/sf/lands", (ents2.length ? ents2 : (this._sync.entitiesByDomain[repo.domainId] || ["—"]).slice(0, 1)).map(function (e) { return "raw." + e; }).join(", "));
-			vm.setProperty("/sf/intervals", (conn && conn.type === "file" ? ["upload"] : ["15m", "1h", "daily"]).map(function (k) { return { key: k, text: that.text("ds.iv." + k) }; }));
-			vm.setProperty("/sf/entities", (this._sync.entitiesByDomain[repo.domainId] || []).map(function (e) { return { key: e, text: that.text("ds.ent." + e) }; }));
+			vm.setProperty("/sf/targetContainer", repo ? this.text("ds.targetContainer", [repo.model]) : "");
+			var mins = f.interval === "15m" ? 15 : f.interval === "1h" ? 60 : f.interval === "daily" ? 1440 : (f.mins || 60);
+			vm.setProperty("/sf/hours", Math.floor(mins / 60));
+			vm.setProperty("/sf/minutes", mins % 60);
+			vm.setProperty("/sf/emptyText", this.text(!f.conn ? "ds.empty.conn" : !f.container ? "ds.empty.container" : !f.repo ? "ds.empty.target" : "ds.noObjects"));
 			vm.setProperty("/sf/objTitle", this.text("ds.objTitle", [f.objects.length]));
 			vm.setProperty("/sf/objects", f.objects.map(function (o) {
-				var fields = ents[o.entity] || [], req = fields.filter(function (x) { return x.req; }),
-					okReq = req.every(function (x) { return o.mapping[x.name]; }), n = Object.keys(o.mapping).length;
+				var fields = ents[o.entity] || [], okReq = fields.filter(function (x) { return x.req; }).every(function (x) { return o.mapping[x.name]; });
 				return Object.assign({}, o, {
-					rowsText: o.rows ? that.text("ds.rows", [that.fmt.num(o.rows)]) : "",
-					entityText: that.text("ds.ent." + o.entity),
-					loadText: that.text(o.load === "delta" ? "ds.load.delta" : "ds.load.initial"), loadIcon: o.load === "delta" ? "sap-icon://synchronize" : "sap-icon://download",
-					mapText: that.text("ds.mapped", [n, fields.length]), mapState: okReq ? "Success" : "Error", mapIcon: okReq ? "sap-icon://combine" : "sap-icon://error",
-					filterCount: (o.filters || []).length, filterText: (o.filters || []).map(function (x) { return x.col + " " + x.op + " " + x.val; }).join("; "),
-					recText: o.last && o.last.initial ? that.text("ds.recs", [that.fmt.num(o.last.initial), that.fmt.num(o.last.delta || 0)]) : "—"
+					srcSub: (o.rows ? that.text("ds.rows", [that.fmt.num(o.rows)]) + " · " : "") + that.text(o.load === "delta" ? "ds.load.delta" : "ds.load.initial") + (o.truncate ? " · " + that.text("ds.truncateShort") : ""),
+					tgtSub: that.text("ds.ent." + o.entity) + " · raw." + o.entity,
+					mapText: that.text("ds.mapped", [Object.keys(o.mapping).length, fields.length]), mapState: okReq ? "Success" : "Error"
 				});
 			}));
 			this._objProps();
 		},
 		_objProps: function () {
-			var vm = this.viewModel(), i = vm.getProperty("/sf/selIdx"), o = this._f.objects[i];
+			var that = this, vm = this.viewModel(), i = vm.getProperty("/sf/selIdx"), o = this._f.objects[i];
 			if (!o) { vm.setProperty("/sf/selIdx", -1); return; }
-			vm.setProperty("/sf/o", o);
-			var conn = S.conn(this, this._f.conn), fields = this._sync.entities[o.entity] || [];
+			var conn = S.conn(this, this._f.conn), fields = this._sync.entities[o.entity] || [],
+				okReq = fields.filter(function (x) { return x.req; }).every(function (x) { return o.mapping[x.name]; }),
+				mapText = this.text("ds.mapped", [Object.keys(o.mapping).length, fields.length]);
+			vm.setProperty("/sf/o", Object.assign({}, o, { hasProjection: !!o.projection }));
+			vm.setProperty("/sf/oEntityText", this.text("ds.ent." + o.entity));
+			vm.setProperty("/sf/oLoadText", this.text(o.load === "delta" ? "ds.load.delta" : "ds.load.initial"));
 			vm.setProperty("/sf/deltaText", this.text("ds.dm." + S.deltaMethod(conn)));
-			vm.setProperty("/sf/oFilterText", (o.filters || []).length ? (o.filters || []).map(function (x) { return x.col + " " + x.op + " " + x.val; }).join("; ") : this.text("ds.noFilter"));
-			vm.setProperty("/sf/oMapText", this.text("ds.mapped", [Object.keys(o.mapping).length, fields.length]));
+			vm.setProperty("/sf/oMapText", (o.projection ? this.text("ds.pjOn") : this.text("ds.pjOff")) + " · " + mapText);
+			vm.setProperty("/sf/oProj", o.projection ? [{ name: o.source.replace(/^.*\./, "") + "_PRJ",
+				filterText: (o.filters || []).length ? o.filters.map(function (x) { return x.col + " " + that.text("ds.op." + x.op + "S") + " " + x.val; }).join("; ") : this.text("ds.noFilter"),
+				mapText: mapText, mapState: okReq ? "Success" : "Error" }] : []);
+			var l = o.last || {};
+			vm.setProperty("/sf/oInitial", l.initial ? this.fmt.num(l.initial) : "—");
+			vm.setProperty("/sf/oDelta", l.initial ? this.fmt.num(l.delta || 0) : "—");
+			vm.setProperty("/sf/oRejected", l.initial ? this.fmt.num(l.rejected || 0) : "—");
 		},
 		_dirty: function () {
-			var vm = this.viewModel();
-			vm.setProperty("/sf/dirty", true);
+			this.viewModel().setProperty("/sf/dirty", true);
 			if (this._f.status === "deployed") { this._f.status = "changed"; }
 			this._refresh();
 		},
-		onDirty: function () { this._dirty(); },
+		onName: function () {
+			var n = this.viewModel().getProperty("/sf/name");
+			this._f[this.lang() === "ar" ? "ar" : "en"] = n;
+			if (this.lang() === "ar" && !this._f.en) { this._f.en = n; }
+			this._dirty();
+		},
+		onInterval: function () {
+			var vm = this.viewModel(), m = (+vm.getProperty("/sf/hours")) * 60 + (+vm.getProperty("/sf/minutes"));
+			if (m < 15) { m = 15; }
+			this._f.interval = m === 15 ? "15m" : m === 60 ? "1h" : m === 1440 ? "daily" : "custom";
+			this._f.mins = m;
+			this._dirty();
+		},
 
-		/* ---------- source / target ---------- */
-		/* Compact picker: connection, then its container (Datasphere "Select Source Connection"). */
-		onPickConn: function () {
+		/* ---------- compact picker (connection, container, target) ---------- */
+		_picker: function (mode) {
 			var that = this, vm = this.viewModel();
-			vm.setProperty("/sp", { q: "", sel: "", container: "", containers: [] });
+			this._spMode = mode;
+			vm.setProperty("/sp", { q: "", sel: "", title: this.text({ conn: "ds.pickConn", container: "ds.pickContainer", target: "ds.pickTarget" }[mode]) });
 			this._spFilter();
-			this._spOk = false;
 			var open = function (d) { that.byId("spList").removeSelections(true); d.open(); };
 			if (this._sp) { open(this._sp); return; }
 			Fragment.load({ id: this.getView().getId(), name: "repoio.proto.fragment.SourcePicker", controller: this }).then(function (d) {
@@ -116,59 +142,107 @@ sap.ui.define([
 			});
 		},
 		_spFilter: function () {
-			var that = this, vm = this.viewModel(), q = (vm.getProperty("/sp/q") || "").toLowerCase(),
-				st = { active: ["Success", "sap-icon://status-positive", "jr.st.succeeded"] };
-			vm.setProperty("/sp/rows", (this.data().getProperty("/connections") || []).filter(function (c) {
-				return !q || [c.id, c.name, c.nameEn, that.text("ds.ct." + c.type)].join(" ").toLowerCase().indexOf(q) > -1;
-			}).map(function (c) {
-				var ok = c.state === "active";
-				return { id: c.id, name: S.connText(that, c), sub: that.text("ds.ct." + c.type) + " · " + c.id, logo: S.logo(c),
-					state: ok ? "Success" : "Warning", stateIcon: ok ? "sap-icon://status-positive" : "sap-icon://status-critical",
-					stateText: that.text(ok ? "ds.sp.ok" : "ds.sp.attention") };
-			}));
-			return st;
+			var that = this, vm = this.viewModel(), q = (vm.getProperty("/sp/q") || "").toLowerCase(), rows;
+			if (this._spMode === "conn") {
+				rows = (this.data().getProperty("/connections") || []).map(function (c) {
+					var ok = c.state === "active";
+					return { id: c.id, name: S.connText(that, c), sub: that.text("ds.ct." + c.type) + " · " + c.id, logo: S.logo(c),
+						state: ok ? "Success" : "Warning", stateIcon: ok ? "sap-icon://status-positive" : "sap-icon://status-critical", stateText: that.text(ok ? "ds.sp.ok" : "ds.sp.attention") };
+				});
+			} else if (this._spMode === "container") {
+				var ct = S.conn(this, this._f.conn).type;
+				rows = (this._sync.containers[this._f.conn] || []).map(function (k) {
+					return { id: k[0], name: k[0], sub: k[1], icon: CONTAINER_TYPE[ct] };
+				});
+			} else {
+				rows = Object.keys(this.data().getProperty("/repos")).map(function (k) {
+					var r = S.repo(that, k), d = S.dom(that, r.domainId);
+					return { id: k, name: r.name, sub: (d ? that.domainName(d) : "") + " · " + that.text("ds.targetContainer", [r.model]), icon: d ? d.icon : "sap-icon://database" };
+				});
+			}
+			vm.setProperty("/sp/rows", rows.filter(function (r) { return !q || (r.name + " " + r.sub + " " + r.id).toLowerCase().indexOf(q) > -1; }));
 		},
 		onSpSearch: function () { this._spFilter(); },
-		onSpSelect: function (oEvent) {
-			var vm = this.viewModel(), id = oEvent.getParameter("listItem").getBindingContext("view").getProperty("id"),
-				conts = this._sync.containers[id] || [];
-			vm.setProperty("/sp/sel", id);
-			vm.setProperty("/sp/containers", conts.map(function (k) { return { key: k[0], text: k[1] }; }));
-			vm.setProperty("/sp/container", conts.length ? conts[0][0] : "");
-		},
+		onSpSelect: function (oEvent) { this.viewModel().setProperty("/sp/sel", oEvent.getParameter("listItem").getBindingContext("view").getProperty("id")); },
 		onSpConfirm: function () {
-			var vm = this.viewModel(), c = S.conn(this, vm.getProperty("/sp/sel"));
-			this._f.conn = c.id;
-			this._f.container = vm.getProperty("/sp/container");
-			if (c.type === "file") { this._f.interval = "upload"; } else if (this._f.interval === "upload") { this._f.interval = "1h"; }
-			this._spOk = true;
+			var id = this.viewModel().getProperty("/sp/sel"), f = this._f;
+			if (this._spMode === "conn") {
+				if (f.conn !== id) { f.container = ""; }
+				f.conn = id;
+				var c = S.conn(this, id);
+				if (c.type === "file") { f.interval = "upload"; } else if (f.interval === "upload") { f.interval = "1h"; }
+			} else if (this._spMode === "container") { f.container = id; } else { f.repo = id; }
 			this._sp.close();
 			this._dirty();
 		},
 		onSpCancel: function () { this._sp.close(); },
-		onSpAfterClose: function () { if (!this._spOk && !this._f.conn) { this.onBack(); } },
-		onRepo: function () { this._dirty(); },
+		onSpAfterClose: function () {},
+		onPickConn: function () { this._picker("conn"); },
+		onPickContainer: function () { this._picker("container"); },
+		onPickTarget: function () { this._picker("target"); },
 		onConn: function () { this.router().navTo("connections", { conn: this._f.conn }); },
-		onFlowSettings: function () { this.byId("sfObjects").removeSelections(true); this.viewModel().setProperty("/sf/selIdx", -1); },
 
-		onAddObjects: function () {
-			var that = this, f = this._f, have = f.objects.map(function (o) { return o.source; }),
-				avail = (this._sync.catalog[f.conn] || []).filter(function (t) { return have.indexOf(t) < 0; });
-			if (!avail.length) { MessageToast.show(this.text("ds.t.noMoreObjects")); return; }
-			var oDlg = new SelectDialog({ title: this.text("ds.addObjects"), multiSelect: true, rememberSelections: false,
-				items: avail.map(function (t) { return new StandardListItem({ title: t, description: that.text("ds.cols", [(that._sync.source[t] || []).length]), icon: "sap-icon://table-view" }); }),
-				confirm: function (e) {
-					var repo = S.repo(that, f.repo), ents = that._sync.entitiesByDomain[repo.domainId] || [];
-					(e.getParameter("selectedItems") || []).forEach(function (it) {
-						var t = it.getTitle();
-						f.objects.push({ id: t, source: t, entity: ents[0], load: S.deltaMethod(S.conn(that, f.conn)) === "upload" ? "initial" : "delta", truncate: false, filters: [], mapping: that._autoMap(t, ents[0]), last: {}, rows: null });
-					});
-					that._dirty();
-				}
-			});
+		/* Target settings (settings icon next to the target, Datasphere): fixed for a Repo.io repository. */
+		onTargetSettings: function () {
+			var oDlg = new Dialog({ title: this.text("ds.targetSettings"), contentWidth: "28rem",
+				content: [new SimpleForm({ editable: true, layout: "ResponsiveGridLayout", labelSpanL: 6, labelSpanM: 6, content: [
+					new Label({ text: this.text("ds.ts.deltaCapture") }), new Switch({ state: true, enabled: false }),
+					new Label({ text: this.text("ds.ts.quarantine") }), new Switch({ state: true, enabled: false }),
+					new Label({ text: this.text("ds.ts.topic") }), new Text({ text: this.viewModel().getProperty("/sf/objects").map(function (o) { return "raw." + o.entity; }).filter(function (x, i, a) { return a.indexOf(x) === i; }).join(", ") || "raw.<entity>" }).addStyleClass("repoioMono")
+				] }), new MessageStrip({ text: this.text("ds.ts.note"), type: "Information", showIcon: true }).addStyleClass("sapUiSmallMargin")],
+				endButton: new Button({ text: this.text("common.close"), press: function () { oDlg.close(); } }),
+				afterClose: function () { oDlg.destroy(); } });
 			this.getView().addDependent(oDlg);
 			oDlg.open();
 		},
+
+		/* ---------- Add Source Objects (browse → Next → Add Selection) ---------- */
+		onAddObjects: function () {
+			var that = this, vm = this.viewModel(), f = this._f;
+			if (!f.repo) { MessageToast.show(this.text("ds.t.targetFirst")); this.onPickTarget(); return; }
+			var have = f.objects.map(function (o) { return o.source; });
+			this._aoAll = (this._sync.catalog[f.conn] || []).filter(function (t) { return have.indexOf(t) < 0; }).map(function (t) {
+				var known = (that._sync.flows.map(function (x) { return x.objects; }).reduce(function (a, b) { return a.concat(b); }, []).filter(function (o) { return o.source === t && o.rows; })[0] || {}).rows;
+				return { name: t, cols: (that._sync.source[t] || []).length, rows: known ? that.fmt.num(known) : "—" };
+			});
+			vm.setProperty("/ao", { q: "", step: 1, count: 0, container: f.container, rows: this._aoAll, picked: [] });
+			var open = function (d) { that.byId("aoTable").removeSelections(true); that.byId("aoNav").to(that.byId("aoPick")); d.open(); };
+			if (this._ao) { open(this._ao); return; }
+			Fragment.load({ id: this.getView().getId(), name: "repoio.proto.fragment.AddObjects", controller: this }).then(function (d) {
+				that._ao = d; that.getView().addDependent(d); open(d);
+			});
+		},
+		onAoSearch: function () {
+			var vm = this.viewModel(), q = (vm.getProperty("/ao/q") || "").toLowerCase();
+			vm.setProperty("/ao/rows", this._aoAll.filter(function (r) { return r.name.toLowerCase().indexOf(q) > -1; }));
+		},
+		onAoSelect: function () { this.viewModel().setProperty("/ao/count", this.byId("aoTable").getSelectedItems().length); },
+		onAoNext: function () {
+			var that = this, ents = this._sync.entitiesByDomain[S.repo(this, this._f.repo).domainId] || [],
+				picked = this.byId("aoTable").getSelectedItems().map(function (it) { return it.getBindingContext("view").getProperty("name"); });
+			this._aoPicked = picked.map(function (t) { return { name: t, entity: that._guessEntity(t, ents) }; });
+			this.viewModel().setProperty("/ao/picked", this._aoPicked.map(function (p) { return { name: p.name, target: that.text("ds.ao.to", [p.entity + " · " + that.text("ds.ent." + p.entity)]) }; }));
+			this.viewModel().setProperty("/ao/pickedTitle", this.text("ds.ao.review", [picked.length]));
+			this.viewModel().setProperty("/ao/step", 2);
+			this.byId("aoNav").to(this.byId("aoReview"));
+		},
+		onAoBack: function () { this.viewModel().setProperty("/ao/step", 1); this.byId("aoNav").back(); },
+		onAoAdd: function () {
+			var that = this, f = this._f, upload = S.deltaMethod(S.conn(this, f.conn)) === "upload";
+			this._aoPicked.forEach(function (p) {
+				f.objects.push({ id: p.name, source: p.name, entity: p.entity, load: upload ? "initial" : "delta", truncate: false, filters: [], projection: false,
+					mapping: that._autoMap(p.name, p.entity), last: {}, rows: null });
+			});
+			this._ao.close();
+			this._dirty();
+		},
+		onAoCancel: function () { this._ao.close(); },
+		/* Default target object: the domain entity whose name best matches the source object. */
+		_guessEntity: function (t, ents) {
+			var n = t.toLowerCase();
+			return ents.filter(function (e) { return /addr/.test(n) ? /address/.test(e) : /contact/.test(n) ? /contact/.test(e) : false; })[0] || ents[0];
+		},
+
 		onRemoveObject: function () {
 			var i = this.viewModel().getProperty("/sf/selIdx");
 			this._f.objects.splice(i, 1);
@@ -177,20 +251,46 @@ sap.ui.define([
 			this._dirty();
 		},
 		onObjSelect: function (oEvent) {
-			var it = oEvent.getParameter("listItem");
-			this.viewModel().setProperty("/sf/selIdx", this.byId("sfObjects").indexOfItem(it));
+			this.viewModel().setProperty("/sf/selIdx", this.byId("sfObjects").indexOfItem(oEvent.getParameter("listItem")));
 			this._objProps();
 		},
-		onEntity: function () {
-			var o = this._f.objects[this.viewModel().getProperty("/sf/selIdx")];
-			o.mapping = this._autoMap(o.source, o.entity);
+		onObjChange: function () {
+			var i = this.viewModel().getProperty("/sf/selIdx"), o = this.viewModel().getProperty("/sf/o");
+			this._f.objects[i].load = o.load;
+			this._f.objects[i].truncate = o.truncate;
 			this._dirty();
 		},
-		onObjChange: function () { this._dirty(); },
 
-		/* Same-name / same-meaning auto-mapping (a suggestion; the steward reviews it in the projection). */
+		/* Additional options next to a target object (Datasphere: rename / map to existing). The target is always an
+		   entity of the repository's model, so it can only be switched to another entity of the domain. */
+		onTargetOptions: function (oEvent) {
+			var that = this, oBtn = oEvent.getSource(), i = this.byId("sfObjects").indexOfItem(oBtn.getParent()), o = this._f.objects[i],
+				ents = this._sync.entitiesByDomain[S.repo(this, this._f.repo).domainId] || [],
+				oMenu = new Menu({ items: [
+					new MenuItem({ text: this.text("ds.opt.map"), icon: "sap-icon://dimension", items: ents.map(function (e) {
+						return new MenuItem({ text: e + " · " + that.text("ds.ent." + e), key: e, icon: e === o.entity ? "sap-icon://accept" : "" });
+					}) }),
+					new MenuItem({ text: this.text("ds.opt.rename"), icon: "sap-icon://edit", enabled: false, tooltip: this.text("ds.opt.renameNo") }),
+					new MenuItem({ text: this.text("ds.opt.projection"), icon: "sap-icon://filter-fields", key: "__pj" })
+				], itemSelected: function (e) {
+					var k = e.getParameter("item").getKey();
+					if (!k) { return; }
+					if (k === "__pj") { that._select(i); that.viewModel().setProperty("/sf/tab", "projections"); that.onProjection(); return; }
+					o.entity = k; o.mapping = that._autoMap(o.source, k); that._dirty();
+				} });
+			this.getView().addDependent(oMenu);
+			oMenu.attachEvent("closed", function () { setTimeout(function () { oMenu.destroy(); }, 0); });
+			oMenu.openBy(oBtn);
+		},
+		_select: function (i) {
+			var t = this.byId("sfObjects");
+			t.setSelectedItem(t.getItems()[i]);
+			this.viewModel().setProperty("/sf/selIdx", i);
+			this._objProps();
+		},
+
 		_autoMap: function (table, entity) {
-			var cols = this._sync.source[table] || [], m = {}, alias = { name: ["Name", "NAME1", "full_name", "school_name", "TitleEn", "MAKTX"], source_key: [] };
+			var cols = this._sync.source[table] || [], m = {}, alias = { name: ["Name", "NAME1", "full_name", "school_name", "TitleEn", "MAKTX"] };
 			(this._sync.entities[entity] || []).forEach(function (fd) {
 				var hit = cols.filter(function (c) {
 					var a = c.name.toLowerCase().replace(/[^a-z]/g, ""), b = fd.name.toLowerCase().replace(/[^a-z]/g, "");
@@ -201,12 +301,12 @@ sap.ui.define([
 			return m;
 		},
 
-		/* ---------- projection dialog ---------- */
+		/* ---------- projection (one per object, as in Datasphere) ---------- */
 		onProjection: function () {
 			var that = this, vm = this.viewModel(), o = this._f.objects[vm.getProperty("/sf/selIdx")],
 				src = (this._sync.source[o.source] || []), fields = this._sync.entities[o.entity] || [];
 			vm.setProperty("/pj", {
-				title: this.text("ds.pj.title", [o.source, o.entity]), tab: "mapping",
+				title: this.text("ds.pj.title", [o.source, o.entity]), tab: "filters",
 				filters: JSON.parse(JSON.stringify(o.filters || [])), mapping: JSON.parse(JSON.stringify(o.mapping)),
 				cols: src, src: src.map(function (c) { return { name: c.name, label: c.label, type: c.type === "code" ? "string" : c.type, key: c.key }; }),
 				tgt: fields.map(function (x) { return { name: x.name, type: x.type, key: x.key, codeList: x.codeList }; }),
@@ -239,7 +339,6 @@ sap.ui.define([
 			this._pjTabs();
 		},
 		onPjMapping: function (oEvent) { this.viewModel().setProperty("/pj/mapping", oEvent.getParameter("mapping")); this._pjTabs(); },
-		/* Values land in raw as delivered; standardisation (repoio-stream) transforms them, not the sync. */
 		onPjTransform: function () { MessageToast.show(this.text("ds.t.noTransform")); },
 		onPjAuto: function () {
 			var o = this._f.objects[this.viewModel().getProperty("/sf/selIdx")];
@@ -247,20 +346,28 @@ sap.ui.define([
 			this._pjTabs();
 		},
 		onPjApply: function () {
-			var vm = this.viewModel(), o = this._f.objects[vm.getProperty("/sf/selIdx")];
+			var vm = this.viewModel(), o = this._f.objects[vm.getProperty("/sf/selIdx")], m = vm.getProperty("/pj/mapping"), plain = {};
 			o.filters = vm.getProperty("/pj/filters");
-			var m = vm.getProperty("/pj/mapping"), plain = {};
 			Object.keys(m).forEach(function (k) { plain[k] = typeof m[k] === "string" ? m[k] : m[k].src; });
 			o.mapping = plain;
+			o.projection = true;
 			this._pj.close();
 			this._dirty();
 		},
 		onPjCancel: function () { this._pj.close(); },
+		onRemoveProjection: function () {
+			var o = this._f.objects[this.viewModel().getProperty("/sf/selIdx")];
+			o.projection = false;
+			o.filters = [];
+			o.mapping = this._autoMap(o.source, o.entity);
+			this._dirty();
+		},
 
-		/* ---------- toolbar ---------- */
+		/* ---------- toolbar: Save, Deploy, Run, Validate, monitor ---------- */
 		_validate: function () {
 			var msgs = S.validate(this, this._f, this._sync), vm = this.viewModel();
-			if (!(this._f.en || this._f.ar)) { msgs.unshift({ type: "Error", title: this.text("ds.v.name") }); }
+			if (!this._f.repo) { msgs.unshift({ type: "Error", title: this.text("ds.v.target") }); }
+			if (!this._f.container && this._f.conn) { msgs.unshift({ type: "Error", title: this.text("ds.v.container") }); }
 			if (!this._f.conn) { msgs.unshift({ type: "Error", title: this.text("ds.v.conn") }); }
 			vm.setProperty("/sf/msgs", msgs);
 			var err = msgs.filter(function (m) { return m.type === "Error"; }).length;
@@ -269,10 +376,10 @@ sap.ui.define([
 			return err;
 		},
 		onValidate: function () {
-			var err = this._validate(), that = this;
+			var that = this;
+			this._validate();
 			if (!this.viewModel().getProperty("/sf/msgs").length) { MessageToast.show(this.text("ds.t.valid")); return; }
 			setTimeout(function () { that.onMessages(); }, 50);
-			return err;
 		},
 		onMessages: function () {
 			if (!this._mp) {
@@ -287,10 +394,30 @@ sap.ui.define([
 			else { this._orig = JSON.parse(JSON.stringify(this._f)); this._sync.flows.push(this._orig); this.viewModel().setProperty("/sf/isNew", false); }
 			this.viewModel().setProperty("/sf/dirty", false);
 		},
+		/* Save: a new flow asks for its name first; the technical name is fixed after the first save (Datasphere). */
 		onSave: function () {
-			this._commit();
-			this._refresh();
-			MessageToast.show(this.text(this._f.status === "changed" ? "ds.t.savedChanged" : "ds.t.saved", [this._f.id]));
+			var that = this;
+			if (this._orig) { this._commit(); this._refresh(); MessageToast.show(this.text(this._f.status === "changed" ? "ds.t.savedChanged" : "ds.t.saved", [this._f.id])); return; }
+			var oName = new Input({ value: this.viewModel().getProperty("/sf/name"), valueLiveUpdate: true, liveChange: function (e) { oTech.setValue(techName(e.getParameter("value"))); oOk.setEnabled(!!e.getParameter("value").trim()); } }),
+				oTech = new Input({ value: techName(oName.getValue()) }).addStyleClass("repoioMono"),
+				oOk = new Button({ text: this.text("common.save"), type: "Emphasized", enabled: !!oName.getValue().trim(), press: function () {
+					that._f[that.lang() === "ar" ? "ar" : "en"] = oName.getValue();
+					if (!that._f.en) { that._f.en = oName.getValue(); }
+					that._f.id = oTech.getValue();
+					oDlg.close();
+					that._commit();
+					that._refresh();
+					MessageToast.show(that.text("ds.t.saved", [that._f.id]));
+				} }),
+				oDlg = new Dialog({ title: this.text("ds.saveTitle"), contentWidth: "26rem",
+					content: [new SimpleForm({ editable: true, layout: "ResponsiveGridLayout", labelSpanL: 12, labelSpanM: 12, content: [
+						new Label({ text: this.text("dsp.businessName"), required: true }), oName,
+						new Label({ text: this.text("dsp.technicalName"), required: true }), oTech
+					] }), new MessageStrip({ text: this.text("ds.saveNote"), type: "Information", showIcon: true }).addStyleClass("sapUiSmallMargin")],
+					beginButton: oOk, endButton: new Button({ text: this.text("common.cancel"), press: function () { oDlg.close(); } }),
+					afterClose: function () { oDlg.destroy(); } });
+			this.getView().addDependent(oDlg);
+			oDlg.open();
 		},
 		onDeploy: function () {
 			if (this._validate()) { this.onMessages(); MessageToast.show(this.text("ds.t.fixFirst")); return; }

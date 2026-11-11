@@ -1,0 +1,44 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<!-- Add Source Objects (Datasphere): browse the container, select objects, Next, review, Add Selection. -->
+	<Dialog id="aoDialog" title="{i18n>ds.addObjects}" contentWidth="40rem" contentHeight="26rem" class="repoioSpDialog">
+		<content>
+			<NavContainer id="aoNav" height="100%">
+				<Page id="aoPick" showHeader="false">
+					<subHeader>
+						<Toolbar>
+							<core:Icon src="sap-icon://folder-blank"/>
+							<Text text="{view>/ao/container}" class="repoioMono"/>
+							<ToolbarSpacer/>
+							<SearchField value="{view>/ao/q}" liveChange=".onAoSearch" width="14rem"/>
+						</Toolbar>
+					</subHeader>
+					<Table id="aoTable" items="{view>/ao/rows}" mode="MultiSelect" selectionChange=".onAoSelect" class="repoioDenseTable" noDataText="{i18n>ds.t.noMoreObjects}">
+						<columns>
+							<Column><Text text="{i18n>ds.col.srcObj}"/></Column>
+							<Column hAlign="End"><Text text="{i18n>ds.colsT}"/></Column>
+							<Column hAlign="End"><Text text="{i18n>ds.rowsT}"/></Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<HBox alignItems="Center"><core:Icon src="sap-icon://table-view" class="repoioExRowIcon"/><Text text="{view>name}" class="repoioMono"/></HBox>
+								<Text text="{view>cols}"/>
+								<Text text="{view>rows}"/>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</Page>
+				<Page id="aoReview" showHeader="false">
+					<List items="{view>/ao/picked}" headerText="{view>/ao/pickedTitle}" class="repoioDenseTable">
+						<StandardListItem title="{view>name}" icon="sap-icon://table-view" description="{view>target}"/>
+					</List>
+				</Page>
+			</NavContainer>
+		</content>
+		<buttons>
+			<Button text="{i18n>ds.ao.back}" press=".onAoBack" visible="{= ${view>/ao/step} === 2 }"/>
+			<Button text="{i18n>ds.ao.next}" type="Emphasized" press=".onAoNext" visible="{= ${view>/ao/step} === 1 }" enabled="{= ${view>/ao/count} > 0 }"/>
+			<Button text="{i18n>ds.ao.add}" type="Emphasized" press=".onAoAdd" visible="{= ${view>/ao/step} === 2 }"/>
+			<Button text="{i18n>common.cancel}" press=".onAoCancel"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

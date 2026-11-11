@@ -21,6 +21,7 @@
      "entity": "customer",
      "load": "delta",
      "truncate": false,
+     "projection": true,
      "filters": [
       {
        "col": "RoleCode",
@@ -54,6 +55,7 @@
      "entity": "customer_address",
      "load": "delta",
      "truncate": false,
+     "projection": true,
      "filters": [],
      "mapping": {
       "source_key": "AccountID",
@@ -76,6 +78,7 @@
      "entity": "customer_contact",
      "load": "delta",
      "truncate": false,
+     "projection": true,
      "filters": [],
      "mapping": {
       "source_key": "ContactID",
@@ -114,6 +117,7 @@
      "entity": "customer",
      "load": "delta",
      "truncate": false,
+     "projection": true,
      "filters": [
       {
        "col": "KTOKD",
@@ -163,6 +167,7 @@
      "entity": "vendor",
      "load": "delta",
      "truncate": false,
+     "projection": true,
      "filters": [],
      "mapping": {
       "source_key": "LIFNR",
@@ -204,6 +209,7 @@
      "entity": "product",
      "load": "delta",
      "truncate": false,
+     "projection": true,
      "filters": [
       {
        "col": "MATKL",
@@ -249,6 +255,7 @@
      "entity": "customer",
      "load": "initial",
      "truncate": false,
+     "projection": true,
      "filters": [],
      "mapping": {
       "source_key": "school_code",
@@ -288,6 +295,7 @@
      "entity": "author",
      "load": "initial",
      "truncate": false,
+     "projection": true,
      "filters": [],
      "mapping": {
       "source_key": "author_no",
@@ -326,6 +334,7 @@
      "entity": "product",
      "load": "delta",
      "truncate": false,
+     "projection": true,
      "filters": [],
      "mapping": {
       "source_key": "TitleID",
@@ -344,6 +353,7 @@
      "entity": "product",
      "load": "delta",
      "truncate": false,
+     "projection": true,
      "filters": [],
      "mapping": {
       "source_key": "TitleID",
@@ -375,6 +385,7 @@
      "entity": "customer",
      "load": "delta",
      "truncate": false,
+     "projection": true,
      "filters": [
       {
        "col": "RoleCode",

@@ -1,6 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-	<!-- Select source connection + container (Datasphere "Select Source Connection" / "Select Source Container"). -->
-	<Dialog id="spDialog" title="{i18n>ds.pickConn}" contentWidth="30rem" verticalScrolling="true" class="repoioSpDialog" afterClose=".onSpAfterClose">
+	<!-- Compact picker dialog (Datasphere "Select Source Connection", "Select Source Container", "Select Target"):
+	     search + one-line rows. The rows and the confirm handler come from the controller (/sp). -->
+	<Dialog id="spDialog" title="{view>/sp/title}" contentWidth="30rem" verticalScrolling="true" class="repoioSpDialog" afterClose=".onSpAfterClose">
 		<subHeader>
 			<Toolbar>
 				<SearchField value="{view>/sp/q}" liveChange=".onSpSearch" placeholder="{i18n>common.search}" width="100%"/>
@@ -10,21 +11,16 @@
 			<List id="spList" items="{view>/sp/rows}" mode="SingleSelectMaster" selectionChange=".onSpSelect" showSeparators="Inner" class="repoioSpList" noDataText="{i18n>ds.sp.noData}">
 				<CustomListItem>
 					<HBox alignItems="Center" class="repoioSpItem">
-						<Image src="{view>logo}" width="1.5rem" height="1.5rem" class="repoioSpLogo"/>
+						<Image src="{view>logo}" width="1.5rem" height="1.5rem" class="repoioSpLogo" visible="{= !!${view>logo} }"/>
+						<core:Icon src="{view>icon}" size="1.25rem" class="repoioSpLogo" visible="{= !${view>logo} }"/>
 						<VBox class="repoioSpText">
 							<Text text="{view>name}" wrapping="false" class="repoioSpName"/>
 							<Text text="{view>sub}" wrapping="false" class="repoioExSub"/>
 						</VBox>
-						<ObjectStatus icon="{view>stateIcon}" state="{view>state}" tooltip="{view>stateText}"/>
+						<ObjectStatus icon="{view>stateIcon}" state="{view>state}" tooltip="{view>stateText}" visible="{= !!${view>stateIcon} }"/>
 					</HBox>
 				</CustomListItem>
 			</List>
-			<VBox class="repoioSpContainer" visible="{= !!${view>/sp/sel} }">
-				<Label text="{i18n>ds.sp.container}" labelFor="spContainer"/>
-				<Select id="spContainer" selectedKey="{view>/sp/container}" items="{path: 'view>/sp/containers', templateShareable: false}" width="100%">
-					<core:ListItem key="{view>key}" text="{view>key}" additionalText="{view>text}" icon="sap-icon://folder-blank"/>
-				</Select>
-			</VBox>
 		</content>
 		<beginButton>
 			<Button text="{i18n>ds.sp.select}" type="Emphasized" enabled="{= !!${view>/sp/sel} }" press=".onSpConfirm"/>

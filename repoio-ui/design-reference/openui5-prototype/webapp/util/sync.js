@@ -23,6 +23,7 @@ sap.ui.define([], function () {
 		dom: function (c, id) { return (c.data().getProperty("/domains") || []).filter(function (d) { return d.id === id; })[0]; },
 		interval: function (c, f) {
 			if (f.interval === "upload") { return c.text("ds.iv.upload"); }
+			if (f.interval === "custom") { return c.text("ds.iv.custom", [Math.floor(f.mins / 60), f.mins % 60]); }
 			return c.text("ds.iv." + f.interval) + (f.interval === "daily" && f.at ? " · " + f.at : "");
 		},
 		load: function (c, f) {

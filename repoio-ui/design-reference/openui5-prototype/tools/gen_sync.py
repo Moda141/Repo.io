@@ -41,7 +41,7 @@ SRC = {
 def src(t): return [dict(name=c[0], label=c[1], type=c[2], key=len(c) > 3 and c[3]) for c in SRC[t]]
 
 def obj(table, entity, mapping, load="delta", filters=None, last=None, rows=None):
-    return dict(id=table, source=table, entity=entity, load=load, truncate=False, filters=filters or [], mapping=mapping, last=last or {}, rows=rows)
+    return dict(id=table, source=table, entity=entity, load=load, truncate=False, projection=True, filters=filters or [], mapping=mapping, last=last or {}, rows=rows)
 
 M_CUST_C4C = {"source_key": "AccountID", "name": "Name", "name_ar": "AdditionalName", "tax_id": "TaxNumber", "business_line": "IndustryCode", "region": "SalesTerritoryID",
               "city": "City", "phone": "Phone", "email": "Email", "sales_org": "SalesOrganisationID", "status": "LifeCycleStatusCode", "changed_at": "LastChangeDateTime"}
