@@ -696,3 +696,18 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioExTop.sapMTB { height: 3.75rem; }
 .repoioExHead { display: flex; flex-direction: column; min-width: 0; }
 .repoioExDesc.sapMText { font-size: 0.8125rem; color: #6a6d70; margin-top: 0.125rem; }
+
+/* ===== Data sync: replication flow editor (Datasphere) ===== */
+.repoioRf { display: flex; flex-direction: column; height: 100%; background: #fff; }
+.repoioRfMain { flex: 1 1 0; min-width: 0; background: #f7f7f7; }
+.repoioRfEnds { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 0.75rem; align-items: stretch; padding: 1rem 1rem 0.75rem; }
+.repoioRfEnd { background: #fff; border: 1px solid #e5e5e5; border-radius: 0.25rem; padding: 0.625rem 0.75rem; min-width: 0; }
+.repoioRfEndLbl.sapMLabel { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: #6a6d70; }
+.repoioRfEndRow { margin-top: 0.375rem; min-height: 1.75rem; }
+.repoioRfStrong.sapMText { font-weight: bold; }
+.repoioRfArrow { align-self: center; color: #0a6ed1; }
+.repoioRfLands { background: #f2f4f7; border-radius: 0.125rem; padding-inline: 0.5rem; }
+.repoioRfTable { margin: 0 1rem; width: calc(100% - 2rem) !important; border: 1px solid #e5e5e5; }
+.repoioRfNote.sapMMsgStrip { margin: 0.75rem 1rem 1rem; }
+.repoioPjTabs.sapMITB { height: 100%; }
+.repoioPjTabs .sapMITBContent { padding: 0.75rem 1rem; }

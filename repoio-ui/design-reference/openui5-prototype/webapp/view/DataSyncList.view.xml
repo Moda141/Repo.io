@@ -1,0 +1,100 @@
+<mvc:View controllerName="repoio.proto.controller.DataSyncList"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" height="100%">
+	<!-- Data sync (SAP Datasphere replication flows) in the Repository Explorer layout. -->
+	<VBox height="100%" renderType="Bare" class="repoioExplorer">
+		<OverflowToolbar class="repoioExTop">
+			<VBox renderType="Bare" class="repoioExHead">
+				<Title text="{i18n>nav.dataSync}" level="H1" titleStyle="H4"/>
+				<Text text="{i18n>ds.desc}" class="repoioExDesc" maxLines="1" tooltip="{i18n>ds.desc}"/>
+				<layoutData><OverflowToolbarLayoutData shrinkable="true" minWidth="12rem"/></layoutData>
+			</VBox>
+			<ToolbarSpacer/>
+			<SearchField value="{view>/ds/q}" liveChange=".onSearch" search=".onSearch" width="32rem" placeholder="{view>/ds/searchPh}">
+				<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" minWidth="12rem"/></layoutData>
+			</SearchField>
+		</OverflowToolbar>
+		<OverflowToolbar class="repoioExBar">
+			<ToggleButton icon="sap-icon://filter" pressed="{view>/ds/showFilters}" tooltip="{i18n>cat.filters}" type="Emphasized"/>
+			<ToolbarSpacer/>
+			<Button icon="sap-icon://add" type="Transparent" tooltip="{i18n>ds.new}" press=".onNew"/>
+			<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>common.edit}" enabled="{= ${view>/ds/selected} === 1 }" press=".onEdit"/>
+			<Button icon="sap-icon://upload-to-cloud" type="Transparent" tooltip="{i18n>ds.deploy}" enabled="{view>/ds/canDeploy}" press=".onDeploy"/>
+			<Button icon="sap-icon://media-play" type="Transparent" tooltip="{i18n>ds.run}" enabled="{view>/ds/canRun}" press=".onRun"/>
+			<Button icon="sap-icon://delete" type="Transparent" tooltip="{i18n>common.delete}" enabled="{view>/ds/canDelete}" press=".onDelete"/>
+		</OverflowToolbar>
+		<HBox class="repoioExBody" renderType="Bare">
+			<ScrollContainer vertical="true" height="100%" width="15rem" visible="{view>/ds/showFilters}" class="repoioFacetPanel">
+				<Title text="{i18n>wl.collection}" level="H3" class="repoioFacetGroup"/>
+				<List items="{view>/ds/collections}" mode="SingleSelectMaster" selectionChange=".onCollection" showSeparators="None" class="repoioFacetList">
+					<StandardListItem title="{view>text}" icon="{view>icon}" selected="{view>selected}"/>
+				</List>
+				<HBox alignItems="Center" justifyContent="SpaceBetween" class="repoioFacetHead">
+					<Title text="{i18n>wl.filterBy}" level="H3" titleStyle="H5"/>
+					<Button icon="sap-icon://clear-filter" type="Transparent" tooltip="{i18n>cat.clearAll}" enabled="{= ${view>/ds/active} > 0 }" press=".onClearFacets"/>
+				</HBox>
+				<VBox items="{view>/ds/facets}" renderType="Bare">
+					<VBox renderType="Bare">
+						<Title text="{view>title}" level="H4" class="repoioFacetGroup"/>
+						<List items="{path: 'view>values', templateShareable: false}" mode="MultiSelect" includeItemNavigation="false" selectionChange=".onFacetChange"
+							showSeparators="None" class="repoioFacetList" app:facet="{view>key}">
+							<StandardListItem title="{view>text}" icon="{view>icon}" counter="{view>count}" selected="{view>selected}"/>
+						</List>
+					</VBox>
+				</VBox>
+			</ScrollContainer>
+
+			<VBox class="repoioExMain" renderType="Bare">
+				<HBox alignItems="Center" class="repoioExScope">
+					<Label text="{i18n>wl.searchIn}" class="repoioExScopeLbl"/>
+					<core:Icon src="{view>/ds/collIcon}" class="repoioExScopeIcon"/>
+					<Text text="{view>/ds/scopeText}"/>
+				</HBox>
+				<ScrollContainer vertical="true" horizontal="true" height="100%" class="repoioExScroll">
+					<Table id="dsTable" items="{view>/ds/rows}" mode="MultiSelect" selectionChange=".onSelect" sticky="ColumnHeaders"
+						class="repoioDenseTable" fixedLayout="false" noDataText="{i18n>ds.noData}" popinLayout="GridSmall">
+						<columns>
+							<Column><Text text="{i18n>dsp.businessName}"/></Column>
+							<Column minScreenWidth="1600px"><Text text="{i18n>dsp.technicalName}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>ds.col.source}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>ds.col.target}"/></Column>
+							<Column minScreenWidth="1500px" hAlign="End"><Text text="{i18n>ds.col.objects}"/></Column>
+							<Column minScreenWidth="1500px"><Text text="{i18n>ds.col.load}"/></Column>
+							<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>ds.col.interval}"/></Column>
+							<Column><Text text="{i18n>domains.col.status}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>bc.col.last}"/></Column>
+							<Column minScreenWidth="1500px" hAlign="Center"><Text text="{i18n>domain.owner}"/></Column>
+							<Column minScreenWidth="1700px"><Text text="{i18n>dsp.changedOn}"/></Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<HBox alignItems="Center">
+									<core:Icon src="sap-icon://synchronize" class="repoioExRowIcon"/>
+									<Link text="{view>title}" press=".onOpen" wrapping="false"/>
+								</HBox>
+								<Text text="{view>id}" class="repoioMono" wrapping="false"/>
+								<HBox alignItems="Center">
+									<Image src="{view>logo}" width="1rem" height="1rem" class="repoioExRowIcon" visible="{= !!${view>logo} }"/>
+									<core:Icon src="{view>connIcon}" class="repoioExRowIcon" visible="{= !${view>logo} }"/>
+									<Link text="{view>connText}" press=".onConn" wrapping="false"/>
+								</HBox>
+								<HBox alignItems="Center">
+									<core:Icon src="{view>domIcon}" class="repoioExRowIcon"/>
+									<Text text="{view>repoText}" wrapping="false"/>
+								</HBox>
+								<Text text="{view>objCount}"/>
+								<Text text="{view>loadText}" wrapping="false"/>
+								<Text text="{view>intervalText}" wrapping="false"/>
+								<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+								<ObjectStatus text="{view>lastText}" state="{view>lastState}" icon="{view>lastIcon}"/>
+								<rc:PersonLink name="{view>owner}"/>
+								<Text text="{view>changedText}" wrapping="false" textDirection="LTR"/>
+							</ColumnListItem>
+						</items>
+					</Table>
+					<rc:Pager total="{view>/ds/count}" page="{view>/ds/page}" pageSize="{view>/ds/size}" change=".onPage"/>
+				</ScrollContainer>
+			</VBox>
+		</HBox>
+	</VBox>
+</mvc:View>

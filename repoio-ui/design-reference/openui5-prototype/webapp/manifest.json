@@ -83,6 +83,10 @@
 			"analytics": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/analytics.json"
+			},
+			"sync": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/sync.json"
 			}
 		},
 		"resources": {
@@ -167,6 +171,16 @@
 					"target": "broadcasts"
 				},
 				{
+					"name": "dataSync",
+					"pattern": "integration/sync",
+					"target": "dataSync"
+				},
+				{
+					"name": "dataSyncFlow",
+					"pattern": "integration/sync/{id}",
+					"target": "dataSyncFlow"
+				},
+				{
 					"name": "page",
 					"pattern": "page/{key}",
 					"target": "placeholder"
@@ -237,6 +251,16 @@
 					"id": "broadcasts",
 					"name": "Broadcasts",
 					"level": 2
+				},
+				"dataSync": {
+					"id": "dataSync",
+					"name": "DataSyncList",
+					"level": 2
+				},
+				"dataSyncFlow": {
+					"id": "dataSyncFlow",
+					"name": "DataSync",
+					"level": 3
 				}
 			}
 		}

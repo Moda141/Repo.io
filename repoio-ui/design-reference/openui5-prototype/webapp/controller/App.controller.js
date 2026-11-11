@@ -74,6 +74,7 @@ sap.ui.define([
 			else if (sKey === "workflowsList") { oRouter.navTo("workflows"); }
 			else if (sKey === "reports") { oRouter.navTo("reports"); }
 			else if (sKey === "broadcasts") { oRouter.navTo("broadcasts"); }
+			else if (sKey === "dataSync") { oRouter.navTo("dataSync"); }
 			else { oRouter.navTo("page", { key: sKey }); }
 			if (this.getOwnerComponent().getModel("device").getProperty("/system/phone")) {
 				this.byId("toolPage").setSideExpanded(false);
@@ -86,7 +87,8 @@ sap.ui.define([
 					sRoute === "home" ? "home" : sRoute === "connections" ? "connections" :
 					sRoute === "ontology" ? "ontologyExplorer" : sRoute === "workflow" ? "newWorkflow" :
 					sRoute === "jobs" || sRoute === "jobRun" ? "dataJobs" : sRoute === "workflows" ? "workflowsList" :
-					sRoute === "reports" || sRoute === "report" || sRoute === "studio" ? "reports" : sRoute === "broadcasts" ? "broadcasts" : "domains";
+					sRoute === "reports" || sRoute === "report" || sRoute === "studio" ? "reports" : sRoute === "broadcasts" ? "broadcasts" :
+					sRoute === "dataSync" || sRoute === "dataSyncFlow" ? "dataSync" : "domains";
 			this._sSelectedKey = sKey;
 			if (this.byId("navList").getItems().length) { this._expandTo(sKey); this.byId("sideNavigation").setSelectedKey(sKey); }
 		},

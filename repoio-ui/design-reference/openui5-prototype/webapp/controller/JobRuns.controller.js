@@ -37,6 +37,9 @@ sap.ui.define([
 				this._now = R.parse(oRuns.getProperty("/now"));
 				var vm = this.viewModel();
 				vm.setProperty("/jr/statuses", STATUSES.map(function (s) { return { key: s, text: this.text("jr.st." + s) }; }.bind(this)));
+				// Opened from another page (e.g. "Open in monitor" on a data sync): filter by that job.
+				var sPending = vm.getProperty("/jrPending");
+				if (sPending) { vm.setProperty("/jr/f", Object.assign(this._emptyFilters(), { name: sPending, range: "168" })); vm.setProperty("/jrPending", null); }
 				this._apply();
 			}.bind(this));
 		},

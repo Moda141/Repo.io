@@ -75,6 +75,7 @@ detection** · Connections hub = **Connections**.
 | J12 | Build & govern entity relationships | Data Steward | M1 (type catalog + CR path), M4 (builder + list UI), Ontology track (RDF materialization) |
 | J13 | Stay informed: feeds & announcements | all | M4 (feeds page, Home strip, authoring UI) |
 | J14 | Analyse & broadcast reports | Data Analyst, Data Steward, Manager | M4 (reports, studio, broadcasts UI); reports API + governed views (M5 grants) |
+| J15 | Configure a data sync (replication flow) | Data Engineer | M2 (pull / push ingest, raw layer), M4 (UI) |
 
 A journey is "available" only when its milestone's acceptance criteria
 in `docs/milestone-plan.md` pass — never before.
@@ -483,6 +484,48 @@ stored; a file over the relay limit is sent as a link-only email to the
 live report (ADR-0003 Part B: 10 MB relay limit); retiring a
 report pauses its broadcasts; a failed run is retried at the next
 scheduled run or with Start now.
+
+## J15 — Configure a data sync (replication flow)
+
+*Pattern: SAP Datasphere replication flows. Connection = how to reach the
+system (J9); sync = what to bring and when; job run = each execution (J10).*
+
+1. The Data Engineer opens **Integration hub → Data sync**: the explorer
+   list of replication flows (facets: source connection, target domain,
+   status; last run; delta interval).
+2. **New replication flow:** pick the source connection from the
+   connections registry (credentials are never shown), then the target
+   **repository**. Its domain and model version define the target
+   entities and fields.
+3. **Add source objects** from the connection's container (C4C OData
+   collections, S/4HANA tables, SQL Server schema, upload folder). Each
+   object maps to one target entity of the domain (closed list; no
+   renaming or new tables, unlike Datasphere).
+4. Per object:
+   - **Load type:** initial only, or initial and delta. Change detection
+     comes from the source type: a watermark column, change data capture,
+     or each upload as a full load.
+   - **Reload:** re-runs the initial load into raw. It never deletes
+     golden records; rows missing from the source are flagged for
+     stewards.
+   - **Projection:** row filters, and the mapping of source columns to
+     model fields (the field mapper, with auto-map). Required and key
+     fields must be mapped.
+5. Flow settings: the **delta interval** (15 min, hourly, daily at a
+   time; "on each upload" for files).
+6. **Validate** lists the errors and warnings. **Deploy** is blocked while
+   errors remain; it creates the ingest job (an Airflow pull DAG, or a
+   push endpoint for uploads). **Run** starts a run, and **Open in Job
+   runs** shows that job's runs.
+7. Editing a deployed flow marks it "Changes not deployed". The running
+   job keeps the deployed version until the next deploy.
+
+*Edge cases:*
+- Rows land in `raw.<entity>` exactly as delivered. Transformations and
+  code-list translation belong to standardisation in `repoio-stream`, not
+  the sync.
+- Rows that fail model validation go to Quarantine.
+- A flow can be deleted only if it was never deployed.
 
 ---
 

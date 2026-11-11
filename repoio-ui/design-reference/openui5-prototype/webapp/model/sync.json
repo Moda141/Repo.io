@@ -1,0 +1,1402 @@
+{
+ "flows": [
+  {
+   "id": "SYNC_C4C_CUSTOMER",
+   "en": "C4C customers to Customer Master",
+   "ar": "عملاء C4C إلى Customer Master",
+   "conn": "C4C_PROD",
+   "container": "c4codataapi",
+   "repo": "customer-master",
+   "status": "deployed",
+   "interval": "15m",
+   "owner": "محمد",
+   "changed": "2026-11-08 10:40",
+   "job": "c4c_customer_pull",
+   "lastRun": "2026-11-10 12:15",
+   "lastState": "succeeded",
+   "objects": [
+    {
+     "id": "customer",
+     "source": "customer",
+     "entity": "customer",
+     "load": "delta",
+     "truncate": false,
+     "filters": [
+      {
+       "col": "RoleCode",
+       "op": "in",
+       "val": "CRM000, BUP002"
+      }
+     ],
+     "mapping": {
+      "source_key": "AccountID",
+      "name": "Name",
+      "name_ar": "AdditionalName",
+      "tax_id": "TaxNumber",
+      "business_line": "IndustryCode",
+      "region": "SalesTerritoryID",
+      "city": "City",
+      "phone": "Phone",
+      "email": "Email",
+      "sales_org": "SalesOrganisationID",
+      "status": "LifeCycleStatusCode",
+      "changed_at": "LastChangeDateTime"
+     },
+     "last": {
+      "initial": 951247,
+      "delta": 1204
+     },
+     "rows": 951247
+    },
+    {
+     "id": "customer_address",
+     "source": "customer_address",
+     "entity": "customer_address",
+     "load": "delta",
+     "truncate": false,
+     "filters": [],
+     "mapping": {
+      "source_key": "AccountID",
+      "address_type": "AddressUsageCode",
+      "street": "StreetName",
+      "city": "City",
+      "governorate": "RegionCode",
+      "postal_code": "PostalCode",
+      "country": "CountryCode"
+     },
+     "last": {
+      "initial": 1204511,
+      "delta": 388
+     },
+     "rows": 1204511
+    },
+    {
+     "id": "contact_person",
+     "source": "contact_person",
+     "entity": "customer_contact",
+     "load": "delta",
+     "truncate": false,
+     "filters": [],
+     "mapping": {
+      "source_key": "ContactID",
+      "first_name": "FirstName",
+      "last_name": "LastName",
+      "role": "ContactFunctionCode",
+      "phone": "Phone",
+      "email": "Email"
+     },
+     "last": {
+      "initial": 310882,
+      "delta": 95
+     },
+     "rows": 310882
+    }
+   ]
+  },
+  {
+   "id": "SYNC_S4_CUSTOMER",
+   "en": "S/4HANA customers to Customer Master",
+   "ar": "عملاء S/4HANA إلى Customer Master",
+   "conn": "S4_HANA",
+   "container": "SAPHANADB",
+   "repo": "customer-master",
+   "status": "deployed",
+   "interval": "1h",
+   "owner": "كريم فوزي",
+   "changed": "2026-11-02 09:12",
+   "job": "",
+   "lastRun": "2026-11-10 12:00",
+   "lastState": "succeededWithFailures",
+   "objects": [
+    {
+     "id": "kna1",
+     "source": "kna1",
+     "entity": "customer",
+     "load": "delta",
+     "truncate": false,
+     "filters": [
+      {
+       "col": "KTOKD",
+       "op": "notIn",
+       "val": "ZONE, CPD"
+      }
+     ],
+     "mapping": {
+      "source_key": "KUNNR",
+      "name": "NAME1",
+      "name_ar": "NAME2",
+      "tax_id": "STCD1",
+      "business_line": "KTOKD",
+      "region": "REGIO",
+      "city": "ORT01",
+      "phone": "TELF1",
+      "status": "LOEVM",
+      "changed_at": "AEDAT"
+     },
+     "last": {
+      "initial": 402118,
+      "delta": 512,
+      "rejected": 37
+     },
+     "rows": 402118
+    }
+   ]
+  },
+  {
+   "id": "SYNC_S4_VENDOR",
+   "en": "S/4HANA suppliers to Vendor Master",
+   "ar": "موردو S/4HANA إلى Vendor Master",
+   "conn": "S4_HANA",
+   "container": "SAPHANADB",
+   "repo": "vendor-master",
+   "status": "deployed",
+   "interval": "1h",
+   "owner": "هالة سمير",
+   "changed": "2026-10-30 14:05",
+   "job": "erp_vendor_pull",
+   "lastRun": "2026-11-10 11:00",
+   "lastState": "failed",
+   "objects": [
+    {
+     "id": "lfa1",
+     "source": "lfa1",
+     "entity": "vendor",
+     "load": "delta",
+     "truncate": false,
+     "filters": [],
+     "mapping": {
+      "source_key": "LIFNR",
+      "name": "NAME1",
+      "name_ar": "NAME2",
+      "tax_id": "STCD1",
+      "country": "LAND1",
+      "city": "ORT01",
+      "payment_terms": "ZTERM",
+      "status": "SPERR"
+     },
+     "last": {
+      "initial": 3120,
+      "delta": 0
+     },
+     "rows": 3120
+    }
+   ]
+  },
+  {
+   "id": "SYNC_S4_BOOKS",
+   "en": "S/4HANA materials to Book catalogue",
+   "ar": "مواد S/4HANA إلى كتالوج الكتب",
+   "conn": "S4_HANA",
+   "container": "SAPHANADB",
+   "repo": "catalog",
+   "status": "deployed",
+   "interval": "daily",
+   "at": "01:30",
+   "owner": "كريم فوزي",
+   "changed": "2026-10-25 08:50",
+   "job": "",
+   "lastRun": "2026-11-10 01:30",
+   "lastState": "succeeded",
+   "objects": [
+    {
+     "id": "mara",
+     "source": "mara",
+     "entity": "product",
+     "load": "delta",
+     "truncate": false,
+     "filters": [
+      {
+       "col": "MATKL",
+       "op": "in",
+       "val": "BOOK, EBOOK"
+      }
+     ],
+     "mapping": {
+      "source_key": "MATNR",
+      "isbn": "EAN11",
+      "title": "MAKTX",
+      "series": "ZZSERIES",
+      "edition": "ZZEDITION",
+      "author_ref": "ZZAUTHOR",
+      "status": "MSTAE"
+     },
+     "last": {
+      "initial": 26340,
+      "delta": 41
+     },
+     "rows": 26340
+    }
+   ]
+  },
+  {
+   "id": "SYNC_FILE_SCHOOLS",
+   "en": "School list uploads",
+   "ar": "رفع قوائم المدارس",
+   "conn": "FILE_UPLOADS",
+   "container": "/uploads/schools",
+   "repo": "schools",
+   "status": "deployed",
+   "interval": "upload",
+   "owner": "سارة عادل",
+   "changed": "2026-10-19 12:30",
+   "job": "",
+   "lastRun": "2026-11-06 09:41",
+   "lastState": "succeeded",
+   "objects": [
+    {
+     "id": "school_list",
+     "source": "school_list",
+     "entity": "customer",
+     "load": "initial",
+     "truncate": false,
+     "filters": [],
+     "mapping": {
+      "source_key": "school_code",
+      "name": "school_name",
+      "name_ar": "school_name_ar",
+      "region": "governorate",
+      "city": "city",
+      "phone": "phone",
+      "email": "email",
+      "business_line": "segment"
+     },
+     "last": {
+      "initial": 4210
+     },
+     "rows": 4210
+    }
+   ]
+  },
+  {
+   "id": "SYNC_FILE_AUTHORS",
+   "en": "Author sheet uploads",
+   "ar": "رفع ملفات المؤلفين",
+   "conn": "FILE_UPLOADS",
+   "container": "/uploads/authors",
+   "repo": "authors",
+   "status": "deployed",
+   "interval": "upload",
+   "owner": "نور الدين",
+   "changed": "2026-10-12 10:05",
+   "job": "author_sheet_push",
+   "lastRun": "2026-11-09 16:20",
+   "lastState": "succeeded",
+   "objects": [
+    {
+     "id": "authors_csv",
+     "source": "authors_csv",
+     "entity": "author",
+     "load": "initial",
+     "truncate": false,
+     "filters": [],
+     "mapping": {
+      "source_key": "author_no",
+      "name": "full_name",
+      "name_ar": "full_name_ar",
+      "pen_name": "pen_name",
+      "nationality": "nationality",
+      "contract_status": "contract"
+     },
+     "last": {
+      "initial": 1875
+     },
+     "rows": 1875
+    }
+   ]
+  },
+  {
+   "id": "SYNC_SQL_TITLES",
+   "en": "Legacy sales titles to Book catalogue",
+   "ar": "عناوين نظام المبيعات القديم إلى كتالوج الكتب",
+   "conn": "SQL_LEGACY_SALES",
+   "container": "dbo",
+   "repo": "catalog",
+   "status": "draft",
+   "interval": "daily",
+   "at": "02:00",
+   "owner": "محمد",
+   "changed": "2026-11-10 17:20",
+   "job": "",
+   "lastRun": "",
+   "lastState": "",
+   "objects": [
+    {
+     "id": "dbo.Titles",
+     "source": "dbo.Titles",
+     "entity": "product",
+     "load": "delta",
+     "truncate": false,
+     "filters": [],
+     "mapping": {
+      "source_key": "TitleID",
+      "isbn": "ISBN13",
+      "title": "TitleEn",
+      "title_ar": "TitleAr",
+      "series": "SeriesName",
+      "list_price": "ListPrice"
+     },
+     "last": {},
+     "rows": 18420
+    },
+    {
+     "id": "dbo.Editions",
+     "source": "dbo.Editions",
+     "entity": "product",
+     "load": "delta",
+     "truncate": false,
+     "filters": [],
+     "mapping": {
+      "source_key": "TitleID",
+      "edition": "EditionNo"
+     },
+     "last": {},
+     "rows": 29115
+    }
+   ]
+  },
+  {
+   "id": "SYNC_C4C_SCHOOLS",
+   "en": "C4C school accounts",
+   "ar": "حسابات المدارس من C4C",
+   "conn": "C4C_PROD",
+   "container": "c4codataapi",
+   "repo": "schools",
+   "status": "changed",
+   "interval": "1h",
+   "owner": "سارة عادل",
+   "changed": "2026-11-09 15:02",
+   "job": "",
+   "lastRun": "2026-11-10 12:00",
+   "lastState": "succeeded",
+   "objects": [
+    {
+     "id": "customer",
+     "source": "customer",
+     "entity": "customer",
+     "load": "delta",
+     "truncate": false,
+     "filters": [
+      {
+       "col": "RoleCode",
+       "op": "eq",
+       "val": "Z_SCHOOL"
+      }
+     ],
+     "mapping": {
+      "source_key": "AccountID",
+      "name": "Name",
+      "name_ar": "AdditionalName",
+      "city": "City",
+      "phone": "Phone",
+      "email": "Email",
+      "status": "LifeCycleStatusCode"
+     },
+     "last": {
+      "initial": 3980,
+      "delta": 12
+     },
+     "rows": 3980
+    }
+   ]
+  }
+ ],
+ "source": {
+  "customer": [
+   {
+    "name": "AccountID",
+    "label": "Account ID",
+    "type": "string",
+    "key": true
+   },
+   {
+    "name": "Name",
+    "label": "Name",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "AdditionalName",
+    "label": "Additional name",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "TaxNumber",
+    "label": "Tax number",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "RoleCode",
+    "label": "Role",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "IndustryCode",
+    "label": "Industry",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "SalesTerritoryID",
+    "label": "Territory",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "City",
+    "label": "City",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "Phone",
+    "label": "Phone",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "Email",
+    "label": "E-mail",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "SalesOrganisationID",
+    "label": "Sales organisation",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "LifeCycleStatusCode",
+    "label": "Status",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "LastChangeDateTime",
+    "label": "Last changed",
+    "type": "date",
+    "key": false
+   },
+   {
+    "name": "CreatedBy",
+    "label": "Created by",
+    "type": "string",
+    "key": false
+   }
+  ],
+  "customer_address": [
+   {
+    "name": "AccountID",
+    "label": "Account ID",
+    "type": "string",
+    "key": true
+   },
+   {
+    "name": "AddressUsageCode",
+    "label": "Address usage",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "StreetName",
+    "label": "Street",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "City",
+    "label": "City",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "RegionCode",
+    "label": "Region",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "PostalCode",
+    "label": "Postal code",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "CountryCode",
+    "label": "Country",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "LastChangeDateTime",
+    "label": "Last changed",
+    "type": "date",
+    "key": false
+   }
+  ],
+  "contact_person": [
+   {
+    "name": "ContactID",
+    "label": "Contact ID",
+    "type": "string",
+    "key": true
+   },
+   {
+    "name": "FirstName",
+    "label": "First name",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "LastName",
+    "label": "Last name",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "JobTitle",
+    "label": "Job title",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "ContactFunctionCode",
+    "label": "Function",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "Phone",
+    "label": "Phone",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "Email",
+    "label": "E-mail",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "LastChangeDateTime",
+    "label": "Last changed",
+    "type": "date",
+    "key": false
+   }
+  ],
+  "kna1": [
+   {
+    "name": "KUNNR",
+    "label": "Customer",
+    "type": "string",
+    "key": true
+   },
+   {
+    "name": "NAME1",
+    "label": "Name 1",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "NAME2",
+    "label": "Name 2",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "STCD1",
+    "label": "Tax number 1",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "KTOKD",
+    "label": "Account group",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "ORT01",
+    "label": "City",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "REGIO",
+    "label": "Region",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "TELF1",
+    "label": "Telephone",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "LOEVM",
+    "label": "Deletion flag",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "AEDAT",
+    "label": "Changed on",
+    "type": "date",
+    "key": false
+   }
+  ],
+  "knvv": [
+   {
+    "name": "KUNNR",
+    "label": "Customer",
+    "type": "string",
+    "key": true
+   },
+   {
+    "name": "VKORG",
+    "label": "Sales org.",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "VTWEG",
+    "label": "Distribution channel",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "SPART",
+    "label": "Division",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "KDGRP",
+    "label": "Customer group",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "AUFSD",
+    "label": "Order block",
+    "type": "code",
+    "key": false
+   }
+  ],
+  "lfa1": [
+   {
+    "name": "LIFNR",
+    "label": "Supplier",
+    "type": "string",
+    "key": true
+   },
+   {
+    "name": "NAME1",
+    "label": "Name 1",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "NAME2",
+    "label": "Name 2",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "STCD1",
+    "label": "Tax number 1",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "LAND1",
+    "label": "Country",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "ORT01",
+    "label": "City",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "ZTERM",
+    "label": "Payment terms",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "SPERR",
+    "label": "Posting block",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "ERDAT",
+    "label": "Created on",
+    "type": "date",
+    "key": false
+   }
+  ],
+  "mara": [
+   {
+    "name": "MATNR",
+    "label": "Material",
+    "type": "string",
+    "key": true
+   },
+   {
+    "name": "EAN11",
+    "label": "EAN / ISBN",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "MAKTX",
+    "label": "Description",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "MATKL",
+    "label": "Material group",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "ZZSERIES",
+    "label": "Series",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "ZZEDITION",
+    "label": "Edition",
+    "type": "integer",
+    "key": false
+   },
+   {
+    "name": "ZZAUTHOR",
+    "label": "Author no.",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "MSTAE",
+    "label": "Status",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "LAEDA",
+    "label": "Last change",
+    "type": "date",
+    "key": false
+   }
+  ],
+  "school_list": [
+   {
+    "name": "school_code",
+    "label": "School code",
+    "type": "string",
+    "key": true
+   },
+   {
+    "name": "school_name",
+    "label": "School name",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "school_name_ar",
+    "label": "School name (Arabic)",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "governorate",
+    "label": "Governorate",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "city",
+    "label": "City",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "phone",
+    "label": "Phone",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "email",
+    "label": "E-mail",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "segment",
+    "label": "Segment",
+    "type": "code",
+    "key": false
+   }
+  ],
+  "authors_csv": [
+   {
+    "name": "author_no",
+    "label": "Author no.",
+    "type": "string",
+    "key": true
+   },
+   {
+    "name": "full_name",
+    "label": "Full name",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "full_name_ar",
+    "label": "Full name (Arabic)",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "pen_name",
+    "label": "Pen name",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "nationality",
+    "label": "Nationality",
+    "type": "code",
+    "key": false
+   },
+   {
+    "name": "contract",
+    "label": "Contract",
+    "type": "code",
+    "key": false
+   }
+  ],
+  "dbo.Titles": [
+   {
+    "name": "TitleID",
+    "label": "Title ID",
+    "type": "integer",
+    "key": true
+   },
+   {
+    "name": "ISBN13",
+    "label": "ISBN-13",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "TitleEn",
+    "label": "Title (English)",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "TitleAr",
+    "label": "Title (Arabic)",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "SeriesName",
+    "label": "Series",
+    "type": "string",
+    "key": false
+   },
+   {
+    "name": "ListPrice",
+    "label": "List price",
+    "type": "decimal",
+    "key": false
+   },
+   {
+    "name": "ModifiedOn",
+    "label": "Modified on",
+    "type": "date",
+    "key": false
+   }
+  ],
+  "dbo.Editions": [
+   {
+    "name": "EditionID",
+    "label": "Edition ID",
+    "type": "integer",
+    "key": true
+   },
+   {
+    "name": "TitleID",
+    "label": "Title ID",
+    "type": "integer",
+    "key": false
+   },
+   {
+    "name": "EditionNo",
+    "label": "Edition no.",
+    "type": "integer",
+    "key": false
+   },
+   {
+    "name": "PrintYear",
+    "label": "Print year",
+    "type": "integer",
+    "key": false
+   },
+   {
+    "name": "ModifiedOn",
+    "label": "Modified on",
+    "type": "date",
+    "key": false
+   }
+  ]
+ },
+ "entities": {
+  "customer": [
+   {
+    "name": "source_key",
+    "type": "string",
+    "key": true,
+    "req": true,
+    "codeList": false,
+    "label": "source_key"
+   },
+   {
+    "name": "name",
+    "type": "string",
+    "key": false,
+    "req": true,
+    "codeList": false,
+    "label": "name"
+   },
+   {
+    "name": "name_ar",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "name_ar"
+   },
+   {
+    "name": "tax_id",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "tax_id"
+   },
+   {
+    "name": "business_line",
+    "type": "string",
+    "key": false,
+    "req": true,
+    "codeList": true,
+    "label": "business_line"
+   },
+   {
+    "name": "region",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": true,
+    "label": "region"
+   },
+   {
+    "name": "city",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "city"
+   },
+   {
+    "name": "phone",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "phone"
+   },
+   {
+    "name": "email",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "email"
+   },
+   {
+    "name": "sales_org",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": true,
+    "label": "sales_org"
+   },
+   {
+    "name": "status",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": true,
+    "label": "status"
+   },
+   {
+    "name": "changed_at",
+    "type": "date",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "changed_at"
+   }
+  ],
+  "customer_address": [
+   {
+    "name": "source_key",
+    "type": "string",
+    "key": true,
+    "req": true,
+    "codeList": false,
+    "label": "source_key"
+   },
+   {
+    "name": "address_type",
+    "type": "string",
+    "key": false,
+    "req": true,
+    "codeList": true,
+    "label": "address_type"
+   },
+   {
+    "name": "street",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "street"
+   },
+   {
+    "name": "city",
+    "type": "string",
+    "key": false,
+    "req": true,
+    "codeList": false,
+    "label": "city"
+   },
+   {
+    "name": "governorate",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": true,
+    "label": "governorate"
+   },
+   {
+    "name": "postal_code",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "postal_code"
+   },
+   {
+    "name": "country",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": true,
+    "label": "country"
+   }
+  ],
+  "customer_contact": [
+   {
+    "name": "source_key",
+    "type": "string",
+    "key": true,
+    "req": true,
+    "codeList": false,
+    "label": "source_key"
+   },
+   {
+    "name": "first_name",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "first_name"
+   },
+   {
+    "name": "last_name",
+    "type": "string",
+    "key": false,
+    "req": true,
+    "codeList": false,
+    "label": "last_name"
+   },
+   {
+    "name": "role",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": true,
+    "label": "role"
+   },
+   {
+    "name": "phone",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "phone"
+   },
+   {
+    "name": "email",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "email"
+   }
+  ],
+  "vendor": [
+   {
+    "name": "source_key",
+    "type": "string",
+    "key": true,
+    "req": true,
+    "codeList": false,
+    "label": "source_key"
+   },
+   {
+    "name": "name",
+    "type": "string",
+    "key": false,
+    "req": true,
+    "codeList": false,
+    "label": "name"
+   },
+   {
+    "name": "name_ar",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "name_ar"
+   },
+   {
+    "name": "tax_id",
+    "type": "string",
+    "key": false,
+    "req": true,
+    "codeList": false,
+    "label": "tax_id"
+   },
+   {
+    "name": "country",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": true,
+    "label": "country"
+   },
+   {
+    "name": "city",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "city"
+   },
+   {
+    "name": "payment_terms",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": true,
+    "label": "payment_terms"
+   },
+   {
+    "name": "status",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": true,
+    "label": "status"
+   }
+  ],
+  "product": [
+   {
+    "name": "source_key",
+    "type": "string",
+    "key": true,
+    "req": true,
+    "codeList": false,
+    "label": "source_key"
+   },
+   {
+    "name": "isbn",
+    "type": "string",
+    "key": false,
+    "req": true,
+    "codeList": false,
+    "label": "isbn"
+   },
+   {
+    "name": "title",
+    "type": "string",
+    "key": false,
+    "req": true,
+    "codeList": false,
+    "label": "title"
+   },
+   {
+    "name": "title_ar",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "title_ar"
+   },
+   {
+    "name": "series",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "series"
+   },
+   {
+    "name": "edition",
+    "type": "integer",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "edition"
+   },
+   {
+    "name": "author_ref",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "author_ref"
+   },
+   {
+    "name": "list_price",
+    "type": "decimal",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "list_price"
+   },
+   {
+    "name": "status",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": true,
+    "label": "status"
+   }
+  ],
+  "author": [
+   {
+    "name": "source_key",
+    "type": "string",
+    "key": true,
+    "req": true,
+    "codeList": false,
+    "label": "source_key"
+   },
+   {
+    "name": "name",
+    "type": "string",
+    "key": false,
+    "req": true,
+    "codeList": false,
+    "label": "name"
+   },
+   {
+    "name": "name_ar",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "name_ar"
+   },
+   {
+    "name": "pen_name",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": false,
+    "label": "pen_name"
+   },
+   {
+    "name": "nationality",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": true,
+    "label": "nationality"
+   },
+   {
+    "name": "contract_status",
+    "type": "string",
+    "key": false,
+    "req": false,
+    "codeList": true,
+    "label": "contract_status"
+   }
+  ]
+ },
+ "catalog": {
+  "C4C_PROD": [
+   "customer",
+   "customer_address",
+   "contact_person"
+  ],
+  "S4_HANA": [
+   "kna1",
+   "knvv",
+   "lfa1",
+   "mara"
+  ],
+  "FILE_UPLOADS": [
+   "school_list",
+   "authors_csv"
+  ],
+  "SQL_LEGACY_SALES": [
+   "dbo.Titles",
+   "dbo.Editions"
+  ]
+ },
+ "entitiesByDomain": {
+  "customers": [
+   "customer",
+   "customer_address",
+   "customer_contact"
+  ],
+  "vendors": [
+   "vendor"
+  ],
+  "products": [
+   "product"
+  ],
+  "authors": [
+   "author"
+  ]
+ }
+}

@@ -1,0 +1,61 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- Projection of one replication object (Datasphere): row filters and the mapping of source columns
+	     to the target entity's model fields. Target fields come from the repository's model version. -->
+	<Dialog id="pjDialog" title="{view>/pj/title}" contentWidth="64rem" contentHeight="70%" resizable="true" draggable="true" class="repoioPjDialog">
+		<content>
+			<IconTabBar selectedKey="{view>/pj/tab}" expandable="false" class="repoioPjTabs" stretchContentHeight="true">
+				<items>
+					<IconTabFilter key="filters" text="{i18n>ds.pj.filtersT}" count="{view>/pj/filtersCount}" icon="sap-icon://filter">
+						<VBox renderType="Bare">
+							<Text text="{i18n>ds.pj.filtersHint}" class="repoioExSub sapUiSmallMarginBottom"/>
+							<Table items="{view>/pj/filters}" class="repoioDenseTable" noDataText="{i18n>ds.pj.noFilters}">
+								<headerToolbar>
+									<OverflowToolbar style="Clear">
+										<ToolbarSpacer/>
+										<Button text="{i18n>ds.pj.addFilter}" icon="sap-icon://add" type="Transparent" press=".onPjAddFilter"/>
+									</OverflowToolbar>
+								</headerToolbar>
+								<columns>
+									<Column><Text text="{i18n>ds.pj.column}"/></Column>
+									<Column width="10rem"><Text text="{i18n>ds.pj.op}"/></Column>
+									<Column><Text text="{i18n>ds.pj.value}"/></Column>
+									<Column width="3rem"/>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<Select selectedKey="{view>col}" items="{path: 'view>/pj/cols', templateShareable: false}" width="100%" forceSelection="false">
+											<core:ListItem key="{view>name}" text="{view>name}" additionalText="{view>label}"/>
+										</Select>
+										<Select selectedKey="{view>op}" width="100%">
+											<core:Item key="eq" text="="/>
+											<core:Item key="ne" text="≠"/>
+											<core:Item key="in" text="{i18n>ds.op.in}"/>
+											<core:Item key="notIn" text="{i18n>ds.op.notIn}"/>
+										</Select>
+										<Input value="{view>val}" placeholder="{i18n>ds.pj.valuePh}" textDirection="LTR"/>
+										<Button icon="sap-icon://decline" type="Transparent" press=".onPjRemoveFilter" tooltip="{i18n>common.delete}"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</VBox>
+					</IconTabFilter>
+					<IconTabFilter key="mapping" text="{i18n>ds.pj.mappingT}" count="{view>/pj/mapCount}" icon="sap-icon://combine">
+						<VBox renderType="Bare">
+							<HBox alignItems="Center" class="sapUiSmallMarginBottom">
+								<Text text="{i18n>ds.pj.mapHint}" class="repoioExSub"/>
+								<ToolbarSpacer/>
+							</HBox>
+							<rc:FieldMapper id="pjMapper" source="{view>/pj/src}" target="{view>/pj/tgt}" mapping="{path: 'view>/pj/mapping', mode: 'OneWay'}"
+								texts="{view>/pj/texts}" change=".onPjMapping" transform=".onPjTransform"/>
+						</VBox>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</content>
+		<buttons>
+			<Button text="{i18n>ds.pj.auto}" icon="sap-icon://combine" press=".onPjAuto"/>
+			<Button text="{i18n>common.apply}" type="Emphasized" press=".onPjApply"/>
+			<Button text="{i18n>common.cancel}" press=".onPjCancel"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>
