@@ -2,6 +2,7 @@ sap.ui.define([
 	"repoio/proto/controller/BaseController",
 	"repoio/proto/util/sync",
 	"repoio/proto/util/people",
+	"repoio/proto/util/jobRuns",
 	"sap/ui/core/Fragment",
 	"sap/m/MessagePopover",
 	"sap/m/MessageItem",
@@ -17,7 +18,7 @@ sap.ui.define([
 	"sap/ui/layout/form/SimpleForm",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox"
-], function (BaseController, S, people, Fragment, MessagePopover, MessageItem, Menu, MenuItem, Dialog, Button, Label, Input, Text, Switch, MessageStrip,
+], function (BaseController, S, people, R, Fragment, MessagePopover, MessageItem, Menu, MenuItem, Dialog, Button, Label, Input, Text, Switch, MessageStrip,
 	SimpleForm, MessageToast, MessageBox) {
 	"use strict";
 
@@ -82,13 +83,26 @@ sap.ui.define([
 			vm.setProperty("/sf/emptyText", this.text(!f.conn ? "ds.empty.conn" : !f.container ? "ds.empty.container" : !f.repo ? "ds.empty.target" : "ds.noObjects"));
 			vm.setProperty("/sf/objTitle", this.text("ds.objTitle", [f.objects.length]));
 			vm.setProperty("/sf/objects", f.objects.map(function (o) {
-				var fields = ents[o.entity] || [], okReq = fields.filter(function (x) { return x.req; }).every(function (x) { return o.mapping[x.name]; });
+				var fields = ents[o.entity] || [], missing = fields.filter(function (x) { return x.req && !o.mapping[x.name]; }).length,
+					nf = (o.filters || []).length;
 				return Object.assign({}, o, {
-					srcSub: (o.rows ? that.text("ds.rows", [that.fmt.num(o.rows)]) + " · " : "") + that.text(o.load === "delta" ? "ds.load.delta" : "ds.load.initial") + (o.truncate ? " · " + that.text("ds.truncateShort") : ""),
-					tgtSub: that.text("ds.ent." + o.entity) + " · raw." + o.entity,
-					mapText: that.text("ds.mapped", [Object.keys(o.mapping).length, fields.length]), mapState: okReq ? "Success" : "Error"
+					rowsText: o.rows ? that.text("ds.rows", [that.fmt.num(o.rows)]) : "",
+					entityText: that.text("ds.ent." + o.entity) + " · raw." + o.entity,
+					loadText: that.text(o.load === "delta" ? "ds.load.delta" : "ds.load.initial"), loadIcon: o.load === "delta" ? "sap-icon://synchronize" : "sap-icon://download",
+					pjText: missing ? that.text("ds.pjMissing", [missing]) : (o.projection ? (nf ? that.text("ds.prjFilters", [nf]) + " · " : "") + that.text("ds.mappedShort", [Object.keys(o.mapping).length, fields.length]) : that.text("ds.pjOff")),
+					pjState: missing ? "Error" : o.projection ? "Success" : "None",
+					pjIcon: missing ? "sap-icon://error" : o.projection ? "sap-icon://filter-fields" : "sap-icon://combine",
+					recText: o.last && o.last.initial ? that.text("ds.recs", [that.fmt.num(o.last.initial), that.fmt.num(o.last.delta || 0)]) : "—"
 				});
 			}));
+			var hasD = f.objects.some(function (o) { return o.load === "delta"; }), la = S.LAST[f.lastState];
+			vm.setProperty("/sf/fact", {
+				objects: String(f.objects.length),
+				load: f.objects.length ? S.load(this, f) : "—",
+				interval: conn ? S.interval(this, f) : "—",
+				last: la ? this.text("jr.st." + f.lastState) + " · " + R.date(f.lastRun, this.lang()).replace(/:\d\d$/, "") : this.text("ds.never"), lastState: la ? la[0] : "None", lastIcon: la ? la[1] : ""
+			});
+			vm.setProperty("/sf/linkText", f.objects.length ? this.text("ds.linkText", [f.objects.length]) + (hasD ? "\n" + S.interval(this, f) : "") : "");
 			this._objProps();
 		},
 		_objProps: function () {
@@ -250,6 +264,10 @@ sap.ui.define([
 			this.byId("sfObjects").removeSelections(true);
 			this.viewModel().setProperty("/sf/selIdx", -1);
 			this._dirty();
+		},
+		onRowProjection: function (oEvent) {
+			this._select(this.byId("sfObjects").indexOfItem(oEvent.getSource().getParent()));
+			this.onProjection();
 		},
 		onObjSelect: function (oEvent) {
 			this.viewModel().setProperty("/sf/selIdx", this.byId("sfObjects").indexOfItem(oEvent.getParameter("listItem")));

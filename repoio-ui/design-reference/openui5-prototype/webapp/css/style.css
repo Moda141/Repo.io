@@ -742,3 +742,29 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioPjCol { width: 100%; gap: 0.25rem; padding-inline-end: 0.5rem; min-width: 0; }
 .repoioPjColLbl { margin-inline-start: auto; max-width: 6.5rem; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; }
 .repoioPjCol .repoioMono { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+/* Replication flow editor v3 */
+.repoioRf { background: #f7f7f7; }
+.repoioRfHeader { flex: none; background: #fff; border-bottom: 1px solid #e5e5e5; padding: 0.25rem 1rem 0.5rem; }
+.repoioRfCrumbs { gap: 0.25rem; margin-inline-start: -0.5rem; }
+.repoioRfSep.sapMText { color: #89919a; }
+.repoioRfTitleBar.sapMTB { height: 2.5rem; padding: 0; }
+.repoioRfTitleIcon { color: #0a6ed1; }
+.repoioRfFacts { display: flex; gap: 2.5rem; padding-top: 0.25rem; }
+.repoioRfFact .sapMLabel { font-size: 0.75rem; color: #6a6d70; }
+.repoioRfSplit { flex: 1 1 0; min-height: 0; }
+.repoioRfCanvas { background: #f7f7f7; }
+.repoioRfEnds { display: grid; grid-template-columns: minmax(0, 1fr) 7rem minmax(0, 1fr); gap: 0; padding: 1rem 1rem 0.75rem; }
+.repoioRfTile { background: #fff; border: 1px solid #e5e5e5; border-radius: 0.5rem; padding: 0.625rem 0.875rem 0.75rem; min-width: 0; border-top: 3px solid #0a6ed1; }
+.repoioRfTileTgt { border-top-color: #188918; }
+.repoioRfTileHead { min-height: 1.75rem; }
+.repoioRfTileLbl.sapMLabel { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6a6d70; }
+.repoioRfTileMain { gap: 0.625rem; margin-top: 0.25rem; }
+.repoioRfTileText { min-width: 0; }
+.repoioRfTileSub { margin-top: 0.5rem; padding: 0.25rem 0.5rem; background: #f5f6f7; border-radius: 0.25rem; min-height: 2rem; }
+.repoioRfBadge { width: 2.25rem; height: 2.25rem; line-height: 2.25rem; border-radius: 50%; background: #e5f0fa; color: #0a6ed1; flex: none; text-align: center; }
+.repoioRfBadgeTgt { background: #e7f4e7; color: #188918; }
+.repoioRfLink { padding-inline: 0.5rem; }
+.repoioRfLink .sapMText { white-space: pre-line; margin-top: 0.25rem; }
+.repoioRfTable { margin: 0 1rem 1rem; width: calc(100% - 2rem) !important; border: 1px solid #e5e5e5; border-radius: 0.5rem; overflow: hidden; }
+.repoioRfProps { border-inline-start: none; }
+.repoioRfStepBtn.sapMBtn { margin-top: 0.75rem; }
