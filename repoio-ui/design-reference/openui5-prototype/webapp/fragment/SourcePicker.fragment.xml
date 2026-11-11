@@ -1,25 +1,32 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-	<!-- Compact picker dialog (Datasphere "Select Source Connection", "Select Source Container", "Select Target"):
-	     search + one-line rows. The rows and the confirm handler come from the controller (/sp). -->
-	<Dialog id="spDialog" title="{view>/sp/title}" contentWidth="30rem" verticalScrolling="true" class="repoioSpDialog" afterClose=".onSpAfterClose">
+	<!-- Datasphere "Select Source Connection" / "Select Source Container" / "Select Target Connection":
+	     a search field over a table of technical name, business name, type and description. -->
+	<Dialog id="spDialog" title="{view>/sp/title}" contentWidth="48rem" contentHeight="22rem" class="repoioSpDialog" afterClose=".onSpAfterClose">
 		<subHeader>
 			<Toolbar>
 				<SearchField value="{view>/sp/q}" liveChange=".onSpSearch" placeholder="{i18n>common.search}" width="100%"/>
 			</Toolbar>
 		</subHeader>
 		<content>
-			<List id="spList" items="{view>/sp/rows}" mode="SingleSelectMaster" selectionChange=".onSpSelect" showSeparators="Inner" class="repoioSpList" noDataText="{i18n>ds.sp.noData}">
-				<CustomListItem>
-					<HBox alignItems="Center" class="repoioSpItem">
-						<core:Icon src="{view>icon}" size="1.25rem" class="repoioSpLogo"/>
-						<VBox class="repoioSpText">
-							<Text text="{view>name}" wrapping="false" class="repoioSpName"/>
-							<Text text="{view>sub}" wrapping="false" class="repoioExSub"/>
-						</VBox>
-						<ObjectStatus icon="{view>stateIcon}" state="{view>state}" tooltip="{view>stateText}" visible="{= !!${view>stateIcon} }"/>
-					</HBox>
-				</CustomListItem>
-			</List>
+			<Table id="spList" items="{view>/sp/rows}" mode="SingleSelectMaster" selectionChange=".onSpSelect" class="repoioDenseTable" noDataText="{i18n>ds.sp.noData}" sticky="ColumnHeaders">
+				<columns>
+					<Column><Text text="{i18n>dsp.technicalName}"/></Column>
+					<Column><Text text="{i18n>dsp.businessName}"/></Column>
+					<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>ds.sp.type}"/></Column>
+					<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>ds.sp.desc}"/></Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<HBox alignItems="Center">
+							<core:Icon src="{view>icon}" class="repoioExRowIcon"/>
+							<Text text="{view>id}" class="repoioSpName" wrapping="false"/>
+						</HBox>
+						<Text text="{view>name}" wrapping="false"/>
+						<Text text="{view>type}" wrapping="false"/>
+						<ObjectStatus text="{view>sub}" state="{view>state}" icon="{view>stateIcon}"/>
+					</ColumnListItem>
+				</items>
+			</Table>
 		</content>
 		<beginButton>
 			<Button text="{i18n>ds.sp.select}" type="Emphasized" enabled="{= !!${view>/sp/sel} }" press=".onSpConfirm"/>

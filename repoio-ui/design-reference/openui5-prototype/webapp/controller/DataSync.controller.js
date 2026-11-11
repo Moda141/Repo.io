@@ -31,7 +31,7 @@ sap.ui.define([
 	   Deploy creates the ingest job (Airflow pull DAG or upload endpoint) that writes to raw.<entity>. */
 	return BaseController.extend("repoio.proto.controller.DataSync", {
 		onInit: function () {
-			this.viewModel().setProperty("/sf", { selIdx: -1, msgs: [], dirty: false, tab: "projections" });
+			this.viewModel().setProperty("/sf", { selIdx: -1, msgs: [], dirty: false, mid: "projections", details: true, qSrc: "", qTgt: "" });
 			this.router().getRoute("dataSyncFlow").attachPatternMatched(this._onMatched, this);
 		},
 
@@ -48,7 +48,8 @@ sap.ui.define([
 				vm.setProperty("/sf/dirty", false);
 				vm.setProperty("/sf/msgs", []);
 				vm.setProperty("/sf/selIdx", -1);
-				that.byId("sfObjects").removeSelections(true);
+				vm.setProperty("/sf/qSrc", "");
+				vm.setProperty("/sf/qTgt", "");
 				that._refresh();
 			});
 		},
@@ -82,19 +83,23 @@ sap.ui.define([
 			vm.setProperty("/sf/minutes", mins % 60);
 			vm.setProperty("/sf/emptyText", this.text(!f.conn ? "ds.empty.conn" : !f.container ? "ds.empty.container" : !f.repo ? "ds.empty.target" : "ds.noObjects"));
 			vm.setProperty("/sf/objTitle", this.text("ds.objTitle", [f.objects.length]));
-			vm.setProperty("/sf/objects", f.objects.map(function (o) {
-				var fields = ents[o.entity] || [], missing = fields.filter(function (x) { return x.req && !o.mapping[x.name]; }).length,
-					nf = (o.filters || []).length;
-				return Object.assign({}, o, {
-					rowsText: o.rows ? that.text("ds.rows", [that.fmt.num(o.rows)]) : "",
-					entityText: that.text("ds.ent." + o.entity) + " · raw." + o.entity,
-					loadText: that.text(o.load === "delta" ? "ds.load.delta" : "ds.load.initial"), loadIcon: o.load === "delta" ? "sap-icon://synchronize" : "sap-icon://download",
-					pjText: missing ? that.text("ds.pjMissing", [missing]) : (o.projection ? (nf ? that.text("ds.prjFilters", [nf]) + " · " : "") + that.text("ds.mappedShort", [Object.keys(o.mapping).length, fields.length]) : that.text("ds.pjOff")),
-					pjState: missing ? "Error" : o.projection ? "Success" : "None",
-					pjIcon: missing ? "sap-icon://error" : o.projection ? "sap-icon://filter-fields" : "sap-icon://combine",
-					recText: o.last && o.last.initial ? that.text("ds.recs", [that.fmt.num(o.last.initial), that.fmt.num(o.last.delta || 0)]) : "—"
-				});
-			}));
+			var sel = vm.getProperty("/sf/selIdx"), qs = (vm.getProperty("/sf/qSrc") || "").toLowerCase(), qt = (vm.getProperty("/sf/qTgt") || "").toLowerCase();
+			vm.setProperty("/sf/rows", f.objects.map(function (o, i) {
+				var fields = ents[o.entity] || [], miss = fields.filter(function (x) { return x.req && !o.mapping[x.name]; }).map(function (x) { return x.name; });
+				return { idx: i, source: o.source, entity: o.entity, load: o.load, truncate: !!o.truncate, projection: !!o.projection, sel: i === sel,
+					srcLabel: o.source + " (" + (that._sync.source[o.source] || []).length + ")", srcInfo: o.rows ? that.text("ds.rows", [that.fmt.num(o.rows)]) : o.source,
+					tgtLabel: o.entity + " (" + fields.length + ")", isNewTarget: f.status === "draft",
+					pjName: o.projectionName || o.source.replace(/^.*\./, "") + "_PRJ", nFilters: String((o.filters || []).length),
+					nMap: Object.keys(o.mapping).length + "/" + fields.length, missing: miss.length > 0,
+					mapTip: miss.length ? that.text("ds.pj.missing", [miss.join(", ")]) : that.text("ds.mapped", [Object.keys(o.mapping).length, fields.length]) };
+			}).filter(function (r) { return (!qs || r.source.toLowerCase().indexOf(qs) > -1) && (!qt || r.entity.toLowerCase().indexOf(qt) > -1); }));
+			var cts = conn ? this.text("ds.cts." + conn.type) : "", ctx = conn ? S.connText(this, conn) : "";
+			vm.setProperty("/sf/connLine", conn ? (ctx.indexOf(cts) > -1 ? ctx : ctx + " (" + cts + ")") : "");
+			vm.setProperty("/sf/pjTab", this.text("ds.pjTab", [f.objects.filter(function (o) { return o.projection; }).length]));
+			vm.setProperty("/sf/srcObjTitle", this.text("ds.objectsN", [f.objects.length]));
+			var oT = this.byId("sfObjects");
+			oT.removeSelections(true);
+			oT.getItems().forEach(function (it) { if (it.getBindingContext("view").getProperty("idx") === sel) { oT.setSelectedItem(it); } });
 			var hasD = f.objects.some(function (o) { return o.load === "delta"; }), la = S.LAST[f.lastState];
 			vm.setProperty("/sf/fact", {
 				objects: String(f.objects.length),
@@ -148,7 +153,7 @@ sap.ui.define([
 		_picker: function (mode) {
 			var that = this, vm = this.viewModel();
 			this._spMode = mode;
-			vm.setProperty("/sp", { q: "", sel: "", title: this.text({ conn: "ds.pickConn", container: "ds.pickContainer", target: "ds.pickTarget" }[mode]) });
+			vm.setProperty("/sp", { q: "", sel: "", title: this.text({ conn: "ds.pickConn", container: "ds.pickContainer", target: "ds.pickTargetConn" }[mode]) });
 			this._spFilter();
 			var open = function (d) { that.byId("spList").removeSelections(true); d.open(); };
 			if (this._sp) { open(this._sp); return; }
@@ -161,24 +166,24 @@ sap.ui.define([
 			if (this._spMode === "conn") {
 				rows = (this.data().getProperty("/connections") || []).map(function (c) {
 					var ok = c.state === "active";
-					return { id: c.id, name: S.connText(that, c), sub: that.text("ds.ct." + c.type) + " · " + c.id, icon: S.icon(c),
-						state: ok ? "Success" : "Warning", stateIcon: ok ? "sap-icon://status-positive" : "sap-icon://status-critical", stateText: that.text(ok ? "ds.sp.ok" : "ds.sp.attention") };
+					return { id: c.id, name: S.connText(that, c), type: that.text("ds.cts." + c.type), icon: S.icon(c),
+						sub: that.text(ok ? "ds.sp.ok" : "ds.sp.attention"), state: ok ? "Success" : "Warning", stateIcon: ok ? "sap-icon://status-positive" : "sap-icon://status-critical" };
 				});
 			} else if (this._spMode === "container") {
 				var ct = S.conn(this, this._f.conn).type;
 				rows = (this._sync.containers[this._f.conn] || []).map(function (k) {
-					return { id: k[0], name: k[0], sub: k[1], icon: CONTAINER_TYPE[ct] };
+					return { id: k[0], name: k[0], type: that.text("ds.cts." + ct), sub: k[1], icon: CONTAINER_TYPE[ct], state: "None" };
 				});
 			} else {
 				rows = Object.keys(this.data().getProperty("/repos")).map(function (k) {
 					var r = S.repo(that, k), d = S.dom(that, r.domainId);
-					return { id: k, name: r.name, sub: (d ? that.domainName(d) : "") + " · " + that.text("ds.targetContainer", [r.model]), icon: d ? d.icon : "sap-icon://database" };
+					return { id: r.code || k, key: k, name: r.name, type: d ? that.domainName(d) : "", sub: that.text("ds.targetContainer", [r.model]), icon: d ? d.icon : "sap-icon://database", state: "None" };
 				});
 			}
-			vm.setProperty("/sp/rows", rows.filter(function (r) { return !q || (r.name + " " + r.sub + " " + r.id).toLowerCase().indexOf(q) > -1; }));
+			vm.setProperty("/sp/rows", rows.filter(function (r) { return !q || [r.id, r.name, r.type, r.sub].join(" ").toLowerCase().indexOf(q) > -1; }));
 		},
 		onSpSearch: function () { this._spFilter(); },
-		onSpSelect: function (oEvent) { this.viewModel().setProperty("/sp/sel", oEvent.getParameter("listItem").getBindingContext("view").getProperty("id")); },
+		onSpSelect: function (oEvent) { var r = oEvent.getParameter("listItem").getBindingContext("view").getObject(); this.viewModel().setProperty("/sp/sel", r.key || r.id); },
 		onSpConfirm: function () {
 			var id = this.viewModel().getProperty("/sp/sel"), f = this._f;
 			if (this._spMode === "conn") {
@@ -218,9 +223,12 @@ sap.ui.define([
 			var have = f.objects.map(function (o) { return o.source; });
 			this._aoAll = (this._sync.catalog[f.conn] || []).filter(function (t) { return have.indexOf(t) < 0; }).map(function (t) {
 				var known = (that._sync.flows.map(function (x) { return x.objects; }).reduce(function (a, b) { return a.concat(b); }, []).filter(function (o) { return o.source === t && o.rows; })[0] || {}).rows;
-				return { name: t, cols: (that._sync.source[t] || []).length, rows: known ? that.fmt.num(known) : "—" };
+				return { name: t, cols: (that._sync.source[t] || []).length, rows: known ? that.fmt.num(known) : "—", type: that.text("ds.ot." + S.conn(that, f.conn).type) };
 			});
-			vm.setProperty("/ao", { q: "", step: 1, count: 0, container: f.container, rows: this._aoAll, picked: [] });
+			var cn = S.conn(this, f.conn);
+			vm.setProperty("/ao", { q: "", step: 1, count: 0, container: f.container, rows: this._aoAll, picked: [],
+				searchIn: this.text("ds.ao.searchIn", [cn.id, f.container]), searchPh: this.text("ds.ao.searchPh", [cn.id, f.container]),
+				countText: this.text("ds.objectsN", [this._aoAll.length]), selectionText: this.text("ds.ao.selection", [0]) });
 			var open = function (d) { that.byId("aoTable").removeSelections(true); that.byId("aoNav").to(that.byId("aoPick")); d.open(); };
 			if (this._ao) { open(this._ao); return; }
 			Fragment.load({ id: this.getView().getId(), name: "repoio.proto.fragment.AddObjects", controller: this }).then(function (d) {
@@ -231,12 +239,21 @@ sap.ui.define([
 			var vm = this.viewModel(), q = (vm.getProperty("/ao/q") || "").toLowerCase();
 			vm.setProperty("/ao/rows", this._aoAll.filter(function (r) { return r.name.toLowerCase().indexOf(q) > -1; }));
 		},
-		onAoSelect: function () { this.viewModel().setProperty("/ao/count", this.byId("aoTable").getSelectedItems().length); },
+		onAoSelect: function () {
+			var n = this.byId("aoTable").getSelectedItems().length;
+			this.viewModel().setProperty("/ao/count", n);
+			this.viewModel().setProperty("/ao/selectionText", this.text("ds.ao.selection", [n]));
+		},
+		onAoTab: function (oEvent) {
+			if (oEvent.getParameter("item").getKey() === "sel") { if (this.viewModel().getProperty("/ao/count")) { this.onAoNext(); } else { this.viewModel().setProperty("/ao/step", 1); } }
+			else { this.onAoBack(); }
+		},
 		onAoNext: function () {
 			var that = this, ents = this._sync.entitiesByDomain[S.repo(this, this._f.repo).domainId] || [],
 				picked = this.byId("aoTable").getSelectedItems().map(function (it) { return it.getBindingContext("view").getProperty("name"); });
 			this._aoPicked = picked.map(function (t) { return { name: t, entity: that._guessEntity(t, ents) }; });
-			this.viewModel().setProperty("/ao/picked", this._aoPicked.map(function (p) { return { name: p.name, target: that.text("ds.ao.to", [p.entity + " · " + that.text("ds.ent." + p.entity)]) }; }));
+			var cn = this._f.conn + "/" + this._f.container + "/", ty = this.text("ds.ot." + S.conn(this, this._f.conn).type);
+			this.viewModel().setProperty("/ao/picked", this._aoPicked.map(function (p) { return { name: p.name, type: ty, location: (cn + p.name).replace(/\/\//g, "/"), target: p.entity + " · " + that.text("ds.ent." + p.entity) }; }));
 			this.viewModel().setProperty("/ao/pickedTitle", this.text("ds.ao.review", [picked.length]));
 			this.viewModel().setProperty("/ao/step", 2);
 			this.byId("aoNav").to(this.byId("aoReview"));
@@ -261,18 +278,22 @@ sap.ui.define([
 		onRemoveObject: function () {
 			var i = this.viewModel().getProperty("/sf/selIdx");
 			this._f.objects.splice(i, 1);
-			this.byId("sfObjects").removeSelections(true);
 			this.viewModel().setProperty("/sf/selIdx", -1);
 			this._dirty();
 		},
-		onRowProjection: function (oEvent) {
-			this._select(this.byId("sfObjects").indexOfItem(oEvent.getSource().getParent()));
-			this.onProjection();
+		onObjSelect: function (oEvent) { this._select(oEvent.getParameter("listItem").getBindingContext("view").getProperty("idx")); },
+		_rowIdx: function (oEvent) { return oEvent.getSource().getBindingContext("view").getProperty("idx"); },
+		onRowSearch: function () { this._refresh(); },
+		onRowSetting: function (oEvent) {
+			var r = oEvent.getSource().getBindingContext("view").getObject(), o = this._f.objects[r.idx];
+			o.load = r.load; o.truncate = r.truncate;
+			if (r.truncate) { MessageToast.show(this.text("ds.truncateWarn")); }
+			this._dirty();
 		},
-		onObjSelect: function (oEvent) {
-			this.viewModel().setProperty("/sf/selIdx", this.byId("sfObjects").indexOfItem(oEvent.getParameter("listItem")));
-			this._objProps();
-		},
+		onRowProjection: function (oEvent) { this._select(this._rowIdx(oEvent)); this.onProjection(); },
+		onRowRemoveProjection: function (oEvent) { this._select(this._rowIdx(oEvent)); this.onRemoveProjection(); },
+		onRemoveRow: function (oEvent) { this._select(this._rowIdx(oEvent)); this.onRemoveObject(); },
+		onCloseDetails: function () { this.viewModel().setProperty("/sf/details", false); },
 		onObjChange: function () {
 			var i = this.viewModel().getProperty("/sf/selIdx"), o = this.viewModel().getProperty("/sf/o");
 			this._f.objects[i].load = o.load;
@@ -283,7 +304,7 @@ sap.ui.define([
 		/* Additional options next to a target object (Datasphere: rename / map to existing). The target is always an
 		   entity of the repository's model, so it can only be switched to another entity of the domain. */
 		onTargetOptions: function (oEvent) {
-			var that = this, oBtn = oEvent.getSource(), i = this.byId("sfObjects").indexOfItem(oBtn.getParent()), o = this._f.objects[i],
+			var that = this, oBtn = oEvent.getSource(), i = this._rowIdx(oEvent), o = this._f.objects[i],
 				ents = this._sync.entitiesByDomain[S.repo(this, this._f.repo).domainId] || [],
 				oMenu = new Menu({ items: [
 					new MenuItem({ text: this.text("ds.opt.map"), icon: "sap-icon://dimension", items: ents.map(function (e) {
@@ -302,10 +323,9 @@ sap.ui.define([
 			oMenu.openBy(oBtn);
 		},
 		_select: function (i) {
-			var t = this.byId("sfObjects");
-			t.setSelectedItem(t.getItems()[i]);
 			this.viewModel().setProperty("/sf/selIdx", i);
-			this._objProps();
+			this.viewModel().setProperty("/sf/details", true);
+			this._refresh();
 		},
 
 		_autoMap: function (table, entity) {
@@ -327,6 +347,7 @@ sap.ui.define([
 			vm.setProperty("/pj", {
 				title: this.text(o.projection ? "ds.pj.editTitle" : "ds.addProjection"), tab: "filters",
 				name: o.projectionName || o.source.replace(/^.*\./, "") + "_PRJ", srcName: o.source, tgtName: o.entity,
+				srcLine: this.text("ds.pj.srcLine", [o.source, src.length]), cur: {}, colQ: "",
 				filters: JSON.parse(JSON.stringify(o.filters || [])), mapping: JSON.parse(JSON.stringify(o.mapping)),
 				cols: src, src: src.map(function (c) { return { name: c.name, label: c.label, type: c.type === "code" ? "string" : c.type, key: c.key }; }),
 				tgt: fields.map(function (x) { return { name: x.name, type: x.type, key: x.key, req: x.req, codeList: x.codeList }; }),
@@ -353,25 +374,34 @@ sap.ui.define([
 			vm.setProperty("/pj/valid", !!String(p.name || "").trim() && !badFilter);
 		},
 		onPjCheck: function () { this._pjTabs(); },
-		/* Filter tab: the left list of source columns drives the expression rows on the right. */
+		/* Filter tab (Datasphere): select a source column, define the expression, Add Expression. */
+		_opText: function (f) {
+			var v = f.op === "between" ? f.val + ", " + f.val2 : f.val, o = { eq: "=", ne: "<>", between: "BETWEEN", in: "IN", notIn: "NOT IN" }[f.op];
+			return "( " + f.col + " " + o + " " + (f.op === "in" || f.op === "notIn" ? "(" + v + ")" : v) + " )";
+		},
 		_pjCols: function () {
-			var vm = this.viewModel(), p = vm.getProperty("/pj"), q = (p.colQ || "").toLowerCase(),
-				used = p.filters.map(function (f) { return f.col; }),
-				ic = { date: "sap-icon://calendar", integer: "sap-icon://number-sign", decimal: "sap-icon://number-sign", code: "sap-icon://list" };
+			var that = this, vm = this.viewModel(), p = vm.getProperty("/pj"), q = (p.colQ || "").toLowerCase(),
+				used = p.filters.map(function (f) { return f.col; }), cur = (p.cur || {}).col,
+				mark = { date: "📅", integer: "12", decimal: "1.2", code: "≡" };
 			vm.setProperty("/pj/colRows", p.cols.filter(function (c) { return !q || (c.name + " " + c.label).toLowerCase().indexOf(q) > -1; }).map(function (c) {
-				return { name: c.name, label: c.label, selected: used.indexOf(c.name) > -1, icon: ic[c.type] || "sap-icon://text" };
+				return { name: c.name, label: c.label, key: !!c.key, used: used.indexOf(c.name) > -1, selected: c.name === cur, typeMark: mark[c.type] || "AA" };
 			}));
+			vm.setProperty("/pj/filters", p.filters.map(function (f) { return Object.assign({}, f, { text: that._opText(f) }); }));
+			vm.setProperty("/pj/expr", p.filters.map(function (f) { return that._opText(f); }).join(" AND "));
 		},
 		onPjColSearch: function () { this._pjCols(); },
-		onPjColSelect: function (oEvent) {
-			var vm = this.viewModel(), a = vm.getProperty("/pj/filters").slice();
-			oEvent.getParameter("listItems").forEach(function (li) {
-				var n = li.getBindingContext("view").getProperty("name");
-				if (li.getSelected()) { if (!a.some(function (f) { return f.col === n; })) { a.push({ col: n, op: "eq", val: "" }); } }
-				else { a = a.filter(function (f) { return f.col !== n; }); }
-			});
+		onPjColPick: function (oEvent) {
+			var n = oEvent.getParameter("listItem").getBindingContext("view").getProperty("name");
+			this.viewModel().setProperty("/pj/cur", { col: n, op: "eq", val: "", val2: "" });
+			this.viewModel().setProperty("/pj/addFor", this.text("ds.pj.addFor", [n]));
+		},
+		onPjAddExpr: function () {
+			var vm = this.viewModel(), c = vm.getProperty("/pj/cur"), a = vm.getProperty("/pj/filters").map(function (f) { return { col: f.col, op: f.op, val: f.val, val2: f.val2 }; });
+			a.push({ col: c.col, op: c.op, val: c.val, val2: c.val2 });
 			vm.setProperty("/pj/filters", a);
+			vm.setProperty("/pj/cur", { col: c.col, op: "eq", val: "", val2: "" });
 			this._pjTabs();
+			this._pjCols();
 		},
 		onPjRemoveFilter: function (oEvent) {
 			var vm = this.viewModel(), a = vm.getProperty("/pj/filters").slice(), i = +oEvent.getSource().getBindingContext("view").getPath().split("/").pop();
@@ -384,7 +414,7 @@ sap.ui.define([
 		onPjTransform: function () { MessageToast.show(this.text("ds.t.noTransform")); },
 		onPjApply: function () {
 			var vm = this.viewModel(), o = this._f.objects[vm.getProperty("/sf/selIdx")], m = vm.getProperty("/pj/mapping"), plain = {};
-			o.filters = vm.getProperty("/pj/filters");
+			o.filters = vm.getProperty("/pj/filters").map(function (f) { return { col: f.col, op: f.op, val: f.val, val2: f.val2 }; });
 			Object.keys(m).forEach(function (k) { plain[k] = typeof m[k] === "string" ? m[k] : m[k].src; });
 			o.mapping = plain;
 			o.projection = true;

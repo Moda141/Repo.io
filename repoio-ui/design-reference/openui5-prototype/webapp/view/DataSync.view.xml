@@ -1,207 +1,203 @@
 <mvc:View controllerName="repoio.proto.controller.DataSync"
-	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" height="100%">
-	<!-- J15: replication flow editor (SAP Datasphere pattern). Header with actions; canvas with the
-	     source → target tiles and the replication objects; resizable properties panel. -->
-	<VBox height="100%" renderType="Bare" class="repoioRf">
-		<!-- Header -->
-		<VBox renderType="Bare" class="repoioRfHeader">
-			<HBox alignItems="Center" class="repoioRfCrumbs">
-				<Button icon="sap-icon://nav-back" type="Transparent" tooltip="{i18n>common.back}" press=".onBack"/>
-				<Link text="{i18n>nav.dataSync}" press=".onBack"/>
-				<Text text="/" class="repoioRfSep"/>
-				<Text text="{view>/sf/f/id}" class="repoioMono repoioExSub" wrapping="false"/>
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" height="100%">
+	<!-- J15: replication flow editor, laid out like the SAP Datasphere replication flow editor:
+	     grouped toolbar (General / Edit / Tools, Details); three columns: source (connection, container,
+	     objects) · Projections / Settings · target (repository, model, objects); properties panel on Details. -->
+	<VBox height="100%" renderType="Bare" class="repoioDsRf">
+		<!-- Toolbar with labelled groups -->
+		<HBox class="repoioDsTb" alignItems="Start" renderType="Bare">
+			<Button icon="sap-icon://nav-back" type="Transparent" tooltip="{i18n>common.back}" press=".onBack" class="repoioDsBack"/>
+			<VBox class="repoioDsTbGrp" renderType="Bare">
+				<Text text="{i18n>ds.tb.general}" class="repoioDsTbLbl"/>
+				<HBox>
+					<Button icon="sap-icon://save" type="Transparent" tooltip="{i18n>common.save}" press=".onSave" enabled="{view>/sf/dirty}"/>
+					<Button icon="sap-icon://upload-to-cloud" type="Transparent" tooltip="{i18n>ds.deploy}" press=".onDeploy" enabled="{= !${view>/sf/isNew} &amp;&amp; (${view>/sf/status} !== 'deployed' || ${view>/sf/dirty}) }"/>
+					<Button icon="sap-icon://media-play" type="Transparent" tooltip="{i18n>ds.run}" press=".onRun" enabled="{= ${view>/sf/status} === 'deployed' || ${view>/sf/status} === 'changed' }"/>
+				</HBox>
+			</VBox>
+			<VBox class="repoioDsTbGrp" renderType="Bare">
+				<Text text="{i18n>ds.tb.edit}" class="repoioDsTbLbl"/>
+				<HBox>
+					<Button text="{i18n>ds.addProjection}" type="Transparent" press=".onProjection" enabled="{= ${view>/sf/selIdx} > -1 &amp;&amp; !${view>/sf/o/projection} }"/>
+				</HBox>
+			</VBox>
+			<VBox class="repoioDsTbGrp" renderType="Bare">
+				<Text text="{i18n>ds.tb.tools}" class="repoioDsTbLbl"/>
+				<HBox>
+					<Button icon="sap-icon://validate" type="Transparent" tooltip="{i18n>ds.validate}" press=".onValidate"/>
+					<Button id="sfMsgBtn" icon="sap-icon://message-popup" text="{view>/sf/msgCount}" type="{view>/sf/msgType}" press=".onMessages" visible="{= ${view>/sf/msgs}.length > 0 }"/>
+					<Button icon="sap-icon://inspection" type="Transparent" tooltip="{i18n>ds.monitor}" press=".onMonitor" enabled="{= !!${view>/sf/lastRun} }"/>
+				</HBox>
+			</VBox>
+			<HBox class="repoioDsTbRight" alignItems="Center" renderType="Bare">
+				<Text text="{view>/sf/titleText}" class="repoioDsTbTitle" wrapping="false"/>
+				<ToggleButton text="{i18n>ds.details}" pressed="{view>/sf/details}" type="Emphasized"/>
 			</HBox>
-			<OverflowToolbar style="Clear" class="repoioRfTitleBar">
-				<core:Icon src="sap-icon://synchronize" size="1.25rem" class="repoioRfTitleIcon"/>
-				<Title text="{view>/sf/titleText}" level="H1" titleStyle="H4" wrapping="false">
-					<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true"/></layoutData>
-				</Title>
-				<ObjectStatus text="{view>/sf/statusText}" state="{view>/sf/statusState}" icon="{view>/sf/statusIcon}" inverted="true"/>
-				<ToolbarSpacer/>
-				<Button id="sfMsgBtn" icon="sap-icon://message-popup" text="{view>/sf/msgCount}" type="{view>/sf/msgType}" press=".onMessages" visible="{= ${view>/sf/msgs}.length > 0 }"/>
-				<Button text="{i18n>ds.validate}" icon="sap-icon://validate" type="Transparent" press=".onValidate"/>
-				<Button text="{i18n>common.save}" icon="sap-icon://save" press=".onSave" enabled="{view>/sf/dirty}"/>
-				<Button text="{i18n>ds.deploy}" icon="sap-icon://upload-to-cloud" type="Emphasized" press=".onDeploy" enabled="{= !${view>/sf/isNew} &amp;&amp; (${view>/sf/status} !== 'deployed' || ${view>/sf/dirty}) }"/>
-				<Button text="{i18n>ds.run}" icon="sap-icon://media-play" press=".onRun" enabled="{= ${view>/sf/status} === 'deployed' || ${view>/sf/status} === 'changed' }"/>
-				<Button text="{i18n>ds.monitorShort}" icon="sap-icon://inspection" type="Transparent" press=".onMonitor" enabled="{= !!${view>/sf/lastRun} }"/>
-			</OverflowToolbar>
-			<HBox wrap="Wrap" class="repoioRfFacts" renderType="Bare">
-				<VBox class="repoioRfFact"><Label text="{i18n>ds.col.objects}"/><Text text="{view>/sf/fact/objects}"/></VBox>
-				<VBox class="repoioRfFact"><Label text="{i18n>ds.col.load}"/><Text text="{view>/sf/fact/load}"/></VBox>
-				<VBox class="repoioRfFact"><Label text="{i18n>ds.loadFrequency}"/><Text text="{view>/sf/fact/interval}"/></VBox>
-				<VBox class="repoioRfFact"><Label text="{i18n>bc.col.last}"/><ObjectStatus text="{view>/sf/fact/last}" state="{view>/sf/fact/lastState}" icon="{view>/sf/fact/lastIcon}"/></VBox>
-				<VBox class="repoioRfFact"><Label text="{i18n>domain.owner}"/><Text text="{view>/sf/ownerText}"/></VBox>
-			</HBox>
-		</VBox>
+		</HBox>
 
-		<l:Splitter height="100%" class="repoioRfSplit">
-			<ScrollContainer vertical="true" height="100%" class="repoioRfCanvas">
-				<layoutData><l:SplitterLayoutData size="auto" minSize="480"/></layoutData>
-				<!-- Source → Target -->
-				<HBox class="repoioRfEnds" renderType="Bare">
-					<VBox class="repoioRfTile repoioRfTileSrc" renderType="Bare">
-						<HBox alignItems="Center" class="repoioRfTileHead">
-							<Label text="{i18n>ds.source}" class="repoioRfTileLbl"/>
-							<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>ds.changeConn}" press=".onPickConn" visible="{= !!${view>/sf/f/conn} &amp;&amp; ${view>/sf/f/objects}.length === 0 }" class="repoioRfEndBtn"/>
+		<HBox class="repoioDsBody" renderType="Bare">
+			<ScrollContainer vertical="true" height="100%" class="repoioDsCanvas">
+				<!-- Column headers: source · projections/settings · target -->
+				<HBox class="repoioDsGrid repoioDsHead" renderType="Bare">
+					<VBox class="repoioDsCell" renderType="Bare">
+						<HBox alignItems="Center" class="repoioDsHeadRow">
+							<Link text="{view>/sf/connLine}" press=".onConn" visible="{= !!${view>/sf/f/conn} }" wrapping="false" class="repoioDsHeadTxt"/>
+							<Text text="{i18n>ds.noConn}" visible="{= !${view>/sf/f/conn} }" class="repoioDsMuted repoioDsHeadTxt"/>
+							<Button icon="sap-icon://connected" type="Transparent" tooltip="{i18n>ds.pickConn}" press=".onPickConn" enabled="{= ${view>/sf/f/objects}.length === 0 }"/>
 						</HBox>
-						<HBox alignItems="Center" class="repoioRfTileMain" visible="{= !!${view>/sf/f/conn} }">
-							<core:Icon src="{view>/sf/connIcon}" size="1.25rem" class="repoioRfBadge"/>
-							<VBox class="repoioRfTileText">
-								<Link text="{view>/sf/connText}" press=".onConn" wrapping="false" class="repoioRfStrong"/>
-								<Text text="{view>/sf/connType}" class="repoioExSub" wrapping="false"/>
-							</VBox>
+						<HBox alignItems="Center" class="repoioDsHeadRow">
+							<Text text="{view>/sf/f/container}" class="repoioMono repoioDsHeadTxt" wrapping="false" visible="{= !!${view>/sf/f/container} }"/>
+							<Text text="{i18n>ds.noContainer}" class="repoioDsMuted repoioDsHeadTxt" visible="{= !${view>/sf/f/container} }"/>
+							<Button icon="sap-icon://folder-blank" type="Transparent" tooltip="{i18n>ds.pickContainer}" press=".onPickContainer" enabled="{= !!${view>/sf/f/conn} &amp;&amp; ${view>/sf/f/objects}.length === 0 }"/>
 						</HBox>
-						<HBox alignItems="Center" class="repoioRfTileSub" visible="{= !!${view>/sf/f/container} }">
-							<core:Icon src="sap-icon://folder-blank" class="sapUiTinyMarginEnd"/>
-							<Text text="{view>/sf/f/container}" class="repoioMono" wrapping="false"/>
-							<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>ds.pickContainer}" press=".onPickContainer" visible="{= ${view>/sf/f/objects}.length === 0 }"/>
-						</HBox>
-						<Button text="{i18n>ds.pickConn}" icon="sap-icon://connected" type="Emphasized" press=".onPickConn" visible="{= !${view>/sf/f/conn} }" class="repoioRfStepBtn"/>
-						<Button text="{i18n>ds.pickContainer}" icon="sap-icon://folder-blank" type="Emphasized" press=".onPickContainer"
-							visible="{= !!${view>/sf/f/conn} &amp;&amp; !${view>/sf/f/container} }" class="repoioRfStepBtn"/>
 					</VBox>
-					<VBox alignItems="Center" justifyContent="Center" class="repoioRfLink" renderType="Bare">
-						<core:Icon src="sap-icon://arrow-right" size="1.25rem" class="repoioRfArrow"/>
-						<Text text="{view>/sf/linkText}" class="repoioExSub" textAlign="Center"/>
-					</VBox>
-					<VBox class="repoioRfTile repoioRfTileTgt" renderType="Bare">
-						<HBox alignItems="Center" class="repoioRfTileHead">
-							<Label text="{i18n>ds.target}" class="repoioRfTileLbl"/>
-							<Button icon="sap-icon://action-settings" type="Transparent" tooltip="{i18n>ds.targetSettings}" press=".onTargetSettings" visible="{= !!${view>/sf/f/repo} }" class="repoioRfEndBtn"/>
-							<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>ds.pickTarget}" press=".onPickTarget" visible="{= !!${view>/sf/f/repo} &amp;&amp; ${view>/sf/f/objects}.length === 0 }"/>
+					<HBox class="repoioDsCell repoioDsMidHead" alignItems="End" renderType="Bare">
+						<IconTabHeader selectedKey="{view>/sf/mid}" mode="Inline" class="repoioDsTabs" backgroundDesign="Transparent">
+							<items>
+								<IconTabFilter key="projections" text="{view>/sf/pjTab}"/>
+								<IconTabFilter key="settings" text="{i18n>ds.tab.settings}"/>
+							</items>
+						</IconTabHeader>
+					</HBox>
+					<VBox class="repoioDsCell" renderType="Bare">
+						<HBox alignItems="Center" class="repoioDsHeadRow">
+							<Text text="{view>/sf/repoText}" class="repoioDsHeadTxt" wrapping="false" visible="{= !!${view>/sf/repoText} }"/>
+							<Text text="{i18n>ds.noTarget}" class="repoioDsMuted repoioDsHeadTxt" visible="{= !${view>/sf/repoText} }"/>
+							<Button icon="sap-icon://database" type="Transparent" tooltip="{i18n>ds.pickTarget}" press=".onPickTarget" enabled="{= ${view>/sf/f/objects}.length === 0 }"/>
+							<Button icon="sap-icon://action-settings" type="Transparent" tooltip="{i18n>ds.targetSettings}" press=".onTargetSettings" enabled="{= !!${view>/sf/f/repo} }"/>
 						</HBox>
-						<HBox alignItems="Center" class="repoioRfTileMain" visible="{= !!${view>/sf/f/repo} }">
-							<core:Icon src="{view>/sf/domIcon}" size="1.25rem" class="repoioRfBadge repoioRfBadgeTgt"/>
-							<VBox class="repoioRfTileText">
-								<Text text="{view>/sf/repoText}" wrapping="false" class="repoioRfStrong"/>
-								<Text text="{view>/sf/domText}" class="repoioExSub" wrapping="false"/>
-							</VBox>
+						<HBox alignItems="Center" class="repoioDsHeadRow">
+							<Text text="{view>/sf/targetContainer}" class="repoioDsHeadTxt" wrapping="false"/>
+							<core:Icon src="sap-icon://folder-blank" class="repoioDsHeadIcon"/>
 						</HBox>
-						<HBox alignItems="Center" class="repoioRfTileSub" visible="{= !!${view>/sf/f/repo} }">
-							<core:Icon src="sap-icon://folder-blank" class="sapUiTinyMarginEnd"/>
-							<Text text="{view>/sf/targetContainer}" wrapping="false"/>
-						</HBox>
-						<Button text="{i18n>ds.pickTarget}" icon="sap-icon://database" type="Emphasized" press=".onPickTarget" visible="{= !${view>/sf/f/repo} }" class="repoioRfStepBtn"/>
 					</VBox>
 				</HBox>
 
-				<!-- Replication objects -->
-				<Table id="sfObjects" items="{view>/sf/objects}" mode="SingleSelectMaster" selectionChange=".onObjSelect" class="repoioDenseTable repoioRfTable"
-					fixedLayout="false" noDataText="{view>/sf/emptyText}" popinLayout="GridSmall">
-					<headerToolbar>
-						<OverflowToolbar>
-							<Title text="{view>/sf/objTitle}" level="H2" titleStyle="H5"/>
-							<ToolbarSpacer/>
-							<Button text="{i18n>ds.addObjects}" icon="sap-icon://add" type="Transparent" press=".onAddObjects" enabled="{= !!${view>/sf/f/container} }"/>
-							<Button text="{i18n>ds.removeObject}" icon="sap-icon://less" type="Transparent" press=".onRemoveObject" enabled="{= ${view>/sf/selIdx} > -1 }"/>
-						</OverflowToolbar>
-					</headerToolbar>
+				<!-- Replication objects: one row per object across the three columns -->
+				<Table id="sfObjects" items="{view>/sf/rows}" mode="SingleSelectMaster" selectionChange=".onObjSelect" fixedLayout="true"
+					class="repoioDsTable" noDataText="{view>/sf/emptyText}">
 					<columns>
-						<Column><Text text="{i18n>ds.col.srcObj}"/></Column>
-						<Column hAlign="Center" width="2rem"><Text text=""/></Column>
-						<Column><Text text="{i18n>ds.col.tgtObj}"/></Column>
-						<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>ds.col.load}"/></Column>
-						<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>ds.tab.projections}"/></Column>
-						<Column minScreenWidth="1600px" hAlign="End"><Text text="{i18n>ds.col.records}"/></Column>
-						<Column hAlign="End" width="2.75rem"><Text text=""/></Column>
+						<Column width="31%">
+							<HBox alignItems="Center" class="repoioDsColHead">
+								<Text text="{view>/sf/srcObjTitle}" wrapping="false"/>
+								<Button icon="sap-icon://add" type="Transparent" tooltip="{i18n>ds.addObjects}" press=".onAddObjects" enabled="{= !!${view>/sf/f/container} }"/>
+								<SearchField value="{view>/sf/qSrc}" liveChange=".onRowSearch" width="9rem" class="repoioDsSearch"/>
+							</HBox>
+						</Column>
+						<Column width="38%" hAlign="Center">
+							<HBox justifyContent="SpaceAround" alignItems="Center" class="repoioDsColHead" visible="{= ${view>/sf/mid} === 'settings' }">
+								<Text text="{i18n>ds.col.load}"/>
+								<Text text="{i18n>ds.truncateLbl}"/>
+							</HBox>
+						</Column>
+						<Column width="31%">
+							<HBox alignItems="Center" class="repoioDsColHead">
+								<Text text="{i18n>ds.objectsT}"/>
+								<SearchField value="{view>/sf/qTgt}" liveChange=".onRowSearch" width="10rem" class="repoioDsSearch"/>
+							</HBox>
+						</Column>
 					</columns>
 					<items>
 						<ColumnListItem>
-							<HBox alignItems="Center">
-								<core:Icon src="sap-icon://table-view" class="repoioExRowIcon"/>
-								<VBox>
-									<Text text="{view>source}" class="repoioMono" wrapping="false"/>
-									<Text text="{view>rowsText}" class="repoioExSub" wrapping="false" visible="{= !!${view>rowsText} }"/>
-								</VBox>
+							<HBox alignItems="Center" class="repoioDsObj">
+								<core:Icon src="sap-icon://table-view" class="repoioDsObjIcon"/>
+								<Text text="{view>srcLabel}" wrapping="false" class="repoioDsObjTxt"/>
+								<core:Icon src="sap-icon://hint" tooltip="{view>srcInfo}" visible="{view>sel}" class="repoioDsRowAct"/>
+								<Button icon="sap-icon://sys-cancel" type="Transparent" tooltip="{i18n>ds.removeObject}" press=".onRemoveRow" visible="{view>sel}" class="repoioDsRowBtn"/>
 							</HBox>
-							<core:Icon src="sap-icon://arrow-right" color="#0a6ed1"/>
-							<HBox alignItems="Center">
-								<core:Icon src="sap-icon://dimension" class="repoioExRowIcon"/>
-								<VBox>
-									<Text text="{view>entity}" class="repoioMono" wrapping="false"/>
-									<Text text="{view>entityText}" class="repoioExSub" wrapping="false"/>
-								</VBox>
+							<HBox justifyContent="Center" alignItems="Center">
+								<!-- Projections -->
+								<HBox alignItems="Center" class="repoioDsChip" visible="{= ${view>/sf/mid} === 'projections' &amp;&amp; ${view>projection} }">
+									<Text text="{view>pjName}" wrapping="false" class="repoioDsChipName"/>
+									<Text text="{view>nFilters}" class="repoioDsChipNum"/>
+									<core:Icon src="sap-icon://filter" class="repoioDsChipIcon"/>
+									<Text text="{view>nMap}" class="repoioDsChipNum"/>
+									<core:Icon src="sap-icon://combine" class="repoioDsChipIcon" color="{= ${view>missing} ? '#bb0000' : '' }" tooltip="{view>mapTip}"/>
+									<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>common.edit}" press=".onRowProjection"/>
+									<Button icon="sap-icon://sys-cancel" type="Transparent" tooltip="{i18n>common.delete}" press=".onRowRemoveProjection"/>
+								</HBox>
+								<Link text="{i18n>ds.addProjection}" press=".onRowProjection" visible="{= ${view>/sf/mid} === 'projections' &amp;&amp; !${view>projection} &amp;&amp; ${view>sel} }"/>
+								<!-- Settings -->
+								<HBox justifyContent="SpaceAround" alignItems="Center" width="100%" visible="{= ${view>/sf/mid} === 'settings' }">
+									<Select selectedKey="{view>load}" change=".onRowSetting" width="11rem">
+										<core:Item key="initial" text="{i18n>ds.load.initial}"/>
+										<core:Item key="delta" text="{i18n>ds.load.delta}" enabled="{= ${view>/sf/delta} !== 'upload' }"/>
+									</Select>
+									<CheckBox selected="{view>truncate}" select=".onRowSetting" tooltip="{i18n>ds.truncateWarn}"/>
+								</HBox>
 							</HBox>
-							<HBox alignItems="Center">
-								<ObjectStatus text="{view>loadText}" icon="{view>loadIcon}"/>
-								<core:Icon src="sap-icon://delete" color="#e9730c" tooltip="{i18n>ds.deleteAll}" visible="{view>truncate}" class="sapUiTinyMarginBegin"/>
+							<HBox alignItems="Center" class="repoioDsObj">
+								<core:Icon src="sap-icon://dimension" class="repoioDsObjIcon"/>
+								<Text text="{view>tgtLabel}" wrapping="false" class="{= ${view>isNewTarget} ? 'repoioDsObjTxt repoioDsNew' : 'repoioDsObjTxt' }"/>
+								<core:Icon src="sap-icon://error" color="#bb0000" tooltip="{view>mapTip}" visible="{view>missing}" class="repoioDsRowAct"/>
+								<Button icon="sap-icon://overflow" type="Transparent" tooltip="{i18n>ds.moreOptions}" press=".onTargetOptions" class="repoioDsRowBtn repoioDsMore"/>
 							</HBox>
-							<ObjectStatus text="{view>pjText}" state="{view>pjState}" icon="{view>pjIcon}" active="true" press=".onRowProjection"/>
-							<Text text="{view>recText}" wrapping="false"/>
-							<Button icon="sap-icon://overflow" type="Transparent" tooltip="{i18n>ds.moreOptions}" press=".onTargetOptions"/>
 						</ColumnListItem>
 					</items>
 				</Table>
 			</ScrollContainer>
 
-			<!-- Properties panel -->
-			<ScrollContainer vertical="true" height="100%" class="repoioStBuilder repoioRfProps">
-				<layoutData><l:SplitterLayoutData size="22rem" minSize="280"/></layoutData>
-				<HBox alignItems="Center" class="repoioStBHead">
-					<Title text="{= ${view>/sf/selIdx} > -1 ? ${i18n>ds.objProps} : ${i18n>ds.flowProps} }" level="H3" titleStyle="H5"/>
+			<!-- Properties (Details) -->
+			<ScrollContainer vertical="true" height="100%" width="22rem" visible="{view>/sf/details}" class="repoioDsProps">
+				<HBox alignItems="Center" class="repoioDsPropsHead">
+					<Text text="{= ${view>/sf/selIdx} > -1 ? ${i18n>ds.objPropsT} : ${i18n>ds.flowPropsT} }"/>
+					<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>common.close}" press=".onCloseDetails" class="repoioRfEndBtn"/>
 				</HBox>
-				<VBox renderType="Bare" class="repoioStBForm" visible="{= ${view>/sf/selIdx} === -1 }">
-					<Title text="{i18n>ds.sec.general}" level="H4" titleStyle="H6" class="repoioStBSec repoioRfFirstSec"/>
-					<Label text="{i18n>dsp.businessName}"/>
-					<Input value="{view>/sf/name}" liveChange=".onName" valueLiveUpdate="true"/>
-					<Label text="{i18n>dsp.technicalName}" class="sapUiTinyMarginTop"/>
-					<Input value="{view>/sf/f/id}" editable="false" class="repoioMono"/>
-					<Label text="{i18n>domains.col.status}" class="sapUiTinyMarginTop"/>
-					<ObjectStatus text="{view>/sf/statusText}" state="{view>/sf/statusState}" icon="{view>/sf/statusIcon}"/>
-					<Label text="{i18n>domain.owner}" class="sapUiTinyMarginTop"/>
-					<Text text="{view>/sf/ownerText}"/>
-					<Title text="{i18n>ds.sec.run}" level="H4" titleStyle="H6" class="repoioStBSec"/>
-					<Label text="{i18n>ds.loadFrequency}"/>
-					<Text text="{i18n>ds.iv.upload}" visible="{= ${view>/sf/delta} === 'upload' }"/>
-					<HBox alignItems="Center" visible="{= ${view>/sf/delta} !== 'upload' }">
-						<StepInput value="{view>/sf/hours}" min="0" max="24" width="6rem" change=".onInterval"/>
-						<Text text="{i18n>ds.hours}" class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
-						<StepInput value="{view>/sf/minutes}" min="0" max="59" step="15" width="6rem" change=".onInterval"/>
-						<Text text="{i18n>ds.minutes}" class="sapUiTinyMarginBegin"/>
-					</HBox>
-					<Text text="{i18n>ds.scheduleHint}" class="repoioExSub sapUiTinyMarginTop"/>
+				<HBox alignItems="Center" class="repoioDsPropsTitle">
+					<Text text="{= ${view>/sf/selIdx} > -1 ? ${view>/sf/o/source} : (${view>/sf/f/id} || ${i18n>ds.untitled}) }" class="repoioMono"/>
+					<Button icon="sap-icon://validate" type="Transparent" tooltip="{i18n>ds.validate}" press=".onValidate" class="repoioRfEndBtn"/>
+				</HBox>
+				<!-- Flow -->
+				<VBox renderType="Bare" visible="{= ${view>/sf/selIdx} === -1 }">
+					<Panel headerText="{i18n>ds.sec.general}" expandable="true" expanded="true" class="repoioDsPanel">
+						<Label text="{i18n>dsp.businessName}" showColon="true"/>
+						<Input value="{view>/sf/name}" liveChange=".onName" valueLiveUpdate="true"/>
+						<Label text="{i18n>dsp.technicalName}" showColon="true" class="sapUiTinyMarginTop"/>
+						<Input value="{view>/sf/f/id}" editable="false"/>
+						<Label text="{i18n>domains.col.status}" showColon="true" class="sapUiTinyMarginTop"/>
+						<ObjectStatus text="{view>/sf/statusText}" state="{view>/sf/statusState}" icon="{view>/sf/statusIcon}"/>
+						<Label text="{i18n>domain.owner}" showColon="true" class="sapUiTinyMarginTop"/>
+						<Text text="{view>/sf/ownerText}"/>
+					</Panel>
+					<Panel headerText="{i18n>ds.sec.run}" expandable="true" expanded="true" class="repoioDsPanel">
+						<Label text="{i18n>ds.loadFrequency}" showColon="true"/>
+						<Text text="{i18n>ds.iv.upload}" visible="{= ${view>/sf/delta} === 'upload' }"/>
+						<HBox alignItems="Center" visible="{= ${view>/sf/delta} !== 'upload' }">
+							<StepInput value="{view>/sf/hours}" min="0" max="24" width="6rem" change=".onInterval"/>
+							<Text text="{i18n>ds.hours}" class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+							<StepInput value="{view>/sf/minutes}" min="0" max="59" step="15" width="6rem" change=".onInterval"/>
+							<Text text="{i18n>ds.minutes}" class="sapUiTinyMarginBegin"/>
+						</HBox>
+					</Panel>
+					<Panel headerText="{i18n>ds.sec.runStatus}" expandable="true" expanded="true" class="repoioDsPanel">
+						<Label text="{i18n>domains.col.status}" showColon="true"/>
+						<ObjectStatus text="{view>/sf/fact/last}" state="{view>/sf/fact/lastState}" icon="{view>/sf/fact/lastIcon}"/>
+					</Panel>
 				</VBox>
-				<VBox renderType="Bare" class="repoioStBForm" visible="{= ${view>/sf/selIdx} > -1 }">
-					<Title text="{i18n>ds.sec.general}" level="H4" titleStyle="H6" class="repoioStBSec repoioRfFirstSec"/>
-					<Label text="{i18n>ds.col.srcObj}"/>
-					<Text text="{view>/sf/o/source}" class="repoioMono"/>
-					<Label text="{i18n>ds.col.tgtObj}" class="sapUiTinyMarginTop"/>
-					<Text text="{= ${view>/sf/o/entity} + ' · ' + ${view>/sf/oEntityText} }"/>
-
-					<HBox alignItems="Center" justifyContent="SpaceBetween" class="repoioStBSec">
-						<Title text="{i18n>ds.tab.projections}" level="H4" titleStyle="H6"/>
-						<Button text="{i18n>ds.add}" icon="sap-icon://add" type="Transparent" press=".onProjection" visible="{= !${view>/sf/o/hasProjection} }"/>
-					</HBox>
-					<Text text="{i18n>ds.noProjection}" class="repoioExSub" visible="{= !${view>/sf/o/hasProjection} }"/>
-					<HBox alignItems="Center" class="repoioStBItem repoioRfPrj" visible="{= !!${view>/sf/o/hasProjection} }">
-						<core:Icon src="sap-icon://filter-fields" class="sapUiTinyMarginEnd"/>
-						<VBox class="repoioRfPrjText">
-							<Link text="{view>/sf/oPrjName}" press=".onProjection" class="repoioMono"/>
-							<Text text="{view>/sf/oPrjSub}" class="repoioExSub"/>
-						</VBox>
-						<Button icon="sap-icon://delete" type="Transparent" tooltip="{i18n>common.delete}" press=".onRemoveProjection"/>
-					</HBox>
-					<MessageStrip text="{view>/sf/oMissing}" type="Error" showIcon="true" visible="{= !!${view>/sf/oMissing} }" class="sapUiTinyMarginTop"/>
-
-					<Title text="{i18n>ds.tab.settings}" level="H4" titleStyle="H6" class="repoioStBSec"/>
-					<Label text="{i18n>ds.col.load}" labelFor="sfLoad"/>
-					<Select id="sfLoad" selectedKey="{view>/sf/o/load}" change=".onObjChange" width="100%">
-						<core:Item key="initial" text="{i18n>ds.load.initial}"/>
-						<core:Item key="delta" text="{i18n>ds.load.delta}" enabled="{= ${view>/sf/delta} !== 'upload' }"/>
-					</Select>
-					<Text text="{view>/sf/deltaText}" class="repoioExSub" visible="{= ${view>/sf/o/load} === 'delta' }"/>
-					<CheckBox text="{i18n>ds.deleteAll}" selected="{view>/sf/o/truncate}" select=".onObjChange" wrapping="true" class="sapUiTinyMarginTop"/>
-					<MessageStrip text="{i18n>ds.truncateWarn}" type="Warning" showIcon="true" visible="{view>/sf/o/truncate}"/>
-
-					<Title text="{i18n>ds.sec.lastRun}" level="H4" titleStyle="H6" class="repoioStBSec"/>
-					<Label text="{i18n>ds.initialRecs}"/>
-					<Text text="{view>/sf/oInitial}"/>
-					<Label text="{i18n>ds.deltaRecs}" class="sapUiTinyMarginTop"/>
-					<Text text="{view>/sf/oDelta}"/>
-					<Label text="{i18n>ds.rejectedRecs}" class="sapUiTinyMarginTop"/>
-					<Text text="{view>/sf/oRejected}"/>
+				<!-- Object -->
+				<VBox renderType="Bare" visible="{= ${view>/sf/selIdx} > -1 }">
+					<Panel headerText="{i18n>ds.sec.general}" expandable="true" expanded="true" class="repoioDsPanel">
+						<Label text="{i18n>ds.col.srcObj}" showColon="true"/>
+						<Text text="{view>/sf/o/source}" class="repoioMono"/>
+						<Label text="{i18n>ds.col.tgtObj}" showColon="true" class="sapUiTinyMarginTop"/>
+						<Text text="{= ${view>/sf/o/entity} + ' · ' + ${view>/sf/oEntityText} }"/>
+						<Label text="{i18n>ds.deltaMethod}" showColon="true" class="sapUiTinyMarginTop"/>
+						<Text text="{view>/sf/deltaText}"/>
+					</Panel>
+					<Panel headerText="{i18n>ds.tab.projections}" expandable="true" expanded="true" class="repoioDsPanel">
+						<Text text="{view>/sf/oMapText}"/>
+						<MessageStrip text="{view>/sf/oMissing}" type="Error" showIcon="true" visible="{= !!${view>/sf/oMissing} }" class="sapUiTinyMarginTop"/>
+					</Panel>
+					<Panel headerText="{i18n>ds.sec.runStatus}" expandable="true" expanded="true" class="repoioDsPanel">
+						<Label text="{i18n>ds.initialRecs}" showColon="true"/>
+						<Text text="{view>/sf/oInitial}"/>
+						<Label text="{i18n>ds.deltaRecs}" showColon="true" class="sapUiTinyMarginTop"/>
+						<Text text="{view>/sf/oDelta}"/>
+						<Label text="{i18n>ds.rejectedRecs}" showColon="true" class="sapUiTinyMarginTop"/>
+						<Text text="{view>/sf/oRejected}"/>
+					</Panel>
 				</VBox>
 			</ScrollContainer>
-		</l:Splitter>
+		</HBox>
 	</VBox>
 </mvc:View>
