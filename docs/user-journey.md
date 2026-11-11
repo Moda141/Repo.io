@@ -509,24 +509,30 @@ system (J9); sync = what to bring and when; job run = each execution (J10).*
    - The row's additional options (…) can map it to another entity of the
      domain.
    - **Rename is disabled**, since targets are model entities.
-4. Selecting an object opens the **Projections** and **Settings** tabs.
-   - **Projections:** one projection per object. It has a name, row
-     filters, and the mapping of source columns to model fields (field
-     mapper with auto-map). Unmapped required fields are listed at the
-     top of the Mapping tab. Apply needs a name and complete filters.
-     Without a projection, columns map by name.
+4. Selecting an object switches the properties panel to that object, as
+   Datasphere does.
+   - **General:** the source object and the target entity.
+   - **Projections:** one projection per object, added with **Add**. The
+     projection dialog has a name and two tabs:
+     - **Filter:** pick source columns in the column list, then set their
+       expressions.
+     - **Mapping:** source columns → model fields in the field mapper,
+       with auto-map. Unmapped required fields are listed.
+
+     Apply needs a name and complete filters. Without a projection,
+     columns map by name.
    - **Settings:**
-     - **Load type** is "Initial only" or "Initial and delta". Change
+     - **Load Type:** "Initial only" or "Initial and delta". Change
        detection comes from the source type: a watermark column, change
        data capture, or a full load per upload.
-     - **Truncate** reloads raw. It never deletes golden records; rows
-       missing from the source are flagged for stewards.
+     - **Delete All Before Loading** reloads raw only. It never deletes
+       golden records; rows missing from the source are flagged for
+       stewards.
+   - **Last run:** initial, delta and rejected record counts.
 5. The properties panel shows:
    - **General:** business name, technical name, status, owner.
    - **Run settings:** delta load interval in hours and minutes, or "On
      each upload" for files.
-   - For a selected object: its last-run record counts (initial, delta,
-     rejected).
    - The target settings icon shows the fixed target behaviour: delta
      capture in raw, and rejected rows go to Quarantine.
 6. Saving a new flow asks for its business and technical name; the

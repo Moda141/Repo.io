@@ -102,9 +102,10 @@ sap.ui.define([
 			vm.setProperty("/sf/oLoadText", this.text(o.load === "delta" ? "ds.load.delta" : "ds.load.initial"));
 			vm.setProperty("/sf/deltaText", this.text("ds.dm." + S.deltaMethod(conn)));
 			vm.setProperty("/sf/oMapText", (o.projection ? this.text("ds.pjOn") : this.text("ds.pjOff")) + " · " + mapText);
-			vm.setProperty("/sf/oProj", o.projection ? [{ name: o.projectionName || o.source.replace(/^.*\./, "") + "_PRJ",
-				filterText: (o.filters || []).length ? o.filters.map(function (x) { return x.col + " " + that.text("ds.op." + x.op + "S") + " " + x.val; }).join("; ") : this.text("ds.noFilter"),
-				mapText: mapText, mapState: okReq ? "Success" : "Error" }] : []);
+			vm.setProperty("/sf/oPrjName", o.projectionName || o.source.replace(/^.*\./, "") + "_PRJ");
+			vm.setProperty("/sf/oPrjSub", ((o.filters || []).length ? this.text("ds.prjFilters", [o.filters.length]) : this.text("ds.noFilter")) + " · " + mapText);
+			var missing = fields.filter(function (x) { return x.req && !o.mapping[x.name]; }).map(function (x) { return x.name; });
+			vm.setProperty("/sf/oMissing", missing.length ? this.text("ds.pj.missing", [missing.join(", ")]) : "");
 			var l = o.last || {};
 			vm.setProperty("/sf/oInitial", l.initial ? this.fmt.num(l.initial) : "—");
 			vm.setProperty("/sf/oDelta", l.initial ? this.fmt.num(l.delta || 0) : "—");
@@ -275,7 +276,7 @@ sap.ui.define([
 				], itemSelected: function (e) {
 					var k = e.getParameter("item").getKey();
 					if (!k) { return; }
-					if (k === "__pj") { that._select(i); that.viewModel().setProperty("/sf/tab", "projections"); that.onProjection(); return; }
+					if (k === "__pj") { that._select(i); that.onProjection(); return; }
 					o.entity = k; o.mapping = that._autoMap(o.source, k); that._dirty();
 				} });
 			this.getView().addDependent(oMenu);
@@ -306,7 +307,7 @@ sap.ui.define([
 			var that = this, vm = this.viewModel(), o = this._f.objects[vm.getProperty("/sf/selIdx")],
 				src = (this._sync.source[o.source] || []), fields = this._sync.entities[o.entity] || [];
 			vm.setProperty("/pj", {
-				title: this.text(o.projection ? "ds.pj.editTitle" : "ds.addProjection"), tab: o.projection ? "mapping" : "filters",
+				title: this.text(o.projection ? "ds.pj.editTitle" : "ds.addProjection"), tab: "filters",
 				name: o.projectionName || o.source.replace(/^.*\./, "") + "_PRJ", srcName: o.source, tgtName: o.entity,
 				filters: JSON.parse(JSON.stringify(o.filters || [])), mapping: JSON.parse(JSON.stringify(o.mapping)),
 				cols: src, src: src.map(function (c) { return { name: c.name, label: c.label, type: c.type === "code" ? "string" : c.type, key: c.key }; }),
@@ -316,6 +317,7 @@ sap.ui.define([
 					hint: this.text("ds.pj.mapperHint"), count: this.text("fd.map.count"), fxTip: this.text("ds.pj.fxTip"), fx: {} }
 			});
 			this._pjTabs();
+			this._pjCols();
 			var open = function (d) { d.open(); };
 			if (this._pj) { open(this._pj); return; }
 			Fragment.load({ id: this.getView().getId(), name: "repoio.proto.fragment.Projection", controller: this }).then(function (d) {
@@ -333,9 +335,23 @@ sap.ui.define([
 			vm.setProperty("/pj/valid", !!String(p.name || "").trim() && !badFilter);
 		},
 		onPjCheck: function () { this._pjTabs(); },
-		onPjAddFilter: function () {
+		/* Filter tab: the left list of source columns drives the expression rows on the right. */
+		_pjCols: function () {
+			var vm = this.viewModel(), p = vm.getProperty("/pj"), q = (p.colQ || "").toLowerCase(),
+				used = p.filters.map(function (f) { return f.col; }),
+				ic = { date: "sap-icon://calendar", integer: "sap-icon://number-sign", decimal: "sap-icon://number-sign", code: "sap-icon://list" };
+			vm.setProperty("/pj/colRows", p.cols.filter(function (c) { return !q || (c.name + " " + c.label).toLowerCase().indexOf(q) > -1; }).map(function (c) {
+				return { name: c.name, label: c.label, selected: used.indexOf(c.name) > -1, icon: ic[c.type] || "sap-icon://text" };
+			}));
+		},
+		onPjColSearch: function () { this._pjCols(); },
+		onPjColSelect: function (oEvent) {
 			var vm = this.viewModel(), a = vm.getProperty("/pj/filters").slice();
-			a.push({ col: "", op: "eq", val: "" });
+			oEvent.getParameter("listItems").forEach(function (li) {
+				var n = li.getBindingContext("view").getProperty("name");
+				if (li.getSelected()) { if (!a.some(function (f) { return f.col === n; })) { a.push({ col: n, op: "eq", val: "" }); } }
+				else { a = a.filter(function (f) { return f.col !== n; }); }
+			});
 			vm.setProperty("/pj/filters", a);
 			this._pjTabs();
 		},
@@ -344,6 +360,7 @@ sap.ui.define([
 			a.splice(i, 1);
 			vm.setProperty("/pj/filters", a);
 			this._pjTabs();
+			this._pjCols();
 		},
 		onPjMapping: function (oEvent) { this.viewModel().setProperty("/pj/mapping", oEvent.getParameter("mapping")); this._pjTabs(); },
 		onPjTransform: function () { MessageToast.show(this.text("ds.t.noTransform")); },

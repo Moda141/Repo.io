@@ -114,55 +114,6 @@
 					</Table>
 				</ScrollContainer>
 
-				<!-- Selected object: Projections and Settings tabs (middle tabs in Datasphere) -->
-				<IconTabBar id="sfTabs" selectedKey="{view>/sf/tab}" visible="{= ${view>/sf/selIdx} > -1 }" headerMode="Inline" expandable="false" class="repoioRfTabs" applyContentPadding="false">
-					<items>
-						<IconTabFilter key="projections" text="{i18n>ds.tab.projections}">
-							<VBox class="repoioRfTab">
-								<VBox visible="{= !${view>/sf/o/hasProjection} }" alignItems="Start">
-									<Text text="{i18n>ds.noProjection}" class="sapUiTinyMarginBottom"/>
-									<Button text="{i18n>ds.addProjection}" icon="sap-icon://add" type="Emphasized" press=".onProjection"/>
-								</VBox>
-								<Table visible="{= !!${view>/sf/o/hasProjection} }" class="repoioDenseTable" fixedLayout="false" items="{view>/sf/oProj}">
-									<columns>
-										<Column><Text text="{i18n>ds.pj.name}"/></Column>
-										<Column><Text text="{i18n>ds.pj.filtersT}"/></Column>
-										<Column><Text text="{i18n>ds.pj.mappingT}"/></Column>
-										<Column hAlign="End"><Text text=""/></Column>
-									</columns>
-									<items>
-										<ColumnListItem>
-											<HBox alignItems="Center"><core:Icon src="sap-icon://filter-fields" class="repoioExRowIcon"/><Text text="{view>name}" class="repoioMono"/></HBox>
-											<Text text="{view>filterText}"/>
-											<ObjectStatus text="{view>mapText}" state="{view>mapState}"/>
-											<HBox justifyContent="End">
-												<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>common.edit}" press=".onProjection"/>
-												<Button icon="sap-icon://delete" type="Transparent" tooltip="{i18n>common.delete}" press=".onRemoveProjection"/>
-											</HBox>
-										</ColumnListItem>
-									</items>
-								</Table>
-							</VBox>
-						</IconTabFilter>
-						<IconTabFilter key="settings" text="{i18n>ds.tab.settings}">
-							<HBox class="repoioRfTab" wrap="Wrap" alignItems="Start">
-								<VBox class="sapUiLargeMarginEnd">
-									<Label text="{i18n>ds.col.load}" labelFor="sfLoad"/>
-									<Select id="sfLoad" selectedKey="{view>/sf/o/load}" change=".onObjChange" width="14rem">
-										<core:Item key="initial" text="{i18n>ds.load.initial}"/>
-										<core:Item key="delta" text="{i18n>ds.load.delta}" enabled="{= ${view>/sf/delta} !== 'upload' }"/>
-									</Select>
-									<Text text="{view>/sf/deltaText}" class="repoioExSub" visible="{= ${view>/sf/o/load} === 'delta' }" width="22rem"/>
-								</VBox>
-								<VBox>
-									<Label text="{i18n>ds.truncateLbl}"/>
-									<CheckBox text="{i18n>ds.truncate}" selected="{view>/sf/o/truncate}" select=".onObjChange" wrapping="true" width="26rem"/>
-									<MessageStrip text="{i18n>ds.truncateWarn}" type="Warning" showIcon="true" visible="{view>/sf/o/truncate}" width="26rem"/>
-								</VBox>
-							</HBox>
-						</IconTabFilter>
-					</items>
-				</IconTabBar>
 			</VBox>
 
 			<!-- Properties panel -->
@@ -197,10 +148,32 @@
 					<Text text="{view>/sf/o/source}" class="repoioMono"/>
 					<Label text="{i18n>ds.col.tgtObj}" class="sapUiTinyMarginTop"/>
 					<Text text="{= ${view>/sf/o/entity} + ' · ' + ${view>/sf/oEntityText} }"/>
-					<Label text="{i18n>ds.col.load}" class="sapUiTinyMarginTop"/>
-					<Text text="{view>/sf/oLoadText}"/>
-					<Label text="{i18n>ds.tab.projections}" class="sapUiTinyMarginTop"/>
-					<Text text="{view>/sf/oMapText}"/>
+
+					<HBox alignItems="Center" justifyContent="SpaceBetween" class="repoioStBSec">
+						<Title text="{i18n>ds.tab.projections}" level="H4" titleStyle="H6"/>
+						<Button text="{i18n>ds.add}" icon="sap-icon://add" type="Transparent" press=".onProjection" visible="{= !${view>/sf/o/hasProjection} }"/>
+					</HBox>
+					<Text text="{i18n>ds.noProjection}" class="repoioExSub" visible="{= !${view>/sf/o/hasProjection} }"/>
+					<HBox alignItems="Center" class="repoioStBItem repoioRfPrj" visible="{= !!${view>/sf/o/hasProjection} }">
+						<core:Icon src="sap-icon://filter-fields" class="sapUiTinyMarginEnd"/>
+						<VBox class="repoioRfPrjText">
+							<Link text="{view>/sf/oPrjName}" press=".onProjection" class="repoioMono"/>
+							<Text text="{view>/sf/oPrjSub}" class="repoioExSub"/>
+						</VBox>
+						<Button icon="sap-icon://delete" type="Transparent" tooltip="{i18n>common.delete}" press=".onRemoveProjection"/>
+					</HBox>
+					<MessageStrip text="{view>/sf/oMissing}" type="Error" showIcon="true" visible="{= !!${view>/sf/oMissing} }" class="sapUiTinyMarginTop"/>
+
+					<Title text="{i18n>ds.tab.settings}" level="H4" titleStyle="H6" class="repoioStBSec"/>
+					<Label text="{i18n>ds.col.load}" labelFor="sfLoad"/>
+					<Select id="sfLoad" selectedKey="{view>/sf/o/load}" change=".onObjChange" width="100%">
+						<core:Item key="initial" text="{i18n>ds.load.initial}"/>
+						<core:Item key="delta" text="{i18n>ds.load.delta}" enabled="{= ${view>/sf/delta} !== 'upload' }"/>
+					</Select>
+					<Text text="{view>/sf/deltaText}" class="repoioExSub" visible="{= ${view>/sf/o/load} === 'delta' }"/>
+					<CheckBox text="{i18n>ds.deleteAll}" selected="{view>/sf/o/truncate}" select=".onObjChange" wrapping="true" class="sapUiTinyMarginTop"/>
+					<MessageStrip text="{i18n>ds.truncateWarn}" type="Warning" showIcon="true" visible="{view>/sf/o/truncate}"/>
+
 					<Title text="{i18n>ds.sec.lastRun}" level="H4" titleStyle="H6" class="repoioStBSec"/>
 					<Label text="{i18n>ds.initialRecs}"/>
 					<Text text="{view>/sf/oInitial}"/>

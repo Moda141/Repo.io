@@ -17,36 +17,46 @@
 		<content>
 			<IconTabBar selectedKey="{view>/pj/tab}" expandable="false" headerMode="Inline" stretchContentHeight="true" applyContentPadding="false" class="repoioPjTabs">
 				<items>
-					<IconTabFilter key="filters" text="{i18n>ds.pj.filtersT}" count="{view>/pj/filtersCount}">
-						<VBox class="repoioPjBody">
-							<HBox alignItems="Center" justifyContent="SpaceBetween" class="sapUiTinyMarginBottom">
-								<Text text="{i18n>ds.pj.filtersHint}" class="repoioExSub"/>
-								<Button text="{i18n>ds.pj.addFilter}" icon="sap-icon://add" type="Transparent" press=".onPjAddFilter"/>
-							</HBox>
-							<Table items="{view>/pj/filters}" class="repoioDenseTable" noDataText="{i18n>ds.pj.noFilters}" fixedLayout="false">
-								<columns>
-									<Column><Text text="{i18n>ds.pj.column}"/></Column>
-									<Column width="11rem"><Text text="{i18n>ds.pj.op}"/></Column>
-									<Column><Text text="{i18n>ds.pj.value}"/></Column>
-									<Column width="2.5rem"/>
-								</columns>
-								<items>
-									<ColumnListItem>
-										<Select selectedKey="{view>col}" items="{path: 'view>/pj/cols', templateShareable: false}" width="100%" forceSelection="false" change=".onPjCheck">
-											<core:ListItem key="{view>name}" text="{view>name}" additionalText="{view>label}"/>
-										</Select>
-										<Select selectedKey="{view>op}" width="100%">
-											<core:Item key="eq" text="{i18n>ds.op.eq}"/>
-											<core:Item key="ne" text="{i18n>ds.op.ne}"/>
-											<core:Item key="in" text="{i18n>ds.op.in}"/>
-											<core:Item key="notIn" text="{i18n>ds.op.notIn}"/>
-										</Select>
-										<Input value="{view>val}" placeholder="{i18n>ds.pj.valuePh}" textDirection="LTR" valueLiveUpdate="true" liveChange=".onPjCheck"/>
-										<Button icon="sap-icon://decline" type="Transparent" press=".onPjRemoveFilter" tooltip="{i18n>common.delete}"/>
-									</ColumnListItem>
-								</items>
-							</Table>
-						</VBox>
+					<IconTabFilter key="filters" text="{i18n>ds.pj.filterT}" count="{view>/pj/filtersCount}">
+						<!-- Datasphere Filter: pick source columns on the left, define their expressions on the right. -->
+						<HBox class="repoioPjBody repoioPjFilter" renderType="Bare">
+							<VBox class="repoioPjCols" renderType="Bare">
+								<SearchField value="{view>/pj/colQ}" liveChange=".onPjColSearch" placeholder="{i18n>fd.map.search}" width="100%"/>
+								<List id="pjCols" items="{view>/pj/colRows}" mode="MultiSelect" includeItemNavigation="false" selectionChange=".onPjColSelect" showSeparators="Inner" class="repoioPjColList">
+									<CustomListItem selected="{view>selected}" tooltip="{view>label}">
+										<HBox alignItems="Center" class="repoioPjCol">
+											<core:Icon src="{view>icon}" class="repoioExRowIcon"/>
+											<Text text="{view>name}" class="repoioMono" wrapping="false"/>
+											<Text text="{view>label}" class="repoioExSub repoioPjColLbl" wrapping="false"/>
+										</HBox>
+									</CustomListItem>
+								</List>
+							</VBox>
+							<VBox class="repoioPjExpr" renderType="Bare">
+								<Text text="{i18n>ds.pj.filtersHint}" class="repoioExSub sapUiTinyMarginBottom"/>
+								<Table items="{view>/pj/filters}" class="repoioDenseTable" noDataText="{i18n>ds.pj.noFiltersPick}" fixedLayout="false">
+									<columns>
+										<Column><Text text="{i18n>ds.pj.column}"/></Column>
+										<Column width="10rem"><Text text="{i18n>ds.pj.op}"/></Column>
+										<Column><Text text="{i18n>ds.pj.value}"/></Column>
+										<Column width="2.5rem"/>
+									</columns>
+									<items>
+										<ColumnListItem>
+											<Text text="{view>col}" class="repoioMono" wrapping="false"/>
+											<Select selectedKey="{view>op}" width="100%">
+												<core:Item key="eq" text="{i18n>ds.op.eq}"/>
+												<core:Item key="ne" text="{i18n>ds.op.ne}"/>
+												<core:Item key="in" text="{i18n>ds.op.in}"/>
+												<core:Item key="notIn" text="{i18n>ds.op.notIn}"/>
+											</Select>
+											<Input value="{view>val}" placeholder="{i18n>ds.pj.valuePh}" textDirection="LTR" valueLiveUpdate="true" liveChange=".onPjCheck"/>
+											<Button icon="sap-icon://decline" type="Transparent" press=".onPjRemoveFilter" tooltip="{i18n>common.delete}"/>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</VBox>
+						</HBox>
 					</IconTabFilter>
 					<IconTabFilter key="mapping" text="{i18n>ds.pj.mappingT}" count="{view>/pj/mapCount}">
 						<VBox class="repoioPjBody">

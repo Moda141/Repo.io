@@ -732,3 +732,13 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioPjTabs.sapMITB { height: 100%; }
 .repoioPjTabs .sapMITBContainerContent { height: 100%; }
 .repoioPjBody { padding: 0.75rem 1rem; height: 100%; box-sizing: border-box; overflow: auto; }
+.repoioPjFilter { display: flex; gap: 1rem; padding: 0 !important; }
+.repoioPjCols { flex: none; width: 17rem; display: flex; flex-direction: column; border-inline-end: 1px solid #e5e5e5; padding: 0.75rem 0.5rem; overflow: auto; }
+.repoioPjColList .sapMLIB { min-height: 2.25rem; }
+.repoioPjExpr { flex: 1 1 auto; min-width: 0; padding-block: 0.75rem; padding-inline-end: 1rem; overflow: auto; }
+.repoioRfPrj { height: auto !important; padding-block: 0.25rem; }
+.repoioRfPrjText { flex: 1 1 auto; min-width: 0; }
+.repoioPjColList .sapMLIB { min-height: 2.25rem !important; height: 2.25rem; }
+.repoioPjCol { width: 100%; gap: 0.25rem; padding-inline-end: 0.5rem; min-width: 0; }
+.repoioPjColLbl { margin-inline-start: auto; max-width: 6.5rem; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; }
+.repoioPjCol .repoioMono { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
