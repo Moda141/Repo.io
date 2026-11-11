@@ -74,8 +74,7 @@
 								</HBox>
 								<Text text="{view>id}" class="repoioMono" wrapping="false"/>
 								<HBox alignItems="Center">
-									<Image src="{view>logo}" width="1rem" height="1rem" class="repoioExRowIcon" visible="{= !!${view>logo} }"/>
-									<core:Icon src="{view>connIcon}" class="repoioExRowIcon" visible="{= !${view>logo} }"/>
+									<core:Icon src="{view>connIcon}" class="repoioExRowIcon"/>
 									<Link text="{view>connText}" press=".onConn" wrapping="false"/>
 								</HBox>
 								<HBox alignItems="Center">

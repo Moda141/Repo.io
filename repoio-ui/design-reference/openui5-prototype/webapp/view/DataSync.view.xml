@@ -36,7 +36,7 @@
 							<VBox renderType="Bare" class="repoioRfEndBody">
 								<Button text="{i18n>ds.pickConn}" icon="sap-icon://connected" press=".onPickConn" visible="{= !${view>/sf/f/conn} }" class="repoioRfStepBtn"/>
 								<HBox alignItems="Center" class="repoioRfEndRow" visible="{= !!${view>/sf/f/conn} }">
-									<Image src="{view>/sf/logo}" width="1.25rem" height="1.25rem" class="sapUiTinyMarginEnd"/>
+									<core:Icon src="{view>/sf/connIcon}" class="sapUiTinyMarginEnd"/>
 									<Link text="{view>/sf/connText}" press=".onConn" wrapping="false"/>
 									<Text text="{= '· ' + ${view>/sf/connType} }" class="repoioExSub sapUiTinyMarginBegin" wrapping="false"/>
 									<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>ds.changeConn}" press=".onPickConn" visible="{= ${view>/sf/f/objects}.length === 0 }"/>

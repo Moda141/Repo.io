@@ -11,8 +11,7 @@
 			<List id="spList" items="{view>/sp/rows}" mode="SingleSelectMaster" selectionChange=".onSpSelect" showSeparators="Inner" class="repoioSpList" noDataText="{i18n>ds.sp.noData}">
 				<CustomListItem>
 					<HBox alignItems="Center" class="repoioSpItem">
-						<Image src="{view>logo}" width="1.5rem" height="1.5rem" class="repoioSpLogo" visible="{= !!${view>logo} }"/>
-						<core:Icon src="{view>icon}" size="1.25rem" class="repoioSpLogo" visible="{= !${view>logo} }"/>
+						<core:Icon src="{view>icon}" size="1.25rem" class="repoioSpLogo"/>
 						<VBox class="repoioSpText">
 							<Text text="{view>name}" wrapping="false" class="repoioSpName"/>
 							<Text text="{view>sub}" wrapping="false" class="repoioExSub"/>

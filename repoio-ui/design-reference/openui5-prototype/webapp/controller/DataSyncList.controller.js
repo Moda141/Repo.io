@@ -38,7 +38,7 @@ sap.ui.define([
 			var rows = this._all.filter(function (f) { return match(f); }).sort(function (a, b) { return a.changed < b.changed ? 1 : -1; }).map(function (f) {
 				var conn = S.conn(that, f.conn), repo = S.repo(that, f.repo), d = S.dom(that, repo.domainId), st = S.STATUS[f.status], la = S.LAST[f.lastState];
 				return Object.assign({}, f, {
-					title: ar ? f.ar : f.en, connText: S.connText(that, conn), logo: S.logo(conn), connIcon: "sap-icon://connected",
+					title: ar ? f.ar : f.en, connText: S.connText(that, conn), connIcon: S.icon(conn),
 					repoText: repo.name, domIcon: d ? d.icon : "sap-icon://database", objCount: f.objects.length,
 					loadText: S.load(that, f), intervalText: S.interval(that, f),
 					statusText: that.text("ds.st." + f.status), statusState: st[0], statusIcon: st[1],
@@ -60,7 +60,7 @@ sap.ui.define([
 			vm.setProperty("/ds/scopeText", this.text("ds.coll." + c) + " (" + rows.length + ")");
 			vm.setProperty("/ds/searchPh", this.text("wl.searchPh", [this.text("ds.coll." + c)]));
 			vm.setProperty("/ds/active", Object.keys(sel).reduce(function (n, k) { return n + Object.keys(sel[k]).length; }, 0));
-			var conns = (this.data().getProperty("/connections") || []).map(function (x) { return [x.id, S.connText(that, x), "sap-icon://connected"]; }),
+			var conns = (this.data().getProperty("/connections") || []).map(function (x) { return [x.id, S.connText(that, x), S.icon(x)]; }),
 				doms = (this.data().getProperty("/domains") || []).map(function (d) { return [d.id, that.domainName(d), d.icon]; });
 			vm.setProperty("/ds/facets", [
 				facet("conn", conns), facet("domain", doms),

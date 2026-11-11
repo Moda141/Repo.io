@@ -18,10 +18,10 @@ sap.ui.define([
 
 	/* The four agreed source types. Features drive both the filter panel and the ingestion section. */
 	var TYPES = [
-		{ key: "hana", name: "SAP HANA", logo: "img/logos/sap.png", logoH: "2.5rem", source: "sap", categories: ["onprem", "cloud"], features: ["pull", "writeback", "profiling"] },
-		{ key: "c4c", name: "SAP Cloud for Customer", logo: "img/logos/sap.png", logoH: "2.5rem", source: "sap", categories: ["cloud"], features: ["push", "pull", "writeback", "profiling"] },
-		{ key: "mssql", name: "Microsoft SQL Server", logo: "img/logos/sqlserver.png", logoH: "4rem", source: "nonsap", categories: ["onprem"], features: ["pull", "profiling"] },
-		{ key: "file", name: "CSV / Excel", logo: "img/logos/csv-xls.png", logoH: "3.5rem", source: "nonsap", categories: ["file"], features: ["upload", "profiling"] }
+		{ key: "hana", name: "SAP HANA", icon: "sap-icon://it-host", logo: "img/logos/sap.png", logoH: "2.5rem", source: "sap", categories: ["onprem", "cloud"], features: ["pull", "writeback", "profiling"] },
+		{ key: "c4c", name: "SAP Cloud for Customer", icon: "sap-icon://cloud", logo: "img/logos/sap.png", logoH: "2.5rem", source: "sap", categories: ["cloud"], features: ["push", "pull", "writeback", "profiling"] },
+		{ key: "mssql", name: "Microsoft SQL Server", icon: "sap-icon://database", logo: "img/logos/sqlserver.png", logoH: "4rem", source: "nonsap", categories: ["onprem"], features: ["pull", "profiling"] },
+		{ key: "file", name: "CSV / Excel", icon: "sap-icon://excel-attachment", logo: "img/logos/csv-xls.png", logoH: "3.5rem", source: "nonsap", categories: ["file"], features: ["upload", "profiling"] }
 	];
 	var FACETS = {
 		features: ["pull", "push", "upload", "writeback", "profiling"],
@@ -134,7 +134,7 @@ sap.ui.define([
 				if (p.writeback) { feats.push("writeback"); }
 				var cat = c.type === "hana" ? p.category : t.categories[0];
 				return Object.assign({}, c, {
-					title: ar ? c.name : c.nameEn, logo: t.logo, typeText: t.name,
+					title: ar ? c.name : c.nameEn, logo: t.logo, icon: t.icon, typeText: t.name,
 					categoryText: that.text("conn.cat." + cat),
 					featureText: feats.map(function (f) { return that.text("conn.feat." + f); }).join(" · "),
 					stateText: that.text("conn.state." + c.state),

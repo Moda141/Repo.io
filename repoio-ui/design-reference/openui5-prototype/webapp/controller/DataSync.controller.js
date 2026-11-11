@@ -70,7 +70,7 @@ sap.ui.define([
 			vm.setProperty("/sf/ownerText", pp && !ar ? pp.en : f.owner);
 			vm.setProperty("/sf/connText", conn ? S.connText(this, conn) : "");
 			vm.setProperty("/sf/connType", conn ? this.text("ds.ct." + conn.type) : "");
-			vm.setProperty("/sf/logo", conn ? S.logo(conn) : "");
+			vm.setProperty("/sf/connIcon", conn ? S.icon(conn) : "");
 			vm.setProperty("/sf/delta", conn ? S.deltaMethod(conn) : "");
 			vm.setProperty("/sf/repoText", repo ? repo.name : "");
 			vm.setProperty("/sf/domText", d ? this.domainName(d) : "");
@@ -102,7 +102,7 @@ sap.ui.define([
 			vm.setProperty("/sf/oLoadText", this.text(o.load === "delta" ? "ds.load.delta" : "ds.load.initial"));
 			vm.setProperty("/sf/deltaText", this.text("ds.dm." + S.deltaMethod(conn)));
 			vm.setProperty("/sf/oMapText", (o.projection ? this.text("ds.pjOn") : this.text("ds.pjOff")) + " · " + mapText);
-			vm.setProperty("/sf/oProj", o.projection ? [{ name: o.source.replace(/^.*\./, "") + "_PRJ",
+			vm.setProperty("/sf/oProj", o.projection ? [{ name: o.projectionName || o.source.replace(/^.*\./, "") + "_PRJ",
 				filterText: (o.filters || []).length ? o.filters.map(function (x) { return x.col + " " + that.text("ds.op." + x.op + "S") + " " + x.val; }).join("; ") : this.text("ds.noFilter"),
 				mapText: mapText, mapState: okReq ? "Success" : "Error" }] : []);
 			var l = o.last || {};
@@ -146,7 +146,7 @@ sap.ui.define([
 			if (this._spMode === "conn") {
 				rows = (this.data().getProperty("/connections") || []).map(function (c) {
 					var ok = c.state === "active";
-					return { id: c.id, name: S.connText(that, c), sub: that.text("ds.ct." + c.type) + " · " + c.id, logo: S.logo(c),
+					return { id: c.id, name: S.connText(that, c), sub: that.text("ds.ct." + c.type) + " · " + c.id, icon: S.icon(c),
 						state: ok ? "Success" : "Warning", stateIcon: ok ? "sap-icon://status-positive" : "sap-icon://status-critical", stateText: that.text(ok ? "ds.sp.ok" : "ds.sp.attention") };
 				});
 			} else if (this._spMode === "container") {
@@ -306,10 +306,11 @@ sap.ui.define([
 			var that = this, vm = this.viewModel(), o = this._f.objects[vm.getProperty("/sf/selIdx")],
 				src = (this._sync.source[o.source] || []), fields = this._sync.entities[o.entity] || [];
 			vm.setProperty("/pj", {
-				title: this.text("ds.pj.title", [o.source, o.entity]), tab: "filters",
+				title: this.text(o.projection ? "ds.pj.editTitle" : "ds.addProjection"), tab: o.projection ? "mapping" : "filters",
+				name: o.projectionName || o.source.replace(/^.*\./, "") + "_PRJ", srcName: o.source, tgtName: o.entity,
 				filters: JSON.parse(JSON.stringify(o.filters || [])), mapping: JSON.parse(JSON.stringify(o.mapping)),
 				cols: src, src: src.map(function (c) { return { name: c.name, label: c.label, type: c.type === "code" ? "string" : c.type, key: c.key }; }),
-				tgt: fields.map(function (x) { return { name: x.name, type: x.type, key: x.key, codeList: x.codeList }; }),
+				tgt: fields.map(function (x) { return { name: x.name, type: x.type, key: x.key, req: x.req, codeList: x.codeList }; }),
 				texts: { all: this.text("fd.map.all"), mapped: this.text("fd.map.mapped"), unmapped: this.text("fd.map.unmapped"), search: this.text("fd.map.search"),
 					src: o.source, tgt: o.entity, unmap: this.text("fd.map.unmap"), valueMap: this.text("ds.pj.valueMap"), auto: this.text("fd.map.auto"),
 					hint: this.text("ds.pj.mapperHint"), count: this.text("fd.map.count"), fxTip: this.text("ds.pj.fxTip"), fx: {} }
@@ -321,11 +322,17 @@ sap.ui.define([
 				that._pj = d; that.getView().addDependent(d); open(d);
 			});
 		},
+		/* Counts on the tabs, the required model fields still unmapped, and whether Apply is allowed. */
 		_pjTabs: function () {
-			var vm = this.viewModel(), p = vm.getProperty("/pj");
+			var vm = this.viewModel(), p = vm.getProperty("/pj"),
+				missing = p.tgt.filter(function (x) { return x.req && !p.mapping[x.name]; }).map(function (x) { return x.name; }),
+				badFilter = p.filters.some(function (f) { return !f.col || !String(f.val || "").trim(); });
 			vm.setProperty("/pj/filtersCount", String(p.filters.length));
 			vm.setProperty("/pj/mapCount", Object.keys(p.mapping).length + " / " + p.tgt.length);
+			vm.setProperty("/pj/missing", missing.length ? this.text("ds.pj.missing", [missing.join(", ")]) : "");
+			vm.setProperty("/pj/valid", !!String(p.name || "").trim() && !badFilter);
 		},
+		onPjCheck: function () { this._pjTabs(); },
 		onPjAddFilter: function () {
 			var vm = this.viewModel(), a = vm.getProperty("/pj/filters").slice();
 			a.push({ col: "", op: "eq", val: "" });
@@ -340,17 +347,13 @@ sap.ui.define([
 		},
 		onPjMapping: function (oEvent) { this.viewModel().setProperty("/pj/mapping", oEvent.getParameter("mapping")); this._pjTabs(); },
 		onPjTransform: function () { MessageToast.show(this.text("ds.t.noTransform")); },
-		onPjAuto: function () {
-			var o = this._f.objects[this.viewModel().getProperty("/sf/selIdx")];
-			this.viewModel().setProperty("/pj/mapping", Object.assign(this._autoMap(o.source, o.entity), this.viewModel().getProperty("/pj/mapping")));
-			this._pjTabs();
-		},
 		onPjApply: function () {
 			var vm = this.viewModel(), o = this._f.objects[vm.getProperty("/sf/selIdx")], m = vm.getProperty("/pj/mapping"), plain = {};
 			o.filters = vm.getProperty("/pj/filters");
 			Object.keys(m).forEach(function (k) { plain[k] = typeof m[k] === "string" ? m[k] : m[k].src; });
 			o.mapping = plain;
 			o.projection = true;
+			o.projectionName = vm.getProperty("/pj/name");
 			this._pj.close();
 			this._dirty();
 		},

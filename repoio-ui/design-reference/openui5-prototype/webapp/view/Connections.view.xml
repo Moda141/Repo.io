@@ -43,7 +43,7 @@
 				<items>
 					<ColumnListItem>
 						<HBox alignItems="Center">
-							<Image src="{view>logo}" height="1.25rem" width="2.25rem" densityAware="false" class="repoioConnLogo" decorative="true"/>
+							<core:Icon src="{view>icon}" class="repoioExRowIcon"/>
 							<Link text="{view>title}" press=".onOpen" wrapping="false"/>
 						</HBox>
 						<Text text="{view>id}" wrapping="false"/>

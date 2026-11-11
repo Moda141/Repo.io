@@ -7,7 +7,8 @@
 sap.ui.define([], function () {
 	"use strict";
 
-	var LOGO = { c4c: "img/logos/sap.png", hana: "img/logos/sap.png", mssql: "img/logos/sqlserver.png", file: "img/logos/csv-xls.png" },
+	var ICON = { c4c: "sap-icon://cloud", hana: "sap-icon://it-host", mssql: "sap-icon://database", file: "sap-icon://excel-attachment" },
+		LOGO = { c4c: "img/logos/sap.png", hana: "img/logos/sap.png", mssql: "img/logos/sqlserver.png", file: "img/logos/csv-xls.png" },
 		STATUS = { draft: ["None", "sap-icon://edit"], deployed: ["Success", "sap-icon://sys-enter-2"], changed: ["Warning", "sap-icon://edit-outside"], running: ["Information", "sap-icon://in-progress"] },
 		LAST = { succeeded: ["Success", "sap-icon://sys-enter-2"], succeededWithFailures: ["Warning", "sap-icon://alert"], failed: ["Error", "sap-icon://error"], running: ["Information", "sap-icon://in-progress"] },
 		/* How changes are detected per connection type: delta is the source system's job, the flow only picks it. */
@@ -18,6 +19,8 @@ sap.ui.define([], function () {
 		conn: function (c, id) { return (c.data().getProperty("/connections") || []).filter(function (x) { return x.id === id; })[0] || { id: id, type: "file", name: id, nameEn: id }; },
 		connText: function (c, conn) { return c.lang() === "ar" ? conn.name : (conn.nameEn || conn.name); },
 		logo: function (conn) { return LOGO[conn.type] || ""; },
+		/* Tables and lists use SAP icons, never vendor logos. */
+		icon: function (conn) { return ICON[conn.type] || "sap-icon://connected"; },
 		deltaMethod: function (conn) { return DELTA[conn.type] || "watermark"; },
 		repo: function (c, id) { return c.data().getProperty("/repos/" + id) || { id: id, name: id, domainId: "customers", model: "" }; },
 		dom: function (c, id) { return (c.data().getProperty("/domains") || []).filter(function (d) { return d.id === id; })[0]; },

@@ -492,7 +492,8 @@ system (J9); sync = what to bring and when; job run = each execution (J10).*
 
 1. The Data Engineer opens **Integration hub → Data sync**: the explorer
    list of replication flows (facets: source connection, target domain,
-   status; last run; delta interval).
+   status; last run; delta interval). Tables use SAP icons, never vendor
+   logos.
 2. **New replication flow** opens an empty canvas with a Source panel and
    a Target panel, following the Datasphere steps:
    - **Select Source Connection:** a compact picker over the connections
@@ -509,9 +510,11 @@ system (J9); sync = what to bring and when; job run = each execution (J10).*
      domain.
    - **Rename is disabled**, since targets are model entities.
 4. Selecting an object opens the **Projections** and **Settings** tabs.
-   - **Projections:** one projection per object, with row filters and
-     the mapping of source columns to model fields (field mapper with
-     auto-map). Without a projection, columns map by name.
+   - **Projections:** one projection per object. It has a name, row
+     filters, and the mapping of source columns to model fields (field
+     mapper with auto-map). Unmapped required fields are listed at the
+     top of the Mapping tab. Apply needs a name and complete filters.
+     Without a projection, columns map by name.
    - **Settings:**
      - **Load type** is "Initial only" or "Initial and delta". Change
        detection comes from the source type: a watermark column, change
