@@ -251,7 +251,9 @@ and API contracts preserved — demonstrated via the parity checklist.
       (granted by Admin, typically to master data stewards) rejects
       non-holders on author/publish.
 
-- [ ] API management (J16): personal access tokens are shown once,
+- [ ] API management (J16): only an Admin can generate tokens (a
+      non-Admin call to the token API is rejected); each token has a
+      named owner and acts with that owner's grants; tokens are shown once,
       stored only in the secret store, scoped, expiring and revocable
       (revocation verified with a direct call); a token never exceeds
       its owner's grants.

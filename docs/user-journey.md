@@ -564,9 +564,9 @@ system (J9); sync = what to bring and when; job run = each execution (J10).*
 how Repo.io reaches other systems; API management is how other systems
 reach Repo.io.*
 
-1. A user granted `use API` opens **Integration hub → API management**.
-   Everyone with that grant sees the catalog and their own tokens and
-   webhooks; the Admin sees every client and the MCP tab.
+1. The Admin (holding `administer API access`) opens **Integration hub
+   → API management**. The page is Admin-only; other users never see
+   it in the navigation, and its APIs reject them server-side.
 2. **API catalog:** the interfaces open to the caller — REST and
    GraphQL for golden records, the SQL endpoint through Trino, MCP —
    by domain and version, each with its status. Opening one renders
@@ -574,11 +574,16 @@ reach Repo.io.*
    - **Try it** runs the call with the caller's own identity and
      grants.
    - **Download OpenAPI** gives the contract file.
-3. **Access tokens:**
-   - **New personal token:** name, scopes (read golden records, query
-     SQL, MCP), expiry (a maximum is set by deployment config). The
-     token value is shown **once**, then only a masked hint; it is
-     stored in the secret store, never in Postgres or logs.
+3. **Access tokens — only the Admin generates tokens:**
+   - A user who needs API access (e.g. a Data Engineer connecting
+     Power BI or Databricks) asks the Admin; users have no
+     token-generation screen anywhere in the console.
+   - **New token:** owner (a named user or an app registration, never
+     empty), name, scopes (read golden records, query SQL, MCP),
+     expiry (a maximum is set by deployment config). The value is
+     shown **once** to the Admin, then only a masked hint; it is stored
+     in the secret store, never in Postgres or logs. The token acts
+     with its owner's identity and grants, not the Admin's.
    - The list shows scopes, created, expires, last used; **Revoke**
      takes effect immediately.
    - **App registrations** (Admin): an Entra ID service principal for a
@@ -602,8 +607,9 @@ reach Repo.io.*
    rate limits per client; a warning when a client nears its quota.
 7. The **Connection details** tab of a repository shows ready-to-copy
    JDBC / ODBC / Python details for its SQL endpoint, with
-   `${REPOIO_SQL_HOST}`-style values from deployment config; its
-   **Create token** link opens step 3.
+   `${REPOIO_SQL_HOST}`-style values from deployment config. For the
+   Admin its **Create token** link opens step 3; other users see
+   "Ask your administrator for an access token" instead.
 8. Every token, webhook, grant and MCP change lands in the audit trail.
 
 *Edge cases:*
@@ -616,6 +622,9 @@ reach Repo.io.*
 - Secret store unreachable → token or webhook creation fails safely,
   with no plaintext fallback.
 - There is no anonymous or shared key, and no shared agent identity.
+- The Admin cannot issue a token with more than its owner's grants;
+  issuing, revoking and every handover-relevant event are audited with
+  both the Admin and the owner.
 
 ---
 

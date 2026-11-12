@@ -165,7 +165,8 @@
        Snowflake, Data Fabric…): endpoint, auth method, token stored once
        in the secret store, health checks; feeds ingestion, write-back
        and federation from the same record. [J9]
-     - **API management** — the inbound side of the hub: how apps, BI,
+     - **API management** — Admin-only page (`administer API
+       access`); the inbound side of the hub: how apps, BI,
        data platforms and AI agents reach Repo.io (Connections is the
        outbound side). Five tabs [J16, M5]:
        1. **API catalog** — published interfaces (REST and GraphQL for
@@ -174,10 +175,12 @@
           spec is rendered from `repoio-spec`; "Try it" runs as the
           caller; OpenAPI download. Read-only — the page displays the
           contract, it never owns it.
-       2. **Access tokens** — personal access tokens (scopes, expiry,
-          last used, revoke; shown once; stored in the secret store)
-          and app registrations (Entra ID service principals,
-          admin-approved, granted roles and domains like any user). No
+       2. **Access tokens** — **only an Admin generates tokens.** Each
+          token is issued to a named owner — a user or an app
+          registration (Entra ID service principal, granted roles and
+          domains like any user) — never to nobody. Scopes, expiry,
+          last used, revoke; the value is shown once to the Admin;
+          stored in the secret store. Users cannot generate tokens. No
           shared or anonymous key, no shared agent identity.
        3. **Webhooks** — subscriptions to `golden.<entity>` /
           `changes.<entity>` events: destination
