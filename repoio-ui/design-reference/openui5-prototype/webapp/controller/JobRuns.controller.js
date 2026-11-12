@@ -1,13 +1,14 @@
 sap.ui.define([
 	"repoio/proto/controller/BaseController",
 	"repoio/proto/util/jobRuns",
+	"repoio/proto/util/folders",
 	"sap/m/MessageToast",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/m/Popover",
 	"sap/m/List",
 	"sap/m/StandardListItem"
-], function (BaseController, R, MessageToast, Menu, MenuItem, Popover, List, StandardListItem) {
+], function (BaseController, R, Fld, MessageToast, Menu, MenuItem, Popover, List, StandardListItem) {
 	"use strict";
 
 	var STATUSES = ["succeeded", "succeededWithFailures", "failed", "timedOut", "running", "queued", "skipped", "canceled"],
@@ -22,12 +23,12 @@ sap.ui.define([
 				COLS.forEach(function (k) { oCols[k] = k !== "params"; });
 				var oSaved = this.store("repoio-jr-cols");
 				if (oSaved) { Object.keys(oSaved).forEach(function (k) { oCols[k] = !!oSaved[k]; }); }
-				vm.setProperty("/jr", { f: this._emptyFilters(), cols: oCols, rows: [], top: [], count: 0, bucket: null });
+				vm.setProperty("/jr", { f: this._emptyFilters(), cols: oCols, rows: [], top: [], count: 0, bucket: null, showFolders: this.store("repoio-jr-folders") !== false });
 			}
 			this.router().getRoute("jobs").attachPatternMatched(this._onMatched, this);
 		},
 
-		_emptyFilters: function () { return { name: "", kind: "all", runAs: "all", range: "48", status: [], runId: "", error: "" }; },
+		_emptyFilters: function () { return { folder: "", name: "", kind: "all", runAs: "all", range: "48", status: [], runId: "", error: "" }; },
 
 		_onMatched: function () {
 			var oRuns = this.getOwnerComponent().getModel("runs");
@@ -40,9 +41,27 @@ sap.ui.define([
 				// Opened from another page (e.g. "Open in monitor" on a data sync): filter by that job.
 				var sPending = vm.getProperty("/jrPending");
 				if (sPending) { vm.setProperty("/jr/f", Object.assign(this._emptyFilters(), { name: sPending, range: "168" })); vm.setProperty("/jrPending", null); }
+				this._tree();
 				this._apply();
 			}.bind(this));
 		},
+
+		/* Folders (ADR-0005): jobs grouped as dags/<domain>/<repository>/<kind>/ or platform/<kind>/. */
+		_seg: function (j) { return j.folder ? j.folder.split("/") : ["platform", "other"]; },
+		_tree: function () {
+			var that = this, k = this.viewModel().getProperty("/jr/f/folder"), jobs = this._jobs;
+			this.viewModel().setProperty("/jr/tree", Fld.tree(this, Object.keys(jobs).map(function (id) { return that._seg(jobs[id]); }), this.text("fld.allJobs"), k));
+			this.viewModel().setProperty("/jr/crumbs", Fld.crumbs(k));
+			Fld.reveal(this.byId("jrTree"), k);
+		},
+		_goFolder: function (sKey) {
+			this.viewModel().setProperty("/jr/f/folder", sKey);
+			this._tree();
+			this._apply();
+		},
+		onFolder: function (oEvent) { this._goFolder(oEvent.getParameter("listItem").getBindingContext("view").getProperty("key")); },
+		onCrumb: function (oEvent) { this._goFolder(oEvent.getSource().getBindingContext("view").getProperty("key")); },
+		onToggleFolders: function () { this.store("repoio-jr-folders", this.viewModel().getProperty("/jr/showFolders")); },
 
 		/* One page of runs (Previous / Next instead of "More"). */
 		_slice: function () {
@@ -62,11 +81,12 @@ sap.ui.define([
 		_inRange: function () {
 			var vm = this.viewModel(), f = vm.getProperty("/jr/f"), now = this._now,
 				from = new Date(now.getTime() - Number(f.range) * 3600e3), jobs = this._jobs,
-				q = (f.name || "").trim().toLowerCase(), id = (f.runId || "").trim().toLowerCase();
+				q = (f.name || "").trim().toLowerCase(), id = (f.runId || "").trim().toLowerCase(), that = this;
 			return this.getOwnerComponent().getModel("runs").getProperty("/runs").filter(function (r) {
 				var j = jobs[r.job], t = R.parse(R.finished(r.status) && r.end ? r.end : r.start);
 				if (r.status === "running" || r.status === "queued") { t = now; }
 				if (t < from) { return false; }
+				if (!Fld.inFolder(that._seg(j), f.folder)) { return false; }
 				if (f.kind !== "all" && !(j.kind === f.kind || (f.kind === "ingest" && j.kind === "push"))) { return false; }
 				if (f.runAs === "me" && r.runAs !== ME) { return false; }
 				if (q && (j.id + " " + j.title_en + " " + j.title_ar).toLowerCase().indexOf(q) < 0) { return false; }
@@ -178,6 +198,7 @@ sap.ui.define([
 			var vm = this.viewModel();
 			vm.setProperty("/jr/f", this._emptyFilters());
 			vm.setProperty("/jr/bucket", null);
+			this._tree();
 			this._apply();
 		},
 		onRefresh: function () { this._apply(); MessageToast.show(this.text("jr.t.refreshed")); },

@@ -1,9 +1,10 @@
 sap.ui.define([
 	"repoio/proto/controller/BaseController",
 	"repoio/proto/util/sync",
+	"repoio/proto/util/folders",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox"
-], function (BaseController, S, MessageToast, MessageBox) {
+], function (BaseController, S, Fld, MessageToast, MessageBox) {
 	"use strict";
 
 	var ME = "محمد",
@@ -12,8 +13,8 @@ sap.ui.define([
 	/* Data sync list (J9b): replication flows from a connection into a repository's raw layer. */
 	return BaseController.extend("repoio.proto.controller.DataSyncList", {
 		onInit: function () {
-			this.viewModel().setProperty("/ds", { q: "", coll: "all", showFilters: true, rows: [], facets: [], active: 0, selected: 0, page: 1, size: 25 });
-			this._sel = { conn: {}, domain: {}, status: {} };
+			this.viewModel().setProperty("/ds", { q: "", coll: "all", folder: "", showFilters: true, rows: [], facets: [], active: 0, selected: 0, page: 1, size: 25 });
+			this._sel = { conn: {}, status: {} };
 			this.router().getRoute("dataSync").attachPatternMatched(this._onMatched, this);
 		},
 
@@ -21,6 +22,7 @@ sap.ui.define([
 			var that = this, oM = this.getOwnerComponent().getModel("sync");
 			Promise.all([oM.dataLoaded(), this.data().dataLoaded()]).then(function () {
 				that._all = oM.getProperty("/flows");
+				that._tree();
 				that._apply(true);
 			});
 		},
@@ -29,9 +31,10 @@ sap.ui.define([
 		_apply: function (bResetPage) {
 			var that = this, vm = this.viewModel(), ar = this.lang() === "ar", c = vm.getProperty("/ds/coll"),
 				q = (vm.getProperty("/ds/q") || "").trim().toLowerCase(), sel = this._sel;
-			var val = function (f, k) { return k === "domain" ? S.repo(that, f.repo).domainId : f[k]; };
+			var fk = vm.getProperty("/ds/folder"), val = function (f, k) { return f[k]; };
 			var match = function (f, skip) {
 				if (!(c === "all" || (c === "mine" && f.owner === ME) || (c === "attention" && that._attention(f)))) { return false; }
+				if (!Fld.inFolder(that._seg(f), fk)) { return false; }
 				if (q && [f.id, f.en, f.ar, f.conn, f.repo].join(" ").toLowerCase().indexOf(q) < 0) { return false; }
 				return Object.keys(sel).every(function (k) { return k === skip || !Object.keys(sel[k]).length || sel[k][val(f, k)]; });
 			};
@@ -60,10 +63,10 @@ sap.ui.define([
 			vm.setProperty("/ds/scopeText", this.text("ds.coll." + c) + " (" + rows.length + ")");
 			vm.setProperty("/ds/searchPh", this.text("wl.searchPh", [this.text("ds.coll." + c)]));
 			vm.setProperty("/ds/active", Object.keys(sel).reduce(function (n, k) { return n + Object.keys(sel[k]).length; }, 0));
-			var conns = (this.data().getProperty("/connections") || []).map(function (x) { return [x.id, S.connText(that, x), S.icon(x)]; }),
-				doms = (this.data().getProperty("/domains") || []).map(function (d) { return [d.id, that.domainName(d), d.icon]; });
+			var conns = (this.data().getProperty("/connections") || []).map(function (x) { return [x.id, S.connText(that, x), S.icon(x)]; });
+			vm.setProperty("/ds/crumbs", Fld.crumbs(fk));
 			vm.setProperty("/ds/facets", [
-				facet("conn", conns), facet("domain", doms),
+				facet("conn", conns),
 				facet("status", Object.keys(S.STATUS).map(function (k) { return [k, that.text("ds.st." + k), S.STATUS[k][1]]; }))
 			]);
 			this.byId("dsTable").removeSelections(true);
@@ -92,7 +95,22 @@ sap.ui.define([
 			});
 			this._apply(true);
 		},
-		onClearFacets: function () { this._sel = { conn: {}, domain: {}, status: {} }; this._apply(true); },
+		onClearFacets: function () { this._sel = { conn: {}, status: {} }; this._apply(true); },
+
+		/* Folders (ADR-0005): a flow's DAG lives in dags/<domain>/<repository>/sync/. */
+		_seg: function (f) { return f.repo ? Fld.path(this, f.repo, "sync") : ["unassigned"]; },
+		_tree: function () {
+			var that = this, k = this.viewModel().getProperty("/ds/folder");
+			this.viewModel().setProperty("/ds/tree", Fld.tree(this, this._all.map(function (f) { return that._seg(f); }), this.text("fld.allFlows"), k));
+			Fld.reveal(this.byId("dsTree"), k);
+		},
+		_goFolder: function (sKey) {
+			this.viewModel().setProperty("/ds/folder", sKey);
+			this._tree();
+			this._apply(true);
+		},
+		onFolder: function (oEvent) { this._goFolder(oEvent.getParameter("listItem").getBindingContext("view").getProperty("key")); },
+		onCrumb: function (oEvent) { this._goFolder(oEvent.getSource().getBindingContext("view").getProperty("key")); },
 
 		_selected: function () {
 			var all = this._all;
@@ -132,6 +150,7 @@ sap.ui.define([
 					if (a !== MessageBox.Action.DELETE) { return; }
 					s.forEach(function (f) { that._all.splice(that._all.indexOf(f), 1); });
 					MessageToast.show(that.text("ds.t.deleted", [s.length]));
+					that._tree();
 					that._apply(false);
 				}
 			});

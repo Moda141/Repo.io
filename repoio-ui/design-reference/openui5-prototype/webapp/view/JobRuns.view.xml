@@ -8,6 +8,7 @@
 				<f:heading><Title text="{i18n>jr.title}" level="H1"/></f:heading>
 				<f:expandedContent><Text text="{i18n>jr.subtitle}"/></f:expandedContent>
 				<f:actions>
+					<ToggleButton icon="sap-icon://open-folder" type="Transparent" pressed="{view>/jr/showFolders}" tooltip="{i18n>fld.toggle}" press=".onToggleFolders"/>
 					<Button icon="sap-icon://refresh" type="Transparent" tooltip="{i18n>jr.a.refresh}" press=".onRefresh"/>
 				</f:actions>
 			</f:DynamicPageTitle>
@@ -65,7 +66,16 @@
 			</f:DynamicPageHeader>
 		</f:header>
 		<f:content>
-			<VBox>
+			<HBox renderType="Bare" class="repoioJrBody">
+			<!-- Folders (ADR-0005): the same domain / repository / kind tree as the Airflow Folders panel. -->
+			<VBox renderType="Bare" width="15rem" visible="{view>/jr/showFolders}" class="repoioJrFolders">
+				<Title text="{i18n>fld.title}" level="H3" class="repoioFacetGroup"/>
+				<Tree id="jrTree" items="{path: 'view>/jr/tree', parameters: {arrayNames: ['nodes']}}" mode="SingleSelectMaster"
+					selectionChange=".onFolder" showSeparators="None" class="repoioFacetList repoioFolderTree">
+					<StandardTreeItem title="{view>text}" icon="{view>icon}" counter="{view>count}" selected="{view>selected}" tooltip="{view>tip}"/>
+				</Tree>
+			</VBox>
+			<VBox renderType="Bare" class="repoioJrMain">
 				<FlexBox wrap="Wrap" class="repoioJrOverview">
 					<VBox class="repoioJrPanel repoioJrChartPanel">
 						<HBox alignItems="Center" justifyContent="SpaceBetween">
@@ -97,6 +107,10 @@
 					<headerToolbar>
 						<OverflowToolbar>
 							<Title text="{path: 'view>/jr/count', formatter: '.listTitle'}" level="H2"/>
+							<Breadcrumbs links="{view>/jr/crumbs/links}" currentLocationText="{view>/jr/crumbs/current}" visible="{= !!${view>/jr/f/folder} }"
+								separatorStyle="Slash" class="repoioFolderCrumbs">
+								<Link text="{view>text}" press=".onCrumb"/>
+							</Breadcrumbs>
 							<Button text="{view>/jr/bucketText}" icon="sap-icon://decline" iconFirst="false" visible="{= !!${view>/jr/bucket} }" press=".onClearBucket" class="repoioJrBucket"/>
 							<ToolbarSpacer/>
 							<Button icon="sap-icon://table-column" type="Transparent" tooltip="{i18n>jr.columns}" press=".onColumns"/>
@@ -140,6 +154,7 @@
 				</Table>
 				<rc:Pager total="{view>/jr/count}" page="{view>/jr/page}" pageSize="{view>/jr/size}" change=".onPage"/>
 			</VBox>
+			</HBox>
 		</f:content>
 	</f:DynamicPage>
 </mvc:View>

@@ -20,7 +20,9 @@
    "delta": "03:00",
    "owner": "أحمد ناصر",
    "exp": 420,
-   "dagId": "c4c_customer_pull"
+   "dagId": "customer__customer_master__sync__c4c_customer_pull",
+   "repo": "customer-master",
+   "folder": "customer/customer_master/sync"
   },
   {
    "id": "erp_vendor_pull",
@@ -40,7 +42,9 @@
    "delta": "04:00",
    "owner": "أحمد ناصر",
    "exp": 300,
-   "dagId": "erp_vendor_pull"
+   "dagId": "vendor__vendor_master__sync__erp_vendor_pull",
+   "repo": "vendor-master",
+   "folder": "vendor/vendor_master/sync"
   },
   {
    "id": "sqlsrv_product_pull",
@@ -60,7 +64,9 @@
    "delta": "24:00",
    "owner": "كريم فوزي",
    "exp": 900,
-   "dagId": "sqlsrv_product_pull"
+   "dagId": "product__book_catalog__sync__sqlsrv_product_pull",
+   "repo": "catalog",
+   "folder": "product/book_catalog/sync"
   },
   {
    "id": "author_sheet_push",
@@ -79,7 +85,9 @@
    "freq_ar": "عند الرفع",
    "delta": "",
    "owner": "كريم فوزي",
-   "exp": 60
+   "exp": 60,
+   "repo": "authors",
+   "folder": "author/author_registry/sync"
   },
   {
    "id": "mdm_customer_stream",
@@ -98,7 +106,9 @@
    "freq_ar": "مستمر",
    "delta": "00:01",
    "owner": "سارة عادل",
-   "exp": null
+   "exp": null,
+   "repo": "customer-master",
+   "folder": "customer/customer_master/stream"
   },
   {
    "id": "mdm_vendor_stream",
@@ -117,7 +127,9 @@
    "freq_ar": "مستمر",
    "delta": "00:01",
    "owner": "هالة سمير",
-   "exp": null
+   "exp": null,
+   "repo": "vendor-master",
+   "folder": "vendor/vendor_master/stream"
   },
   {
    "id": "dq_nightly_suite",
@@ -137,7 +149,9 @@
    "delta": "",
    "owner": "سارة عادل",
    "exp": 1200,
-   "dagId": "dq_nightly_suite"
+   "dagId": "customer__customer_master__dq__dq_nightly_suite",
+   "repo": "customer-master",
+   "folder": "customer/customer_master/dq"
   },
   {
    "id": "iceberg_housekeeping",
@@ -157,7 +171,9 @@
    "delta": "",
    "owner": "أحمد ناصر",
    "exp": 600,
-   "dagId": "iceberg_housekeeping"
+   "dagId": "platform__housekeeping__iceberg_housekeeping",
+   "repo": null,
+   "folder": "platform/housekeeping"
   }
  ],
  "runs": [

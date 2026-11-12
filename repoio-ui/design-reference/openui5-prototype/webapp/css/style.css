@@ -833,3 +833,16 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioPjAddRow { gap: 0.5rem; margin-top: 0.25rem; }
 .repoioPjAddBtn.sapMBtn { align-self: flex-end; margin-top: 0.5rem; }
 .repoioPjExprRow { width: 100%; gap: 0.25rem; }
+
+/* Folders (ADR-0005): domain / repository / kind tree, like the Airflow Folders panel. */
+.repoioFolderTree .sapMTreeItemBase { height: 2rem; min-height: 2rem; }
+.repoioFolderTree .sapMSLITitleOnly { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: "72Mono", "72", monospace; font-size: 0.8125rem; direction: ltr; unicode-bidi: isolate; }
+.repoioFolderTree .sapMLIBCounter { font-size: 0.75rem; color: #6a6d70; }
+.repoioFolderTree .sapMSLIIcon { color: #6a6d70; font-size: 0.875rem; }
+.repoioFolderTree .sapMLIBSelected .sapMSLIIcon { color: #0a6ed1; }
+.repoioFolderCrumbs { margin-inline-start: 0.5rem; direction: ltr; }
+.repoioFolderCrumbs .sapMLnk, .repoioFolderCrumbs .sapMBreadcrumbsCurrentLocation { font-family: "72Mono", "72", monospace; font-size: 0.8125rem; }
+.repoioFolderCrumbIcon { margin-inline-start: 1rem; }
+.repoioJrBody { display: flex; align-items: stretch; gap: 1rem; }
+.repoioJrFolders { flex: none; background: #fff; border: 1px solid #e5e5e5; border-radius: 0.25rem; padding-bottom: 0.5rem; }
+.repoioJrMain { flex: 1 1 auto; min-width: 0; }

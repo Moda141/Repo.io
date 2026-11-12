@@ -29,6 +29,11 @@
 				<List items="{view>/ds/collections}" mode="SingleSelectMaster" selectionChange=".onCollection" showSeparators="None" class="repoioFacetList">
 					<StandardListItem title="{view>text}" icon="{view>icon}" selected="{view>selected}"/>
 				</List>
+				<Title text="{i18n>fld.title}" level="H3" class="repoioFacetGroup"/>
+				<Tree id="dsTree" items="{path: 'view>/ds/tree', parameters: {arrayNames: ['nodes']}}" mode="SingleSelectMaster"
+					selectionChange=".onFolder" showSeparators="None" class="repoioFacetList repoioFolderTree">
+					<StandardTreeItem title="{view>text}" icon="{view>icon}" counter="{view>count}" selected="{view>selected}" tooltip="{view>tip}"/>
+				</Tree>
 				<HBox alignItems="Center" justifyContent="SpaceBetween" class="repoioFacetHead">
 					<Title text="{i18n>wl.filterBy}" level="H3" titleStyle="H5"/>
 					<Button icon="sap-icon://clear-filter" type="Transparent" tooltip="{i18n>cat.clearAll}" enabled="{= ${view>/ds/active} > 0 }" press=".onClearFacets"/>
@@ -49,6 +54,11 @@
 					<Label text="{i18n>wl.searchIn}" class="repoioExScopeLbl"/>
 					<core:Icon src="{view>/ds/collIcon}" class="repoioExScopeIcon"/>
 					<Text text="{view>/ds/scopeText}"/>
+					<core:Icon src="sap-icon://open-folder" class="repoioExScopeIcon repoioFolderCrumbIcon" visible="{= !!${view>/ds/folder} }"/>
+					<Breadcrumbs links="{view>/ds/crumbs/links}" currentLocationText="{view>/ds/crumbs/current}" visible="{= !!${view>/ds/folder} }"
+						separatorStyle="Slash" class="repoioFolderCrumbs">
+						<Link text="{view>text}" press=".onCrumb"/>
+					</Breadcrumbs>
 				</HBox>
 				<ScrollContainer vertical="true" horizontal="true" height="100%" class="repoioExScroll">
 					<Table id="dsTable" items="{view>/ds/rows}" mode="MultiSelect" selectionChange=".onSelect" sticky="ColumnHeaders"

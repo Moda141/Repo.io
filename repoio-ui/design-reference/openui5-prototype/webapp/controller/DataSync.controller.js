@@ -17,9 +17,10 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/m/MessageToast",
-	"sap/m/MessageBox"
+	"sap/m/MessageBox",
+	"repoio/proto/util/folders"
 ], function (BaseController, S, people, R, Fragment, MessagePopover, MessageItem, Menu, MenuItem, Dialog, Button, Label, Input, Text, Switch, MessageStrip,
-	SimpleForm, MessageToast, MessageBox) {
+	SimpleForm, MessageToast, MessageBox, Fld) {
 	"use strict";
 
 	var NOW = "2026-11-11 14:10",
@@ -70,6 +71,10 @@ sap.ui.define([
 			vm.setProperty("/sf/statusIcon", st[1]);
 			var pp = people.get(f.owner);
 			vm.setProperty("/sf/ownerText", pp && !ar ? pp.en : f.owner);
+			// ADR-0005: Deploy writes the flow's DAG to dags/<domain>/<repository>/sync/<flow>.py.
+			var seg = f.repo ? Fld.path(this, f.repo, "sync") : null;
+			vm.setProperty("/sf/dagFile", seg && f.id ? Fld.file(seg, f.id) : "—");
+			vm.setProperty("/sf/dagId", seg && f.id ? Fld.dagId(seg, f.id) : "—");
 			vm.setProperty("/sf/connText", conn ? S.connText(this, conn) : "");
 			vm.setProperty("/sf/connType", conn ? this.text("ds.ct." + conn.type) : "");
 			vm.setProperty("/sf/connIcon", conn ? S.icon(conn) : "");

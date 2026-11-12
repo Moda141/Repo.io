@@ -158,6 +158,10 @@
 						<ObjectStatus text="{view>/sf/statusText}" state="{view>/sf/statusState}" icon="{view>/sf/statusIcon}"/>
 						<Label text="{i18n>domain.owner}" showColon="true" class="sapUiTinyMarginTop"/>
 						<Text text="{view>/sf/ownerText}"/>
+						<Label text="{i18n>ds.dagId}" showColon="true" class="sapUiTinyMarginTop"/>
+						<Text text="{view>/sf/dagId}" class="repoioMono" textDirection="LTR" wrapping="true"/>
+						<Label text="{i18n>ds.dagFile}" showColon="true" class="sapUiTinyMarginTop"/>
+						<Text text="{view>/sf/dagFile}" class="repoioMono" textDirection="LTR" wrapping="true"/>
 					</Panel>
 					<Panel headerText="{i18n>ds.sec.run}" expandable="true" expanded="true" class="repoioDsPanel">
 						<Label text="{i18n>ds.loadFrequency}" showColon="true"/>

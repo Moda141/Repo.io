@@ -335,7 +335,10 @@ workflow → deletion blocked, deprecate instead.
    dropped silently, never blocking the whole stream.
 4. DQ suites and results are inspectable per run (Great Expectations
    results surfaced, not summarized away).
-5. The runs list filters by job, type, run-as user, time range, status,
+5. A Folders panel groups jobs as domain → repository → kind (sync,
+   stream, dq) and platform → kind, the same tree as the Airflow
+   Folders panel (ADR-0005); choosing a folder filters the runs.
+   The runs list filters by job, type, run-as user, time range, status,
    run ID and error code, and shows finished runs over time and the top
    error types. A run opens a monitor view: the job and its runs on one
    side, the run's tasks, objects, messages and metrics on the other.
@@ -492,8 +495,9 @@ scheduled run or with Start now.
 system (J9); sync = what to bring and when; job run = each execution (J10).*
 
 1. The Data Engineer opens **Integration hub → Data sync**: the explorer
-   list of replication flows (facets: source connection, target domain,
-   status; last run; delta interval). Tables use SAP icons, never vendor
+   list of replication flows (a Folders tree domain → repository → sync,
+   the same as the Airflow Folders panel, ADR-0005; facets: source
+   connection, status; last run; delta interval). Tables use SAP icons, never vendor
    logos.
 2. **New replication flow** opens an empty canvas with a Source panel and
    a Target panel, following the Datasphere steps:
