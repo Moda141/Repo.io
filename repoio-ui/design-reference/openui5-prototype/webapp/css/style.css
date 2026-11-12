@@ -916,3 +916,15 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioFlowMenu .sapMLIBContent, .repoioFlowMenu .sapMSLIDiv, .repoioFlowMenu .sapMSLITitleDiv, .repoioFlowMenu .sapMSLIDescriptionDiv { min-width: 0; overflow: hidden; }
 .repoioFlowMenu .sapMSLIDescription { display: block; text-overflow: ellipsis !important; width: 100%; }
 .repoioFlowMenuPop .sapMPopoverScroll { width: 100% !important; }
+
+/* Trigger card (Begin): the event that starts the workflow. Green accent, eyebrow label above the header. */
+.rfT-begin.rfCard { background: linear-gradient(180deg, #f2faf5 0, #fff 3.25rem); border: 1px solid #a9d9bb; border-inline-start: 4px solid #2f9e5b; }
+.rfT-begin.rfCard .rfIcon { background: #2f9e5b; color: #fff; border-radius: 50%; }
+.rfT-begin.rfCard .rfTitle { color: #174f2e; }
+.rfT-begin.rfCard .rfSub { color: #2f6b45; font-weight: 600; }
+.rfT-begin.rfCard .rfLine .rfV { color: #1d2d3e; }
+.rfT-begin.rfCard.rfSel { border-color: #6366f1; border-inline-start-color: #2f9e5b; }
+.rfEyebrow { position: absolute; top: -0.6875rem; inset-inline-start: 0.625rem; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0 0.5rem;
+	height: 1.25rem; border-radius: 0.625rem; background: #2f9e5b; color: #fff; font: bold 0.625rem/1.25rem "72", Arial, sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }
+.rfEyebrow .rfGlyph { font-size: 0.5625rem; }
+.rfT-begin.rfCard .rfHead { padding-top: 0.875rem; }

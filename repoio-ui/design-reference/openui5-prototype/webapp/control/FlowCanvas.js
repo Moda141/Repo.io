@@ -125,7 +125,7 @@ sap.ui.define([
 				}).join("") + "</div>" : "";
 				var st = "left:" + n.x + "px;top:" + n.y + "px;width:" + n.w + "px;height:" + n.h + "px";
 				var aria = esc(n.title + (n.subtitle ? ", " + n.subtitle : "") + (n.issues ? ", " + n.issues : ""));
-				if (n.type === "begin" || n.type === "end") {
+				if (n.type === "end" || (n.type === "begin" && !n.lines)) {
 					return "<div class=\"" + cls + " rfPill\" style=\"" + st + "\" data-id=\"" + esc(n.id) + "\" tabindex=\"0\" role=\"button\" aria-label=\"" + aria + "\">" + tag +
 						icon(n.icon) + "<span class=\"rfPillText\">" + esc(n.title) + "</span>" + (n.issues && !m.overlay ? "<span class=\"rfWarn\" title=\"" + esc(n.issues) + "\">!</span>" : "") + stats + "</div>";
 				}
@@ -136,6 +136,7 @@ sap.ui.define([
 				if (n.note) { body += "<div class=\"rfNote\">" + esc(n.note) + "</div>"; }
 				if (n.badges && n.badges.length) { body += "<div class=\"rfBadges\">" + n.badges.map(function (b) { return "<span class=\"rfBadge\">" + esc(b) + "</span>"; }).join("") + "</div>"; }
 				return "<div class=\"" + cls + " rfCard\" style=\"" + st + "\" data-id=\"" + esc(n.id) + "\" tabindex=\"0\" role=\"button\" aria-label=\"" + aria + "\">" + tag + stats +
+					(n.eyebrow ? "<div class=\"rfEyebrow\">" + icon("sap-icon://flag") + esc(n.eyebrow) + "</div>" : "") +
 					"<div class=\"rfHead\"><span class=\"rfIcon\">" + icon(n.icon) + "</span><div class=\"rfTitles\"><div class=\"rfTitle\">" + esc(n.title) + "</div>" +
 					(n.subtitle ? "<div class=\"rfSub\">" + esc(n.subtitle) + "</div>" : "") + "</div>" +
 					(m.overlay ? "" : n.issues ? "<span class=\"rfWarn\" title=\"" + esc(n.issues) + "\">!</span>" : "<span class=\"rfOk\" title=\"OK\">" + icon("sap-icon://accept") + "</span>") +

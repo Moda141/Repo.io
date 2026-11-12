@@ -48,7 +48,7 @@ sap.ui.define([
 		begin: "sap-icon://media-play", template: "sap-icon://form", approval: "sap-icon://approvals", notification: "sap-icon://bell",
 		script: "sap-icon://syntax", validation: "sap-icon://validate", writeBack: "sap-icon://upload-to-cloud", condition: "sap-icon://split", end: "sap-icon://stop"
 	};
-	var SIZE = { begin: { w: 104, h: 40 }, end: { w: 132, h: 40 }, script: { w: 236, h: 140 }, card: { w: 236, h: 124 } };
+	var SIZE = { begin: { w: 248, h: 116 }, end: { w: 132, h: 40 }, script: { w: 236, h: 140 }, card: { w: 236, h: 124 } };
 	var VARIABLES = ["request.id", "request.title", "requester.name", "decision", "comment", "record.business_name", "link"];
 	var FX = ["const", "upper", "trim", "truncate", "concat", "default"];
 	var SQL_SAMPLE = "-- Read-only: runs through Trino with your grants.\n-- :field placeholders come from the template.\nSELECT master_id, business_name, tax_number\nFROM golden.customer\nWHERE tax_number = :tax_number\n  AND master_id <> :customer_id";
@@ -287,7 +287,16 @@ sap.ui.define([
 		_card: function (n, issues, f) {
 			var p = n.props || {}, T = this.text.bind(this), c = { title: this._label(n), icon: NODE_ICON[n.type], lines: [], badges: [] }, that = this;
 			switch (n.type) {
-			case "begin": c.title = T("fd.n.begin"); break;
+			case "begin":
+				// Trigger card: the event that starts the workflow, taken from the template step.
+				var tn = Object.keys(f.nodes).map(function (k) { return f.nodes[k]; }).filter(function (x) { return x.type === "template"; })[0],
+					tt = tn && this._tpl(tn.props.template);
+				c.eyebrow = T("fd.trig.eyebrow");
+				c.title = T("fd.trig.title");
+				c.subtitle = tt ? (this.lang() === "ar" ? tt.ar : tt.en) : T("fd.pickTemplate");
+				c.lines = [{ k: T("fd.trig.event"), v: T("fd.trig.submitted") }, { k: T("fd.trig.domain"), v: tt ? this._domainText(tt.domain) : "—" },
+					{ k: T("fd.trig.from"), v: T("fd.trig.channels") }];
+				break;
 			case "template":
 				var t = this._tpl(p.template), v = this._tplVersion(f);
 				c.subtitle = t ? this._domainText(t.domain) + " · v" + (v ? v.v : t.version) : T("fd.pickTemplate");
