@@ -1,5 +1,5 @@
 <mvc:View controllerName="repoio.proto.controller.DataSync"
-	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" height="100%">
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control" height="100%">
 	<!-- J15: replication flow editor, laid out like the SAP Datasphere replication flow editor:
 	     grouped toolbar (General / Edit / Tools, Details); three columns: source (connection, container,
 	     objects) · Projections / Settings · target (repository, model, objects); properties panel on Details. -->
@@ -157,7 +157,7 @@
 						<Label text="{i18n>domains.col.status}" showColon="true" class="sapUiTinyMarginTop"/>
 						<ObjectStatus text="{view>/sf/statusText}" state="{view>/sf/statusState}" icon="{view>/sf/statusIcon}"/>
 						<Label text="{i18n>domain.owner}" showColon="true" class="sapUiTinyMarginTop"/>
-						<Text text="{view>/sf/ownerText}"/>
+						<HBox><rc:PersonLink name="{view>/sf/f/owner}"/></HBox>
 						<Label text="{i18n>ds.dagId}" showColon="true" class="sapUiTinyMarginTop"/>
 						<Text text="{view>/sf/dagId}" class="repoioMono" textDirection="LTR" wrapping="true"/>
 						<Label text="{i18n>ds.dagFile}" showColon="true" class="sapUiTinyMarginTop"/>

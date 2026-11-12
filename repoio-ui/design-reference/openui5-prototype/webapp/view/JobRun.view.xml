@@ -51,7 +51,7 @@
 					<Label text="{i18n>jr.d.orch}"/>
 					<Text text="{view>/jd/job/orchText}"/>
 					<Label text="{i18n>jr.d.owner}"/>
-					<HBox alignItems="Center"><rc:PersonLink name="{view>/jd/job/owner}"/><Text text="{view>/jd/job/ownerText}" class="sapUiTinyMarginBegin"/></HBox>
+					<HBox alignItems="Center"><rc:PersonLink name="{view>/jd/job/owner}"/></HBox>
 				</VBox>
 				<VBox class="repoioJdFacts repoioJdSched">
 					<Title text="{i18n>jr.d.schedule}" level="H3"/>
@@ -118,7 +118,7 @@
 					<VBox class="repoioJdFact"><Label text="{i18n>jr.d.startDate}"/><Text text="{view>/jd/run/startText}"/></VBox>
 					<VBox class="repoioJdFact"><Label text="{i18n>jr.d.endDate}"/><Text text="{view>/jd/run/endText}"/></VBox>
 					<VBox class="repoioJdFact"><Label text="{i18n>jr.d.runBy}"/>
-						<HBox alignItems="Center"><rc:PersonLink name="{view>/jd/run/runAs}"/><Text text="{view>/jd/run/runAsText}" class="sapUiTinyMarginBegin"/></HBox>
+						<HBox alignItems="Center"><rc:PersonLink name="{view>/jd/run/runAs}"/></HBox>
 					</VBox>
 					<VBox class="repoioJdFact"><Label text="{i18n>jr.d.runType}"/><Text text="{view>/jd/run/runTypeText}"/></VBox>
 					<VBox class="repoioJdFact"><Label text="{i18n>jr.d.launched}"/><Text text="{view>/jd/run/launchedText}"/></VBox>

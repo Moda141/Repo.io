@@ -116,8 +116,8 @@
 									<Text text="{view>name}" wrapping="false" tooltip="{view>createdText}"/>
 									<HBox alignItems="Center" renderType="Bare" class="repoioApiOwner">
 										<rc:PersonLink name="{view>owner}" visible="{= ${view>ownerType} === 'user' }"/>
-										<core:Icon src="sap-icon://it-system" visible="{= ${view>ownerType} === 'app' }" class="repoioApiAppIcon" tooltip="{i18n>api.ownerApp}"/>
-										<Text text="{view>ownerText}" wrapping="false" tooltip="{view>ownerText}" class="repoioApiOwnerName"/>
+										<Avatar src="sap-icon://it-system" displaySize="Custom" customDisplaySize="1.5rem" customFontSize="0.75rem" displayShape="Square"
+											backgroundColor="Accent6" visible="{= ${view>ownerType} === 'app' }" tooltip="{view>ownerText}" press=".onOwnerApp"/>
 									</HBox>
 									<Text text="{view>scopeText}"/>
 									<Text text="{view>hint}" class="repoioMono" textDirection="LTR" wrapping="false"/>
@@ -203,7 +203,6 @@
 									<Text text="{view>eventText}" class="repoioMono" textDirection="LTR" wrapping="false" tooltip="{view>eventText}"/>
 									<HBox alignItems="Center">
 										<rc:PersonLink name="{view>owner}"/>
-										<Text text="{view>ownerText}" wrapping="false" class="repoioApiOwnerName"/>
 									</HBox>
 									<ObjectStatus text="{view>lastText}" state="{view>lastState}" textDirection="LTR"/>
 									<Text text="{view>rateText}" textDirection="LTR"/>
@@ -324,13 +323,13 @@
 								<ColumnListItem highlight="{view>highlight}">
 									<HBox alignItems="Center">
 										<rc:PersonLink name="{view>id}" visible="{= !${view>isApp} }"/>
-										<core:Icon src="sap-icon://it-system" visible="{view>isApp}" class="repoioApiAppIcon" decorative="true"/>
-										<Text text="{view>clientText}" wrapping="false" class="repoioApiOwnerName"/>
+										<Avatar src="sap-icon://it-system" displaySize="Custom" customDisplaySize="1.5rem" customFontSize="0.75rem" displayShape="Square"
+											backgroundColor="Accent6" visible="{view>isApp}" tooltip="{view>clientText}" press=".onOwnerApp"/>
 									</HBox>
 									<Text text="{view>totalText}" textDirection="LTR"/>
 									<ObjectStatus text="{view>errText}" state="{view>errState}" textDirection="LTR"/>
 									<Text text="{view>p95Text}" textDirection="LTR"/>
-									<ProgressIndicator percentValue="{view>pct}" displayValue="{view>quotaText}" state="{view>quotaState}" height="1rem" tooltip="{view>quotaHint}" class="repoioApiQuota"/>
+									<ProgressIndicator percentValue="{view>pct}" displayValue="{view>quotaText}" state="{view>quotaState}" textDirection="LTR" height="1rem" tooltip="{view>quotaHint}" class="repoioApiQuota"/>
 								</ColumnListItem>
 							</items>
 						</Table>

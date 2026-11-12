@@ -120,6 +120,10 @@ sap.ui.define([
 				});
 			}));
 		},
+		/* An app owner has no person card; its avatar shows the app name. */
+		onOwnerApp: function (oEvent) {
+			MessageToast.show(oEvent.getSource().getTooltip());
+		},
 		onApproveApp: function (oEvent) {
 			var id = oEvent.getSource().getBindingContext("view").getProperty("id"), a = this._app(id);
 			a.status = "active"; a.approvedBy = ME; a.approved = TODAY;

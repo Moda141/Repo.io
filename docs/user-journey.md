@@ -48,6 +48,12 @@ the persona label in this file.
    search — on the **Quartz Light** theme (`sap_fiori_3`). Navigation
    items render from the same server-filtered APIs as page content;
    the shell is presentation and owns no authority.
+8. **People are avatars with a quick view, never a name in text.** An
+   owner, approver, requester or "run as" is rendered as an avatar;
+   hovering or focusing opens a quick view (name, role, team, contact).
+   The name lives in the tooltip and the quick view, not in the cell.
+   A non-person owner (an app registration) is a square app avatar with
+   its name as the tooltip.
 
 ### Page names
 
