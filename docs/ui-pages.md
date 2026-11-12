@@ -165,8 +165,33 @@
        Snowflake, Data Fabric…): endpoint, auth method, token stored once
        in the secret store, health checks; feeds ingestion, write-back
        and federation from the same record. [J9]
-     - **API management** — API keys, webhooks, MCP server exposure for
-       consumers and agents. [M5]
+     - **API management** — the inbound side of the hub: how apps, BI,
+       data platforms and AI agents reach Repo.io (Connections is the
+       outbound side). Five tabs [J16, M5]:
+       1. **API catalog** — published interfaces (REST and GraphQL for
+          golden records, the SQL endpoint through Trino, MCP) by
+          domain and version, with status (active / deprecated). The
+          spec is rendered from `repoio-spec`; "Try it" runs as the
+          caller; OpenAPI download. Read-only — the page displays the
+          contract, it never owns it.
+       2. **Access tokens** — personal access tokens (scopes, expiry,
+          last used, revoke; shown once; stored in the secret store)
+          and app registrations (Entra ID service principals,
+          admin-approved, granted roles and domains like any user). No
+          shared or anonymous key, no shared agent identity.
+       3. **Webhooks** — subscriptions to `golden.<entity>` /
+          `changes.<entity>` events: destination
+          (`${WEBHOOK_URL}`-style, admin-configured), events, domain
+          filter, signing secret in the secret store, delivery log,
+          retries, test delivery. Payloads are filtered by the
+          subscription owner's grants. Notification only — never a
+          write-back path.
+       4. **MCP exposure** — tools enabled per role (the versioned
+          role→tool grant matrix), agent policies, active agent
+          sessions with their initiating user. Agents act with that
+          user's scopes; every call is audited.
+       5. **Usage & limits** — calls, errors and latency per client;
+          rate limits and quota warnings.
      - **Data sync** — what syncs and when: sync configurations,
        schedules and field mappings per connection (configuration, not
        runs).

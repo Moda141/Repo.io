@@ -76,6 +76,7 @@ detection** · Connections hub = **Connections**.
 | J13 | Stay informed: feeds & announcements | all | M4 (feeds page, Home strip, authoring UI) |
 | J14 | Analyse & broadcast reports | Data Analyst, Data Steward, Manager | M4 (reports, studio, broadcasts UI); reports API + governed views (M5 grants) |
 | J15 | Configure a data sync (replication flow) | Data Engineer | M2 (pull / push ingest, raw layer), M4 (UI) |
+| J16 | Manage API access (tokens, webhooks, MCP) | Admin, Data Engineer, Consumer | M5 (identity, tokens, MCP), M4 (UI) |
 
 A journey is "available" only when its milestone's acceptance criteria
 in `docs/milestone-plan.md` pass — never before.
@@ -556,6 +557,65 @@ system (J9); sync = what to bring and when; job run = each execution (J10).*
   the sync.
 - Rows that fail model validation go to Quarantine.
 - A flow can be deleted only if it was never deployed.
+
+## J16 — Manage API access (tokens, webhooks, MCP)
+
+*Pattern: the inbound side of the Integration hub. Connections (J9) is
+how Repo.io reaches other systems; API management is how other systems
+reach Repo.io.*
+
+1. A user granted `use API` opens **Integration hub → API management**.
+   Everyone with that grant sees the catalog and their own tokens and
+   webhooks; the Admin sees every client and the MCP tab.
+2. **API catalog:** the interfaces open to the caller — REST and
+   GraphQL for golden records, the SQL endpoint through Trino, MCP —
+   by domain and version, each with its status. Opening one renders
+   its spec from `repoio-spec`.
+   - **Try it** runs the call with the caller's own identity and
+     grants.
+   - **Download OpenAPI** gives the contract file.
+3. **Access tokens:**
+   - **New personal token:** name, scopes (read golden records, query
+     SQL, MCP), expiry (a maximum is set by deployment config). The
+     token value is shown **once**, then only a masked hint; it is
+     stored in the secret store, never in Postgres or logs.
+   - The list shows scopes, created, expires, last used; **Revoke**
+     takes effect immediately.
+   - **App registrations** (Admin): an Entra ID service principal for a
+     system consumer (Power BI, a Databricks job). It is approved by
+     the Admin and receives roles and domain grants like any user.
+   - A token never carries more than its owner's grants; when a grant
+     is removed, the token loses it too.
+4. **Webhooks:**
+   - **New subscription:** destination URL, events
+     (`golden.<entity>`, `changes.<entity>`), domain filter. A signing
+     secret is generated and stored in the secret store; receivers
+     verify each delivery with it.
+   - **Send test** posts a sample event. The delivery log shows status,
+     response code, attempts and next retry.
+   - Payloads contain only what the subscription owner may read.
+5. **MCP exposure** (Admin): the role→tool grant matrix (versioned
+   configuration), agent policies, and active agent sessions with
+   their initiating user. Disabling a tool for a role takes effect on
+   the next call.
+6. **Usage & limits:** calls, errors and latency per client over time;
+   rate limits per client; a warning when a client nears its quota.
+7. The **Connection details** tab of a repository shows ready-to-copy
+   JDBC / ODBC / Python details for its SQL endpoint, with
+   `${REPOIO_SQL_HOST}`-style values from deployment config; its
+   **Create token** link opens step 3.
+8. Every token, webhook, grant and MCP change lands in the audit trail.
+
+*Edge cases:*
+- An expired or revoked token is rejected with 401; an ungranted scope
+  or domain is denied, never answered with partial data.
+- A webhook endpoint that keeps failing is paused after the retry
+  policy is exhausted; the owner sees it in the list. A webhook never
+  writes to a source system; write-back goes only through a workflow
+  with a Write-back Task (J9).
+- Secret store unreachable → token or webhook creation fails safely,
+  with no plaintext fallback.
+- There is no anonymous or shared key, and no shared agent identity.
 
 ---
 

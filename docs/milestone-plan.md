@@ -251,6 +251,17 @@ and API contracts preserved — demonstrated via the parity checklist.
       (granted by Admin, typically to master data stewards) rejects
       non-holders on author/publish.
 
+- [ ] API management (J16): personal access tokens are shown once,
+      stored only in the secret store, scoped, expiring and revocable
+      (revocation verified with a direct call); a token never exceeds
+      its owner's grants.
+- [ ] App registrations are Entra ID service principals approved by an
+      Admin, with role and domain grants; no anonymous or shared key.
+- [ ] Webhooks on `golden.<entity>` / `changes.<entity>` are signed,
+      retried, logged, and filtered by the owner's grants; they have no
+      write path to source systems.
+- [ ] Rate limits per client are enforced and visible on the Usage tab.
+
 **Exit gate:** "AI agents can read/write golden records with per-user
 scopes" — demonstrated with both the happy path and the denials.
 
