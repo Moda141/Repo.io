@@ -2,9 +2,10 @@ sap.ui.define([
 	"repoio/proto/controller/BaseController",
 	"repoio/proto/util/people",
 	"sap/ui/core/Fragment",
+	"sap/ui/model/Filter",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox"
-], function (BaseController, People, Fragment, MessageToast, MessageBox) {
+], function (BaseController, People, Fragment, Filter, MessageToast, MessageBox) {
 	"use strict";
 
 	var TODAY = "2026-11-12", ME = "محمد", SOON_DAYS = 14,
@@ -18,7 +19,8 @@ sap.ui.define([
 	   Lists come from the admin API in the product; token values and signing secrets never leave the secret store. */
 	return BaseController.extend("repoio.proto.controller.ApiManagement", {
 		onInit: function () {
-			this.viewModel().setProperty("/api", { tab: this.store("repoio-api-tab") || "catalog", kind: "all", tq: "", tstate: "all", n: {}, mcp: {} });
+			this.viewModel().setProperty("/api", { tab: this.store("repoio-api-tab") || "catalog", kind: "all", tq: "", tstate: "all", n: {}, mcp: {},
+				f: { cq: "", cdom: "", cst: "all", otype: "all", scope: "all", wq: "", wev: "", wst: "all", mq: "", mkind: "all", uk: "all", near: false } });
 			this.router().getRoute("apiManagement").attachPatternMatched(this._onMatched, this);
 		},
 
@@ -45,8 +47,11 @@ sap.ui.define([
 
 		/* 1. Catalog */
 		_catalog: function () {
-			var that = this, k = this.viewModel().getProperty("/api/kind");
-			var rows = this._d.apis.filter(function (a) { return k === "all" || a.kind === k; }).map(function (a) {
+			var that = this, vm = this.viewModel(), k = vm.getProperty("/api/kind"), f = vm.getProperty("/api/f"), q = (f.cq || "").toLowerCase();
+			var rows = this._d.apis.filter(function (a) {
+				return (k === "all" || a.kind === k) && (!f.cdom || a.domain === f.cdom || !a.domain) && (f.cst === "all" || a.status === f.cst) &&
+					(!q || [a.en, a.ar, a.base, a.version].join(" ").toLowerCase().indexOf(q) > -1);
+			}).map(function (a) {
 				var dep = a.status === "deprecated";
 				return Object.assign({}, a, {
 					title: that._t(a), kindText: KIND[a.kind][0], icon: KIND[a.kind][1], domainText: a.domain ? that._dom(a.domain) : that.text("api.allDomains"),
@@ -54,10 +59,12 @@ sap.ui.define([
 					statusState: dep ? "Warning" : "Success", statusIcon: dep ? "sap-icon://past" : "sap-icon://status-positive"
 				});
 			});
-			this.viewModel().setProperty("/api/apis", rows);
+			vm.setProperty("/api/apis", rows);
+			vm.setProperty("/api/catTitle", this.text("api.catalog.titleN", [rows.length]));
 			this.viewModel().setProperty("/api/n/catalog", this._d.apis.length);
 		},
 		onKind: function () { this._catalog(); },
+		onFilter: function () { this._catalog(); this._webhooks(); },
 
 		/* 2. Tokens */
 		_tokState: function (t) {
@@ -66,22 +73,25 @@ sap.ui.define([
 			return days(TODAY, t.expires) <= SOON_DAYS ? "expiring" : "active";
 		},
 		_tokens: function () {
-			var that = this, vm = this.viewModel(), q = (vm.getProperty("/api/tq") || "").toLowerCase(), f = vm.getProperty("/api/tstate");
+			var that = this, vm = this.viewModel(), q = (vm.getProperty("/api/tq") || "").toLowerCase(), f = vm.getProperty("/api/tstate"), ff = vm.getProperty("/api/f");
 			var rows = this._d.tokens.map(function (t) {
 				var st = that._tokState(t), left = days(TODAY, t.expires);
 				return Object.assign({}, t, {
 					st: st, ownerText: that._owner(t.owner, t.ownerType), scopeText: that._scopes(t.scopes),
-					createdText: that.text("api.tok.created", [t.created, that._person(t.createdBy)]),
+					createdText: that.text("api.tok.created", [t.created, that._person(t.createdBy)]), createdShort: t.created,
 					statusText: st === "expiring" ? that.text("api.st.expiresIn", [left]) : that.text("api.st." + st),
 					statusState: TOK[st][0], statusIcon: TOK[st][1], highlight: st === "expiring" ? "Warning" : "None",
 					canRevoke: st === "active" || st === "expiring"
 				});
 			}).filter(function (r) {
 				if (f !== "all" && r.st !== f) { return false; }
+				if (ff.otype !== "all" && r.ownerType !== ff.otype) { return false; }
+				if (ff.scope !== "all" && r.scopes.indexOf(ff.scope) < 0) { return false; }
 				return !q || [r.name, r.ownerText, r.hint].join(" ").toLowerCase().indexOf(q) > -1;
 			});
 			vm.setProperty("/api/tokens", rows);
-			vm.setProperty("/api/n/tokens", this._d.tokens.filter(function (t) { var s = that._tokState(t); return s === "active" || s === "expiring"; }).length);
+			vm.setProperty("/api/tokTitle", this.text("api.tok.titleN", [rows.length]));
+			vm.setProperty("/api/n/tokens", this._d.tokens.length);
 		},
 		onTokSearch: function () { this._tokens(); },
 		onRevoke: function (oEvent) {
@@ -119,8 +129,11 @@ sap.ui.define([
 
 		/* 3. Webhooks */
 		_webhooks: function () {
-			var that = this;
-			this.viewModel().setProperty("/api/webhooks", this._d.webhooks.map(function (w) {
+			var that = this, vm = this.viewModel(), f = vm.getProperty("/api/f"), q = (f.wq || "").toLowerCase();
+			var rows = this._d.webhooks.filter(function (w) {
+				return (f.wst === "all" || w.status === f.wst) && (!f.wev || w.events.indexOf(f.wev) > -1) &&
+					(!q || [w.name, w.url, that._person(w.owner)].join(" ").toLowerCase().indexOf(q) > -1);
+			}).map(function (w) {
 				var ok = w.lastCode >= 200 && w.lastCode < 300, paused = w.status === "paused";
 				return Object.assign({}, w, {
 					domainText: that._dom(w.domain), ownerText: that._person(w.owner), eventText: w.events.join(", "),
@@ -129,7 +142,9 @@ sap.ui.define([
 					statusText: that.text(paused ? "api.st.paused" : "api.st.active"), statusState: paused ? "Error" : "Success",
 					statusIcon: paused ? "sap-icon://media-pause" : "sap-icon://status-positive", highlight: paused ? "Error" : "None"
 				});
-			}));
+			});
+			vm.setProperty("/api/webhooks", rows);
+			vm.setProperty("/api/whTitle", this.text("api.wh.titleN", [rows.length]));
 			this.viewModel().setProperty("/api/n/webhooks", this._d.webhooks.length);
 		},
 		_wh: function (oEvent) { var id = oEvent.getSource().getBindingContext("view").getProperty("id"); return this._d.webhooks.filter(function (w) { return w.id === id; })[0]; },
@@ -156,7 +171,8 @@ sap.ui.define([
 		/* 4. MCP exposure */
 		_mcp: function () {
 			var that = this, m = this._d.mcp, vm = this.viewModel();
-			vm.setProperty("/api/mcp/rows", m.tools.map(function (t) { return { id: t.id, write: t.write, desc: that.text("api.tool." + t.id), grants: Object.assign({}, t.grants) }; }));
+			vm.setProperty("/api/mcp/rows", m.tools.map(function (t) { return { id: t.id, write: t.write, show: true, desc: that.text("api.tool." + t.id), grants: Object.assign({}, t.grants) }; }));
+			this.onMcpFilter();
 			vm.setProperty("/api/mcp/sessions", m.sessions);
 			vm.setProperty("/api/mcp/versionText", this.text("api.mcp.version", [m.version, m.changed, this._person(m.changedBy)]));
 			vm.setProperty("/api/mcp/dirty", false);
@@ -166,6 +182,15 @@ sap.ui.define([
 			this.viewModel().setProperty("/api/mcp/dirty", rows.some(function (r, i) { return JSON.stringify(r.grants) !== JSON.stringify(cur[i].grants); }));
 		},
 		onMcpReset: function () { this._mcp(); },
+		onMcpFilter: function () {
+			var vm = this.viewModel(), f = vm.getProperty("/api/f"), q = (f.mq || "").toLowerCase();
+			(vm.getProperty("/api/mcp/rows") || []).forEach(function (r) {
+				r.show = (f.mkind === "all" || (f.mkind === "write") === r.write) && (!q || (r.id + " " + r.desc).toLowerCase().indexOf(q) > -1);
+			});
+			vm.refresh(true);
+			var b = this.byId("mcpTable").getBinding("items");
+			if (b) { b.filter(new Filter("show", "EQ", true)); }
+		},
 		onMcpSave: function () {
 			var m = this._d.mcp, rows = this.viewModel().getProperty("/api/mcp/rows");
 			m.tools.forEach(function (t, i) { t.grants = Object.assign({}, rows[i].grants); });
@@ -186,7 +211,8 @@ sap.ui.define([
 					quotaState: pct >= 80 ? "Warning" : "Success", quotaHint: pct >= 80 ? that.text("api.use.near", [pct]) : "", highlight: pct >= 80 ? "Warning" : "None"
 				};
 			});
-			this.viewModel().setProperty("/api/usage", rows);
+			this._usageRows = rows;
+			this.onUsageFilter();
 			this.byId("apiChart").setOption({
 				animation: false, color: pal,
 				grid: { left: rtl ? 12 : 44, right: rtl ? 44 : 12, top: 30, bottom: 22 },
@@ -198,11 +224,20 @@ sap.ui.define([
 			});
 		},
 
-		/* Picker lists for the dialogs. */
+		onUsageFilter: function () {
+			var vm = this.viewModel(), f = vm.getProperty("/api/f");
+			vm.setProperty("/api/usage", (this._usageRows || []).filter(function (r) {
+				return (f.uk === "all" || (f.uk === "app") === r.isApp) && (!f.near || r.pct >= 80);
+			}));
+		},
+
+		/* Picker lists for the dialogs and filters. */
 		_lists: function () {
 			var that = this, vm = this.viewModel(), doms = (this.data().getProperty("/domains") || []).map(function (d) { return { key: d.id, text: that.domainName(d) }; });
 			vm.setProperty("/api/domainItems", [{ key: "", text: this.text("api.allDomains") }].concat(doms));
 			vm.setProperty("/api/domainPick", doms);
+			vm.setProperty("/api/domainFilter", [{ key: "", text: this.text("api.f.allDomains") }].concat(doms));
+			vm.setProperty("/api/eventFilter", [{ key: "", text: this.text("api.f.allEvents") }].concat(this._d.events.map(function (e) { return { key: e, text: e }; })));
 			vm.setProperty("/api/eventItems", this._d.events.map(function (e) { return { key: e }; }));
 			vm.setProperty("/api/userItems", People.names().map(function (n) { return { key: n, text: that._person(n) }; }));
 			vm.setProperty("/api/appItems", this._d.apps.filter(function (a) { return a.status === "active"; }).map(function (a) { return { key: a.id, text: a.name }; }));

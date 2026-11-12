@@ -21,17 +21,24 @@
 						<Table items="{view>/api/apis}" class="repoioDenseTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" noDataText="{i18n>api.noData}">
 							<headerToolbar>
 								<OverflowToolbar>
-									<Title text="{i18n>api.catalog.title}" level="H2"/>
+									<Title text="{view>/api/catTitle}" level="H2"/>
 									<ToolbarSpacer/>
-									<SegmentedButton selectedKey="{view>/api/kind}" selectionChange=".onKind">
-										<items>
-											<SegmentedButtonItem key="all" text="{i18n>common.all}"/>
-											<SegmentedButtonItem key="rest" text="REST"/>
-											<SegmentedButtonItem key="graphql" text="GraphQL"/>
-											<SegmentedButtonItem key="sql" text="SQL"/>
-											<SegmentedButtonItem key="mcp" text="MCP"/>
-										</items>
-									</SegmentedButton>
+									<SearchField width="13rem" value="{view>/api/f/cq}" liveChange=".onFilter" placeholder="{i18n>common.search}"/>
+									<Select selectedKey="{view>/api/kind}" change=".onFilter" width="8rem" tooltip="{i18n>api.col.type}">
+										<core:Item key="all" text="{i18n>api.f.allTypes}"/>
+										<core:Item key="rest" text="REST"/>
+										<core:Item key="graphql" text="GraphQL"/>
+										<core:Item key="sql" text="SQL"/>
+										<core:Item key="mcp" text="MCP"/>
+									</Select>
+									<Select selectedKey="{view>/api/f/cdom}" change=".onFilter" width="11rem" items="{view>/api/domainFilter}" tooltip="{i18n>api.col.domain}">
+										<core:Item key="{view>key}" text="{view>text}"/>
+									</Select>
+									<Select selectedKey="{view>/api/f/cst}" change=".onFilter" width="9rem" tooltip="{i18n>api.col.status}">
+										<core:Item key="all" text="{i18n>api.st.allStates}"/>
+										<core:Item key="active" text="{i18n>api.st.active}"/>
+										<core:Item key="deprecated" text="{i18n>api.st.deprecated}"/>
+									</Select>
 								</OverflowToolbar>
 							</headerToolbar>
 							<columns>
@@ -69,10 +76,21 @@
 						<Table id="tokTable" items="{view>/api/tokens}" class="repoioDenseTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" noDataText="{i18n>api.noData}">
 							<headerToolbar>
 								<OverflowToolbar>
-									<Title text="{i18n>api.tok.title}" level="H2"/>
+									<Title text="{view>/api/tokTitle}" level="H2"/>
 									<ToolbarSpacer/>
 									<SearchField width="13rem" value="{view>/api/tq}" liveChange=".onTokSearch" placeholder="{i18n>common.search}"/>
-									<Select selectedKey="{view>/api/tstate}" change=".onTokSearch" width="9rem">
+									<Select selectedKey="{view>/api/f/otype}" change=".onTokSearch" width="9rem" tooltip="{i18n>api.f.ownerType}">
+										<core:Item key="all" text="{i18n>api.f.allOwners}"/>
+										<core:Item key="user" text="{i18n>api.f.user}"/>
+										<core:Item key="app" text="{i18n>api.f.app}"/>
+									</Select>
+									<Select selectedKey="{view>/api/f/scope}" change=".onTokSearch" width="9rem" tooltip="{i18n>api.col.scopes}">
+										<core:Item key="all" text="{i18n>api.f.allScopes}"/>
+										<core:Item key="read" text="{i18n>api.scopeShort.read}"/>
+										<core:Item key="sql" text="{i18n>api.scopeShort.sql}"/>
+										<core:Item key="mcp" text="{i18n>api.scopeShort.mcp}"/>
+									</Select>
+									<Select selectedKey="{view>/api/tstate}" change=".onTokSearch" width="9rem" tooltip="{i18n>api.col.status}">
 										<core:Item key="all" text="{i18n>api.st.allStates}"/>
 										<core:Item key="active" text="{i18n>api.st.active}"/>
 										<core:Item key="expiring" text="{i18n>api.st.expiring}"/>
@@ -85,7 +103,7 @@
 							</headerToolbar>
 							<columns>
 								<Column><Text text="{i18n>api.col.name}"/></Column>
-								<Column width="13rem"><Text text="{i18n>api.col.owner}"/></Column>
+								<Column width="12rem"><Text text="{i18n>api.col.owner}"/></Column>
 								<Column minScreenWidth="Tablet" demandPopin="true" width="8rem"><Text text="{i18n>api.col.scopes}"/></Column>
 								<Column minScreenWidth="Desktop" demandPopin="true" width="7rem"><Text text="{i18n>api.col.token}"/></Column>
 								<Column minScreenWidth="Tablet" demandPopin="true" width="7.5rem"><Text text="{i18n>api.col.expires}"/></Column>
@@ -95,14 +113,11 @@
 							</columns>
 							<items>
 								<ColumnListItem highlight="{view>highlight}">
-									<VBox>
-										<Text text="{view>name}"/>
-										<Text text="{view>createdText}" class="repoioApiSub"/>
-									</VBox>
-									<HBox alignItems="Center">
+									<Text text="{view>name}" wrapping="false" tooltip="{view>createdText}"/>
+									<HBox alignItems="Center" renderType="Bare" class="repoioApiOwner">
 										<rc:PersonLink name="{view>owner}" visible="{= ${view>ownerType} === 'user' }"/>
 										<core:Icon src="sap-icon://it-system" visible="{= ${view>ownerType} === 'app' }" class="repoioApiAppIcon" tooltip="{i18n>api.ownerApp}"/>
-										<Text text="{view>ownerText}" class="repoioApiOwnerName"/>
+										<Text text="{view>ownerText}" wrapping="false" tooltip="{view>ownerText}" class="repoioApiOwnerName"/>
 									</HBox>
 									<Text text="{view>scopeText}"/>
 									<Text text="{view>hint}" class="repoioMono" textDirection="LTR" wrapping="false"/>
@@ -136,7 +151,7 @@
 										<Text text="{view>name}" wrapping="false"/>
 									</HBox>
 									<Text text="{view>clientId}" class="repoioMono" textDirection="LTR" wrapping="false"/>
-									<Text text="{view>grantText}"/>
+									<Text text="{view>grantText}" wrapping="false" tooltip="{view>grantText}"/>
 									<HBox alignItems="Center">
 										<rc:PersonLink name="{view>approvedBy}" visible="{= !!${view>approvedBy} }"/>
 										<Text text="{view>approvedText}" wrapping="false" class="repoioApiOwnerName"/>
@@ -154,32 +169,41 @@
 						<Table items="{view>/api/webhooks}" class="repoioDenseTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" noDataText="{i18n>api.noData}">
 							<headerToolbar>
 								<OverflowToolbar>
-									<Title text="{i18n>api.wh.title}" level="H2"/>
+									<Title text="{view>/api/whTitle}" level="H2"/>
 									<ToolbarSpacer/>
+									<SearchField width="13rem" value="{view>/api/f/wq}" liveChange=".onFilter" placeholder="{i18n>common.search}"/>
+									<Select selectedKey="{view>/api/f/wev}" change=".onFilter" width="11rem" items="{view>/api/eventFilter}" tooltip="{i18n>api.col.events}">
+										<core:Item key="{view>key}" text="{view>text}"/>
+									</Select>
+									<Select selectedKey="{view>/api/f/wst}" change=".onFilter" width="9rem" tooltip="{i18n>api.col.status}">
+										<core:Item key="all" text="{i18n>api.st.allStates}"/>
+										<core:Item key="active" text="{i18n>api.st.active}"/>
+										<core:Item key="paused" text="{i18n>api.st.paused}"/>
+									</Select>
+									<ToolbarSeparator/>
 									<Button text="{i18n>api.wh.new}" icon="sap-icon://add" type="Emphasized" press=".onNewWebhook"/>
 								</OverflowToolbar>
 							</headerToolbar>
 							<columns>
-								<Column><Text text="{i18n>api.col.name}"/></Column>
+								<Column width="12rem"><Text text="{i18n>api.col.name}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="6.5rem"><Text text="{i18n>api.col.domain}"/></Column>
 								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>api.col.destination}"/></Column>
-								<Column minScreenWidth="Tablet" demandPopin="true" width="10rem"><Text text="{i18n>api.col.events}"/></Column>
-								<Column minScreenWidth="Tablet" demandPopin="true" width="10rem"><Text text="{i18n>api.col.owner}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="9rem"><Text text="{i18n>api.col.events}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="8.5rem"><Text text="{i18n>api.col.owner}"/></Column>
 								<Column width="8.5rem"><Text text="{i18n>api.col.lastDelivery}"/></Column>
-								<Column minScreenWidth="Desktop" demandPopin="true" hAlign="End" width="7.5rem"><Text text="{i18n>api.col.success}"/></Column>
-								<Column width="8rem"><Text text="{i18n>api.col.status}"/></Column>
-								<Column hAlign="End" width="8rem"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true" hAlign="End" width="6rem"><Text text="{i18n>api.col.success}"/></Column>
+								<Column width="7rem"><Text text="{i18n>api.col.status}"/></Column>
+								<Column hAlign="End" width="7rem"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
 							</columns>
 							<items>
 								<ColumnListItem highlight="{view>highlight}">
-									<VBox>
-										<Text text="{view>name}"/>
-										<Text text="{view>domainText}" class="repoioApiSub"/>
-									</VBox>
+									<Text text="{view>name}" wrapping="false" tooltip="{view>name}"/>
+									<Text text="{view>domainText}" wrapping="false"/>
 									<Text text="{view>url}" class="repoioMono" textDirection="LTR" wrapping="false" tooltip="{view>url}"/>
-									<Text text="{view>eventText}" class="repoioMono" textDirection="LTR"/>
+									<Text text="{view>eventText}" class="repoioMono" textDirection="LTR" wrapping="false" tooltip="{view>eventText}"/>
 									<HBox alignItems="Center">
 										<rc:PersonLink name="{view>owner}"/>
-										<Text text="{view>ownerText}" class="repoioApiOwnerName"/>
+										<Text text="{view>ownerText}" wrapping="false" class="repoioApiOwnerName"/>
 									</HBox>
 									<ObjectStatus text="{view>lastText}" state="{view>lastState}" textDirection="LTR"/>
 									<Text text="{view>rateText}" textDirection="LTR"/>
@@ -198,18 +222,26 @@
 					<!-- 4. MCP exposure: the versioned role -> tool grant matrix and live agent sessions. -->
 					<IconTabFilter key="mcp" text="{i18n>api.tab.mcp}">
 						<MessageStrip text="{i18n>api.mcp.rule}" type="Information" showIcon="true" class="repoioApiStrip"/>
-						<Table id="mcpTable" items="{view>/api/mcp/rows}" class="repoioDenseTable repoioApiMatrix" noDataText="{i18n>api.noData}">
+						<Table id="mcpTable" items="{path: 'view>/api/mcp/rows', filters: [{path: 'show', operator: 'EQ', value1: true}]}" class="repoioDenseTable repoioApiMatrix" noDataText="{i18n>api.noData}">
 							<headerToolbar>
 								<OverflowToolbar>
 									<Title text="{i18n>api.mcp.title}" level="H2"/>
 									<Text text="{view>/api/mcp/versionText}" class="repoioApiSub"/>
 									<ToolbarSpacer/>
+									<SearchField width="12rem" value="{view>/api/f/mq}" liveChange=".onMcpFilter" placeholder="{i18n>common.search}"/>
+									<Select selectedKey="{view>/api/f/mkind}" change=".onMcpFilter" width="10rem">
+										<core:Item key="all" text="{i18n>api.f.allTools}"/>
+										<core:Item key="read" text="{i18n>api.f.readTools}"/>
+										<core:Item key="write" text="{i18n>api.f.writeTools}"/>
+									</Select>
+									<ToolbarSeparator/>
 									<Button text="{i18n>common.cancel}" type="Transparent" enabled="{view>/api/mcp/dirty}" press=".onMcpReset"/>
 									<Button text="{i18n>api.mcp.save}" type="Emphasized" enabled="{view>/api/mcp/dirty}" press=".onMcpSave"/>
 								</OverflowToolbar>
 							</headerToolbar>
 							<columns>
-								<Column><Text text="{i18n>api.col.tool}"/></Column>
+								<Column width="14rem"><Text text="{i18n>api.col.tool}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>api.col.summary}"/></Column>
 								<Column hAlign="Center" width="7rem"><Text text="{i18n>api.role.requester}"/></Column>
 								<Column hAlign="Center" width="7rem"><Text text="{i18n>api.role.steward}"/></Column>
 								<Column hAlign="Center" width="7rem"><Text text="{i18n>api.role.engineer}"/></Column>
@@ -218,13 +250,11 @@
 							</columns>
 							<items>
 								<ColumnListItem>
-									<VBox>
-										<HBox alignItems="Center">
-											<Text text="{view>id}" class="repoioMono" textDirection="LTR" wrapping="false"/>
-											<ObjectStatus text="{i18n>api.mcp.write}" state="Warning" visible="{view>write}" class="repoioApiWriteTag"/>
-										</HBox>
-										<Text text="{view>desc}" class="repoioApiSub"/>
-									</VBox>
+									<HBox alignItems="Center">
+										<Text text="{view>id}" class="repoioMono" textDirection="LTR" wrapping="false"/>
+										<core:Icon src="sap-icon://edit" color="Critical" visible="{view>write}" tooltip="{i18n>api.mcp.write}" class="repoioApiWriteTag"/>
+									</HBox>
+									<Text text="{view>desc}" wrapping="false" tooltip="{view>desc}"/>
 									<CheckBox selected="{view>grants/requester}" select=".onMcpChange"/>
 									<CheckBox selected="{view>grants/steward}" select=".onMcpChange"/>
 									<CheckBox selected="{view>grants/engineer}" select=".onMcpChange"/>
@@ -268,11 +298,20 @@
 								<Title text="{i18n>api.use.chart}" level="H3"/>
 								<Text text="{i18n>api.use.hint}" class="repoioJrHint"/>
 							</HBox>
-							<rc:EChart id="apiChart" height="12rem" ariaLabel="{i18n>api.use.chart}"/>
+							<rc:EChart id="apiChart" height="9rem" ariaLabel="{i18n>api.use.chart}"/>
 						</VBox>
 						<Table items="{view>/api/usage}" class="repoioDenseTable repoioApiSecond" noDataText="{i18n>api.noData}">
 							<headerToolbar>
-								<OverflowToolbar><Title text="{i18n>api.use.title}" level="H2"/></OverflowToolbar>
+								<OverflowToolbar>
+									<Title text="{i18n>api.use.title}" level="H2"/>
+									<ToolbarSpacer/>
+									<Select selectedKey="{view>/api/f/uk}" change=".onUsageFilter" width="9rem">
+										<core:Item key="all" text="{i18n>api.f.allClients}"/>
+										<core:Item key="user" text="{i18n>api.f.user}"/>
+										<core:Item key="app" text="{i18n>api.f.app}"/>
+									</Select>
+									<CheckBox text="{i18n>api.f.nearOnly}" selected="{view>/api/f/near}" select=".onUsageFilter"/>
+								</OverflowToolbar>
 							</headerToolbar>
 							<columns>
 								<Column><Text text="{i18n>api.col.client}"/></Column>
@@ -291,10 +330,7 @@
 									<Text text="{view>totalText}" textDirection="LTR"/>
 									<ObjectStatus text="{view>errText}" state="{view>errState}" textDirection="LTR"/>
 									<Text text="{view>p95Text}" textDirection="LTR"/>
-									<VBox>
-										<ProgressIndicator percentValue="{view>pct}" displayValue="{view>quotaText}" state="{view>quotaState}" height="1.125rem" class="repoioApiQuota"/>
-										<Text text="{view>quotaHint}" class="repoioApiSub" visible="{= !!${view>quotaHint} }"/>
-									</VBox>
+									<ProgressIndicator percentValue="{view>pct}" displayValue="{view>quotaText}" state="{view>quotaState}" height="1rem" tooltip="{view>quotaHint}" class="repoioApiQuota"/>
 								</ColumnListItem>
 							</items>
 						</Table>
