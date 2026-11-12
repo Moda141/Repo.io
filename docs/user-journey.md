@@ -341,7 +341,8 @@ workflow → deletion blocked, deprecate instead.
    side, the run's tasks, objects, messages and metrics on the other.
 6. Airflow-orchestrated runs (pull ingest, DQ runs, housekeeping) link
    to the DAG run and to each task in Airflow. The link base comes from
-   the Airflow connection; Airflow applies its own access rules.
+   the Airflow connection; Airflow applies its own access rules. DAGs sit
+   in the same domain → repository folders as the console (ADR-0005).
 
 *Edge cases:* DLQ growth alert leads here; replaying a batch is an
 explicit governed action with an idempotency guarantee, not a button
@@ -538,7 +539,8 @@ system (J9); sync = what to bring and when; job run = each execution (J10).*
 6. Saving a new flow asks for its business and technical name; the
    technical name is fixed after that.
 7. **Validate** lists the errors and warnings. **Deploy** is blocked while
-   errors remain; it creates the ingest job (an Airflow pull DAG, or an
+   errors remain; it creates the ingest job (an Airflow pull DAG in
+   `dags/<domain>/<repository>/sync/`, ADR-0005, or an
    upload endpoint). **Run** starts a run, and the monitor button opens
    that job's runs in Job runs.
 8. Editing a deployed flow marks it "Changes not deployed". The job keeps

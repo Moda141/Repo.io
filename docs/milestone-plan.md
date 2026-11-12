@@ -98,6 +98,13 @@ ingest for SAP C4C.
 - [ ] Outbox consumer pattern implemented for SAP C4C callbacks.
 - [ ] Airflow DAG scaffolding for pull sources (ERP, SQL Server) —
       config-driven from `ingestion/pipelines/` YAML.
+- [ ] Airflow 3.4 patch pinned with its constraints file; providers and
+      Python 3.11 verified against it (ADR-0005).
+- [ ] DAG folder layout `dags/<domain>/<repository>/{sync,dq}/`,
+      `analytics/`, `platform/` in place; DAG IDs and tags follow
+      ADR-0005; the Airflow Folders panel shows the domain tree.
+- [ ] DAG bundle mechanism for Deploy-generated flow DAGs decided and
+      recorded (Git bundle or shared volume).
 - [ ] **Benchmark harness exists for Iceberg Index point lookups** by
       `master_id` at realistic row counts, with measured latency recorded
       in the milestone report. If the sub-100 ms target is missed, a

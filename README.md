@@ -47,7 +47,7 @@ Migrate screen by screen, but OpenUI5 is the final frontend architecture.
 | UI integrations       | BPMN.js, Monaco Editor, ECharts, Cytoscape.js        | `repoio-ui/` integrations          |
 | Python execution      | Isolated worker containers for workflow Script steps (ADR-0004) | `repoio-python-runtime/` *(new)* |
 | AI agent interface    | **MCP** server (JDK)                                 | `repoio-mcp/`                      |
-| Pipelines             | Airflow DAGs (Managed APIs)                          | `repoio-airflow-apis/`             |
+| Pipelines             | **Airflow 3.4** DAGs in domain → repository folders (ADR-0005) | `repoio-airflow-apis/`   |
 | Infra                 | **Kubernetes operator** (CRD: `Repository`)          | `repoio-k8s-operator/`             |
 | Distribution          | Docker images + Helm charts                          | `repoio-dist/`, `docker/`          |
 | Ontology store        | Jena TDB2 RDF dataset                                 | `repoio-ontology/` *(new)*         |
@@ -500,7 +500,8 @@ never defines a measure.**
   the recipient cannot see in the console; recipients without a grant
   are skipped and reported in the run (list shows "Sent · N skipped").
 - **Scheduling uses Airflow**, which the platform already runs
-  (`repoio-airflow-apis`); no second scheduler. Pause / resume toggle
+  (`repoio-airflow-apis`); no second scheduler. The dispatch DAG lives in
+  `dags/analytics/broadcasts/` (ADR-0005). Pause / resume toggle
   the schedule; a run that is in flight finishes.
 - **Mail goes through the corporate SMTP relay, configured by an Admin
   in Administration → System configuration.** The settings are host,
@@ -616,7 +617,7 @@ repoio-k8s-operator/    CRDs: Repository, Pipeline, IcebergCatalog
 repoio-integration-tests/   Cross-module e2e
 repoio-shaded-deps/     Shaded Elasticsearch / OpenSearch
 repoio-dist/            Assembly · Docker images · Helm
-repoio-airflow-apis/    Pull-ingest DAGs, DQ runs, housekeeping, broadcast dispatch (proposed, §2.8)
+repoio-airflow-apis/    Airflow 3.4 DAGs in domain/repository folders (ADR-0005): pull ingest, DQ runs, housekeeping, broadcast dispatch
 
 repoio-stream/          NEW · Spark Structured Streaming jobs (Scala/PySpark)
 repoio-catalog/         NEW · Iceberg REST catalog, table DDL, index config
@@ -768,7 +769,7 @@ separate services. A local development Compose profile may include:
 | `kafka` | Event bus (Redpanda may be used in development) |
 | `postgres` | Control-plane metadata and operational state |
 | `trino` / `spark` | Query and processing engines |
-| `airflow` | Scheduled batch / pull ingestion DAGs |
+| `airflow` | Airflow 3.4 (pinned patch, ADR-0005) · scheduled batch / pull ingestion DAGs, organised in domain → repository folders |
 
 The UI container should serve static frontend assets only. It should not
 contain Python execution dependencies or direct database credentials.
@@ -888,6 +889,12 @@ Recommended order:
 - **Write-back:** source write-back (SAP C4C, SAP ERP) is workflow-driven —
   a ChangeRequest writes back only when its approved workflow includes a
   Write-back Task node. `changes.<entity>` stays informational.
+- **Scheduling:** Apache Airflow 3.4 line (patch pinned at M2). DAG files
+  live in folders that mirror domain → repository → kind
+  (`dags/<domain>/<repository>/sync|dq/…`, plus `analytics/` and
+  `platform/`), so the Airflow Folders panel shows the console hierarchy.
+  Deploying a data sync flow generates its thin DAG file in that folder
+  (ADR-0005).
 - **Connections:** admins manage source and data-platform connections
   (Databricks, Snowflake, Data Fabric, …) in a control-plane registry with
   URL + token; tokens live in the secret store, never in Postgres.

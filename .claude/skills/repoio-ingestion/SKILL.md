@@ -59,6 +59,11 @@ per entity. Downstream stages subscribe; they never call connectors.
 - Airflow DAGs: one DAG per source-entity pair, config-driven from
   `ingestion/pipelines/` YAML — no per-source hardcoded schedules buried
   in Python.
+- Airflow 3.4 line (patch pinned). Every DAG file lives in
+  `dags/<domain>/<repository>/<sync|dq>/`, or in `analytics/` /
+  `platform/` for cross-cutting jobs. DAG ID = path joined with `__`;
+  tags `domain:`, `repo:`, `kind:`. Deploy-generated flow DAGs hold only
+  the flow ID (ADR-0005).
 - Dev runs Redpanda; anything environment-specific stays in
   `docker/kafka/` compose files.
 

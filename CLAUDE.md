@@ -96,6 +96,7 @@ introduce a parallel technology without an approved ADR.
 | Ontology | **Apache Jena** (Fuseki, TDB2, SHACL, bounded reasoning) |
 | Broadcast export rendering | **Node** worker: ECharts server-side rendering, headless Chromium (PDF), `pptxgenjs`, `exceljs` (ADR-0003); mail via corporate SMTP relay |
 | AI agent interface | **MCP** server (JDK) |
+| Scheduler | **Apache Airflow 3.4** (patch pinned at M2); DAGs in `dags/<domain>/<repository>/<kind>/` folders (ADR-0005) |
 | Metadata store | Postgres 15 (control plane) + Iceberg (data plane) |
 
 Explicit traps to avoid:
@@ -278,7 +279,8 @@ an honest "not verified" is acceptable; an unverified "done" is not.
   ADR-0002: the Repo.io flow designer replaces bpmn-js, Flowable stays;
   ADR-0003: broadcast exports render in a Node worker; attachments up
   to 10 MB, otherwise a link-only email; ADR-0004: no Python Workspace
-  screen, the Python runtime serves workflow Script steps only).
+  screen, the Python runtime serves workflow Script steps only;
+  ADR-0005: Airflow 3.4, DAGs organised in domain → repository folders).
 - **Docs:** every module gets a README following
   `docs/module-readme-template.md` — update it when adding entry points,
   config or commands.
