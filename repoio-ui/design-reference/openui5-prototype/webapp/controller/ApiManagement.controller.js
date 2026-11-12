@@ -272,10 +272,16 @@ sap.ui.define([
 		},
 		onLogFilter: function () { this._calls(true); },
 		onClientLog: function (oEvent) {
-			var id = oEvent.getSource().getBindingContext("view").getProperty("id"), that = this;
-			this.viewModel().setProperty("/api/f/lc", id);
+			this._openLog(oEvent.getSource().getBindingContext("view").getProperty("id"));
+		},
+		onAllLog: function () { this._openLog(""); },
+		_openLog: function (sClient) {
+			var vm = this.viewModel(), app = sClient && this._app(sClient);
+			vm.setProperty("/api/f/lc", sClient);
+			vm.setProperty("/api/f/lq", ""); vm.setProperty("/api/f/lk", "all"); vm.setProperty("/api/f/lr", "all");
+			vm.setProperty("/api/callDlgTitle", sClient ? this.text("api.log.dlgFor", [app ? app.name : this._person(sClient)]) : this.text("api.log.title"));
 			this._calls(true);
-			setTimeout(function () { var t = that.byId("apiLogTable"); if (t && t.getDomRef()) { t.getDomRef().scrollIntoView({ behavior: "smooth", block: "start" }); } }, 50);
+			this._open("apiCallDlg");
 		},
 		onLogExport: function () { MessageToast.show(this.text("api.t.logExport", [this.viewModel().getProperty("/api/callCount")])); },
 

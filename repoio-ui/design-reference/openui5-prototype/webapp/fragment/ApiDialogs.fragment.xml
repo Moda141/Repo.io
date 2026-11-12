@@ -1,4 +1,4 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:rc="repoio.proto.control">
 	<!-- Generate token (Admin only). The owner is required: a token is never issued to nobody. -->
 	<Dialog id="apiTokDlg" title="{i18n>api.tok.new}" contentWidth="34rem" class="sapUiContentPadding">
 		<VBox>
@@ -147,6 +147,73 @@
 				</ColumnListItem>
 			</items>
 		</Table>
+		<endButton><Button text="{i18n>common.close}" press=".onDlgClose"/></endButton>
+	</Dialog>
+
+	<!-- Call log of one client or all clients (Usage and limits). -->
+	<Dialog id="apiCallDlg" title="{view>/api/callDlgTitle}" contentWidth="72rem" resizable="true" draggable="true" class="repoioApiCallDlg">
+		<VBox renderType="Bare">
+		<!-- Call log: metadata of each call only (who, what, result, timing); never request or response payloads. -->
+		<Table id="apiLogTable" sticky="ColumnHeaders,HeaderToolbar" items="{view>/api/calls}" class="repoioDenseTable" popinLayout="GridSmall" noDataText="{i18n>api.log.none}">
+			<headerToolbar>
+				<OverflowToolbar>
+					<Title text="{view>/api/callTitle}" level="H2"/>
+					<ToolbarSpacer/>
+					<SearchField width="12rem" value="{view>/api/f/lq}" liveChange=".onLogFilter" placeholder="{i18n>api.log.searchPh}"/>
+					<Select selectedKey="{view>/api/f/lc}" change=".onLogFilter" width="12rem" items="{view>/api/clientFilter}" tooltip="{i18n>api.col.client}">
+						<core:Item key="{view>key}" text="{view>text}"/>
+					</Select>
+					<Select selectedKey="{view>/api/f/lk}" change=".onLogFilter" width="8rem" tooltip="{i18n>api.col.type}">
+						<core:Item key="all" text="{i18n>api.f.allTypes}"/>
+						<core:Item key="rest" text="REST"/>
+						<core:Item key="graphql" text="GraphQL"/>
+						<core:Item key="sql" text="SQL"/>
+						<core:Item key="mcp" text="MCP"/>
+					</Select>
+					<Select selectedKey="{view>/api/f/lr}" change=".onLogFilter" width="10rem" tooltip="{i18n>api.col.code}">
+						<core:Item key="all" text="{i18n>api.log.allResults}"/>
+						<core:Item key="ok" text="{i18n>api.log.ok}"/>
+						<core:Item key="denied" text="{i18n>api.log.denied}"/>
+						<core:Item key="limited" text="{i18n>api.log.limited}"/>
+						<core:Item key="error" text="{i18n>api.log.error}"/>
+					</Select>
+					<Button icon="sap-icon://download" type="Transparent" tooltip="{i18n>api.log.export}" press=".onLogExport"/>
+				</OverflowToolbar>
+			</headerToolbar>
+			<columns>
+				<Column width="9.5rem"><Text text="{i18n>api.col.time}"/></Column>
+				<Column width="4rem" hAlign="Center"><Text text="{i18n>api.col.client}"/></Column>
+				<Column width="6rem"><Text text="{i18n>api.col.type}"/></Column>
+				<Column><Text text="{i18n>api.log.op}"/></Column>
+				<Column width="10rem"><Text text="{i18n>api.col.code}"/></Column>
+				<Column minScreenWidth="Tablet" demandPopin="true" hAlign="End" width="5.5rem"><Text text="{i18n>api.col.ms}"/></Column>
+				<Column minScreenWidth="Tablet" demandPopin="true" hAlign="End" width="5rem"><Text text="{i18n>api.log.rows}"/></Column>
+				<Column minScreenWidth="Desktop" demandPopin="true" width="7rem"><Text text="{i18n>api.col.token}"/></Column>
+				<Column minScreenWidth="1400px" width="8rem"><Text text="{i18n>api.log.req}"/></Column>
+			</columns>
+			<items>
+				<ColumnListItem highlight="{view>highlight}">
+					<Text text="{view>at}" textDirection="LTR" wrapping="false"/>
+					<HBox justifyContent="Center">
+						<rc:PersonLink name="{view>client}" visible="{= !${view>isApp} }"/>
+						<Avatar src="sap-icon://it-system" displaySize="Custom" customDisplaySize="1.5rem" customFontSize="0.75rem" displayShape="Square"
+							backgroundColor="Accent6" visible="{view>isApp}" tooltip="{view>clientText}" press=".onOwnerApp"/>
+					</HBox>
+					<Text text="{view>kindText}"/>
+					<HBox alignItems="Center" renderType="Bare" class="repoioApiOwner">
+						<ObjectStatus text="{view>m}" state="{view>mState}" inverted="true" class="repoioApiMethod"/>
+						<Text text="{view>p}" class="repoioMono" textDirection="LTR" wrapping="false" tooltip="{view>p}"/>
+					</HBox>
+					<ObjectStatus text="{view>codeText}" state="{view>codeState}" icon="{view>codeIcon}" tooltip="{view>note}"/>
+					<Text text="{view>msText}" textDirection="LTR"/>
+					<Text text="{view>rowsText}" textDirection="LTR"/>
+					<Text text="{view>token}" class="repoioMono" textDirection="LTR" wrapping="false"/>
+					<Text text="{view>req}" class="repoioMono" textDirection="LTR" wrapping="false"/>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<rc:Pager total="{view>/api/callCount}" page="{view>/api/lpage}" pageSize="{view>/api/lsize}" change=".onLogPage"/>
+		</VBox>
 		<endButton><Button text="{i18n>common.close}" press=".onDlgClose"/></endButton>
 	</Dialog>
 </core:FragmentDefinition>

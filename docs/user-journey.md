@@ -611,11 +611,12 @@ reach Repo.io.*
    the next call.
 6. **Usage & limits:** calls, errors and latency per client over time;
    rate limits per client; a warning when a client nears its quota.
-   The **call log** under the clients lists each call's metadata — time,
+   The **call log** (a popup from a client row, or for all clients)
+   lists each call's metadata — time,
    client, interface, operation, response (succeeded, denied, rate
    limited, server error, with the reason), duration, rows, token hint
    and request ID — filterable and exportable. It never shows request or
-   response payloads; selecting a client filters the log to it.
+   response payloads.
 7. The **Connection details** tab of a repository shows ready-to-copy
    JDBC / ODBC / Python details for its SQL endpoint, with
    `${REPOIO_SQL_HOST}`-style values from deployment config. For the
