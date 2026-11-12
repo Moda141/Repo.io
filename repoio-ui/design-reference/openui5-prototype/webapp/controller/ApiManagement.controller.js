@@ -20,7 +20,7 @@ sap.ui.define([
 	return BaseController.extend("repoio.proto.controller.ApiManagement", {
 		onInit: function () {
 			this.viewModel().setProperty("/api", { tab: this.store("repoio-api-tab") || "catalog", kind: "all", tq: "", tstate: "all", n: {}, mcp: {},
-				f: { cq: "", cdom: "", cst: "all", otype: "all", scope: "all", wq: "", wev: "", wst: "all", mq: "", mkind: "all", uk: "all", near: false } });
+				f: { cq: "", cdom: "", cst: "all", otype: "all", scope: "all", wq: "", wev: "", wst: "all", mq: "", mkind: "all", uk: "all", near: false, lq: "", lc: "", lk: "all", lr: "all" }, lpage: 1, lsize: 10 });
 			this.router().getRoute("apiManagement").attachPatternMatched(this._onMatched, this);
 		},
 
@@ -217,6 +217,8 @@ sap.ui.define([
 			});
 			this._usageRows = rows;
 			this.onUsageFilter();
+			this.viewModel().setProperty("/api/clientFilter", [{ key: "", text: this.text("api.f.allClients") }].concat(rows.map(function (r) { return { key: r.id, text: r.clientText }; })));
+			this._calls(true);
 			this.byId("apiChart").setOption({
 				animation: false, color: pal,
 				grid: { left: rtl ? 12 : 44, right: rtl ? 44 : 12, top: 30, bottom: 22 },
@@ -234,6 +236,48 @@ sap.ui.define([
 				return (f.uk === "all" || (f.uk === "app") === r.isApp) && (!f.near || r.pct >= 80);
 			}));
 		},
+
+		/* Call log: metadata of each call (who, what, result, timing), never payloads. */
+		_result: function (code) { return code < 300 ? "ok" : code === 403 || code === 401 ? "denied" : code === 429 ? "limited" : "error"; },
+		_calls: function (bReset) {
+			var that = this, vm = this.viewModel(), f = vm.getProperty("/api/f"), q = (f.lq || "").toLowerCase(),
+				RES = { ok: ["Success", "sap-icon://status-positive"], denied: ["Error", "sap-icon://locked"], limited: ["Warning", "sap-icon://pending"], error: ["Error", "sap-icon://status-negative"] };
+			var rows = (this._d.usage.log || []).filter(function (c) {
+				return (!f.lc || c.client === f.lc) && (f.lk === "all" || c.kind === f.lk) && (f.lr === "all" || that._result(c.code) === f.lr) &&
+					(!q || [c.p, c.req, c.token, c.code].join(" ").toLowerCase().indexOf(q) > -1);
+			}).map(function (c) {
+				var r = that._result(c.code), app = that._app(c.client);
+				return Object.assign({}, c, {
+					isApp: !!app, clientText: app ? app.name : that._person(c.client), kindText: KIND[c.kind][0], mState: METHOD[c.m] || "None",
+					codeText: c.code + " · " + that.text("api.log." + r), codeState: RES[r][0], codeIcon: RES[r][1],
+					note: r === "ok" ? "" : that.text("api.log.note." + c.code), highlight: r === "ok" ? "None" : RES[r][0],
+					msText: c.ms ? c.ms + " ms" : that.text("common.none"), rowsText: c.code < 300 ? c.rows.toLocaleString("en-US") : that.text("common.none")
+				});
+			});
+			this._callRows = rows;
+			if (bReset) { vm.setProperty("/api/lpage", 1); }
+			vm.setProperty("/api/callCount", rows.length);
+			vm.setProperty("/api/callTitle", this.text("api.log.titleN", [rows.length]));
+			this._callSlice();
+		},
+		_callSlice: function () {
+			var vm = this.viewModel(), p = vm.getProperty("/api/lpage"), n = vm.getProperty("/api/lsize");
+			vm.setProperty("/api/calls", (this._callRows || []).slice((p - 1) * n, p * n));
+		},
+		onLogPage: function (oEvent) {
+			var vm = this.viewModel();
+			vm.setProperty("/api/lpage", oEvent.getParameter("page"));
+			vm.setProperty("/api/lsize", oEvent.getParameter("pageSize"));
+			this._callSlice();
+		},
+		onLogFilter: function () { this._calls(true); },
+		onClientLog: function (oEvent) {
+			var id = oEvent.getSource().getBindingContext("view").getProperty("id"), that = this;
+			this.viewModel().setProperty("/api/f/lc", id);
+			this._calls(true);
+			setTimeout(function () { var t = that.byId("apiLogTable"); if (t && t.getDomRef()) { t.getDomRef().scrollIntoView({ behavior: "smooth", block: "start" }); } }, 50);
+		},
+		onLogExport: function () { MessageToast.show(this.text("api.t.logExport", [this.viewModel().getProperty("/api/callCount")])); },
 
 		/* Picker lists for the dialogs and filters. */
 		_lists: function () {

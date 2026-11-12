@@ -1,91 +1,1413 @@
 {
 	"_comment": "Sample data for API management (J16). In the product every list comes from the admin API; token values and signing secrets live only in the secret store. Hosts are deployment placeholders.",
 	"apis": [
-		{ "id": "golden-customer", "en": "Customer golden records", "ar": "السجلات الذهبية للعملاء", "kind": "rest", "domain": "customers", "version": "v1", "status": "active", "base": "${REPOIO_API_BASE_URL}/v1/customers", "ops": [
-			{ "m": "GET", "p": "/customers", "en": "List golden customers (paged, filtered)", "ar": "عرض العملاء الذهبيين (صفحات وفلاتر)" },
-			{ "m": "GET", "p": "/customers/{masterId}", "en": "Get one golden customer", "ar": "جلب عميل ذهبي واحد" },
-			{ "m": "GET", "p": "/customers/{masterId}/sources", "en": "Source records behind a golden record", "ar": "سجلات المصادر وراء السجل الذهبي" },
-			{ "m": "GET", "p": "/customers/{masterId}/history", "en": "Change history", "ar": "سجل التغييرات" },
-			{ "m": "POST", "p": "/change-requests", "en": "Submit a change request (governed write path)", "ar": "تقديم طلب تغيير (مسار الكتابة المحكوم)" }
-		] },
-		{ "id": "golden-vendor", "en": "Vendor golden records", "ar": "السجلات الذهبية للموردين", "kind": "rest", "domain": "vendors", "version": "v1", "status": "active", "base": "${REPOIO_API_BASE_URL}/v1/vendors", "ops": [
-			{ "m": "GET", "p": "/vendors", "en": "List golden vendors", "ar": "عرض الموردين الذهبيين" },
-			{ "m": "GET", "p": "/vendors/{masterId}", "en": "Get one golden vendor", "ar": "جلب مورد ذهبي واحد" },
-			{ "m": "POST", "p": "/change-requests", "en": "Submit a change request", "ar": "تقديم طلب تغيير" }
-		] },
-		{ "id": "golden-product", "en": "Book catalog golden records", "ar": "السجلات الذهبية لكتالوج الكتب", "kind": "rest", "domain": "products", "version": "v1", "status": "active", "base": "${REPOIO_API_BASE_URL}/v1/products", "ops": [
-			{ "m": "GET", "p": "/products", "en": "List golden products", "ar": "عرض المنتجات الذهبية" },
-			{ "m": "GET", "p": "/products/{masterId}", "en": "Get one golden product", "ar": "جلب منتج ذهبي واحد" }
-		] },
-		{ "id": "golden-customer-v0", "en": "Customer lookup (legacy)", "ar": "بحث العملاء (قديم)", "kind": "rest", "domain": "customers", "version": "v0", "status": "deprecated", "sunset": "2027-03-31", "base": "${REPOIO_API_BASE_URL}/v0/customer-lookup", "ops": [
-			{ "m": "GET", "p": "/customer-lookup?code={code}", "en": "Look up by source code — replaced by /v1/customers", "ar": "بحث بكود المصدر — استُبدل بـ /v1/customers" }
-		] },
-		{ "id": "graphql", "en": "Golden records graph", "ar": "رسم السجلات الذهبية", "kind": "graphql", "domain": "", "version": "v1", "status": "active", "base": "${REPOIO_API_BASE_URL}/graphql", "ops": [
-			{ "m": "QUERY", "p": "customer(masterId) { … relationships { … } }", "en": "Golden record with its governed relationships", "ar": "السجل الذهبي مع علاقاته المحكومة" },
-			{ "m": "QUERY", "p": "search(entity, text) { … }", "en": "Search across permitted domains", "ar": "بحث في الدومينات المسموحة" }
-		] },
-		{ "id": "sql", "en": "SQL endpoint (Trino)", "ar": "نقطة SQL (Trino)", "kind": "sql", "domain": "", "version": "—", "status": "active", "base": "jdbc:trino://${REPOIO_SQL_HOST}:${REPOIO_SQL_PORT}/iceberg", "ops": [
-			{ "m": "SQL", "p": "SELECT … FROM golden.customer", "en": "Golden tables, row and column grants enforced by Trino", "ar": "الجداول الذهبية، وTrino بيطبّق صلاحيات الصفوف والأعمدة" }
-		] },
-		{ "id": "mcp", "en": "MCP server for AI agents", "ar": "خادم MCP للـ AI agents", "kind": "mcp", "domain": "", "version": "2026-06", "status": "active", "base": "${REPOIO_MCP_URL}", "ops": [
-			{ "m": "TOOL", "p": "search_golden_records", "en": "Search golden records within the user's grants", "ar": "بحث في السجلات الذهبية في حدود صلاحيات المستخدم" },
-			{ "m": "TOOL", "p": "create_change_request", "en": "Draft a change request (never a direct write)", "ar": "إنشاء مسودة طلب تغيير (مش كتابة مباشرة)" }
-		] }
+		{
+			"id": "golden-customer",
+			"en": "Customer golden records",
+			"ar": "السجلات الذهبية للعملاء",
+			"kind": "rest",
+			"domain": "customers",
+			"version": "v1",
+			"status": "active",
+			"base": "${REPOIO_API_BASE_URL}/v1/customers",
+			"ops": [
+				{
+					"m": "GET",
+					"p": "/customers",
+					"en": "List golden customers (paged, filtered)",
+					"ar": "عرض العملاء الذهبيين (صفحات وفلاتر)"
+				},
+				{
+					"m": "GET",
+					"p": "/customers/{masterId}",
+					"en": "Get one golden customer",
+					"ar": "جلب عميل ذهبي واحد"
+				},
+				{
+					"m": "GET",
+					"p": "/customers/{masterId}/sources",
+					"en": "Source records behind a golden record",
+					"ar": "سجلات المصادر وراء السجل الذهبي"
+				},
+				{
+					"m": "GET",
+					"p": "/customers/{masterId}/history",
+					"en": "Change history",
+					"ar": "سجل التغييرات"
+				},
+				{
+					"m": "POST",
+					"p": "/change-requests",
+					"en": "Submit a change request (governed write path)",
+					"ar": "تقديم طلب تغيير (مسار الكتابة المحكوم)"
+				}
+			]
+		},
+		{
+			"id": "golden-vendor",
+			"en": "Vendor golden records",
+			"ar": "السجلات الذهبية للموردين",
+			"kind": "rest",
+			"domain": "vendors",
+			"version": "v1",
+			"status": "active",
+			"base": "${REPOIO_API_BASE_URL}/v1/vendors",
+			"ops": [
+				{
+					"m": "GET",
+					"p": "/vendors",
+					"en": "List golden vendors",
+					"ar": "عرض الموردين الذهبيين"
+				},
+				{
+					"m": "GET",
+					"p": "/vendors/{masterId}",
+					"en": "Get one golden vendor",
+					"ar": "جلب مورد ذهبي واحد"
+				},
+				{
+					"m": "POST",
+					"p": "/change-requests",
+					"en": "Submit a change request",
+					"ar": "تقديم طلب تغيير"
+				}
+			]
+		},
+		{
+			"id": "golden-product",
+			"en": "Book catalog golden records",
+			"ar": "السجلات الذهبية لكتالوج الكتب",
+			"kind": "rest",
+			"domain": "products",
+			"version": "v1",
+			"status": "active",
+			"base": "${REPOIO_API_BASE_URL}/v1/products",
+			"ops": [
+				{
+					"m": "GET",
+					"p": "/products",
+					"en": "List golden products",
+					"ar": "عرض المنتجات الذهبية"
+				},
+				{
+					"m": "GET",
+					"p": "/products/{masterId}",
+					"en": "Get one golden product",
+					"ar": "جلب منتج ذهبي واحد"
+				}
+			]
+		},
+		{
+			"id": "golden-customer-v0",
+			"en": "Customer lookup (legacy)",
+			"ar": "بحث العملاء (قديم)",
+			"kind": "rest",
+			"domain": "customers",
+			"version": "v0",
+			"status": "deprecated",
+			"sunset": "2027-03-31",
+			"base": "${REPOIO_API_BASE_URL}/v0/customer-lookup",
+			"ops": [
+				{
+					"m": "GET",
+					"p": "/customer-lookup?code={code}",
+					"en": "Look up by source code — replaced by /v1/customers",
+					"ar": "بحث بكود المصدر — استُبدل بـ /v1/customers"
+				}
+			]
+		},
+		{
+			"id": "graphql",
+			"en": "Golden records graph",
+			"ar": "رسم السجلات الذهبية",
+			"kind": "graphql",
+			"domain": "",
+			"version": "v1",
+			"status": "active",
+			"base": "${REPOIO_API_BASE_URL}/graphql",
+			"ops": [
+				{
+					"m": "QUERY",
+					"p": "customer(masterId) { … relationships { … } }",
+					"en": "Golden record with its governed relationships",
+					"ar": "السجل الذهبي مع علاقاته المحكومة"
+				},
+				{
+					"m": "QUERY",
+					"p": "search(entity, text) { … }",
+					"en": "Search across permitted domains",
+					"ar": "بحث في الدومينات المسموحة"
+				}
+			]
+		},
+		{
+			"id": "sql",
+			"en": "SQL endpoint (Trino)",
+			"ar": "نقطة SQL (Trino)",
+			"kind": "sql",
+			"domain": "",
+			"version": "—",
+			"status": "active",
+			"base": "jdbc:trino://${REPOIO_SQL_HOST}:${REPOIO_SQL_PORT}/iceberg",
+			"ops": [
+				{
+					"m": "SQL",
+					"p": "SELECT … FROM golden.customer",
+					"en": "Golden tables, row and column grants enforced by Trino",
+					"ar": "الجداول الذهبية، وTrino بيطبّق صلاحيات الصفوف والأعمدة"
+				}
+			]
+		},
+		{
+			"id": "mcp",
+			"en": "MCP server for AI agents",
+			"ar": "خادم MCP للـ AI agents",
+			"kind": "mcp",
+			"domain": "",
+			"version": "2026-06",
+			"status": "active",
+			"base": "${REPOIO_MCP_URL}",
+			"ops": [
+				{
+					"m": "TOOL",
+					"p": "search_golden_records",
+					"en": "Search golden records within the user's grants",
+					"ar": "بحث في السجلات الذهبية في حدود صلاحيات المستخدم"
+				},
+				{
+					"m": "TOOL",
+					"p": "create_change_request",
+					"en": "Draft a change request (never a direct write)",
+					"ar": "إنشاء مسودة طلب تغيير (مش كتابة مباشرة)"
+				}
+			]
+		}
 	],
 	"apps": [
-		{ "id": "app-powerbi", "name": "Power BI — Sales dashboards", "clientId": "${ENTRA_CLIENT_ID_POWERBI}", "roles": ["Data analyst"], "domains": ["customers", "products"], "approvedBy": "محمد", "approved": "2026-09-14", "status": "active" },
-		{ "id": "app-databricks", "name": "Databricks — Customer 360 job", "clientId": "${ENTRA_CLIENT_ID_DATABRICKS}", "roles": ["Data engineer"], "domains": ["customers"], "approvedBy": "محمد", "approved": "2026-10-02", "status": "active" },
-		{ "id": "app-crm-portal", "name": "Retail portal", "clientId": "${ENTRA_CLIENT_ID_RETAIL}", "roles": ["Requester"], "domains": ["stores"], "approvedBy": "", "approved": "", "status": "pending" }
+		{
+			"id": "app-powerbi",
+			"name": "Power BI — Sales dashboards",
+			"clientId": "${ENTRA_CLIENT_ID_POWERBI}",
+			"roles": [
+				"Data analyst"
+			],
+			"domains": [
+				"customers",
+				"products"
+			],
+			"approvedBy": "محمد",
+			"approved": "2026-09-14",
+			"status": "active"
+		},
+		{
+			"id": "app-databricks",
+			"name": "Databricks — Customer 360 job",
+			"clientId": "${ENTRA_CLIENT_ID_DATABRICKS}",
+			"roles": [
+				"Data engineer"
+			],
+			"domains": [
+				"customers"
+			],
+			"approvedBy": "محمد",
+			"approved": "2026-10-02",
+			"status": "active"
+		},
+		{
+			"id": "app-crm-portal",
+			"name": "Retail portal",
+			"clientId": "${ENTRA_CLIENT_ID_RETAIL}",
+			"roles": [
+				"Requester"
+			],
+			"domains": [
+				"stores"
+			],
+			"approvedBy": "",
+			"approved": "",
+			"status": "pending"
+		}
 	],
 	"tokens": [
-		{ "id": "tok-01", "name": "Power BI gateway refresh", "owner": "app-powerbi", "ownerType": "app", "scopes": ["read", "sql"], "created": "2026-09-14", "createdBy": "محمد", "expires": "2026-12-13", "lastUsed": "2026-11-12 12:40", "hint": "rpio_…7f3a", "status": "active" },
-		{ "id": "tok-02", "name": "Customer 360 notebook", "owner": "أحمد ناصر", "ownerType": "user", "scopes": ["read", "sql"], "created": "2026-10-02", "createdBy": "محمد", "expires": "2027-01-30", "lastUsed": "2026-11-12 09:15", "hint": "rpio_…c21e", "status": "active" },
-		{ "id": "tok-03", "name": "Claude agent — steward assistant", "owner": "سارة عادل", "ownerType": "user", "scopes": ["read", "mcp"], "created": "2026-10-20", "createdBy": "محمد", "expires": "2026-11-19", "lastUsed": "2026-11-12 11:02", "hint": "rpio_…09bd", "status": "active" },
-		{ "id": "tok-04", "name": "Vendor report export", "owner": "نور الدين", "ownerType": "user", "scopes": ["sql"], "created": "2026-08-01", "createdBy": "محمد", "expires": "2026-10-30", "lastUsed": "2026-10-29 17:20", "hint": "rpio_…5a10", "status": "expired" },
-		{ "id": "tok-05", "name": "Old ERP bridge test", "owner": "عمر طارق", "ownerType": "user", "scopes": ["read"], "created": "2026-07-11", "createdBy": "محمد", "expires": "2026-12-31", "lastUsed": "2026-09-03 10:00", "hint": "rpio_…e7d2", "status": "revoked" },
-		{ "id": "tok-06", "name": "Databricks job service", "owner": "app-databricks", "ownerType": "app", "scopes": ["read", "sql"], "created": "2026-10-02", "createdBy": "محمد", "expires": "2027-04-01", "lastUsed": "2026-11-12 06:00", "hint": "rpio_…b448", "status": "active" }
+		{
+			"id": "tok-01",
+			"name": "Power BI gateway refresh",
+			"owner": "app-powerbi",
+			"ownerType": "app",
+			"scopes": [
+				"read",
+				"sql"
+			],
+			"created": "2026-09-14",
+			"createdBy": "محمد",
+			"expires": "2026-12-13",
+			"lastUsed": "2026-11-12 12:40",
+			"hint": "rpio_…7f3a",
+			"status": "active"
+		},
+		{
+			"id": "tok-02",
+			"name": "Customer 360 notebook",
+			"owner": "أحمد ناصر",
+			"ownerType": "user",
+			"scopes": [
+				"read",
+				"sql"
+			],
+			"created": "2026-10-02",
+			"createdBy": "محمد",
+			"expires": "2027-01-30",
+			"lastUsed": "2026-11-12 09:15",
+			"hint": "rpio_…c21e",
+			"status": "active"
+		},
+		{
+			"id": "tok-03",
+			"name": "Claude agent — steward assistant",
+			"owner": "سارة عادل",
+			"ownerType": "user",
+			"scopes": [
+				"read",
+				"mcp"
+			],
+			"created": "2026-10-20",
+			"createdBy": "محمد",
+			"expires": "2026-11-19",
+			"lastUsed": "2026-11-12 11:02",
+			"hint": "rpio_…09bd",
+			"status": "active"
+		},
+		{
+			"id": "tok-04",
+			"name": "Vendor report export",
+			"owner": "نور الدين",
+			"ownerType": "user",
+			"scopes": [
+				"sql"
+			],
+			"created": "2026-08-01",
+			"createdBy": "محمد",
+			"expires": "2026-10-30",
+			"lastUsed": "2026-10-29 17:20",
+			"hint": "rpio_…5a10",
+			"status": "expired"
+		},
+		{
+			"id": "tok-05",
+			"name": "Old ERP bridge test",
+			"owner": "عمر طارق",
+			"ownerType": "user",
+			"scopes": [
+				"read"
+			],
+			"created": "2026-07-11",
+			"createdBy": "محمد",
+			"expires": "2026-12-31",
+			"lastUsed": "2026-09-03 10:00",
+			"hint": "rpio_…e7d2",
+			"status": "revoked"
+		},
+		{
+			"id": "tok-06",
+			"name": "Databricks job service",
+			"owner": "app-databricks",
+			"ownerType": "app",
+			"scopes": [
+				"read",
+				"sql"
+			],
+			"created": "2026-10-02",
+			"createdBy": "محمد",
+			"expires": "2027-04-01",
+			"lastUsed": "2026-11-12 06:00",
+			"hint": "rpio_…b448",
+			"status": "active"
+		}
 	],
 	"webhooks": [
-		{ "id": "wh-01", "name": "CRM portal — customer changes", "owner": "سارة عادل", "url": "${CRM_PORTAL_WEBHOOK_URL}", "events": ["changes.customer"], "domain": "customers", "status": "active", "last": "2026-11-12 12:31", "lastCode": 200, "rate": 99.6, "deliveries": [
-			{ "at": "2026-11-12 12:31", "event": "changes.customer", "code": 200, "attempts": 1, "ms": 142 },
-			{ "at": "2026-11-12 11:58", "event": "changes.customer", "code": 200, "attempts": 1, "ms": 120 },
-			{ "at": "2026-11-12 10:07", "event": "changes.customer", "code": 503, "attempts": 3, "ms": 0, "next": "" },
-			{ "at": "2026-11-12 09:44", "event": "changes.customer", "code": 200, "attempts": 1, "ms": 133 }
-		] },
-		{ "id": "wh-02", "name": "Data catalog — golden products", "owner": "كريم فوزي", "url": "${CATALOG_WEBHOOK_URL}", "events": ["golden.product"], "domain": "products", "status": "active", "last": "2026-11-12 08:10", "lastCode": 200, "rate": 100, "deliveries": [
-			{ "at": "2026-11-12 08:10", "event": "golden.product", "code": 200, "attempts": 1, "ms": 98 }
-		] },
-		{ "id": "wh-03", "name": "Procurement alerts — vendors", "owner": "هالة سمير", "url": "${PROCUREMENT_WEBHOOK_URL}", "events": ["golden.vendor", "changes.vendor"], "domain": "vendors", "status": "paused", "last": "2026-11-11 22:40", "lastCode": 500, "rate": 61.2, "deliveries": [
-			{ "at": "2026-11-11 22:40", "event": "changes.vendor", "code": 500, "attempts": 6, "ms": 0 },
-			{ "at": "2026-11-11 21:05", "event": "golden.vendor", "code": 500, "attempts": 6, "ms": 0 },
-			{ "at": "2026-11-11 18:30", "event": "changes.vendor", "code": 200, "attempts": 2, "ms": 410 }
-		] }
+		{
+			"id": "wh-01",
+			"name": "CRM portal — customer changes",
+			"owner": "سارة عادل",
+			"url": "${CRM_PORTAL_WEBHOOK_URL}",
+			"events": [
+				"changes.customer"
+			],
+			"domain": "customers",
+			"status": "active",
+			"last": "2026-11-12 12:31",
+			"lastCode": 200,
+			"rate": 99.6,
+			"deliveries": [
+				{
+					"at": "2026-11-12 12:31",
+					"event": "changes.customer",
+					"code": 200,
+					"attempts": 1,
+					"ms": 142
+				},
+				{
+					"at": "2026-11-12 11:58",
+					"event": "changes.customer",
+					"code": 200,
+					"attempts": 1,
+					"ms": 120
+				},
+				{
+					"at": "2026-11-12 10:07",
+					"event": "changes.customer",
+					"code": 503,
+					"attempts": 3,
+					"ms": 0,
+					"next": ""
+				},
+				{
+					"at": "2026-11-12 09:44",
+					"event": "changes.customer",
+					"code": 200,
+					"attempts": 1,
+					"ms": 133
+				}
+			]
+		},
+		{
+			"id": "wh-02",
+			"name": "Data catalog — golden products",
+			"owner": "كريم فوزي",
+			"url": "${CATALOG_WEBHOOK_URL}",
+			"events": [
+				"golden.product"
+			],
+			"domain": "products",
+			"status": "active",
+			"last": "2026-11-12 08:10",
+			"lastCode": 200,
+			"rate": 100,
+			"deliveries": [
+				{
+					"at": "2026-11-12 08:10",
+					"event": "golden.product",
+					"code": 200,
+					"attempts": 1,
+					"ms": 98
+				}
+			]
+		},
+		{
+			"id": "wh-03",
+			"name": "Procurement alerts — vendors",
+			"owner": "هالة سمير",
+			"url": "${PROCUREMENT_WEBHOOK_URL}",
+			"events": [
+				"golden.vendor",
+				"changes.vendor"
+			],
+			"domain": "vendors",
+			"status": "paused",
+			"last": "2026-11-11 22:40",
+			"lastCode": 500,
+			"rate": 61.2,
+			"deliveries": [
+				{
+					"at": "2026-11-11 22:40",
+					"event": "changes.vendor",
+					"code": 500,
+					"attempts": 6,
+					"ms": 0
+				},
+				{
+					"at": "2026-11-11 21:05",
+					"event": "golden.vendor",
+					"code": 500,
+					"attempts": 6,
+					"ms": 0
+				},
+				{
+					"at": "2026-11-11 18:30",
+					"event": "changes.vendor",
+					"code": 200,
+					"attempts": 2,
+					"ms": 410
+				}
+			]
+		}
 	],
-	"events": ["golden.customer", "changes.customer", "golden.vendor", "changes.vendor", "golden.product", "changes.product", "golden.author", "changes.author"],
+	"events": [
+		"golden.customer",
+		"changes.customer",
+		"golden.vendor",
+		"changes.vendor",
+		"golden.product",
+		"changes.product",
+		"golden.author",
+		"changes.author"
+	],
 	"mcp": {
-		"version": 7, "changed": "2026-11-05", "changedBy": "محمد",
-		"roles": ["requester", "steward", "engineer", "analyst", "admin"],
+		"version": 7,
+		"changed": "2026-11-05",
+		"changedBy": "محمد",
+		"roles": [
+			"requester",
+			"steward",
+			"engineer",
+			"analyst",
+			"admin"
+		],
 		"tools": [
-			{ "id": "search_golden_records", "write": false, "grants": { "requester": true, "steward": true, "engineer": true, "analyst": true, "admin": true } },
-			{ "id": "get_golden_record", "write": false, "grants": { "requester": true, "steward": true, "engineer": true, "analyst": true, "admin": true } },
-			{ "id": "list_potential_matches", "write": false, "grants": { "requester": false, "steward": true, "engineer": false, "analyst": false, "admin": true } },
-			{ "id": "explain_lineage", "write": false, "grants": { "requester": false, "steward": true, "engineer": true, "analyst": true, "admin": true } },
-			{ "id": "query_sql", "write": false, "grants": { "requester": false, "steward": false, "engineer": true, "analyst": true, "admin": true } },
-			{ "id": "create_change_request", "write": true, "grants": { "requester": true, "steward": true, "engineer": false, "analyst": false, "admin": true } },
-			{ "id": "confirm_match", "write": true, "grants": { "requester": false, "steward": true, "engineer": false, "analyst": false, "admin": false } }
+			{
+				"id": "search_golden_records",
+				"write": false,
+				"grants": {
+					"requester": true,
+					"steward": true,
+					"engineer": true,
+					"analyst": true,
+					"admin": true
+				}
+			},
+			{
+				"id": "get_golden_record",
+				"write": false,
+				"grants": {
+					"requester": true,
+					"steward": true,
+					"engineer": true,
+					"analyst": true,
+					"admin": true
+				}
+			},
+			{
+				"id": "list_potential_matches",
+				"write": false,
+				"grants": {
+					"requester": false,
+					"steward": true,
+					"engineer": false,
+					"analyst": false,
+					"admin": true
+				}
+			},
+			{
+				"id": "explain_lineage",
+				"write": false,
+				"grants": {
+					"requester": false,
+					"steward": true,
+					"engineer": true,
+					"analyst": true,
+					"admin": true
+				}
+			},
+			{
+				"id": "query_sql",
+				"write": false,
+				"grants": {
+					"requester": false,
+					"steward": false,
+					"engineer": true,
+					"analyst": true,
+					"admin": true
+				}
+			},
+			{
+				"id": "create_change_request",
+				"write": true,
+				"grants": {
+					"requester": true,
+					"steward": true,
+					"engineer": false,
+					"analyst": false,
+					"admin": true
+				}
+			},
+			{
+				"id": "confirm_match",
+				"write": true,
+				"grants": {
+					"requester": false,
+					"steward": true,
+					"engineer": false,
+					"analyst": false,
+					"admin": false
+				}
+			}
 		],
 		"sessions": [
-			{ "agent": "Claude — steward assistant", "user": "سارة عادل", "started": "2026-11-12 10:48", "calls": 37, "denied": 1, "lastTool": "list_potential_matches" },
-			{ "agent": "Claude — sales analyst", "user": "نور الدين", "started": "2026-11-12 12:05", "calls": 12, "denied": 0, "lastTool": "query_sql" }
+			{
+				"agent": "Claude — steward assistant",
+				"user": "سارة عادل",
+				"started": "2026-11-12 10:48",
+				"calls": 37,
+				"denied": 1,
+				"lastTool": "list_potential_matches"
+			},
+			{
+				"agent": "Claude — sales analyst",
+				"user": "نور الدين",
+				"started": "2026-11-12 12:05",
+				"calls": 12,
+				"denied": 0,
+				"lastTool": "query_sql"
+			}
 		]
 	},
 	"usage": {
-		"days": ["11-06", "11-07", "11-08", "11-09", "11-10", "11-11", "11-12"],
+		"days": [
+			"11-06",
+			"11-07",
+			"11-08",
+			"11-09",
+			"11-10",
+			"11-11",
+			"11-12"
+		],
 		"clients": [
-			{ "id": "app-powerbi", "calls": [4100, 4380, 1200, 900, 4620, 4710, 3890], "errors": 0.4, "p95": 180, "limit": 10000, "today": 3890 },
-			{ "id": "app-databricks", "calls": [2200, 2150, 2300, 2280, 2400, 2350, 2410], "errors": 0.1, "p95": 240, "limit": 5000, "today": 2410 },
-			{ "id": "أحمد ناصر", "calls": [310, 520, 0, 0, 880, 640, 1720], "errors": 2.3, "p95": 410, "limit": 2000, "today": 1720 },
-			{ "id": "سارة عادل", "calls": [0, 0, 0, 0, 140, 260, 330], "errors": 0.9, "p95": 650, "limit": 1000, "today": 330 }
+			{
+				"id": "app-powerbi",
+				"calls": [
+					4100,
+					4380,
+					1200,
+					900,
+					4620,
+					4710,
+					3890
+				],
+				"errors": 0.4,
+				"p95": 180,
+				"limit": 10000,
+				"today": 3890
+			},
+			{
+				"id": "app-databricks",
+				"calls": [
+					2200,
+					2150,
+					2300,
+					2280,
+					2400,
+					2350,
+					2410
+				],
+				"errors": 0.1,
+				"p95": 240,
+				"limit": 5000,
+				"today": 2410
+			},
+			{
+				"id": "أحمد ناصر",
+				"calls": [
+					310,
+					520,
+					0,
+					0,
+					880,
+					640,
+					1720
+				],
+				"errors": 2.3,
+				"p95": 410,
+				"limit": 2000,
+				"today": 1720
+			},
+			{
+				"id": "سارة عادل",
+				"calls": [
+					0,
+					0,
+					0,
+					0,
+					140,
+					260,
+					330
+				],
+				"errors": 0.9,
+				"p95": 650,
+				"limit": 1000,
+				"today": 330
+			}
+		],
+		"log": [
+			{
+				"at": "2026-11-12 13:36:00",
+				"client": "app-databricks",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}/sources",
+				"code": 200,
+				"ms": 523,
+				"rows": 1,
+				"token": "rpio_…b448",
+				"req": "req-97db9c",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 13:35:29",
+				"client": "app-powerbi",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.product",
+				"code": 200,
+				"ms": 165,
+				"rows": 1,
+				"token": "rpio_…7f3a",
+				"req": "req-e9e028",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 13:33:22",
+				"client": "أحمد ناصر",
+				"kind": "graphql",
+				"m": "QUERY",
+				"p": "customer(masterId) { relationships }",
+				"code": 200,
+				"ms": 234,
+				"rows": 25,
+				"token": "rpio_…c21e",
+				"req": "req-fd13f2",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 13:32:33",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 118,
+				"rows": 1,
+				"token": "rpio_…b448",
+				"req": "req-bf02c7",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 13:24:46",
+				"client": "app-powerbi",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer WHERE region = ?",
+				"code": 200,
+				"ms": 105,
+				"rows": 1,
+				"token": "rpio_…7f3a",
+				"req": "req-06b0d1",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 13:22:29",
+				"client": "app-databricks",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}/sources",
+				"code": 500,
+				"ms": 474,
+				"rows": 0,
+				"token": "rpio_…b448",
+				"req": "req-2803c2",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 13:20:14",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 182,
+				"rows": 5000,
+				"token": "rpio_…b448",
+				"req": "req-a3d41d",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 13:18:47",
+				"client": "app-powerbi",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer WHERE region = ?",
+				"code": 200,
+				"ms": 95,
+				"rows": 1,
+				"token": "rpio_…7f3a",
+				"req": "req-18b072",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 13:17:15",
+				"client": "سارة عادل",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}/history",
+				"code": 200,
+				"ms": 179,
+				"rows": 1,
+				"token": "rpio_…09bd",
+				"req": "req-7d2790",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 13:09:56",
+				"client": "سارة عادل",
+				"kind": "mcp",
+				"m": "TOOL",
+				"p": "search_golden_records",
+				"code": 200,
+				"ms": 399,
+				"rows": 4,
+				"token": "rpio_…09bd",
+				"req": "req-eecc6c",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 13:00:24",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 215,
+				"rows": 3,
+				"token": "rpio_…b448",
+				"req": "req-34e28e",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:57:56",
+				"client": "أحمد ناصر",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer JOIN golden.store …",
+				"code": 200,
+				"ms": 96,
+				"rows": 1,
+				"token": "rpio_…c21e",
+				"req": "req-4330e0",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:54:55",
+				"client": "سارة عادل",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}/history",
+				"code": 200,
+				"ms": 125,
+				"rows": 25,
+				"token": "rpio_…09bd",
+				"req": "req-d0e78d",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:52:48",
+				"client": "app-powerbi",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.product",
+				"code": 200,
+				"ms": 144,
+				"rows": 1,
+				"token": "rpio_…7f3a",
+				"req": "req-9c24ba",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:49:31",
+				"client": "أحمد ناصر",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}",
+				"code": 200,
+				"ms": 138,
+				"rows": 120,
+				"token": "rpio_…c21e",
+				"req": "req-28b8b7",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:48:32",
+				"client": "أحمد ناصر",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer JOIN golden.store …",
+				"code": 200,
+				"ms": 103,
+				"rows": 25,
+				"token": "rpio_…c21e",
+				"req": "req-ab6f9d",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:44:29",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 125,
+				"rows": 1,
+				"token": "rpio_…b448",
+				"req": "req-6b7494",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:39:57",
+				"client": "أحمد ناصر",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer JOIN golden.store …",
+				"code": 200,
+				"ms": 111,
+				"rows": 1,
+				"token": "rpio_…c21e",
+				"req": "req-0bbcfd",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:30:42",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 83,
+				"rows": 5000,
+				"token": "rpio_…b448",
+				"req": "req-8913cb",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:27:06",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 145,
+				"rows": 25,
+				"token": "rpio_…b448",
+				"req": "req-611639",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:25:46",
+				"client": "app-powerbi",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.product",
+				"code": 200,
+				"ms": 64,
+				"rows": 5000,
+				"token": "rpio_…7f3a",
+				"req": "req-75afe1",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:22:09",
+				"client": "app-databricks",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}/sources",
+				"code": 200,
+				"ms": 340,
+				"rows": 1,
+				"token": "rpio_…b448",
+				"req": "req-50cd7a",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:16:07",
+				"client": "أحمد ناصر",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.vendor",
+				"code": 403,
+				"ms": 0,
+				"rows": 0,
+				"token": "rpio_…c21e",
+				"req": "req-ce5cc2",
+				"note": "Domain \"vendors\" not granted to the token owner"
+			},
+			{
+				"at": "2026-11-12 12:10:27",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 172,
+				"rows": 25,
+				"token": "rpio_…b448",
+				"req": "req-08ae1d",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:06:26",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 52,
+				"rows": 1,
+				"token": "rpio_…b448",
+				"req": "req-aee4d5",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:03:25",
+				"client": "app-powerbi",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.product",
+				"code": 200,
+				"ms": 193,
+				"rows": 3,
+				"token": "rpio_…7f3a",
+				"req": "req-1cdbac",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 12:00:57",
+				"client": "app-databricks",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}/sources",
+				"code": 200,
+				"ms": 310,
+				"rows": 1,
+				"token": "rpio_…b448",
+				"req": "req-0003c7",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 11:53:53",
+				"client": "app-powerbi",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer WHERE region = ?",
+				"code": 200,
+				"ms": 78,
+				"rows": 120,
+				"token": "rpio_…7f3a",
+				"req": "req-0d66e5",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 11:48:28",
+				"client": "app-powerbi",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers?page={n}",
+				"code": 200,
+				"ms": 167,
+				"rows": 120,
+				"token": "rpio_…7f3a",
+				"req": "req-4b115b",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 11:45:39",
+				"client": "أحمد ناصر",
+				"kind": "graphql",
+				"m": "QUERY",
+				"p": "customer(masterId) { relationships }",
+				"code": 200,
+				"ms": 291,
+				"rows": 5000,
+				"token": "rpio_…c21e",
+				"req": "req-15ce85",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 11:40:55",
+				"client": "app-powerbi",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.product",
+				"code": 200,
+				"ms": 358,
+				"rows": 25,
+				"token": "rpio_…7f3a",
+				"req": "req-f46f19",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 11:35:00",
+				"client": "app-powerbi",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer WHERE region = ?",
+				"code": 200,
+				"ms": 252,
+				"rows": 1,
+				"token": "rpio_…7f3a",
+				"req": "req-f2ee67",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 11:31:59",
+				"client": "أحمد ناصر",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}",
+				"code": 200,
+				"ms": 213,
+				"rows": 120,
+				"token": "rpio_…c21e",
+				"req": "req-ac02ba",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 11:26:23",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 118,
+				"rows": 25,
+				"token": "rpio_…b448",
+				"req": "req-6df4b6",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 11:25:45",
+				"client": "app-powerbi",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer WHERE region = ?",
+				"code": 200,
+				"ms": 156,
+				"rows": 3,
+				"token": "rpio_…7f3a",
+				"req": "req-0a082f",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 11:24:56",
+				"client": "app-databricks",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}/sources",
+				"code": 200,
+				"ms": 68,
+				"rows": 1,
+				"token": "rpio_…b448",
+				"req": "req-21b14c",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 11:18:26",
+				"client": "أحمد ناصر",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.vendor",
+				"code": 403,
+				"ms": 0,
+				"rows": 0,
+				"token": "rpio_…c21e",
+				"req": "req-f7bbac",
+				"note": "Domain \"vendors\" not granted to the token owner"
+			},
+			{
+				"at": "2026-11-12 11:15:24",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 114,
+				"rows": 1,
+				"token": "rpio_…b448",
+				"req": "req-b4c422",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 11:08:05",
+				"client": "سارة عادل",
+				"kind": "mcp",
+				"m": "TOOL",
+				"p": "list_potential_matches",
+				"code": 500,
+				"ms": 403,
+				"rows": 0,
+				"token": "rpio_…09bd",
+				"req": "req-873000",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 11:04:21",
+				"client": "سارة عادل",
+				"kind": "mcp",
+				"m": "TOOL",
+				"p": "create_change_request",
+				"code": 200,
+				"ms": 368,
+				"rows": 4,
+				"token": "rpio_…09bd",
+				"req": "req-7fef9f",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 10:57:58",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 129,
+				"rows": 120,
+				"token": "rpio_…b448",
+				"req": "req-2d8934",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 10:49:08",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 101,
+				"rows": 1,
+				"token": "rpio_…b448",
+				"req": "req-7d447d",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 10:42:41",
+				"client": "app-powerbi",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.product",
+				"code": 200,
+				"ms": 121,
+				"rows": 3,
+				"token": "rpio_…7f3a",
+				"req": "req-050d4d",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 10:35:40",
+				"client": "سارة عادل",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}/history",
+				"code": 200,
+				"ms": 224,
+				"rows": 5000,
+				"token": "rpio_…09bd",
+				"req": "req-4d9364",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 10:26:12",
+				"client": "app-powerbi",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers?page={n}",
+				"code": 200,
+				"ms": 176,
+				"rows": 1,
+				"token": "rpio_…7f3a",
+				"req": "req-7844b9",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 10:21:20",
+				"client": "سارة عادل",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}/history",
+				"code": 200,
+				"ms": 90,
+				"rows": 5000,
+				"token": "rpio_…09bd",
+				"req": "req-aaed12",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 10:12:18",
+				"client": "أحمد ناصر",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}",
+				"code": 429,
+				"ms": 0,
+				"rows": 0,
+				"token": "rpio_…c21e",
+				"req": "req-4b043b",
+				"note": "Daily limit reached"
+			},
+			{
+				"at": "2026-11-12 10:09:46",
+				"client": "أحمد ناصر",
+				"kind": "graphql",
+				"m": "QUERY",
+				"p": "customer(masterId) { relationships }",
+				"code": 200,
+				"ms": 103,
+				"rows": 120,
+				"token": "rpio_…c21e",
+				"req": "req-929f6d",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 10:03:21",
+				"client": "سارة عادل",
+				"kind": "mcp",
+				"m": "TOOL",
+				"p": "search_golden_records",
+				"code": 200,
+				"ms": 427,
+				"rows": 1,
+				"token": "rpio_…09bd",
+				"req": "req-bbba29",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 10:01:37",
+				"client": "app-databricks",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}/sources",
+				"code": 200,
+				"ms": 167,
+				"rows": 1,
+				"token": "rpio_…b448",
+				"req": "req-43a1df",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 09:57:38",
+				"client": "سارة عادل",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}/history",
+				"code": 200,
+				"ms": 258,
+				"rows": 1,
+				"token": "rpio_…09bd",
+				"req": "req-51c490",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 09:53:09",
+				"client": "أحمد ناصر",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.vendor",
+				"code": 403,
+				"ms": 0,
+				"rows": 0,
+				"token": "rpio_…c21e",
+				"req": "req-d93636",
+				"note": "Domain \"vendors\" not granted to the token owner"
+			},
+			{
+				"at": "2026-11-12 09:47:53",
+				"client": "أحمد ناصر",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer JOIN golden.store …",
+				"code": 429,
+				"ms": 0,
+				"rows": 0,
+				"token": "rpio_…c21e",
+				"req": "req-9678e8",
+				"note": "Daily limit reached"
+			},
+			{
+				"at": "2026-11-12 09:46:24",
+				"client": "app-powerbi",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers?page={n}",
+				"code": 200,
+				"ms": 182,
+				"rows": 1,
+				"token": "rpio_…7f3a",
+				"req": "req-dfcf6f",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 09:39:48",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 49,
+				"rows": 5000,
+				"token": "rpio_…b448",
+				"req": "req-d62aa1",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 09:37:26",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 132,
+				"rows": 5000,
+				"token": "rpio_…b448",
+				"req": "req-c3ab05",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 09:34:12",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 124,
+				"rows": 25,
+				"token": "rpio_…b448",
+				"req": "req-decdc8",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 09:25:39",
+				"client": "app-databricks",
+				"kind": "sql",
+				"m": "SQL",
+				"p": "SELECT … FROM golden.customer",
+				"code": 200,
+				"ms": 119,
+				"rows": 1,
+				"token": "rpio_…b448",
+				"req": "req-7ccd10",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 09:20:05",
+				"client": "app-databricks",
+				"kind": "rest",
+				"m": "GET",
+				"p": "/v1/customers/{masterId}/sources",
+				"code": 200,
+				"ms": 184,
+				"rows": 1,
+				"token": "rpio_…b448",
+				"req": "req-30e6ce",
+				"note": ""
+			},
+			{
+				"at": "2026-11-12 09:16:27",
+				"client": "أحمد ناصر",
+				"kind": "graphql",
+				"m": "QUERY",
+				"p": "customer(masterId) { relationships }",
+				"code": 200,
+				"ms": 150,
+				"rows": 1,
+				"token": "rpio_…c21e",
+				"req": "req-371fd7",
+				"note": ""
+			}
 		]
 	}
 }
