@@ -906,3 +906,13 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioRefList .sapMLIB.sapMSLI { height: 2.75rem; }
 .repoioRefList .sapMSLITitleOnly, .repoioRefList .sapMSLITitle { font-size: 0.875rem; }
 .repoioRefList .sapMSLIDescription { font-size: 0.75rem; }
+/* Add step menu (flow designer): compact, one line per description. */
+.repoioFlowMenuPop .sapMPopoverHeader .sapMTitle { font-size: 0.875rem; }
+.repoioFlowMenu .sapMLIB.sapMSLI { height: 2.625rem; padding-inline: 0.75rem; }
+.repoioFlowMenu .sapMSLITitle { font-size: 0.8125rem; }
+.repoioFlowMenu .sapMSLIDescription { font-size: 0.6875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.repoioFlowMenu .sapMSLIDiv { min-width: 0; }
+.repoioFlowMenu .sapMLIBIcon { font-size: 1rem; width: 1.25rem; margin-inline-end: 0.625rem; }
+.repoioFlowMenu .sapMLIBContent, .repoioFlowMenu .sapMSLIDiv, .repoioFlowMenu .sapMSLITitleDiv, .repoioFlowMenu .sapMSLIDescriptionDiv { min-width: 0; overflow: hidden; }
+.repoioFlowMenu .sapMSLIDescription { display: block; text-overflow: ellipsis !important; width: 100%; }
+.repoioFlowMenuPop .sapMPopoverScroll { width: 100% !important; }

@@ -765,10 +765,10 @@ sap.ui.define([
 			if (this.viewModel().getProperty("/wf/readOnly")) { return; }
 			var from = e.getParameter("from"), port = e.getParameter("port"), that = this, T = this.text.bind(this);
 			var list = new List({ mode: "None", items: Flow.INSERTABLE.map(function (t) {
-				return new StandardListItem({ type: "Active", title: T("fd.n." + t), description: T("fd.d." + t), icon: NODE_ICON[t], wrapping: true,
+				return new StandardListItem({ type: "Active", title: T("fd.n." + t), description: T("fd.d." + t), tooltip: T("fd.d." + t), icon: NODE_ICON[t], wrapping: false,
 					press: function () { pop.close(); that._insert(from, port, t); } });
 			}) }).addStyleClass("repoioFlowMenu");
-			var pop = new ResponsivePopover({ title: T("fd.addStep"), placement: "Auto", contentWidth: "22rem", content: [list], afterClose: function () { pop.destroy(); } });
+			var pop = new ResponsivePopover({ title: T("fd.addStep"), placement: "Auto", contentWidth: "17rem", content: [list], afterClose: function () { pop.destroy(); } }).addStyleClass("repoioFlowMenuPop");
 			this.getView().addDependent(pop);
 			pop.openBy(e.getParameter("domRef"));
 		},
