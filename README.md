@@ -684,6 +684,7 @@ or when a specialist library is materially better for that job.
 | Charts | **Apache ECharts** | Data quality, profiling and operational dashboards |
 | Graph visualization | **Cytoscape.js** | Data lineage, relationships and entity networks |
 | Lightweight editor alternative | **CodeMirror 6** | Smaller embedded code-editing surfaces |
+| API reference | **Swagger UI** (`swagger-ui-dist`, Apache 2.0, pinned 5.17.14) | Renders the OpenAPI 3.1 contract from `repoio-spec` on the API reference page (J16) |
 
 Integration rules:
 1. Prefer native OpenUI5 controls for standard UI elements.

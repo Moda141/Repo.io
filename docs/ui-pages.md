@@ -194,7 +194,12 @@
           sessions with their initiating user. Agents act with that
           user's scopes; every call is audited.
        5. **Usage & limits** — calls, errors and latency per client;
-          rate limits and quota warnings.
+          rate limits and quota warnings; call log popup.
+       - **API reference** (sub-page) — every API family rendered from
+         the OpenAPI 3.1 contract in `repoio-spec` with Swagger UI inside
+         an OpenUI5 control; each operation shows the milestone it lands
+         with and its required grant; OpenAPI download. "Try it out"
+         runs as the signed-in user through the gateway.
      - **Data sync** — what syncs and when: sync configurations,
        schedules and field mappings per connection (configuration, not
        runs).

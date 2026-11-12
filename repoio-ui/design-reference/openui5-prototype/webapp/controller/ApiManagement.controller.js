@@ -420,8 +420,12 @@ sap.ui.define([
 			MessageToast.show(this.text("api.t.appRegistered", [a.name.trim()]));
 		},
 
+		/* Catalog rows open the full API reference; the SQL endpoint (JDBC, not HTTP) keeps the connection-details dialog. */
+		onReference: function () { this.router().navTo("apiReference", {}); },
 		onSpec: function (oEvent) {
-			var that = this, a = oEvent.getSource().getBindingContext("view").getObject();
+			var that = this, a = oEvent.getSource().getBindingContext("view").getObject(),
+				DOC = { "golden-customer": "golden-records", "golden-vendor": "golden-records", "golden-product": "golden-records", "golden-customer-v0": "customer-lookup-v0", graphql: "graphql", mcp: "mcp" };
+			if (DOC[a.id]) { this.router().navTo("apiReference", { api: DOC[a.id] }); return; }
 			this._specApi = a;
 			this.viewModel().setProperty("/api/spec", {
 				title: a.title, base: a.base, statusText: a.statusText, statusState: a.statusState, statusIcon: a.statusIcon,

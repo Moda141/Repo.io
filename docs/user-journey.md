@@ -580,6 +580,10 @@ reach Repo.io.*
    - **Try it** runs the call with the caller's own identity and
      grants.
    - **Download OpenAPI** gives the contract file.
+   - **API reference** opens the full reference for every API family
+     (Swagger UI over the OpenAPI 3.1 contract): operations, parameters,
+     schemas, error responses (401 / 403 / 429) and the required grant
+     per operation, with the milestone each one lands with.
 3. **Access tokens — only the Admin generates tokens:**
    - A user who needs API access (e.g. a Data Engineer connecting
      Power BI or Databricks) asks the Admin; users have no

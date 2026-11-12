@@ -1,0 +1,3 @@
+swagger-ui
+Copyright 2020-2021 SmartBear Software Inc.
+Patched: one literal ESC byte (0x1B) in a string replaced by the \u001b escape so the file is plain text; behaviour unchanged.

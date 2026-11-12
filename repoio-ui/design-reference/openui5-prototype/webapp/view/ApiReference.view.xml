@@ -1,0 +1,46 @@
+<mvc:View controllerName="repoio.proto.controller.ApiReference"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control" height="100%">
+	<!-- J16: API reference for every Repo.io API family, rendered from OpenAPI 3.1 (repoio-spec) with Swagger UI
+	     inside an OpenUI5 control. Sample documents only; each endpoint shows the milestone it lands with. -->
+	<VBox height="100%" renderType="Bare" class="repoioExplorer repoioRef">
+		<OverflowToolbar class="repoioExTop">
+			<Button icon="sap-icon://nav-back" type="Transparent" tooltip="{i18n>common.back}" press=".onBack"/>
+			<VBox renderType="Bare" class="repoioExHead">
+				<Title text="{i18n>ref.title}" level="H1"/>
+				<Text text="{i18n>ref.desc}" class="repoioExDesc" maxLines="1" tooltip="{i18n>ref.desc}"/>
+			</VBox>
+			<ToolbarSpacer/>
+			<ObjectStatus text="{i18n>ref.sample}" icon="sap-icon://hint" state="Information"/>
+		</OverflowToolbar>
+		<HBox class="repoioExBody" renderType="Bare">
+			<!-- API families -->
+			<VBox width="19rem" renderType="Bare" class="repoioRefSide">
+				<SearchField value="{view>/ref/q}" liveChange=".onSearch" placeholder="{i18n>ref.searchPh}" class="repoioRefSearch"/>
+				<ScrollContainer vertical="true" height="100%" class="repoioRefList">
+					<List id="refList" items="{path: 'view>/ref/items', sorter: {path: 'areaText', group: true}}" mode="SingleSelectMaster"
+						selectionChange=".onPick" showSeparators="None" class="repoioFacetList" noDataText="{i18n>ref.none}">
+						<StandardListItem title="{view>title}" description="{view>pathsText}" icon="{view>icon}" info="{view>ms}"
+							infoState="{= ${view>deprecated} ? 'Warning' : 'Information' }" selected="{view>selected}" tooltip="{view>title}"/>
+					</List>
+				</ScrollContainer>
+			</VBox>
+			<!-- Selected document -->
+			<VBox renderType="Bare" class="repoioExMain">
+				<HBox alignItems="Center" wrap="Wrap" class="repoioRefHead">
+					<core:Icon src="{view>/ref/sel/icon}" class="repoioRefHeadIcon" decorative="true"/>
+					<Title text="{view>/ref/sel/title}" level="H2"/>
+					<Text text="{view>/ref/sel/version}" class="repoioRefVer" textDirection="LTR"/>
+					<ObjectStatus text="{view>/ref/sel/statusText}" state="{view>/ref/sel/statusState}" icon="{view>/ref/sel/statusIcon}" class="repoioRefStatus"/>
+					<HBox renderType="Bare" class="repoioRefGrow"/>
+					<Text text="{view>/ref/sel/base}" class="repoioMono repoioRefBase" textDirection="LTR" wrapping="false" tooltip="{view>/ref/sel/base}"/>
+					<Button icon="sap-icon://download" text="{i18n>ref.download}" type="Transparent" press=".onDownload"/>
+					<Button icon="sap-icon://chain-link" type="Transparent" tooltip="{i18n>ref.copyLink}" press=".onCopyLink"/>
+				</HBox>
+				<MessageStrip text="{i18n>ref.tryOff}" type="Information" showIcon="true" class="repoioRefStrip"/>
+				<ScrollContainer vertical="true" height="100%" class="repoioExScroll repoioRefScroll">
+					<rc:SwaggerDoc id="refDoc" spec="{view>/ref/sel/spec}"/>
+				</ScrollContainer>
+			</VBox>
+		</HBox>
+	</VBox>
+</mvc:View>

@@ -23,6 +23,8 @@
 								<OverflowToolbar>
 									<Title text="{view>/api/catTitle}" level="H2"/>
 									<ToolbarSpacer/>
+									<Button text="{i18n>ref.title}" icon="sap-icon://course-book" type="Transparent" press=".onReference"/>
+									<ToolbarSeparator/>
 									<SearchField width="13rem" value="{view>/api/f/cq}" liveChange=".onFilter" placeholder="{i18n>common.search}"/>
 									<Select selectedKey="{view>/api/kind}" change=".onFilter" width="8rem" tooltip="{i18n>api.col.type}">
 										<core:Item key="all" text="{i18n>api.f.allTypes}"/>

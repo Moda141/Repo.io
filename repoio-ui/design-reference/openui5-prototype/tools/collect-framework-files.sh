@@ -13,10 +13,14 @@ while read -r f; do
   curl -fsS -o "dist/$f" "$BASE/$f"
 done < publish/framework-files.txt
 cp publish/repoio-console.html dist/
-# The artifact host rejects a literal U+FFFD; the bundle has one inside a JS string.
+# The artifact host rejects literal U+FFFD and control bytes. In these bundles they only occur inside
+# JS string literals (the minifier turns source escapes back into raw characters), so re-escape them;
+# node --check below confirms the files still parse.
 python3 - <<'PY'
-p = "dist/resources/sap-ui-custom.js"
-s = open(p, encoding="utf-8").read()
-open(p, "w", encoding="utf-8").write(s.replace('return"�"', 'return"\\uFFFD"'))
+for p in ("dist/resources/sap-ui-custom.js", "dist/thirdparty/swagger-ui-bundle.js"):
+    s = open(p, encoding="utf-8").read()
+    s = s.replace(chr(0xFFFD), "\\uFFFD").replace(chr(0x1B), "\\u001b")
+    open(p, "w", encoding="utf-8").write(s)
 PY
+node --check dist/resources/sap-ui-custom.js && node --check dist/thirdparty/swagger-ui-bundle.js
 echo "dist/ is ready to publish (page: dist/repoio-console.html)"

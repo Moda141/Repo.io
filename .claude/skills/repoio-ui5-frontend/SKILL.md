@@ -35,7 +35,7 @@ description: Use when working on the Repo.io frontend — the OpenUI5 console, t
    Reach for a third-party library only when OpenUI5 lacks the capability
    or is materially worse at it.
 3. **Every third-party library is wrapped.** Monaco (code editor), Apache ECharts (charts), Cytoscape.js (graphs),
-   CodeMirror 6 (lightweight editor) each live inside an OpenUI5 custom
+   CodeMirror 6 (lightweight editor), Swagger UI (API reference) each live inside an OpenUI5 custom
    control or dedicated page component. Library DOM and event handling
    stays inside the wrapper and respects the OpenUI5 rendering and
    destruction lifecycle. Never let library DOM leak into views.

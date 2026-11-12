@@ -91,6 +91,10 @@
 			"api": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/api.json"
+			},
+			"apidocs": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/apidocs.json"
 			}
 		},
 		"resources": {
@@ -185,6 +189,11 @@
 					"target": "dataSyncFlow"
 				},
 				{
+					"name": "apiReference",
+					"pattern": "integration/api/reference/:api:",
+					"target": "apiReference"
+				},
+				{
 					"name": "apiManagement",
 					"pattern": "integration/api",
 					"target": "apiManagement"
@@ -275,6 +284,11 @@
 					"id": "apiManagement",
 					"name": "ApiManagement",
 					"level": 2
+				},
+				"apiReference": {
+					"id": "apiReference",
+					"name": "ApiReference",
+					"level": 3
 				}
 			}
 		}
