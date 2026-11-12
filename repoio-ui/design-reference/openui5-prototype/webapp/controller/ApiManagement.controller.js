@@ -87,7 +87,8 @@ sap.ui.define([
 				if (f !== "all" && r.st !== f) { return false; }
 				if (ff.otype !== "all" && r.ownerType !== ff.otype) { return false; }
 				if (ff.scope !== "all" && r.scopes.indexOf(ff.scope) < 0) { return false; }
-				return !q || [r.name, r.ownerText, r.hint].join(" ").toLowerCase().indexOf(q) > -1;
+				var pp = People.get(r.owner);
+				return !q || [r.name, r.ownerText, r.owner, pp ? pp.email : "", r.hint].join(" ").toLowerCase().indexOf(q) > -1;
 			});
 			vm.setProperty("/api/tokens", rows);
 			vm.setProperty("/api/tokTitle", this.text("api.tok.titleN", [rows.length]));
@@ -136,7 +137,7 @@ sap.ui.define([
 			var that = this, vm = this.viewModel(), f = vm.getProperty("/api/f"), q = (f.wq || "").toLowerCase();
 			var rows = this._d.webhooks.filter(function (w) {
 				return (f.wst === "all" || w.status === f.wst) && (!f.wev || w.events.indexOf(f.wev) > -1) &&
-					(!q || [w.name, w.url, that._person(w.owner)].join(" ").toLowerCase().indexOf(q) > -1);
+					(!q || [w.name, w.url, w.owner, that._person(w.owner), (People.get(w.owner) || {}).email].join(" ").toLowerCase().indexOf(q) > -1);
 			}).map(function (w) {
 				var ok = w.lastCode >= 200 && w.lastCode < 300, paused = w.status === "paused";
 				return Object.assign({}, w, {
@@ -293,8 +294,13 @@ sap.ui.define([
 			vm.setProperty("/api/domainFilter", [{ key: "", text: this.text("api.f.allDomains") }].concat(doms));
 			vm.setProperty("/api/eventFilter", [{ key: "", text: this.text("api.f.allEvents") }].concat(this._d.events.map(function (e) { return { key: e, text: e }; })));
 			vm.setProperty("/api/eventItems", this._d.events.map(function (e) { return { key: e }; }));
-			vm.setProperty("/api/userItems", People.names().map(function (n) { return { key: n, text: that._person(n) }; }));
-			vm.setProperty("/api/appItems", this._d.apps.filter(function (a) { return a.status === "active"; }).map(function (a) { return { key: a.id, text: a.name }; }));
+			vm.setProperty("/api/userItems", People.names().map(function (n) {
+				var pp = People.get(n);
+				return { key: n, text: that._person(n), sub: pp.email, icon: "sap-icon://employee", search: [n, pp.en, pp.email, pp.role_en, pp.role_ar].join(" ").toLowerCase() };
+			}));
+			vm.setProperty("/api/appItems", this._d.apps.filter(function (a) { return a.status === "active"; }).map(function (a) {
+				return { key: a.id, text: a.name, sub: a.clientId, icon: "sap-icon://it-system", search: [a.name, a.clientId, a.id].join(" ").toLowerCase() };
+			}));
 		},
 
 		onTab: function (oEvent) { this.store("repoio-api-tab", oEvent.getParameter("key")); },
@@ -307,6 +313,7 @@ sap.ui.define([
 			Fragment.load({ id: v.getId(), name: "repoio.proto.fragment.ApiDialogs", controller: this }).then(function (a) {
 				that._frag = a;
 				a.forEach(function (d) { v.addDependent(d); });
+				["apiTokOwner", "apiWhOwner"].forEach(function (id) { that._ownerFilter(v.byId(id)); });
 				go();
 			});
 		},
@@ -321,10 +328,36 @@ sap.ui.define([
 			this.onDlgOwnerType();
 			this._open("apiTokDlg");
 		},
+		/* Owner pickers: type a name (Arabic or English) or an email; only a picked suggestion sets the owner. */
+		_ownerFilter: function (oInput) {
+			if (oInput._repoioFilter) { return; }
+			oInput._repoioFilter = true;
+			oInput.setFilterFunction(function (sTerm, oItem) {
+				var o = oItem.getBindingContext("view").getObject(), q = (sTerm || "").toLowerCase().trim();
+				return !q || o.search.indexOf(q) > -1;
+			});
+		},
+		onOwnerType: function (oEvent) {
+			var oIn = oEvent.getSource(), k = oIn.data("dlg"), vm = this.viewModel();
+			this._ownerFilter(oIn);
+			vm.setProperty("/api/" + k + "/owner", "");
+			vm.setProperty("/api/" + k + "/ownerState", oEvent.getParameter("value") ? "Warning" : "None");
+			if (k === "d") { this.onDlgCheck(); } else { this.onWhCheck(); }
+		},
+		onOwnerPick: function (oEvent) {
+			var oIn = oEvent.getSource(), k = oIn.data("dlg"), vm = this.viewModel(), it = oEvent.getParameter("selectedItem");
+			if (!it) { return; }
+			vm.setProperty("/api/" + k + "/owner", it.getKey());
+			vm.setProperty("/api/" + k + "/ownerQ", it.getText());
+			vm.setProperty("/api/" + k + "/ownerState", "None");
+			if (k === "d") { this.onDlgCheck(); } else { this.onWhCheck(); }
+		},
 		onDlgOwnerType: function () {
 			var vm = this.viewModel(), t = vm.getProperty("/api/d/ownerType");
 			vm.setProperty("/api/d/owners", vm.getProperty(t === "app" ? "/api/appItems" : "/api/userItems"));
 			vm.setProperty("/api/d/owner", "");
+			vm.setProperty("/api/d/ownerQ", "");
+			vm.setProperty("/api/d/ownerState", "None");
 			this.onDlgCheck();
 		},
 		onDlgCheck: function () {
@@ -356,7 +389,7 @@ sap.ui.define([
 
 		onNewWebhook: function () {
 			var vm = this.viewModel();
-			vm.setProperty("/api/w", { name: "", owner: "", url: "", events: [], domain: "", valid: false, owners: vm.getProperty("/api/userItems") });
+			vm.setProperty("/api/w", { name: "", owner: "", ownerQ: "", ownerState: "None", url: "", events: [], domain: "", valid: false, owners: vm.getProperty("/api/userItems") });
 			this._open("apiWhDlg");
 		},
 		onWhCheck: function () {

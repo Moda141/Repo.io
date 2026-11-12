@@ -12,9 +12,12 @@
 					</items>
 				</SegmentedButton>
 				<Label text="{i18n>api.col.owner}" required="true"/>
-				<Select selectedKey="{view>/api/d/owner}" items="{view>/api/d/owners}" forceSelection="false" change=".onDlgCheck">
-					<core:Item key="{view>key}" text="{view>text}"/>
-				</Select>
+				<Input id="apiTokOwner" value="{view>/api/d/ownerQ}" placeholder="{= ${view>/api/d/ownerType} === 'app' ? ${i18n>api.f.appPh} : ${i18n>api.f.ownerPh} }"
+					showSuggestion="true" startSuggestion="1" maxSuggestionWidth="28rem" liveChange=".onOwnerType" suggestionItemSelected=".onOwnerPick"
+					valueState="{view>/api/d/ownerState}" valueStateText="{i18n>api.f.ownerPick}" suggestionItems="{path: 'view>/api/d/owners', templateShareable: false}">
+					<customData><core:CustomData key="dlg" value="d"/></customData>
+					<suggestionItems><core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>sub}" icon="{view>icon}"/></suggestionItems>
+				</Input>
 				<Label text="{i18n>api.col.name}" required="true"/>
 				<Input value="{view>/api/d/name}" liveChange=".onDlgCheck" placeholder="{i18n>api.f.namePh}"/>
 				<Label text="{i18n>api.col.scopes}" required="true"/>
@@ -57,9 +60,12 @@
 			<Label text="{i18n>api.col.name}" required="true"/>
 			<Input value="{view>/api/w/name}" liveChange=".onWhCheck"/>
 			<Label text="{i18n>api.col.owner}" required="true"/>
-			<Select selectedKey="{view>/api/w/owner}" items="{view>/api/w/owners}" forceSelection="false" change=".onWhCheck">
-				<core:Item key="{view>key}" text="{view>text}"/>
-			</Select>
+			<Input id="apiWhOwner" value="{view>/api/w/ownerQ}" placeholder="{i18n>api.f.ownerPh}"
+				showSuggestion="true" startSuggestion="1" maxSuggestionWidth="28rem" liveChange=".onOwnerType" suggestionItemSelected=".onOwnerPick"
+				valueState="{view>/api/w/ownerState}" valueStateText="{i18n>api.f.ownerPick}" suggestionItems="{path: 'view>/api/w/owners', templateShareable: false}">
+				<customData><core:CustomData key="dlg" value="w"/></customData>
+				<suggestionItems><core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>sub}" icon="{view>icon}"/></suggestionItems>
+			</Input>
 			<Label text="{i18n>api.col.destination}" required="true"/>
 			<Input value="{view>/api/w/url}" liveChange=".onWhCheck" placeholder="$\{RECEIVER_WEBHOOK_URL\}" textDirection="LTR" class="repoioMono"/>
 			<Label text="{i18n>api.col.events}" required="true"/>

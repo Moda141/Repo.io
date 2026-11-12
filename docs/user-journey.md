@@ -585,7 +585,9 @@ reach Repo.io.*
      Power BI or Databricks) asks the Admin; users have no
      token-generation screen anywhere in the console.
    - **New token:** owner (a named user or an app registration, never
-     empty), name, scopes (read golden records, query SQL, MCP),
+     empty; found by typing a name in Arabic or English or an email, or
+     an app name or Entra client ID, and set only by picking a
+     suggestion), name, scopes (read golden records, query SQL, MCP),
      expiry (a maximum is set by deployment config). The value is
      shown **once** to the Admin, then only a masked hint; it is stored
      in the secret store, never in Postgres or logs. The token acts
