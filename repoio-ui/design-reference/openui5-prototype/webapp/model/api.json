@@ -1,0 +1,91 @@
+{
+	"_comment": "Sample data for API management (J16). In the product every list comes from the admin API; token values and signing secrets live only in the secret store. Hosts are deployment placeholders.",
+	"apis": [
+		{ "id": "golden-customer", "en": "Customer golden records", "ar": "السجلات الذهبية للعملاء", "kind": "rest", "domain": "customers", "version": "v1", "status": "active", "base": "${REPOIO_API_BASE_URL}/v1/customers", "ops": [
+			{ "m": "GET", "p": "/customers", "en": "List golden customers (paged, filtered)", "ar": "عرض العملاء الذهبيين (صفحات وفلاتر)" },
+			{ "m": "GET", "p": "/customers/{masterId}", "en": "Get one golden customer", "ar": "جلب عميل ذهبي واحد" },
+			{ "m": "GET", "p": "/customers/{masterId}/sources", "en": "Source records behind a golden record", "ar": "سجلات المصادر وراء السجل الذهبي" },
+			{ "m": "GET", "p": "/customers/{masterId}/history", "en": "Change history", "ar": "سجل التغييرات" },
+			{ "m": "POST", "p": "/change-requests", "en": "Submit a change request (governed write path)", "ar": "تقديم طلب تغيير (مسار الكتابة المحكوم)" }
+		] },
+		{ "id": "golden-vendor", "en": "Vendor golden records", "ar": "السجلات الذهبية للموردين", "kind": "rest", "domain": "vendors", "version": "v1", "status": "active", "base": "${REPOIO_API_BASE_URL}/v1/vendors", "ops": [
+			{ "m": "GET", "p": "/vendors", "en": "List golden vendors", "ar": "عرض الموردين الذهبيين" },
+			{ "m": "GET", "p": "/vendors/{masterId}", "en": "Get one golden vendor", "ar": "جلب مورد ذهبي واحد" },
+			{ "m": "POST", "p": "/change-requests", "en": "Submit a change request", "ar": "تقديم طلب تغيير" }
+		] },
+		{ "id": "golden-product", "en": "Book catalog golden records", "ar": "السجلات الذهبية لكتالوج الكتب", "kind": "rest", "domain": "products", "version": "v1", "status": "active", "base": "${REPOIO_API_BASE_URL}/v1/products", "ops": [
+			{ "m": "GET", "p": "/products", "en": "List golden products", "ar": "عرض المنتجات الذهبية" },
+			{ "m": "GET", "p": "/products/{masterId}", "en": "Get one golden product", "ar": "جلب منتج ذهبي واحد" }
+		] },
+		{ "id": "golden-customer-v0", "en": "Customer lookup (legacy)", "ar": "بحث العملاء (قديم)", "kind": "rest", "domain": "customers", "version": "v0", "status": "deprecated", "sunset": "2027-03-31", "base": "${REPOIO_API_BASE_URL}/v0/customer-lookup", "ops": [
+			{ "m": "GET", "p": "/customer-lookup?code={code}", "en": "Look up by source code — replaced by /v1/customers", "ar": "بحث بكود المصدر — استُبدل بـ /v1/customers" }
+		] },
+		{ "id": "graphql", "en": "Golden records graph", "ar": "رسم السجلات الذهبية", "kind": "graphql", "domain": "", "version": "v1", "status": "active", "base": "${REPOIO_API_BASE_URL}/graphql", "ops": [
+			{ "m": "QUERY", "p": "customer(masterId) { … relationships { … } }", "en": "Golden record with its governed relationships", "ar": "السجل الذهبي مع علاقاته المحكومة" },
+			{ "m": "QUERY", "p": "search(entity, text) { … }", "en": "Search across permitted domains", "ar": "بحث في الدومينات المسموحة" }
+		] },
+		{ "id": "sql", "en": "SQL endpoint (Trino)", "ar": "نقطة SQL (Trino)", "kind": "sql", "domain": "", "version": "—", "status": "active", "base": "jdbc:trino://${REPOIO_SQL_HOST}:${REPOIO_SQL_PORT}/iceberg", "ops": [
+			{ "m": "SQL", "p": "SELECT … FROM golden.customer", "en": "Golden tables, row and column grants enforced by Trino", "ar": "الجداول الذهبية، وTrino بيطبّق صلاحيات الصفوف والأعمدة" }
+		] },
+		{ "id": "mcp", "en": "MCP server for AI agents", "ar": "خادم MCP للـ AI agents", "kind": "mcp", "domain": "", "version": "2026-06", "status": "active", "base": "${REPOIO_MCP_URL}", "ops": [
+			{ "m": "TOOL", "p": "search_golden_records", "en": "Search golden records within the user's grants", "ar": "بحث في السجلات الذهبية في حدود صلاحيات المستخدم" },
+			{ "m": "TOOL", "p": "create_change_request", "en": "Draft a change request (never a direct write)", "ar": "إنشاء مسودة طلب تغيير (مش كتابة مباشرة)" }
+		] }
+	],
+	"apps": [
+		{ "id": "app-powerbi", "name": "Power BI — Sales dashboards", "clientId": "${ENTRA_CLIENT_ID_POWERBI}", "roles": ["Data analyst"], "domains": ["customers", "products"], "approvedBy": "محمد", "approved": "2026-09-14", "status": "active" },
+		{ "id": "app-databricks", "name": "Databricks — Customer 360 job", "clientId": "${ENTRA_CLIENT_ID_DATABRICKS}", "roles": ["Data engineer"], "domains": ["customers"], "approvedBy": "محمد", "approved": "2026-10-02", "status": "active" },
+		{ "id": "app-crm-portal", "name": "Retail portal", "clientId": "${ENTRA_CLIENT_ID_RETAIL}", "roles": ["Requester"], "domains": ["stores"], "approvedBy": "", "approved": "", "status": "pending" }
+	],
+	"tokens": [
+		{ "id": "tok-01", "name": "Power BI gateway refresh", "owner": "app-powerbi", "ownerType": "app", "scopes": ["read", "sql"], "created": "2026-09-14", "createdBy": "محمد", "expires": "2026-12-13", "lastUsed": "2026-11-12 12:40", "hint": "rpio_…7f3a", "status": "active" },
+		{ "id": "tok-02", "name": "Customer 360 notebook", "owner": "أحمد ناصر", "ownerType": "user", "scopes": ["read", "sql"], "created": "2026-10-02", "createdBy": "محمد", "expires": "2027-01-30", "lastUsed": "2026-11-12 09:15", "hint": "rpio_…c21e", "status": "active" },
+		{ "id": "tok-03", "name": "Claude agent — steward assistant", "owner": "سارة عادل", "ownerType": "user", "scopes": ["read", "mcp"], "created": "2026-10-20", "createdBy": "محمد", "expires": "2026-11-19", "lastUsed": "2026-11-12 11:02", "hint": "rpio_…09bd", "status": "active" },
+		{ "id": "tok-04", "name": "Vendor report export", "owner": "نور الدين", "ownerType": "user", "scopes": ["sql"], "created": "2026-08-01", "createdBy": "محمد", "expires": "2026-10-30", "lastUsed": "2026-10-29 17:20", "hint": "rpio_…5a10", "status": "expired" },
+		{ "id": "tok-05", "name": "Old ERP bridge test", "owner": "عمر طارق", "ownerType": "user", "scopes": ["read"], "created": "2026-07-11", "createdBy": "محمد", "expires": "2026-12-31", "lastUsed": "2026-09-03 10:00", "hint": "rpio_…e7d2", "status": "revoked" },
+		{ "id": "tok-06", "name": "Databricks job service", "owner": "app-databricks", "ownerType": "app", "scopes": ["read", "sql"], "created": "2026-10-02", "createdBy": "محمد", "expires": "2027-04-01", "lastUsed": "2026-11-12 06:00", "hint": "rpio_…b448", "status": "active" }
+	],
+	"webhooks": [
+		{ "id": "wh-01", "name": "CRM portal — customer changes", "owner": "سارة عادل", "url": "${CRM_PORTAL_WEBHOOK_URL}", "events": ["changes.customer"], "domain": "customers", "status": "active", "last": "2026-11-12 12:31", "lastCode": 200, "rate": 99.6, "deliveries": [
+			{ "at": "2026-11-12 12:31", "event": "changes.customer", "code": 200, "attempts": 1, "ms": 142 },
+			{ "at": "2026-11-12 11:58", "event": "changes.customer", "code": 200, "attempts": 1, "ms": 120 },
+			{ "at": "2026-11-12 10:07", "event": "changes.customer", "code": 503, "attempts": 3, "ms": 0, "next": "" },
+			{ "at": "2026-11-12 09:44", "event": "changes.customer", "code": 200, "attempts": 1, "ms": 133 }
+		] },
+		{ "id": "wh-02", "name": "Data catalog — golden products", "owner": "كريم فوزي", "url": "${CATALOG_WEBHOOK_URL}", "events": ["golden.product"], "domain": "products", "status": "active", "last": "2026-11-12 08:10", "lastCode": 200, "rate": 100, "deliveries": [
+			{ "at": "2026-11-12 08:10", "event": "golden.product", "code": 200, "attempts": 1, "ms": 98 }
+		] },
+		{ "id": "wh-03", "name": "Procurement alerts — vendors", "owner": "هالة سمير", "url": "${PROCUREMENT_WEBHOOK_URL}", "events": ["golden.vendor", "changes.vendor"], "domain": "vendors", "status": "paused", "last": "2026-11-11 22:40", "lastCode": 500, "rate": 61.2, "deliveries": [
+			{ "at": "2026-11-11 22:40", "event": "changes.vendor", "code": 500, "attempts": 6, "ms": 0 },
+			{ "at": "2026-11-11 21:05", "event": "golden.vendor", "code": 500, "attempts": 6, "ms": 0 },
+			{ "at": "2026-11-11 18:30", "event": "changes.vendor", "code": 200, "attempts": 2, "ms": 410 }
+		] }
+	],
+	"events": ["golden.customer", "changes.customer", "golden.vendor", "changes.vendor", "golden.product", "changes.product", "golden.author", "changes.author"],
+	"mcp": {
+		"version": 7, "changed": "2026-11-05", "changedBy": "محمد",
+		"roles": ["requester", "steward", "engineer", "analyst", "admin"],
+		"tools": [
+			{ "id": "search_golden_records", "write": false, "grants": { "requester": true, "steward": true, "engineer": true, "analyst": true, "admin": true } },
+			{ "id": "get_golden_record", "write": false, "grants": { "requester": true, "steward": true, "engineer": true, "analyst": true, "admin": true } },
+			{ "id": "list_potential_matches", "write": false, "grants": { "requester": false, "steward": true, "engineer": false, "analyst": false, "admin": true } },
+			{ "id": "explain_lineage", "write": false, "grants": { "requester": false, "steward": true, "engineer": true, "analyst": true, "admin": true } },
+			{ "id": "query_sql", "write": false, "grants": { "requester": false, "steward": false, "engineer": true, "analyst": true, "admin": true } },
+			{ "id": "create_change_request", "write": true, "grants": { "requester": true, "steward": true, "engineer": false, "analyst": false, "admin": true } },
+			{ "id": "confirm_match", "write": true, "grants": { "requester": false, "steward": true, "engineer": false, "analyst": false, "admin": false } }
+		],
+		"sessions": [
+			{ "agent": "Claude — steward assistant", "user": "سارة عادل", "started": "2026-11-12 10:48", "calls": 37, "denied": 1, "lastTool": "list_potential_matches" },
+			{ "agent": "Claude — sales analyst", "user": "نور الدين", "started": "2026-11-12 12:05", "calls": 12, "denied": 0, "lastTool": "query_sql" }
+		]
+	},
+	"usage": {
+		"days": ["11-06", "11-07", "11-08", "11-09", "11-10", "11-11", "11-12"],
+		"clients": [
+			{ "id": "app-powerbi", "calls": [4100, 4380, 1200, 900, 4620, 4710, 3890], "errors": 0.4, "p95": 180, "limit": 10000, "today": 3890 },
+			{ "id": "app-databricks", "calls": [2200, 2150, 2300, 2280, 2400, 2350, 2410], "errors": 0.1, "p95": 240, "limit": 5000, "today": 2410 },
+			{ "id": "أحمد ناصر", "calls": [310, 520, 0, 0, 880, 640, 1720], "errors": 2.3, "p95": 410, "limit": 2000, "today": 1720 },
+			{ "id": "سارة عادل", "calls": [0, 0, 0, 0, 140, 260, 330], "errors": 0.9, "p95": 650, "limit": 1000, "today": 330 }
+		]
+	}
+}

@@ -1,0 +1,152 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
+	<!-- Generate token (Admin only). The owner is required: a token is never issued to nobody. -->
+	<Dialog id="apiTokDlg" title="{i18n>api.tok.new}" contentWidth="34rem" class="sapUiContentPadding">
+		<VBox>
+			<MessageStrip text="{i18n>api.tok.ownerRule}" type="Information" showIcon="true" class="sapUiSmallMarginBottom"/>
+			<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" columnsL="1" columnsM="1">
+				<Label text="{i18n>api.f.ownerType}"/>
+				<SegmentedButton selectedKey="{view>/api/d/ownerType}" selectionChange=".onDlgOwnerType">
+					<items>
+						<SegmentedButtonItem key="user" text="{i18n>api.f.user}"/>
+						<SegmentedButtonItem key="app" text="{i18n>api.f.app}"/>
+					</items>
+				</SegmentedButton>
+				<Label text="{i18n>api.col.owner}" required="true"/>
+				<Select selectedKey="{view>/api/d/owner}" items="{view>/api/d/owners}" forceSelection="false" change=".onDlgCheck">
+					<core:Item key="{view>key}" text="{view>text}"/>
+				</Select>
+				<Label text="{i18n>api.col.name}" required="true"/>
+				<Input value="{view>/api/d/name}" liveChange=".onDlgCheck" placeholder="{i18n>api.f.namePh}"/>
+				<Label text="{i18n>api.col.scopes}" required="true"/>
+				<VBox>
+					<CheckBox text="{i18n>api.scope.read}" selected="{view>/api/d/scopes/read}" select=".onDlgCheck"/>
+					<CheckBox text="{i18n>api.scope.sql}" selected="{view>/api/d/scopes/sql}" select=".onDlgCheck"/>
+					<CheckBox text="{i18n>api.scope.mcp}" selected="{view>/api/d/scopes/mcp}" select=".onDlgCheck"/>
+				</VBox>
+				<Label text="{i18n>api.col.expires}"/>
+				<Select selectedKey="{view>/api/d/days}">
+					<core:Item key="30" text="{i18n>api.f.d30}"/>
+					<core:Item key="90" text="{i18n>api.f.d90}"/>
+					<core:Item key="180" text="{i18n>api.f.d180}"/>
+				</Select>
+				<Label text=""/>
+				<Text text="{view>/api/d/grantHint}" class="repoioApiSub"/>
+			</form:SimpleForm>
+		</VBox>
+		<beginButton><Button text="{i18n>api.f.generate}" type="Emphasized" enabled="{view>/api/d/valid}" press=".onGenerate"/></beginButton>
+		<endButton><Button text="{i18n>common.cancel}" press=".onDlgClose"/></endButton>
+	</Dialog>
+
+	<!-- The value is shown once. -->
+	<Dialog id="apiShownDlg" title="{i18n>api.shown.title}" contentWidth="34rem" class="sapUiContentPadding" type="Message" state="Warning">
+		<VBox>
+			<Text text="{i18n>api.shown.once}" class="sapUiSmallMarginBottom"/>
+			<HBox alignItems="Center" class="repoioApiSecretBox">
+				<Text text="{view>/api/shown/value}" class="repoioMono" textDirection="LTR" wrapping="true"/>
+				<Button icon="sap-icon://copy" type="Transparent" tooltip="{i18n>api.a.copy}" press=".onCopyToken"/>
+			</HBox>
+			<Text text="{view>/api/shown/meta}" class="repoioApiSub sapUiSmallMarginTop"/>
+			<MessageStrip text="{i18n>api.shown.handover}" type="Warning" showIcon="true" class="sapUiSmallMarginTop"/>
+		</VBox>
+		<endButton><Button text="{i18n>api.shown.done}" type="Emphasized" press=".onShownClose"/></endButton>
+	</Dialog>
+
+	<!-- New webhook subscription. -->
+	<Dialog id="apiWhDlg" title="{i18n>api.wh.new}" contentWidth="34rem" class="sapUiContentPadding">
+		<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" columnsL="1" columnsM="1">
+			<Label text="{i18n>api.col.name}" required="true"/>
+			<Input value="{view>/api/w/name}" liveChange=".onWhCheck"/>
+			<Label text="{i18n>api.col.owner}" required="true"/>
+			<Select selectedKey="{view>/api/w/owner}" items="{view>/api/w/owners}" forceSelection="false" change=".onWhCheck">
+				<core:Item key="{view>key}" text="{view>text}"/>
+			</Select>
+			<Label text="{i18n>api.col.destination}" required="true"/>
+			<Input value="{view>/api/w/url}" liveChange=".onWhCheck" placeholder="$\{RECEIVER_WEBHOOK_URL\}" textDirection="LTR" class="repoioMono"/>
+			<Label text="{i18n>api.col.events}" required="true"/>
+			<MultiComboBox selectedKeys="{view>/api/w/events}" items="{view>/api/eventItems}" selectionFinish=".onWhCheck">
+				<core:Item key="{view>key}" text="{view>key}"/>
+			</MultiComboBox>
+			<Label text="{i18n>api.col.domain}"/>
+			<Select selectedKey="{view>/api/w/domain}" items="{view>/api/domainItems}">
+				<core:Item key="{view>key}" text="{view>text}"/>
+			</Select>
+			<Label text=""/>
+			<Text text="{i18n>api.wh.secretHint}" class="repoioApiSub"/>
+		</form:SimpleForm>
+		<beginButton><Button text="{i18n>common.create}" type="Emphasized" enabled="{view>/api/w/valid}" press=".onCreateWebhook"/></beginButton>
+		<endButton><Button text="{i18n>common.cancel}" press=".onDlgClose"/></endButton>
+	</Dialog>
+
+	<!-- Register a system consumer (Entra ID service principal); approval is a separate step. -->
+	<Dialog id="apiAppDlg" title="{i18n>api.app.new}" contentWidth="32rem" class="sapUiContentPadding">
+		<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" columnsL="1" columnsM="1">
+			<Label text="{i18n>api.col.name}" required="true"/>
+			<Input value="{view>/api/a/name}" liveChange=".onAppCheck"/>
+			<Label text="{i18n>api.col.clientId}" required="true"/>
+			<Input value="{view>/api/a/clientId}" liveChange=".onAppCheck" placeholder="$\{ENTRA_CLIENT_ID\}" textDirection="LTR" class="repoioMono"/>
+			<Label text="{i18n>api.col.domain}" required="true"/>
+			<MultiComboBox selectedKeys="{view>/api/a/domains}" items="{view>/api/domainPick}" selectionFinish=".onAppCheck">
+				<core:Item key="{view>key}" text="{view>text}"/>
+			</MultiComboBox>
+			<Label text=""/>
+			<Text text="{i18n>api.app.hint}" class="repoioApiSub"/>
+		</form:SimpleForm>
+		<beginButton><Button text="{i18n>api.app.register}" type="Emphasized" enabled="{view>/api/a/valid}" press=".onRegisterApp"/></beginButton>
+		<endButton><Button text="{i18n>common.cancel}" press=".onDlgClose"/></endButton>
+	</Dialog>
+
+	<!-- Spec of one interface, rendered from repoio-spec. -->
+	<Dialog id="apiSpecDlg" title="{view>/api/spec/title}" contentWidth="44rem" class="sapUiContentPadding" resizable="true">
+		<VBox>
+			<HBox alignItems="Center" wrap="Wrap" class="sapUiSmallMarginBottom">
+				<ObjectStatus text="{view>/api/spec/statusText}" state="{view>/api/spec/statusState}" icon="{view>/api/spec/statusIcon}" class="sapUiSmallMarginEnd"/>
+				<Text text="{view>/api/spec/meta}" class="repoioApiSub"/>
+			</HBox>
+			<MessageStrip text="{view>/api/spec/sunsetText}" type="Warning" showIcon="true" visible="{= !!${view>/api/spec/sunsetText} }" class="sapUiSmallMarginBottom"/>
+			<Text text="{view>/api/spec/base}" class="repoioMono repoioApiSecretBox" textDirection="LTR"/>
+			<Table items="{view>/api/spec/ops}" class="repoioDenseTable sapUiSmallMarginTop">
+				<columns>
+					<Column width="5.5rem"><Text text="{i18n>api.col.method}"/></Column>
+					<Column><Text text="{i18n>api.col.path}"/></Column>
+					<Column><Text text="{i18n>api.col.summary}"/></Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<ObjectStatus text="{view>m}" state="{view>state}" inverted="true"/>
+						<Text text="{view>p}" class="repoioMono" textDirection="LTR"/>
+						<Text text="{view>summary}"/>
+					</ColumnListItem>
+				</items>
+			</Table>
+			<Text text="{i18n>api.spec.tryHint}" class="repoioApiSub sapUiSmallMarginTop"/>
+		</VBox>
+		<buttons>
+			<Button text="{i18n>api.a.try}" icon="sap-icon://play" press=".onTry"/>
+			<Button text="{i18n>api.a.download}" icon="sap-icon://download" press=".onDownloadSpec"/>
+			<Button text="{i18n>common.close}" type="Emphasized" press=".onDlgClose"/>
+		</buttons>
+	</Dialog>
+
+	<!-- Webhook delivery log. -->
+	<Dialog id="apiLogDlg" title="{view>/api/log/title}" contentWidth="40rem" class="sapUiContentPadding">
+		<Table items="{view>/api/log/rows}" class="repoioDenseTable">
+			<columns>
+				<Column width="9rem"><Text text="{i18n>api.col.time}"/></Column>
+				<Column><Text text="{i18n>api.col.events}"/></Column>
+				<Column width="6rem"><Text text="{i18n>api.col.code}"/></Column>
+				<Column hAlign="End" width="5rem"><Text text="{i18n>api.col.attempts}"/></Column>
+				<Column hAlign="End" width="5rem"><Text text="{i18n>api.col.ms}"/></Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<Text text="{view>at}" textDirection="LTR"/>
+					<Text text="{view>event}" class="repoioMono" textDirection="LTR"/>
+					<ObjectStatus text="{view>code}" state="{view>state}" textDirection="LTR"/>
+					<Text text="{view>attempts}"/>
+					<Text text="{view>msText}" textDirection="LTR"/>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<endButton><Button text="{i18n>common.close}" press=".onDlgClose"/></endButton>
+	</Dialog>
+</core:FragmentDefinition>

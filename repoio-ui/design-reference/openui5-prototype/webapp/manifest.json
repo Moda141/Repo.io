@@ -87,6 +87,10 @@
 			"sync": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/sync.json"
+			},
+			"api": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/api.json"
 			}
 		},
 		"resources": {
@@ -181,6 +185,11 @@
 					"target": "dataSyncFlow"
 				},
 				{
+					"name": "apiManagement",
+					"pattern": "integration/api",
+					"target": "apiManagement"
+				},
+				{
 					"name": "page",
 					"pattern": "page/{key}",
 					"target": "placeholder"
@@ -261,6 +270,11 @@
 					"id": "dataSyncFlow",
 					"name": "DataSync",
 					"level": 3
+				},
+				"apiManagement": {
+					"id": "apiManagement",
+					"name": "ApiManagement",
+					"level": 2
 				}
 			}
 		}

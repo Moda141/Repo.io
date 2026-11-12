@@ -1,0 +1,306 @@
+<mvc:View controllerName="repoio.proto.controller.ApiManagement"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- J16: API management — the inbound side of the Integration hub. Admin-only (administer API access);
+	     the real page is served only to that grant, hiding it here is presentation. -->
+	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="false" class="repoioEdge repoioApiPage">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading><Title text="{i18n>nav.apiManagement}" level="H1"/></f:heading>
+				<f:expandedContent><Text text="{i18n>api.subtitle}"/></f:expandedContent>
+				<f:actions>
+					<ObjectStatus text="{i18n>api.adminOnly}" icon="sap-icon://locked" state="Information" class="repoioApiAdminTag"/>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:content>
+			<IconTabBar id="apiTabs" selectedKey="{view>/api/tab}" select=".onTab" expandable="false" headerMode="Inline"
+				applyContentPadding="false" class="repoioApiTabs">
+				<items>
+					<!-- 1. API catalog: rendered from repoio-spec; read-only. -->
+					<IconTabFilter key="catalog" text="{i18n>api.tab.catalog}" count="{view>/api/n/catalog}">
+						<Table items="{view>/api/apis}" class="repoioDenseTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" noDataText="{i18n>api.noData}">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="{i18n>api.catalog.title}" level="H2"/>
+									<ToolbarSpacer/>
+									<SegmentedButton selectedKey="{view>/api/kind}" selectionChange=".onKind">
+										<items>
+											<SegmentedButtonItem key="all" text="{i18n>common.all}"/>
+											<SegmentedButtonItem key="rest" text="REST"/>
+											<SegmentedButtonItem key="graphql" text="GraphQL"/>
+											<SegmentedButtonItem key="sql" text="SQL"/>
+											<SegmentedButtonItem key="mcp" text="MCP"/>
+										</items>
+									</SegmentedButton>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>api.col.interface}"/></Column>
+								<Column width="6.5rem"><Text text="{i18n>api.col.type}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="9rem"><Text text="{i18n>api.col.domain}"/></Column>
+								<Column width="5rem"><Text text="{i18n>api.col.version}"/></Column>
+								<Column width="12.5rem"><Text text="{i18n>api.col.status}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>api.col.base}"/></Column>
+								<Column hAlign="End" width="5.5rem"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem type="Active" press=".onSpec">
+									<HBox alignItems="Center">
+										<core:Icon src="{view>icon}" class="repoioExRowIcon" decorative="true"/>
+										<Link text="{view>title}" press=".onSpec" wrapping="false"/>
+									</HBox>
+									<Text text="{view>kindText}"/>
+									<Text text="{view>domainText}"/>
+									<Text text="{view>version}" textDirection="LTR"/>
+									<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+									<Text text="{view>base}" class="repoioMono" textDirection="LTR" wrapping="false" tooltip="{view>base}"/>
+									<HBox justifyContent="End">
+										<Button icon="sap-icon://document-text" type="Transparent" tooltip="{i18n>api.a.spec}" press=".onSpec"/>
+										<Button icon="sap-icon://download" type="Transparent" tooltip="{i18n>api.a.download}" press=".onDownloadSpec"/>
+									</HBox>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</IconTabFilter>
+
+					<!-- 2. Access tokens: only the Admin generates them; each has a named owner and acts with that owner's grants. -->
+					<IconTabFilter key="tokens" text="{i18n>api.tab.tokens}" count="{view>/api/n/tokens}">
+						<MessageStrip text="{i18n>api.tok.rule}" type="Information" showIcon="true" class="repoioApiStrip"/>
+						<Table id="tokTable" items="{view>/api/tokens}" class="repoioDenseTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" noDataText="{i18n>api.noData}">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="{i18n>api.tok.title}" level="H2"/>
+									<ToolbarSpacer/>
+									<SearchField width="13rem" value="{view>/api/tq}" liveChange=".onTokSearch" placeholder="{i18n>common.search}"/>
+									<Select selectedKey="{view>/api/tstate}" change=".onTokSearch" width="9rem">
+										<core:Item key="all" text="{i18n>api.st.allStates}"/>
+										<core:Item key="active" text="{i18n>api.st.active}"/>
+										<core:Item key="expiring" text="{i18n>api.st.expiring}"/>
+										<core:Item key="expired" text="{i18n>api.st.expired}"/>
+										<core:Item key="revoked" text="{i18n>api.st.revoked}"/>
+									</Select>
+									<ToolbarSeparator/>
+									<Button text="{i18n>api.tok.new}" icon="sap-icon://add" type="Emphasized" press=".onNewToken"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>api.col.name}"/></Column>
+								<Column width="13rem"><Text text="{i18n>api.col.owner}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="8rem"><Text text="{i18n>api.col.scopes}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true" width="7rem"><Text text="{i18n>api.col.token}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="7.5rem"><Text text="{i18n>api.col.expires}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true" width="9rem"><Text text="{i18n>api.col.lastUsed}"/></Column>
+								<Column width="9rem"><Text text="{i18n>api.col.status}"/></Column>
+								<Column hAlign="End" width="3.5rem"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem highlight="{view>highlight}">
+									<VBox>
+										<Text text="{view>name}"/>
+										<Text text="{view>createdText}" class="repoioApiSub"/>
+									</VBox>
+									<HBox alignItems="Center">
+										<rc:PersonLink name="{view>owner}" visible="{= ${view>ownerType} === 'user' }"/>
+										<core:Icon src="sap-icon://it-system" visible="{= ${view>ownerType} === 'app' }" class="repoioApiAppIcon" tooltip="{i18n>api.ownerApp}"/>
+										<Text text="{view>ownerText}" class="repoioApiOwnerName"/>
+									</HBox>
+									<Text text="{view>scopeText}"/>
+									<Text text="{view>hint}" class="repoioMono" textDirection="LTR" wrapping="false"/>
+									<Text text="{view>expires}" textDirection="LTR" wrapping="false"/>
+									<Text text="{view>lastUsed}" textDirection="LTR" wrapping="false"/>
+									<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+									<Button icon="sap-icon://cancel" type="Transparent" tooltip="{i18n>api.a.revoke}" visible="{view>canRevoke}" press=".onRevoke"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+						<Table items="{view>/api/apps}" class="repoioDenseTable repoioApiSecond" popinLayout="GridSmall" noDataText="{i18n>api.noData}">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="{i18n>api.app.title}" level="H2"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>api.app.new}" icon="sap-icon://add" type="Transparent" press=".onNewApp"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>api.col.name}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>api.col.clientId}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>api.col.grants}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="12rem"><Text text="{i18n>api.col.approvedBy}"/></Column>
+								<Column width="9rem"><Text text="{i18n>api.col.status}"/></Column>
+								<Column hAlign="End" width="7rem"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<HBox alignItems="Center">
+										<core:Icon src="sap-icon://it-system" class="repoioExRowIcon" decorative="true"/>
+										<Text text="{view>name}" wrapping="false"/>
+									</HBox>
+									<Text text="{view>clientId}" class="repoioMono" textDirection="LTR" wrapping="false"/>
+									<Text text="{view>grantText}"/>
+									<HBox alignItems="Center">
+										<rc:PersonLink name="{view>approvedBy}" visible="{= !!${view>approvedBy} }"/>
+										<Text text="{view>approvedText}" wrapping="false" class="repoioApiOwnerName"/>
+									</HBox>
+									<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+									<Button text="{i18n>api.a.approve}" type="Transparent" visible="{= ${view>status} === 'pending' }" press=".onApproveApp"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</IconTabFilter>
+
+					<!-- 3. Webhooks: signed notifications on golden / changes topics; never a write-back path. -->
+					<IconTabFilter key="webhooks" text="{i18n>api.tab.webhooks}" count="{view>/api/n/webhooks}">
+						<MessageStrip text="{i18n>api.wh.rule}" type="Information" showIcon="true" class="repoioApiStrip"/>
+						<Table items="{view>/api/webhooks}" class="repoioDenseTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" noDataText="{i18n>api.noData}">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="{i18n>api.wh.title}" level="H2"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>api.wh.new}" icon="sap-icon://add" type="Emphasized" press=".onNewWebhook"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>api.col.name}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>api.col.destination}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="10rem"><Text text="{i18n>api.col.events}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="10rem"><Text text="{i18n>api.col.owner}"/></Column>
+								<Column width="8.5rem"><Text text="{i18n>api.col.lastDelivery}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true" hAlign="End" width="7.5rem"><Text text="{i18n>api.col.success}"/></Column>
+								<Column width="8rem"><Text text="{i18n>api.col.status}"/></Column>
+								<Column hAlign="End" width="8rem"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem highlight="{view>highlight}">
+									<VBox>
+										<Text text="{view>name}"/>
+										<Text text="{view>domainText}" class="repoioApiSub"/>
+									</VBox>
+									<Text text="{view>url}" class="repoioMono" textDirection="LTR" wrapping="false" tooltip="{view>url}"/>
+									<Text text="{view>eventText}" class="repoioMono" textDirection="LTR"/>
+									<HBox alignItems="Center">
+										<rc:PersonLink name="{view>owner}"/>
+										<Text text="{view>ownerText}" class="repoioApiOwnerName"/>
+									</HBox>
+									<ObjectStatus text="{view>lastText}" state="{view>lastState}" textDirection="LTR"/>
+									<Text text="{view>rateText}" textDirection="LTR"/>
+									<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+									<HBox justifyContent="End">
+										<Button icon="sap-icon://paper-plane" type="Transparent" tooltip="{i18n>api.a.test}" press=".onTestWebhook"/>
+										<Button icon="sap-icon://list" type="Transparent" tooltip="{i18n>api.a.log}" press=".onWebhookLog"/>
+										<Button icon="{= ${view>status} === 'paused' ? 'sap-icon://media-play' : 'sap-icon://media-pause' }" type="Transparent"
+											tooltip="{= ${view>status} === 'paused' ? ${i18n>api.a.resume} : ${i18n>api.a.pause} }" press=".onToggleWebhook"/>
+									</HBox>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</IconTabFilter>
+
+					<!-- 4. MCP exposure: the versioned role -> tool grant matrix and live agent sessions. -->
+					<IconTabFilter key="mcp" text="{i18n>api.tab.mcp}">
+						<MessageStrip text="{i18n>api.mcp.rule}" type="Information" showIcon="true" class="repoioApiStrip"/>
+						<Table id="mcpTable" items="{view>/api/mcp/rows}" class="repoioDenseTable repoioApiMatrix" noDataText="{i18n>api.noData}">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="{i18n>api.mcp.title}" level="H2"/>
+									<Text text="{view>/api/mcp/versionText}" class="repoioApiSub"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>common.cancel}" type="Transparent" enabled="{view>/api/mcp/dirty}" press=".onMcpReset"/>
+									<Button text="{i18n>api.mcp.save}" type="Emphasized" enabled="{view>/api/mcp/dirty}" press=".onMcpSave"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>api.col.tool}"/></Column>
+								<Column hAlign="Center" width="7rem"><Text text="{i18n>api.role.requester}"/></Column>
+								<Column hAlign="Center" width="7rem"><Text text="{i18n>api.role.steward}"/></Column>
+								<Column hAlign="Center" width="7rem"><Text text="{i18n>api.role.engineer}"/></Column>
+								<Column hAlign="Center" width="7rem"><Text text="{i18n>api.role.analyst}"/></Column>
+								<Column hAlign="Center" width="7rem"><Text text="{i18n>api.role.admin}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<VBox>
+										<HBox alignItems="Center">
+											<Text text="{view>id}" class="repoioMono" textDirection="LTR" wrapping="false"/>
+											<ObjectStatus text="{i18n>api.mcp.write}" state="Warning" visible="{view>write}" class="repoioApiWriteTag"/>
+										</HBox>
+										<Text text="{view>desc}" class="repoioApiSub"/>
+									</VBox>
+									<CheckBox selected="{view>grants/requester}" select=".onMcpChange"/>
+									<CheckBox selected="{view>grants/steward}" select=".onMcpChange"/>
+									<CheckBox selected="{view>grants/engineer}" select=".onMcpChange"/>
+									<CheckBox selected="{view>grants/analyst}" select=".onMcpChange"/>
+									<CheckBox selected="{view>grants/admin}" select=".onMcpChange"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+						<Table items="{view>/api/mcp/sessions}" class="repoioDenseTable repoioApiSecond" noDataText="{i18n>api.mcp.noSessions}">
+							<headerToolbar>
+								<OverflowToolbar><Title text="{i18n>api.mcp.sessions}" level="H2"/></OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>api.col.agent}"/></Column>
+								<Column width="12rem"><Text text="{i18n>api.col.initUser}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="9rem"><Text text="{i18n>api.col.started}"/></Column>
+								<Column hAlign="End" width="5rem"><Text text="{i18n>api.col.calls}"/></Column>
+								<Column hAlign="End" width="5rem"><Text text="{i18n>api.col.denied}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>api.col.lastTool}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<HBox alignItems="Center">
+										<core:Icon src="sap-icon://da" class="repoioExRowIcon" decorative="true"/>
+										<Text text="{view>agent}" wrapping="false"/>
+									</HBox>
+									<rc:PersonLink name="{view>user}"/>
+									<Text text="{view>started}" textDirection="LTR"/>
+									<Text text="{view>calls}"/>
+									<ObjectStatus text="{view>denied}" state="{= ${view>denied} > 0 ? 'Warning' : 'None' }"/>
+									<Text text="{view>lastTool}" class="repoioMono" textDirection="LTR"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</IconTabFilter>
+
+					<!-- 5. Usage and limits per client. -->
+					<IconTabFilter key="usage" text="{i18n>api.tab.usage}">
+						<VBox class="repoioJrPanel repoioApiChartPanel">
+							<HBox alignItems="Center" justifyContent="SpaceBetween">
+								<Title text="{i18n>api.use.chart}" level="H3"/>
+								<Text text="{i18n>api.use.hint}" class="repoioJrHint"/>
+							</HBox>
+							<rc:EChart id="apiChart" height="12rem" ariaLabel="{i18n>api.use.chart}"/>
+						</VBox>
+						<Table items="{view>/api/usage}" class="repoioDenseTable repoioApiSecond" noDataText="{i18n>api.noData}">
+							<headerToolbar>
+								<OverflowToolbar><Title text="{i18n>api.use.title}" level="H2"/></OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>api.col.client}"/></Column>
+								<Column hAlign="End" width="7rem"><Text text="{i18n>api.col.calls7d}"/></Column>
+								<Column hAlign="End" width="6rem"><Text text="{i18n>api.col.errors}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" hAlign="End" width="7rem"><Text text="{i18n>api.col.p95}"/></Column>
+								<Column width="16rem"><Text text="{i18n>api.col.quota}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem highlight="{view>highlight}">
+									<HBox alignItems="Center">
+										<rc:PersonLink name="{view>id}" visible="{= !${view>isApp} }"/>
+										<core:Icon src="sap-icon://it-system" visible="{view>isApp}" class="repoioApiAppIcon" decorative="true"/>
+										<Text text="{view>clientText}" wrapping="false" class="repoioApiOwnerName"/>
+									</HBox>
+									<Text text="{view>totalText}" textDirection="LTR"/>
+									<ObjectStatus text="{view>errText}" state="{view>errState}" textDirection="LTR"/>
+									<Text text="{view>p95Text}" textDirection="LTR"/>
+									<VBox>
+										<ProgressIndicator percentValue="{view>pct}" displayValue="{view>quotaText}" state="{view>quotaState}" height="1.125rem" class="repoioApiQuota"/>
+										<Text text="{view>quotaHint}" class="repoioApiSub" visible="{= !!${view>quotaHint} }"/>
+									</VBox>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>
