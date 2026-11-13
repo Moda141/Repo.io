@@ -283,6 +283,10 @@ sap.ui.define([
 		/* ---------- canvas model ---------- */
 
 		_size: function (n) { return SIZE[n.type] || SIZE.card; },
+		/* Trigger settings: which channels may submit the request and which request types start this workflow. */
+		_trigChannels: function (p) { return p.channels || ["console", "api", "mcp"]; },
+		_trigTypes: function (p) { return p.types || ["create", "change", "merge", "deactivate"]; },
+		_trigText: function (aKeys, sPrefix) { var T = this.text.bind(this); return aKeys.length ? aKeys.map(function (k) { return T(sPrefix + k); }).join(this.lang() === "ar" ? "، " : ", ") : "—"; },
 
 		_card: function (n, issues, f) {
 			var p = n.props || {}, T = this.text.bind(this), c = { title: this._label(n), icon: NODE_ICON[n.type], lines: [], badges: [] }, that = this;
@@ -294,8 +298,8 @@ sap.ui.define([
 				c.eyebrow = T("fd.trig.eyebrow");
 				c.title = T("fd.trig.title");
 				c.subtitle = tt ? (this.lang() === "ar" ? tt.ar : tt.en) : T("fd.pickTemplate");
-				c.lines = [{ k: T("fd.trig.event"), v: T("fd.trig.submitted") }, { k: T("fd.trig.domain"), v: tt ? this._domainText(tt.domain) : "—" },
-					{ k: T("fd.trig.from"), v: T("fd.trig.channels") }];
+				c.lines = [{ k: T("fd.trig.event"), v: this._trigText(this._trigTypes(p), "fd.trig.t.") }, { k: T("fd.trig.domain"), v: tt ? this._domainText(tt.domain) : "—" },
+					{ k: T("fd.trig.from"), v: this._trigText(this._trigChannels(p), "fd.trig.c.") }];
 				break;
 			case "template":
 				var t = this._tpl(p.template), v = this._tplVersion(f);
@@ -459,6 +463,11 @@ sap.ui.define([
 					sel.tplDomain = t ? this._domainText(t.domain) : ""; sel.tplVersion = v ? v.v : "";
 					sel.newer = t && v && v.v !== t.version ? t.version : "";
 				}
+				if (n.type === "begin") {
+					var ch = this._trigChannels(p), ty = this._trigTypes(p);
+					sel.trig = { console: ch.indexOf("console") > -1, api: ch.indexOf("api") > -1, mcp: ch.indexOf("mcp") > -1,
+						create: ty.indexOf("create") > -1, change: ty.indexOf("change") > -1, merge: ty.indexOf("merge") > -1, deactivate: ty.indexOf("deactivate") > -1 };
+				}
 				if (n.type === "condition") { sel.condFields = this._condFields(id); sel.valueHint = this._condValueHint(p.field, id); }
 			}
 			m.setProperty("/wf/sel", sel);
@@ -504,6 +513,10 @@ sap.ui.define([
 		/* Approval: single or parallel groups; rework; segregation of duties; delegation. */
 		onApproverType: function (e) { this._upd({ approverType: e.getParameter("item").getKey() }); },
 		onApprovers: function (e) { this._upd({ approvers: e.getSource().getSelectedKeys() }); },
+		onTrigger: function () {
+			var t = this.viewModel().getProperty("/wf/sel/trig"), pick = function (keys) { return keys.filter(function (k) { return t[k]; }); };
+			this._upd({ channels: pick(["console", "api", "mcp"]), types: pick(["create", "change", "merge", "deactivate"]) });
+		},
 		onRule: function (e) { this._upd({ rule: e.getParameter("item").getKey() }); },
 		onApprovalMode: function (e) {
 			var k = e.getParameter("item").getKey(), s = this.viewModel().getProperty("/wf/sel");
@@ -822,6 +835,10 @@ sap.ui.define([
 				var p = n.props || {};
 				switch (n.type) {
 				case "template": if (!tplKey) { add(n, "fd.v.noTemplate"); } break;
+				case "begin":
+					if (!that._trigChannels(p).length) { add(n, "fd.v.noChannel"); }
+					if (!that._trigTypes(p).length) { add(n, "fd.v.noType"); }
+					break;
 				case "approval":
 					if (p.mode === "parallel") {
 						if ((p.groups || []).length < 2) { add(n, "fd.v.twoGroups"); }

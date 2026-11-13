@@ -928,3 +928,4 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 	height: 1.25rem; border-radius: 0.625rem; background: #2f9e5b; color: #fff; font: bold 0.625rem/1.25rem "72", Arial, sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }
 .rfEyebrow .rfGlyph { font-size: 0.5625rem; }
 .rfT-begin.rfCard .rfHead { padding-top: 0.875rem; }
+.repoioTrigHint.sapMText { margin: -0.25rem 0 0.25rem; margin-inline-start: 2rem; font-size: 0.75rem; }

@@ -222,9 +222,14 @@ current entity schema → blocked at save with the schema rule cited.
 1. The designer opens the **Workflow Designer** — the Repo.io flow
    designer (ADR-0002): step cards on a canvas, "+" on any path to add a
    step, properties in a panel beside it, a minimap for large flows. It
-   starts with **Begin** and **Template**: exactly one request template,
-   chosen from the published templates the user can see; the workflow's
-   domain is that template's. **New** starts from a blank canvas or as a
+   starts with the **Trigger** and **Template**: exactly one request
+   template, chosen from the published templates the user can see; the
+   workflow's domain is that template's. The Trigger card sets which
+   request types start the workflow (create, change, merge, deactivate)
+   and which channels may submit them (console, API, AI agent via MCP,
+   where the agent only drafts and the user submits); at least one of
+   each is required, the server rejects a request from an unticked
+   channel or type, and the caller's own grants apply on every channel. **New** starts from a blank canvas or as a
    **copy** of an existing workflow (a new draft v1; the original is
    unchanged).
 2. The workflow is **pinned to a template version**. When a newer

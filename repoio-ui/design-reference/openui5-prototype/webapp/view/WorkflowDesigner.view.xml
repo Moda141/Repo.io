@@ -120,9 +120,26 @@
 							</Panel>
 
 							<!-- Begin -->
-							<VBox renderType="Bare" visible="{= ${view>/wf/sel/type} === 'begin' }" class="sapUiSmallMargin">
-								<Text text="{i18n>fd.beginHint}"/>
-							</VBox>
+							<Panel headerText="{i18n>fd.trig.settings}" visible="{= ${view>/wf/sel/type} === 'begin' }" class="repoioWfPanel">
+								<Text text="{i18n>fd.beginHint}" class="repoioHint"/>
+								<Label text="{i18n>fd.trig.event}" class="sapUiSmallMarginTop" required="true"/>
+								<VBox renderType="Bare">
+									<CheckBox text="{i18n>fd.trig.t.create}" selected="{view>/wf/sel/trig/create}" select=".onTrigger" enabled="{= !${view>/wf/readOnly} }"/>
+									<CheckBox text="{i18n>fd.trig.t.change}" selected="{view>/wf/sel/trig/change}" select=".onTrigger" enabled="{= !${view>/wf/readOnly} }"/>
+									<CheckBox text="{i18n>fd.trig.t.merge}" selected="{view>/wf/sel/trig/merge}" select=".onTrigger" enabled="{= !${view>/wf/readOnly} }"/>
+									<CheckBox text="{i18n>fd.trig.t.deactivate}" selected="{view>/wf/sel/trig/deactivate}" select=".onTrigger" enabled="{= !${view>/wf/readOnly} }"/>
+								</VBox>
+								<Label text="{i18n>fd.trig.from}" class="sapUiSmallMarginTop" required="true"/>
+								<VBox renderType="Bare">
+									<CheckBox text="{i18n>fd.trig.c.console}" selected="{view>/wf/sel/trig/console}" select=".onTrigger" enabled="{= !${view>/wf/readOnly} }"/>
+									<Text text="{i18n>fd.trig.h.console}" class="repoioHint repoioTrigHint"/>
+									<CheckBox text="{i18n>fd.trig.c.api}" selected="{view>/wf/sel/trig/api}" select=".onTrigger" enabled="{= !${view>/wf/readOnly} }"/>
+									<Text text="{i18n>fd.trig.h.api}" class="repoioHint repoioTrigHint"/>
+									<CheckBox text="{i18n>fd.trig.c.mcp}" selected="{view>/wf/sel/trig/mcp}" select=".onTrigger" enabled="{= !${view>/wf/readOnly} }"/>
+									<Text text="{i18n>fd.trig.h.mcp}" class="repoioHint repoioTrigHint"/>
+								</VBox>
+								<MessageStrip text="{i18n>fd.trig.note}" type="Information" showIcon="true" class="sapUiSmallMarginTop"/>
+							</Panel>
 
 							<!-- Template -->
 							<Panel headerText="{i18n>fd.n.template}" visible="{= ${view>/wf/sel/type} === 'template' }" class="repoioWfPanel">

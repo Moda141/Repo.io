@@ -178,7 +178,7 @@ sap.ui.define([], function () {
 			var n = that.nodes[id], p = n.props || {}, nm = esc(n.name || label(n)), next = n.next, gw;
 			switch (n.type) {
 			case "begin":
-				els.push("    <bpmn:startEvent id=\"" + id + "\" name=\"" + nm + "\" />"); break;
+				els.push("    <bpmn:startEvent id=\"" + id + "\" name=\"" + nm + "\"" + attrs({ channels: (p.channels || ["console", "api", "mcp"]).join(","), requestTypes: (p.types || ["create", "change", "merge", "deactivate"]).join(",") }) + " />"); break;
 			case "template":
 				// The template binds the workflow; no runtime step of its own.
 				els.push("    <bpmn:serviceTask id=\"" + id + "\" name=\"" + nm + "\" repoio:taskType=\"loadRequest\"" + attrs({ template: p.template }) + " />"); break;
