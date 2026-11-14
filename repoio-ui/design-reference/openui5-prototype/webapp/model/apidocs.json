@@ -7989,6 +7989,392 @@
 		{
 			"openapi": "3.1.0",
 			"info": {
+				"title": "SQL endpoint (Trino)",
+				"version": "—",
+				"description": "Read-only SQL over the golden tables through Trino. JDBC, ODBC and the Python client all speak this HTTP protocol; Trino enforces row and column grants for the signed-in user (or the token owner). Writes are not accepted.\n\nJDBC: `jdbc:trino://${REPOIO_SQL_HOST}:${REPOIO_SQL_PORT}/iceberg?SSL=true`\n\n> Sample documentation in the console prototype. Endpoints are designed, not implemented; each one lands with the milestone shown."
+			},
+			"servers": [
+				{
+					"url": "https://${REPOIO_SQL_HOST}:${REPOIO_SQL_PORT}",
+					"description": "Set per deployment (API gateway)."
+				}
+			],
+			"security": [
+				{
+					"entra": []
+				},
+				{
+					"pat": []
+				}
+			],
+			"paths": {
+				"/v1/statement": {
+					"post": {
+						"summary": "Submit a query",
+						"description": "Body is the SQL text. The response carries the first rows (if any) and `nextUri` to page through the rest.\n\n**Required grant:** `sql + read:<domain>`",
+						"responses": {
+							"200": {
+								"description": "OK",
+								"content": {
+									"application/json": {
+										"schema": {
+											"$ref": "#/components/schemas/QueryResults"
+										}
+									}
+								}
+							},
+							"401": {
+								"description": "Missing, expired or revoked token.",
+								"content": {
+									"application/problem+json": {
+										"schema": {
+											"$ref": "#/components/schemas/Problem"
+										}
+									}
+								}
+							},
+							"403": {
+								"description": "The caller (the token owner) has no grant for this domain, repository or action. Never answered with partial data.",
+								"content": {
+									"application/problem+json": {
+										"schema": {
+											"$ref": "#/components/schemas/Problem"
+										}
+									}
+								}
+							},
+							"429": {
+								"description": "Daily limit reached for this client.",
+								"headers": {
+									"Retry-After": {
+										"schema": {
+											"type": "integer"
+										}
+									}
+								},
+								"content": {
+									"application/problem+json": {
+										"schema": {
+											"$ref": "#/components/schemas/Problem"
+										}
+									}
+								}
+							},
+							"400": {
+								"description": "Syntax error, or a statement that is not read-only."
+							}
+						},
+						"parameters": [
+							{
+								"name": "X-Trino-Catalog",
+								"in": "header",
+								"schema": {
+									"type": "string",
+									"default": "iceberg"
+								}
+							},
+							{
+								"name": "X-Trino-Schema",
+								"in": "header",
+								"schema": {
+									"type": "string",
+									"examples": [
+										"golden"
+									]
+								}
+							}
+						],
+						"requestBody": {
+							"required": true,
+							"content": {
+								"application/json": {
+									"schema": {
+										"type": "string",
+										"examples": [
+											"SELECT golden_id, name, city FROM golden.customer WHERE city = 'Cairo'"
+										]
+									}
+								}
+							}
+						},
+						"x-milestone": "M2",
+						"tags": [
+							"SQL endpoint (Trino)"
+						]
+					}
+				},
+				"/v1/statement/executing/{queryId}/{token}": {
+					"get": {
+						"summary": "Fetch the next page",
+						"description": "Follow `nextUri` until it is absent.\n\n**Required grant:** `sql`",
+						"responses": {
+							"200": {
+								"description": "OK",
+								"content": {
+									"application/json": {
+										"schema": {
+											"$ref": "#/components/schemas/QueryResults"
+										}
+									}
+								}
+							},
+							"401": {
+								"description": "Missing, expired or revoked token.",
+								"content": {
+									"application/problem+json": {
+										"schema": {
+											"$ref": "#/components/schemas/Problem"
+										}
+									}
+								}
+							},
+							"403": {
+								"description": "The caller (the token owner) has no grant for this domain, repository or action. Never answered with partial data.",
+								"content": {
+									"application/problem+json": {
+										"schema": {
+											"$ref": "#/components/schemas/Problem"
+										}
+									}
+								}
+							},
+							"429": {
+								"description": "Daily limit reached for this client.",
+								"headers": {
+									"Retry-After": {
+										"schema": {
+											"type": "integer"
+										}
+									}
+								},
+								"content": {
+									"application/problem+json": {
+										"schema": {
+											"$ref": "#/components/schemas/Problem"
+										}
+									}
+								}
+							}
+						},
+						"parameters": [
+							{
+								"name": "queryId",
+								"in": "path",
+								"required": true,
+								"description": "",
+								"schema": {
+									"type": "string"
+								}
+							},
+							{
+								"name": "token",
+								"in": "path",
+								"required": true,
+								"description": "",
+								"schema": {
+									"type": "string"
+								}
+							}
+						],
+						"x-milestone": "M2",
+						"tags": [
+							"SQL endpoint (Trino)"
+						]
+					},
+					"delete": {
+						"summary": "Cancel the query",
+						"description": "**Required grant:** `sql`",
+						"responses": {
+							"204": {
+								"description": "Cancelled"
+							},
+							"401": {
+								"description": "Missing, expired or revoked token.",
+								"content": {
+									"application/problem+json": {
+										"schema": {
+											"$ref": "#/components/schemas/Problem"
+										}
+									}
+								}
+							},
+							"403": {
+								"description": "The caller (the token owner) has no grant for this domain, repository or action. Never answered with partial data.",
+								"content": {
+									"application/problem+json": {
+										"schema": {
+											"$ref": "#/components/schemas/Problem"
+										}
+									}
+								}
+							},
+							"429": {
+								"description": "Daily limit reached for this client.",
+								"headers": {
+									"Retry-After": {
+										"schema": {
+											"type": "integer"
+										}
+									}
+								},
+								"content": {
+									"application/problem+json": {
+										"schema": {
+											"$ref": "#/components/schemas/Problem"
+										}
+									}
+								}
+							}
+						},
+						"parameters": [
+							{
+								"name": "queryId",
+								"in": "path",
+								"required": true,
+								"description": "",
+								"schema": {
+									"type": "string"
+								}
+							},
+							{
+								"name": "token",
+								"in": "path",
+								"required": true,
+								"description": "",
+								"schema": {
+									"type": "string"
+								}
+							}
+						],
+						"x-milestone": "M2",
+						"tags": [
+							"SQL endpoint (Trino)"
+						]
+					}
+				}
+			},
+			"components": {
+				"schemas": {
+					"Problem": {
+						"type": "object",
+						"description": "RFC 9457 problem details.",
+						"properties": {
+							"type": {
+								"type": "string",
+								"format": "uri"
+							},
+							"title": {
+								"type": "string"
+							},
+							"status": {
+								"type": "integer"
+							},
+							"detail": {
+								"type": "string"
+							},
+							"requestId": {
+								"type": "string",
+								"examples": [
+									"req-ce5cc2"
+								]
+							}
+						},
+						"required": [
+							"title",
+							"status",
+							"requestId"
+						]
+					},
+					"QueryResults": {
+						"type": "object",
+						"description": "Trino client protocol page.",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"nextUri": {
+								"type": "string"
+							},
+							"columns": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"name": {
+											"type": "string"
+										},
+										"type": {
+											"type": "string"
+										}
+									}
+								}
+							},
+							"data": {
+								"type": "array",
+								"items": {
+									"type": "array"
+								}
+							},
+							"stats": {
+								"type": "object",
+								"properties": {
+									"state": {
+										"type": "string",
+										"enum": [
+											"QUEUED",
+											"RUNNING",
+											"FINISHED",
+											"FAILED"
+										]
+									}
+								}
+							},
+							"error": {
+								"$ref": "#/components/schemas/Problem"
+							}
+						}
+					}
+				},
+				"securitySchemes": {
+					"entra": {
+						"type": "oauth2",
+						"description": "Microsoft Entra ID (interactive users and app registrations).",
+						"flows": {
+							"authorizationCode": {
+								"authorizationUrl": "${ENTRA_AUTHORITY}/oauth2/v2.0/authorize",
+								"tokenUrl": "${ENTRA_AUTHORITY}/oauth2/v2.0/token",
+								"scopes": {
+									"repoio.read": "Read within your grants",
+									"repoio.write": "Submit change requests"
+								}
+							}
+						}
+					},
+					"pat": {
+						"type": "http",
+						"scheme": "bearer",
+						"description": "Access token issued by an administrator to a named owner. Acts with the owner's grants."
+					}
+				}
+			},
+			"x-repoio": {
+				"id": "sql",
+				"area": "data",
+				"milestone": "M2",
+				"status": "planned",
+				"kind": "sql",
+				"deprecated": false,
+				"sunset": null
+			},
+			"tags": [
+				{
+					"name": "SQL endpoint (Trino)"
+				}
+			]
+		},
+		{
+			"openapi": "3.1.0",
+			"info": {
 				"title": "MCP server",
 				"version": "2026-06",
 				"description": "Model Context Protocol (JSON-RPC 2.0) for AI agents. Every tool call runs with the initiating user's scopes and is audited.\n\nTools: `search_golden_records`, `get_golden_record`, `list_potential_matches`, `explain_lineage`, `query_sql`, `create_change_request` (drafts only), `confirm_match`.\n\n> Sample documentation in the console prototype. Endpoints are designed, not implemented; each one lands with the milestone shown."

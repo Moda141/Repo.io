@@ -5,7 +5,7 @@ sap.ui.define([
 	"use strict";
 
 	var AREA = ["data", "stewardship", "integration", "process", "agents", "platform", "admin"],
-		KIND = { rest: "sap-icon://chain-link", graphql: "sap-icon://overview-chart", mcp: "sap-icon://da" };
+		KIND = { rest: "sap-icon://chain-link", graphql: "sap-icon://overview-chart", sql: "sap-icon://syntax", mcp: "sap-icon://da" };
 
 	/* API reference (J16): one OpenAPI 3.1 document per API family; the catalog in API management links here. */
 	return BaseController.extend("repoio.proto.controller.ApiReference", {

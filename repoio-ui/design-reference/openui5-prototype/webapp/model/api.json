@@ -8,7 +8,7 @@
 			"kind": "rest",
 			"domain": "customers",
 			"version": "v1",
-			"status": "active",
+			"status": "planned",
 			"base": "${REPOIO_API_BASE_URL}/v1/customers",
 			"ops": [
 				{
@@ -41,7 +41,8 @@
 					"en": "Submit a change request (governed write path)",
 					"ar": "تقديم طلب تغيير (مسار الكتابة المحكوم)"
 				}
-			]
+			],
+			"milestone": "M1"
 		},
 		{
 			"id": "golden-vendor",
@@ -50,7 +51,7 @@
 			"kind": "rest",
 			"domain": "vendors",
 			"version": "v1",
-			"status": "active",
+			"status": "planned",
 			"base": "${REPOIO_API_BASE_URL}/v1/vendors",
 			"ops": [
 				{
@@ -71,7 +72,8 @@
 					"en": "Submit a change request",
 					"ar": "تقديم طلب تغيير"
 				}
-			]
+			],
+			"milestone": "M1"
 		},
 		{
 			"id": "golden-product",
@@ -80,7 +82,7 @@
 			"kind": "rest",
 			"domain": "products",
 			"version": "v1",
-			"status": "active",
+			"status": "planned",
 			"base": "${REPOIO_API_BASE_URL}/v1/products",
 			"ops": [
 				{
@@ -95,7 +97,8 @@
 					"en": "Get one golden product",
 					"ar": "جلب منتج ذهبي واحد"
 				}
-			]
+			],
+			"milestone": "M1"
 		},
 		{
 			"id": "golden-customer-v0",
@@ -114,7 +117,8 @@
 					"en": "Look up by source code — replaced by /v1/customers",
 					"ar": "بحث بكود المصدر — استُبدل بـ /v1/customers"
 				}
-			]
+			],
+			"milestone": "M1"
 		},
 		{
 			"id": "graphql",
@@ -123,7 +127,7 @@
 			"kind": "graphql",
 			"domain": "",
 			"version": "v1",
-			"status": "active",
+			"status": "planned",
 			"base": "${REPOIO_API_BASE_URL}/graphql",
 			"ops": [
 				{
@@ -138,7 +142,8 @@
 					"en": "Search across permitted domains",
 					"ar": "بحث في الدومينات المسموحة"
 				}
-			]
+			],
+			"milestone": "M4"
 		},
 		{
 			"id": "sql",
@@ -147,7 +152,7 @@
 			"kind": "sql",
 			"domain": "",
 			"version": "—",
-			"status": "active",
+			"status": "planned",
 			"base": "jdbc:trino://${REPOIO_SQL_HOST}:${REPOIO_SQL_PORT}/iceberg",
 			"ops": [
 				{
@@ -156,7 +161,8 @@
 					"en": "Golden tables, row and column grants enforced by Trino",
 					"ar": "الجداول الذهبية، وTrino بيطبّق صلاحيات الصفوف والأعمدة"
 				}
-			]
+			],
+			"milestone": "M2"
 		},
 		{
 			"id": "mcp",
@@ -165,7 +171,7 @@
 			"kind": "mcp",
 			"domain": "",
 			"version": "2026-06",
-			"status": "active",
+			"status": "planned",
 			"base": "${REPOIO_MCP_URL}",
 			"ops": [
 				{
@@ -180,7 +186,8 @@
 					"en": "Draft a change request (never a direct write)",
 					"ar": "إنشاء مسودة طلب تغيير (مش كتابة مباشرة)"
 				}
-			]
+			],
+			"milestone": "M5"
 		}
 	],
 	"apps": [

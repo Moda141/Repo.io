@@ -87,7 +87,7 @@ sap.ui.define([
 				sKey = sRoute === "page" ? oEvent.getParameter("arguments").key :
 					sRoute === "home" ? "home" : sRoute === "connections" ? "connections" :
 					sRoute === "ontology" ? "ontologyExplorer" : sRoute === "workflow" ? "newWorkflow" :
-					sRoute === "jobs" || sRoute === "jobRun" ? "dataJobs" : sRoute === "workflows" ? "workflowsList" :
+					sRoute === "jobs" || sRoute === "jobRun" || sRoute === "streams" ? "dataJobs" : sRoute === "workflows" ? "workflowsList" :
 					sRoute === "reports" || sRoute === "report" || sRoute === "studio" ? "reports" : sRoute === "broadcasts" ? "broadcasts" :
 					sRoute === "dataSync" || sRoute === "dataSyncFlow" ? "dataSync" : sRoute === "apiManagement" || sRoute === "apiReference" ? "apiManagement" : "domains";
 			this._sSelectedKey = sKey;

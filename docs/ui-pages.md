@@ -204,7 +204,10 @@
        schedules and field mappings per connection (configuration, not
        runs).
      - **Data jobs** — execution observability: ingestion batches,
-       streaming checkpoints, consumer lag, governed replay. [J10]
+       streaming checkpoints, consumer lag, governed replay. Two views
+       behind one switch: **Runs** (batch and DQ runs, run monitor) and
+       **Streams** (one streaming job per entity: stages, consumer
+       lag, last checkpoint, throughput, dead-letter growth alert). [J10]
 
 ## Layout notes — cross-cutting components (not pages)
 

@@ -109,6 +109,9 @@ EXTRA = {
     "Webhook": {"type": "object", "properties": {"id": {"type": "string"}, "owner": ref("EntityReference"), "url": {"type": "string"}, "events": {"type": "array", "items": {"type": "string"}}, "domain": {"type": "string"}, "status": {"type": "string", "enum": ["active", "paused"]}}},
     "CallLogEntry": {"type": "object", "description": "Call metadata only; never request or response payloads.", "properties": {"at": {"type": "string", "format": "date-time"}, "client": ref("EntityReference"), "operation": {"type": "string"}, "status": {"type": "integer"}, "durationMs": {"type": "integer"}, "rows": {"type": "integer"}, "requestId": {"type": "string"}}},
     "AuditEntry": {"type": "object", "properties": {"at": {"type": "string", "format": "date-time"}, "actor": ref("EntityReference"), "action": {"type": "string"}, "object": ref("EntityReference"), "version": {"type": "integer"}}},
+    "QueryResults": {"type": "object", "description": "Trino client protocol page.", "properties": {"id": {"type": "string"}, "nextUri": {"type": "string"},
+        "columns": {"type": "array", "items": {"type": "object", "properties": {"name": {"type": "string"}, "type": {"type": "string"}}}}, "data": {"type": "array", "items": {"type": "array"}},
+        "stats": {"type": "object", "properties": {"state": {"type": "string", "enum": ["QUEUED", "RUNNING", "FINISHED", "FAILED"]}}}, "error": ref("Problem")}},
     "GraphQLRequest": {"type": "object", "properties": {"query": {"type": "string"}, "variables": {"type": "object"}}, "required": ["query"]},
     "JsonRpc": {"type": "object", "properties": {"jsonrpc": {"const": "2.0"}, "id": {"type": ["string", "integer"]}, "method": {"type": "string", "examples": ["tools/call"]}, "params": {"type": "object"}}},
 }
@@ -210,6 +213,14 @@ DOCS = [
     doc("graphql", "GraphQL", "data", "M4", "Golden records with their governed relationships in one query. Same grants as REST.", {
         "/graphql": {"post": op("Run a GraphQL query", "Example: `{ customer(masterId: \"C-10001\") { goldenId attributes { name value } relationships { type to { goldenId } } } }`", body=ref("GraphQLRequest"), okschema={"type": "object", "properties": {"data": {"type": "object"}, "errors": {"type": "array", "items": {"type": "object"}}}}, grant="read:<domain>", ms="M4")},
     }, ["GraphQLRequest"], kind="graphql"),
+    doc("sql", "SQL endpoint (Trino)", "data", "M2", "Read-only SQL over the golden tables through Trino. JDBC, ODBC and the Python client all speak this HTTP protocol; Trino enforces row and column grants for the signed-in user (or the token owner). Writes are not accepted.\n\nJDBC: `jdbc:trino://${REPOIO_SQL_HOST}:${REPOIO_SQL_PORT}/iceberg?SSL=true`", {
+        "/v1/statement": {"post": op("Submit a query", "Body is the SQL text. The response carries the first rows (if any) and `nextUri` to page through the rest.",
+            [{"name": "X-Trino-Catalog", "in": "header", "schema": {"type": "string", "default": "iceberg"}}, {"name": "X-Trino-Schema", "in": "header", "schema": {"type": "string", "examples": ["golden"]}}],
+            body={"type": "string", "examples": ["SELECT golden_id, name, city FROM golden.customer WHERE city = 'Cairo'"]},
+            okschema=ref("QueryResults"), grant="sql + read:<domain>", ms="M2", extra={"400": {"description": "Syntax error, or a statement that is not read-only."}})},
+        "/v1/statement/executing/{queryId}/{token}": {"get": op("Fetch the next page", "Follow `nextUri` until it is absent.", [P("queryId", "path"), P("token", "path")], okschema=ref("QueryResults"), grant="sql", ms="M2"),
+            "delete": op("Cancel the query", params=[P("queryId", "path"), P("token", "path")], ok="204", okdesc="Cancelled", grant="sql", ms="M2")},
+    }, ["QueryResults"], base="https://${REPOIO_SQL_HOST}:${REPOIO_SQL_PORT}", version="—", kind="sql"),
     doc("mcp", "MCP server", "agents", "M5", "Model Context Protocol (JSON-RPC 2.0) for AI agents. Every tool call runs with the initiating user's scopes and is audited.\n\nTools: `search_golden_records`, `get_golden_record`, `list_potential_matches`, `explain_lineage`, `query_sql`, `create_change_request` (drafts only), `confirm_match`.", {
         "/mcp": {"post": op("JSON-RPC request", "`tools/list` returns only the tools your role is granted; `tools/call` runs one.", body=ref("JsonRpc"), okschema=ref("JsonRpc"), grant="mcp", ms="M5")},
     }, ["JsonRpc"], base="${REPOIO_MCP_URL}", version="2026-06", kind="mcp"),

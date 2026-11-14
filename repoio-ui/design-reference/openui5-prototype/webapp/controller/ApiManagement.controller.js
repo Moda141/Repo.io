@@ -55,8 +55,8 @@ sap.ui.define([
 				var dep = a.status === "deprecated";
 				return Object.assign({}, a, {
 					title: that._t(a), kindText: KIND[a.kind][0], icon: KIND[a.kind][1], domainText: a.domain ? that._dom(a.domain) : that.text("api.allDomains"),
-					statusText: dep ? that.text("api.st.deprecatedUntil", [a.sunset]) : that.text("api.st.active"),
-					statusState: dep ? "Warning" : "Success", statusIcon: dep ? "sap-icon://past" : "sap-icon://status-positive"
+					statusText: dep ? that.text("api.st.deprecatedUntil", [a.sunset]) : that.text("ref.planned", [a.milestone]),
+					statusState: dep ? "Warning" : "Information", statusIcon: dep ? "sap-icon://past" : "sap-icon://pending"
 				});
 			});
 			vm.setProperty("/api/apis", rows);
@@ -424,7 +424,7 @@ sap.ui.define([
 		onReference: function () { this.router().navTo("apiReference", {}); },
 		onSpec: function (oEvent) {
 			var that = this, a = oEvent.getSource().getBindingContext("view").getObject(),
-				DOC = { "golden-customer": "golden-records", "golden-vendor": "golden-records", "golden-product": "golden-records", "golden-customer-v0": "customer-lookup-v0", graphql: "graphql", mcp: "mcp" };
+				DOC = { "golden-customer": "golden-records", "golden-vendor": "golden-records", "golden-product": "golden-records", "golden-customer-v0": "customer-lookup-v0", graphql: "graphql", sql: "sql", mcp: "mcp" };
 			if (DOC[a.id]) { this.router().navTo("apiReference", { api: DOC[a.id] }); return; }
 			this._specApi = a;
 			this.viewModel().setProperty("/api/spec", {

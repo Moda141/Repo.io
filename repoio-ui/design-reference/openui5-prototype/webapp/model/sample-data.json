@@ -1761,7 +1761,7 @@
    "lastSync": "2026-11-04 02:00",
    "syncState": "Success",
    "props": {
-    "url": "https://my345678.crm.ondemand.com",
+    "url": "${C4C_TENANT_URL}",
     "service": "c4codataapi",
     "auth": "oauth",
     "user": "MDM_COMM_USER",
@@ -1770,7 +1770,38 @@
     "writeback": true
    },
    "desc": "Customers and contacts from the production C4C tenant.",
-   "descAr": "العملاء وجهات الاتصال من بيئة C4C الإنتاجية."
+   "descAr": "العملاء وجهات الاتصال من بيئة C4C الإنتاجية.",
+   "health": {
+    "checked": "2026-11-14 17:00",
+    "ok": true,
+    "ms": 212
+   },
+   "history": [
+    {
+     "at": "2026-10-28 11:20",
+     "who": "محمد",
+     "what": "schedule",
+     "detail": "daily_0130 → daily_0200"
+    },
+    {
+     "at": "2026-09-30 09:05",
+     "who": "محمد",
+     "what": "rotated",
+     "detail": "clientSecret"
+    },
+    {
+     "at": "2026-07-02 14:40",
+     "who": "محمد",
+     "what": "writeback",
+     "detail": "off → on"
+    },
+    {
+     "at": "2026-06-15 10:12",
+     "who": "محمد",
+     "what": "created",
+     "detail": ""
+    }
+   ]
   },
   {
    "id": "S4_HANA",
@@ -1796,7 +1827,38 @@
     "writeback": true
    },
    "desc": "Business partners, materials and vendors from S/4HANA CDS views.",
-   "descAr": "شركاء الأعمال والمواد والموردون من CDS views في S/4HANA."
+   "descAr": "شركاء الأعمال والمواد والموردون من CDS views في S/4HANA.",
+   "health": {
+    "checked": "2026-11-14 17:00",
+    "ok": true,
+    "ms": 95
+   },
+   "history": [
+    {
+     "at": "2026-10-12 08:30",
+     "who": "أحمد ناصر",
+     "what": "resumed",
+     "detail": ""
+    },
+    {
+     "at": "2026-10-11 22:10",
+     "who": "أحمد ناصر",
+     "what": "paused",
+     "detail": ""
+    },
+    {
+     "at": "2026-08-20 13:00",
+     "who": "محمد",
+     "what": "rotated",
+     "detail": "password"
+    },
+    {
+     "at": "2026-06-16 11:00",
+     "who": "محمد",
+     "what": "created",
+     "detail": ""
+    }
+   ]
   },
   {
    "id": "SQL_LEGACY_SALES",
@@ -1822,7 +1884,27 @@
     "schedule": "weekly"
    },
    "desc": "Historic customer orders before the C4C go-live.",
-   "descAr": "طلبات العملاء التاريخية قبل تشغيل C4C."
+   "descAr": "طلبات العملاء التاريخية قبل تشغيل C4C.",
+   "health": {
+    "checked": "2026-11-14 17:00",
+    "ok": false,
+    "ms": 0,
+    "error": "AUTH_TOKEN_EXPIRED"
+   },
+   "history": [
+    {
+     "at": "2026-11-01 09:00",
+     "who": "أحمد ناصر",
+     "what": "edited",
+     "detail": "database"
+    },
+    {
+     "at": "2026-07-05 12:00",
+     "who": "أحمد ناصر",
+     "what": "created",
+     "detail": ""
+    }
+   ]
   },
   {
    "id": "FILE_UPLOADS",
@@ -1843,7 +1925,20 @@
     "maxSize": "50"
    },
    "desc": "Steward uploads: school lists, new customers, book lists.",
-   "descAr": "ملفات أمناء البيانات: قوائم المدارس والعملاء الجدد والكتب."
+   "descAr": "ملفات أمناء البيانات: قوائم المدارس والعملاء الجدد والكتب.",
+   "health": {
+    "checked": "",
+    "ok": true,
+    "ms": 0
+   },
+   "history": [
+    {
+     "at": "2026-06-20 10:00",
+     "who": "محمد",
+     "what": "created",
+     "detail": ""
+    }
+   ]
   }
  ],
  "ontology": {

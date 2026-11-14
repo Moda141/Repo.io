@@ -23,7 +23,7 @@ sap.ui.define([
 				COLS.forEach(function (k) { oCols[k] = k !== "params"; });
 				var oSaved = this.store("repoio-jr-cols");
 				if (oSaved) { Object.keys(oSaved).forEach(function (k) { oCols[k] = !!oSaved[k]; }); }
-				vm.setProperty("/jr", { f: this._emptyFilters(), cols: oCols, rows: [], top: [], count: 0, bucket: null, showFolders: this.store("repoio-jr-folders") !== false });
+				vm.setProperty("/jr", { f: this._emptyFilters(), cols: oCols, rows: [], top: [], count: 0, bucket: null, showFolders: this._foldersDefault() });
 			}
 			this.router().getRoute("jobs").attachPatternMatched(this._onMatched, this);
 		},
@@ -61,6 +61,9 @@ sap.ui.define([
 		},
 		onFolder: function (oEvent) { this._goFolder(oEvent.getParameter("listItem").getBindingContext("view").getProperty("key")); },
 		onCrumb: function (oEvent) { this._goFolder(oEvent.getSource().getBindingContext("view").getProperty("key")); },
+		/* The folders panel starts open on wide screens; below 1440px it starts closed so the runs table keeps every column. A saved choice wins. */
+		_foldersDefault: function () { var v = this.store("repoio-jr-folders"); return v === null ? window.innerWidth >= 1440 : v !== false; },
+		onSwitch: function (oEvent) { if (oEvent.getParameter("item").getKey() === "streams") { this.router().navTo("streams"); } },
 		onToggleFolders: function () { this.store("repoio-jr-folders", this.viewModel().getProperty("/jr/showFolders")); },
 
 		/* One page of runs (Previous / Next instead of "More"). */

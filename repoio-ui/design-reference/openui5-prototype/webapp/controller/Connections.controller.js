@@ -138,8 +138,8 @@ sap.ui.define([
 					categoryText: that.text("conn.cat." + cat),
 					featureText: feats.map(function (f) { return that.text("conn.feat." + f); }).join(" · "),
 					stateText: that.text("conn.state." + c.state),
-					stateState: c.state === "active" ? "Success" : c.state === "paused" ? "None" : "Error",
-					stateIcon: c.state === "active" ? "sap-icon://sys-enter-2" : c.state === "paused" ? "sap-icon://pause" : "sap-icon://error"
+					stateState: c.state === "active" ? "Success" : c.state === "paused" ? "None" : c.state === "deprecated" ? "Warning" : "Error",
+					stateIcon: c.state === "active" ? "sap-icon://sys-enter-2" : c.state === "paused" ? "sap-icon://pause" : c.state === "deprecated" ? "sap-icon://past" : "sap-icon://error"
 				});
 			}).filter(function (r) { return !q || [r.title, r.id, r.typeText, r.owner].join(" ").toLowerCase().indexOf(q) > -1; });
 			this._rows = rows.sort(function (a, b) { return a.changed < b.changed ? 1 : a.changed > b.changed ? -1 : 0; });
@@ -201,8 +201,41 @@ sap.ui.define([
 			this._refresh();
 		},
 
+		/* What uses a connection: deployed or draft sync flows, and workflows whose Write-back Task targets it. */
+		_usedBy: function (c) {
+			var that = this, ar = this.lang() === "ar", out = [],
+				flows = (this.getOwnerComponent().getModel("sync").getProperty("/flows") || []),
+				wfs = (this.getOwnerComponent().getModel("workflows").getProperty("/workflows") || []),
+				WB = { c4c: "C4C_PROD", erp: "S4_HANA" };
+			flows.filter(function (f) { return f.conn === c.id; }).forEach(function (f) {
+				out.push({ kind: "flow", id: f.id, title: ar ? f.ar : f.en, icon: "sap-icon://synchronize", kindText: that.text("cd.kind.flow"),
+					statusText: that.text("ds.st." + f.status), statusState: f.status === "draft" ? "None" : "Information" });
+			});
+			wfs.filter(function (w) { return WB[w.writeback] === c.id && w.status !== "retired"; }).forEach(function (w) {
+				out.push({ kind: "workflow", id: w.id, title: ar ? w.ar : w.en, icon: "sap-icon://workflow-tasks", kindText: that.text("cd.kind.workflow"),
+					statusText: that.text("wl.st." + w.status), statusState: w.status === "published" ? "Success" : "None" });
+			});
+			return out;
+		},
+
 		onDelete: function () {
-			var that = this, sel = this._selected();
+			var that = this, sel = this._selected(),
+				used = sel.map(function (c) { return { c: c, u: that._usedBy(c) }; }).filter(function (x) { return x.u.length; });
+			if (used.length) {
+				var dep = this.text("cd.deprecate");
+				MessageBox.error(this.text("cd.deleteBlocked"), {
+					title: this.text("common.delete"),
+					details: used.map(function (x) { return "<strong>" + x.c.title + "</strong>: " + x.u.map(function (u) { return u.title; }).join(", "); }).join("<br/>"),
+					actions: [dep, MessageBox.Action.CANCEL], emphasizedAction: dep,
+					onClose: function (a) {
+						if (a !== dep) { return; }
+						used.forEach(function (x) { that._deprecate(that._entry(x.c.id)); });
+						MessageToast.show(that.text("cd.deprecated", [used.length]));
+						that._refresh();
+					}
+				});
+				return;
+			}
 			MessageBox.warning(this.text("conn.deleteConfirm", [sel.length]), {
 				title: this.text("common.delete"),
 				actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL], emphasizedAction: MessageBox.Action.DELETE,
@@ -216,9 +249,15 @@ sap.ui.define([
 			});
 		},
 
+		_deprecate: function (e) {
+			e.state = "deprecated";
+			(e.history = e.history || []).unshift({ at: "2026-11-14 18:05", who: "محمد", what: "deprecated", detail: "" });
+		},
+
 		/* Validate: what the backend health check would report (reachability, auth, features). */
-		onValidate: function () {
-			var c = this._selected()[0], t = this._type(c.type), that = this;
+		onValidate: function () { this._validate(this._selected()[0]); },
+		_validate: function (c) {
+			var t = this._type(c.type), that = this;
 			if (c.type === "file") { MessageBox.information(this.text("conn.validateFile"), { title: c.title }); return; }
 			var lines = [this.text("conn.v.reach"), this.text("conn.v.auth")];
 			if (c.props.ssl || c.type === "c4c") { lines.push(this.text("conn.v.tls")); }
@@ -232,7 +271,49 @@ sap.ui.define([
 		/* ---------- Create / edit dialog ---------- */
 		onCreate: function () { this._openDialog(null); },
 		onEditSelected: function () { this._openDialog(this._entry(this._selected()[0].id)); },
-		onOpen: function (e) { this._openDialog(this._entry(e.getSource().getBindingContext("view").getProperty("id"))); },
+		onOpen: function (e) { this._openDetail(e.getSource().getBindingContext("view").getProperty("id")); },
+
+		/* ---------- Connection details (overview, used by, history) ---------- */
+		_openDetail: function (sId) {
+			var that = this, row = this._rows.filter(function (r) { return r.id === sId; })[0], e = this._entry(sId), p = e.props || {}, h = e.health || {},
+				ar = this.lang() === "ar", used = this._usedBy(row), file = e.type === "file";
+			var endpoint = p.url || (p.host ? p.host + ":" + p.port : "") || (p.server ? p.server + ":" + p.port + " / " + p.database : "") || p.folder || this.text("cd.none");
+			var secretKey = { oauth: "clientSecret", basic: "password", x509: "cert", sql: "password", windows: "password" }[p.auth];
+			this.viewModel().setProperty("/cd", {
+				id: e.id, type: e.type, title: row.title, icon: row.icon, typeText: row.typeText, owner: e.owner, featureText: row.featureText,
+				stateText: row.stateText, stateState: row.stateState, stateIcon: row.stateIcon, tab: "overview", endpoint: endpoint,
+				authText: p.auth ? this.text("cp.auth." + p.auth) : this.text("cd.none"),
+				secretRef: secretKey ? "kv://repoio/connections/" + e.id.toLowerCase() + "/" + secretKey + "  ••••" : this.text("cd.none"),
+				healthText: file ? this.text("cd.health.na") : h.ok ? this.text("cd.health.ok", [h.ms, h.checked]) : this.text("cd.health.fail", [h.error || "", h.checked]),
+				healthState: file ? "None" : h.ok ? "Success" : "Error", healthIcon: file ? "" : h.ok ? "sap-icon://sys-enter-2" : "sap-icon://error",
+				deprecatedText: e.state === "deprecated" ? this.text("cd.deprecatedNote") : "",
+				usedBy: used, usedCount: used.length,
+				history: (e.history || []).map(function (x) {
+					return { at: x.at, who: x.who, text: that.text("cd.h." + x.what, [x.detail]) };
+				})
+			});
+			var v = this.getView();
+			var open = function () { v.byId("connDetailDlg").open(); };
+			if (this._cdDlg) { open(); return; }
+			Fragment.load({ id: v.getId(), name: "repoio.proto.fragment.ConnDetails", controller: this }).then(function (d) {
+				that._cdDlg = d; v.addDependent(d); open();
+			});
+		},
+		onDetailClose: function () { this.byId("connDetailDlg").close(); },
+		onDetailEdit: function () {
+			var id = this.viewModel().getProperty("/cd/id");
+			this.byId("connDetailDlg").close();
+			this._openDialog(this._entry(id));
+		},
+		onDetailValidate: function () {
+			var id = this.viewModel().getProperty("/cd/id");
+			this._validate(this._rows.filter(function (r) { return r.id === id; })[0]);
+		},
+		onUsedByOpen: function (oEvent) {
+			var u = oEvent.getSource().getBindingContext("view").getObject();
+			this.byId("connDetailDlg").close();
+			if (u.kind === "flow") { this.router().navTo("dataSyncFlow", { id: u.id }); } else { this.router().navTo("workflows"); }
+		},
 
 		_openDialog: function (entry) {
 			var that = this, ar = this.lang() === "ar";

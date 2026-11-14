@@ -8,6 +8,12 @@
 				<f:heading><Title text="{i18n>jr.title}" level="H1"/></f:heading>
 				<f:expandedContent><Text text="{i18n>jr.subtitle}"/></f:expandedContent>
 				<f:actions>
+					<SegmentedButton selectedKey="runs" selectionChange=".onSwitch">
+						<items>
+							<SegmentedButtonItem key="runs" text="{i18n>st.seg.runs}" icon="sap-icon://history"/>
+							<SegmentedButtonItem key="streams" text="{i18n>st.seg.streams}" icon="sap-icon://process"/>
+						</items>
+					</SegmentedButton>
 					<ToggleButton icon="sap-icon://open-folder" type="Transparent" pressed="{view>/jr/showFolders}" tooltip="{i18n>fld.toggle}" press=".onToggleFolders"/>
 					<Button icon="sap-icon://refresh" type="Transparent" tooltip="{i18n>jr.a.refresh}" press=".onRefresh"/>
 				</f:actions>
@@ -124,7 +130,7 @@
 						<Column visible="{view>/jr/cols/launched}" minScreenWidth="Desktop" demandPopin="true" width="6.5rem"><Text text="{i18n>jr.col.launched}"/></Column>
 						<Column visible="{view>/jr/cols/duration}" width="5.75rem"><Text text="{i18n>jr.col.duration}"/></Column>
 						<Column width="11.5rem"><Text text="{i18n>jr.col.status}"/></Column>
-						<Column visible="{view>/jr/cols/error}" minScreenWidth="Tablet" demandPopin="true" width="12rem"><Text text="{i18n>jr.col.error}"/></Column>
+						<Column visible="{view>/jr/cols/error}" minScreenWidth="Tablet" demandPopin="true" width="10.5rem"><Text text="{i18n>jr.col.error}"/></Column>
 						<Column visible="{view>/jr/cols/params}" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>jr.col.params}"/></Column>
 						<Column hAlign="End" width="4.5rem"><Text text="{i18n>jr.col.actions}" class="sapUiInvisibleText"/></Column>
 					</columns>

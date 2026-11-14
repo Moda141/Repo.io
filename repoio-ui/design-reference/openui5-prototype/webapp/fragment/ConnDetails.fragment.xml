@@ -1,0 +1,83 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:rc="repoio.proto.control">
+	<!-- J9: one connection — overview with health, what uses it (deletion is blocked while anything does), and its change history. -->
+	<Dialog id="connDetailDlg" contentWidth="44rem" contentHeight="30rem" resizable="true" draggable="true" class="repoioConnDlg">
+		<customHeader>
+			<Bar>
+				<contentLeft>
+					<core:Icon src="{view>/cd/icon}" class="repoioConnDlgIcon" decorative="true"/>
+					<Title text="{view>/cd/title}" level="H2"/>
+					<ObjectStatus text="{view>/cd/stateText}" state="{view>/cd/stateState}" icon="{view>/cd/stateIcon}"/>
+				</contentLeft>
+			</Bar>
+		</customHeader>
+		<IconTabBar selectedKey="{view>/cd/tab}" expandable="false" headerMode="Inline" applyContentPadding="false" class="repoioConnTabs">
+			<items>
+				<IconTabFilter key="overview" text="{i18n>cd.tab.overview}">
+					<MessageStrip text="{view>/cd/deprecatedText}" type="Warning" showIcon="true" visible="{= !!${view>/cd/deprecatedText} }" class="repoioConnStrip"/>
+					<form:SimpleForm editable="false" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" columnsL="1" columnsM="1" class="repoioConnForm">
+						<Label text="{i18n>dsp.technicalName}"/>
+						<Text text="{view>/cd/id}" class="repoioMono"/>
+						<Label text="{i18n>conn.type}"/>
+						<Text text="{view>/cd/typeText}"/>
+						<Label text="{i18n>cd.endpoint}"/>
+						<Text text="{view>/cd/endpoint}" class="repoioMono" textDirection="LTR"/>
+						<Label text="{i18n>cd.auth}"/>
+						<Text text="{view>/cd/authText}"/>
+						<Label text="{i18n>cd.secret}"/>
+						<HBox alignItems="Center">
+							<core:Icon src="sap-icon://locked" class="repoioConnLock" decorative="true"/>
+							<Text text="{view>/cd/secretRef}" class="repoioMono" textDirection="LTR"/>
+						</HBox>
+						<Label text="{i18n>conn.features}"/>
+						<Text text="{view>/cd/featureText}"/>
+						<Label text="{i18n>cd.health}"/>
+						<ObjectStatus text="{view>/cd/healthText}" state="{view>/cd/healthState}" icon="{view>/cd/healthIcon}"/>
+						<Label text="{i18n>domain.owner}"/>
+						<HBox><rc:PersonLink name="{view>/cd/owner}"/></HBox>
+					</form:SimpleForm>
+				</IconTabFilter>
+				<IconTabFilter key="usedBy" text="{i18n>cd.tab.usedBy}" count="{view>/cd/usedCount}">
+					<MessageStrip text="{i18n>cd.usedRule}" type="Information" showIcon="true" class="repoioConnStrip"/>
+					<Table items="{view>/cd/usedBy}" class="repoioDenseTable" noDataText="{i18n>cd.unused}">
+						<columns>
+							<Column><Text text="{i18n>dsp.businessName}"/></Column>
+							<Column width="9rem"><Text text="{i18n>cd.kind}"/></Column>
+							<Column width="9rem"><Text text="{i18n>domains.col.status}"/></Column>
+						</columns>
+						<items>
+							<ColumnListItem type="Active" press=".onUsedByOpen">
+								<HBox alignItems="Center">
+									<core:Icon src="{view>icon}" class="repoioExRowIcon" decorative="true"/>
+									<Link text="{view>title}" press=".onUsedByOpen" wrapping="false"/>
+								</HBox>
+								<Text text="{view>kindText}"/>
+								<ObjectStatus text="{view>statusText}" state="{view>statusState}"/>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</IconTabFilter>
+				<IconTabFilter key="history" text="{i18n>cd.tab.history}">
+					<Table items="{view>/cd/history}" class="repoioDenseTable" noDataText="{i18n>cd.noHistory}">
+						<columns>
+							<Column width="9.5rem"><Text text="{i18n>api.col.time}"/></Column>
+							<Column width="4rem" hAlign="Center"><Text text="{i18n>cd.who}"/></Column>
+							<Column><Text text="{i18n>cd.change}"/></Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<Text text="{view>at}" textDirection="LTR" wrapping="false"/>
+								<HBox justifyContent="Center"><rc:PersonLink name="{view>who}"/></HBox>
+								<Text text="{view>text}"/>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+		<buttons>
+			<Button text="{i18n>common.edit}" icon="sap-icon://edit" press=".onDetailEdit"/>
+			<Button text="{i18n>dsp.validate}" press=".onDetailValidate" visible="{= ${view>/cd/type} !== 'file' }"/>
+			<Button text="{i18n>common.close}" type="Emphasized" press=".onDetailClose"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

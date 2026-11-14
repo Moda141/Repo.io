@@ -38,7 +38,7 @@
 									</Select>
 									<Select selectedKey="{view>/api/f/cst}" change=".onFilter" width="9rem" tooltip="{i18n>api.col.status}">
 										<core:Item key="all" text="{i18n>api.st.allStates}"/>
-										<core:Item key="active" text="{i18n>api.st.active}"/>
+										<core:Item key="planned" text="{i18n>api.st.planned}"/>
 										<core:Item key="deprecated" text="{i18n>api.st.deprecated}"/>
 									</Select>
 								</OverflowToolbar>

@@ -154,6 +154,11 @@
 					"target": "jobs"
 				},
 				{
+					"name": "streams",
+					"pattern": "jobs/streams",
+					"target": "streams"
+				},
+				{
 					"name": "jobRun",
 					"pattern": "jobs/runs/{runId}",
 					"target": "jobRun"
@@ -243,6 +248,11 @@
 				"jobs": {
 					"id": "jobs",
 					"name": "JobRuns",
+					"level": 2
+				},
+				"streams": {
+					"id": "streams",
+					"name": "Streams",
 					"level": 2
 				},
 				"jobRun": {
