@@ -318,7 +318,7 @@ bulk-upload change requests.
 1. The Admin (holding `administer connections`) opens the
    **Connections hub** in the Admin area.
 2. Register a connection: name, type (`sap_c4c`, `sap_erp`,
-   `sqlserver`, `databricks`, `snowflake`, `data_fabric`, …), endpoint
+   `sqlserver`, file upload — systems Repo.io calls; ADR-0006), endpoint
    URL, auth method.
 3. The token is **entered once and stored in the secret store** (Vault
    / Azure Key Vault); the registry keeps only a reference and a masked
@@ -328,9 +328,11 @@ bulk-upload change requests.
    surface failures in the console and alerting.
 5. Source connections feed ingestion connectors and write-back
    adapters from the same record — one credential config per system.
-6. Data-platform connections default to **federation**: the platform
-   reads golden tables through the Iceberg REST catalog under a granted
-   identity — zero-copy, no export pipeline.
+6. Data platforms (Databricks, Snowflake) are **not** registered here
+   for reading golden records (ADR-0006): they read the golden tables in
+   place through the Iceberg REST catalog using the repository's
+   **Connection details** (J16 step 7) and a token from API management —
+   zero-copy, no export pipeline.
 7. Every connection change lands in the audit trail (who, what, when).
 
 *Edge cases:* secret store unreachable → connection save fails safely
@@ -628,9 +630,12 @@ reach Repo.io.*
    limited, server error, with the reason), duration, rows, token hint
    and request ID — filterable and exportable. It never shows request or
    response payloads.
-7. The **Connection details** tab of a repository shows ready-to-copy
-   JDBC / ODBC / Python details for its SQL endpoint, with
-   `${REPOIO_SQL_HOST}`-style values from deployment config. For the
+7. **Connection details** of a repository (from its card in Domain
+   management, ADR-0006) show ready-to-copy values and snippets per
+   client — JDBC, ODBC and Python for its SQL endpoint, and Databricks
+   (Spark catalog) and Snowflake (catalog integration) over the Iceberg
+   REST catalog — with `${REPOIO_SQL_HOST}`-style values from deployment
+   config. For the
    Admin its **Create token** link opens step 3; other users see
    "Ask your administrator for an access token" instead.
 8. Every token, webhook, grant and MCP change lands in the audit trail.

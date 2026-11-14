@@ -56,7 +56,10 @@
      more — ADR-0001): per repository its assigned model, golden records
      it holds, contributing data sources, ID prefix, owner team, status;
      per data source the repositories it feeds; per field the
-     repositories and model attributes it maps to. Prototype:
+     repositories and model attributes it maps to. Each repository card
+     opens **Connection details**: JDBC, ODBC, Python, Databricks and
+     Snowflake values and snippets to read its golden tables (ADR-0006,
+     J16 step 7). Prototype:
      `repoio-ui/design-reference/prototypes/02-domains.html`.
    - **Golden Records management** — steward working area over the records
      themselves: browse per domain, inspect, review states, history.
@@ -161,10 +164,11 @@
        version. [cross-cutting UX rule 4]
    - **Integration Hub**
      - **(→) Connections** *(was "Data source")* — one registry entry per
-       external system (SAP C4C, SAP ERP, SQL Server, Databricks,
-       Snowflake, Data Fabric…): endpoint, auth method, token stored once
-       in the secret store, health checks; feeds ingestion, write-back
-       and federation from the same record. [J9]
+       external system Repo.io calls (SAP C4C, SAP ERP / HANA, SQL
+       Server, CSV / Excel): endpoint, auth method, token stored once in
+       the secret store, health checks, used by, history; feeds
+       ingestion and write-back from the same record. Data platforms
+       that read golden records are not registered here (ADR-0006). [J9]
      - **API management** — Admin-only page (`administer API
        access`); the inbound side of the hub: how apps, BI,
        data platforms and AI agents reach Repo.io (Connections is the

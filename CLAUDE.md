@@ -280,7 +280,9 @@ an honest "not verified" is acceptable; an unverified "done" is not.
   ADR-0003: broadcast exports render in a Node worker; attachments up
   to 10 MB, otherwise a link-only email; ADR-0004: no Python Workspace
   screen, the Python runtime serves workflow Script steps only;
-  ADR-0005: Airflow 3.4, DAGs organised in domain → repository folders).
+  ADR-0005: Airflow 3.4, DAGs organised in domain → repository folders;
+  ADR-0006: data platforms read golden records through repository
+  connection details, not connection records).
 - **Docs:** every module gets a README following
   `docs/module-readme-template.md` — update it when adding entry points,
   config or commands.

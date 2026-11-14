@@ -25,7 +25,8 @@ sap.ui.define([
 		},
 
 		_onMatched: function () {
-			var that = this, oM = this.getOwnerComponent().getModel("api");
+			var that = this, oM = this.getOwnerComponent().getModel("api"), sTab = this.store("repoio-api-tab");
+			if (sTab) { this.viewModel().setProperty("/api/tab", sTab); }
 			Promise.all([oM.dataLoaded(), this.data().dataLoaded()]).then(function () {
 				that._d = oM.getData();
 				if (!that._mcp0) { that._mcp0 = JSON.stringify(that._d.mcp.tools); }

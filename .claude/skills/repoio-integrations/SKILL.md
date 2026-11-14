@@ -1,6 +1,6 @@
 ---
 name: repoio-integrations
-description: Use when working on Repo.io connections and source write-back — the connections registry and admin hub (Databricks, Snowflake, Data Fabric, SQL Server, C4C, ERP), secret-store token handling, connection health checks, the workflow-driven Write-back Task, C4C/ERP write-back adapters, or data-platform federation via the Iceberg REST catalog. Trigger on tasks about "integration URL and access token", registering data platforms, write-back to source systems, or any M9 work.
+description: Use when working on Repo.io connections and source write-back — the connections registry and admin hub (SQL Server, C4C, ERP / HANA, file upload), secret-store token handling, connection health checks, the workflow-driven Write-back Task, C4C/ERP write-back adapters, or data-platform federation via the Iceberg REST catalog. Trigger on tasks about "integration URL and access token", data-platform access to golden records (repository connection details, ADR-0006), write-back to source systems, or any M9 work.
 ---
 
 # Repo.io Integrations — Connections Hub & Write-back (M9)
@@ -8,9 +8,10 @@ description: Use when working on Repo.io connections and source write-back — t
 ## What this domain owns
 
 - **Connections registry** (Postgres control plane): name, type, endpoint
-  URL, auth method, secret reference, status, health. Types include
-  `sap_c4c`, `sap_erp`, `sqlserver`, `databricks`, `snowflake`,
-  `data_fabric`, and future platforms.
+  URL, auth method, secret reference, status, health. Types are the
+  systems Repo.io calls: `sap_c4c`, `sap_erp` (HANA), `sqlserver`, file
+  upload. Data platforms reading golden records are **not** connections
+  (ADR-0006).
 - **Connections admin UI** (OpenUI5, Admin area): create/edit/test
   connections, health status, audit trail.
 - **Secret store integration** — where the actual tokens live.
@@ -18,7 +19,9 @@ description: Use when working on Repo.io connections and source write-back — t
 - **Write-back adapters** in `repoio-clients/`: SAP C4C (OData) and SAP
   ERP (OData/RFC).
 - **Data-platform federation** — Databricks / Snowflake / Fabric reading
-  golden tables from the Iceberg REST catalog.
+  golden tables from the Iceberg REST catalog, configured from each
+  repository's **Connection details** with a token issued in API
+  management (ADR-0006), not from a connection record.
 
 ## Design decisions already made — do not re-litigate
 
@@ -83,12 +86,14 @@ Non-negotiable details:
 - **Source connections** (C4C, ERP, SQL Server) feed ingestion connectors
   and write-back adapters — one connection record serves both directions,
   no duplicated credential config.
-- **Ingest mode for data platforms:** a Databricks/Snowflake/Fabric
-  connection can also act as a *source* (pull master data) — connector in
-  the Python SDK + Airflow DAG configured through the connection record.
-- **Federation mode:** the connection record documents the granted
-  identity and the Iceberg REST catalog endpoint the platform reads
-  from. Access grants to the catalog are enforced at the catalog layer.
+- **Ingest mode for data platforms** (a platform as a *source*) is an
+  open point under ADR-0006: add it as a connection type only through
+  its own decision.
+- **Federation:** the platform reads with a token owner (user or app
+  registration) from API management, using the endpoints on the
+  repository's Connection details. Access grants are enforced at the
+  catalog and Trino layer; the call log and catalog access logs are the
+  audit.
 
 ## Verification (must pass before "done")
 

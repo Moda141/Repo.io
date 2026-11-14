@@ -7,9 +7,11 @@ Repo.io is a lakehouse-native Master Data Management platform. It unifies
 master data from SAP C4C, SAP ERP, SQL Server and spreadsheet sources into
 governed golden records that are served to apps, BI and AI agents.
 Approved changes flow back to source systems (SAP C4C, SAP ERP) through
-workflow-driven write-back, and admins manage external integrations
-(Databricks, Snowflake, Data Fabric, …) through a connections hub where
-tokens live in a secret store — see §2.4 and §2.5. Change requests start
+workflow-driven write-back, and admins manage the systems Repo.io calls
+through a connections hub where tokens live in a secret store; data
+platforms (Databricks, Snowflake, Data Fabric, …) read golden tables in
+place from each repository's connection details — see §2.4, §2.5 and
+ADR-0006. Change requests start
 from domain-scoped request templates, with reference lists filtered by
 the selected target system — see §2.6.
 
@@ -296,11 +298,11 @@ by workflow definitions, not by an automatic consumer of
 
 ### 2.5 Connections hub — admin-managed integrations
 
-Admins register external systems and data platforms as **connections** in
+Admins register the external systems Repo.io calls as **connections** in
 the control plane instead of editing environment variables per deploy.
 
 - `connections` registry (Postgres control plane): name, type (`sap_c4c`,
-  `sap_erp`, `sqlserver`, `databricks`, `snowflake`, `data_fabric`, …),
+  `sap_erp` (HANA), `sqlserver`, file upload — systems Repo.io calls),
   endpoint URL, auth method, secret reference, status, health.
 - **Tokens are never stored in Postgres.** Secrets live in the secret
   store (Vault / Azure Key Vault); the registry holds only a reference and
@@ -310,14 +312,17 @@ the control plane instead of editing environment variables per deploy.
   action: `administer connections`, separate from other admin grants.
 - Source connections (C4C, ERP, SQL Server) feed the ingestion connectors
   and the write-back adapters.
-- Data-platform connections (Databricks, Snowflake, Data Fabric) support
-  two modes:
-  1. **Ingest** — pull master data from platform tables as another source
-     (connector + Airflow DAG, configured through a connection record).
-  2. **Federation (preferred for serving)** — the platform reads Repo.io
-     golden tables directly from the Iceberg REST catalog: zero-copy, no
-     duplicated storage, no per-platform export pipelines. The connection
-     record documents the granted identity and endpoint.
+- Data platforms (Databricks, Snowflake, Data Fabric):
+  1. **Federation (preferred for serving)** — the platform reads Repo.io
+     golden tables directly from the Iceberg REST catalog (or Trino):
+     zero-copy, no duplicated storage, no per-platform export pipelines.
+     This is **not** a connection record (ADR-0006): each repository's
+     **Connection details** give the endpoints and snippets (JDBC, ODBC,
+     Python, Databricks, Snowflake), and the reader is a token owner
+     (user or app registration) issued in API management.
+  2. **Ingest** — pulling master data from platform tables as another
+     source is an open point; it would be added as a connection type
+     through its own decision (ADR-0006).
 - Periodic health checks per connection; failures surface in the admin
   console and in alerting.
 

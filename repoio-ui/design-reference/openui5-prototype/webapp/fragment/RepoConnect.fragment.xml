@@ -1,0 +1,37 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<!-- Repository connection details (like the Databricks SQL warehouse "Connection details" tab): how BI tools,
+	     notebooks and data platforms (Databricks, Snowflake) read this repository's golden tables. Hosts are
+	     deployment placeholders; access always runs as the token owner and Trino enforces row and column grants. -->
+	<Dialog id="repoConnDlg" title="{view>/rc/title}" contentWidth="46rem" resizable="true" draggable="true" class="repoioRcDlg">
+		<VBox renderType="Bare">
+			<MessageStrip text="{i18n>rc.rule}" type="Information" showIcon="true" class="repoioRcStrip"/>
+			<IconTabBar selectedKey="{view>/rc/tab}" select=".onRcTab" expandable="false" headerMode="Inline" applyContentPadding="false" class="repoioRcTabs"
+				items="{view>/rc/tabs}">
+				<items>
+					<IconTabFilter key="{view>key}" text="{view>text}" icon="{view>icon}"/>
+				</items>
+			</IconTabBar>
+			<Text text="{view>/rc/intro}" class="repoioRcIntro"/>
+			<List items="{view>/rc/fields}" showSeparators="Inner" class="repoioRcFields">
+				<CustomListItem>
+					<HBox alignItems="Center" renderType="Bare" class="repoioRcRow">
+						<Label text="{view>label}" class="repoioRcLbl"/>
+						<Text text="{view>value}" class="repoioMono repoioRcVal" textDirection="LTR" wrapping="true"/>
+						<Button icon="sap-icon://copy" type="Transparent" tooltip="{i18n>api.a.copy}" press=".onRcCopy"/>
+					</HBox>
+				</CustomListItem>
+			</List>
+			<HBox alignItems="Center" justifyContent="SpaceBetween" class="repoioRcCodeHead" visible="{= !!${view>/rc/code} }">
+				<Text text="{view>/rc/codeTitle}" class="repoioRcLblStrong"/>
+				<Button icon="sap-icon://copy" text="{i18n>api.a.copy}" type="Transparent" press=".onRcCopyCode"/>
+			</HBox>
+			<Text text="{view>/rc/code}" visible="{= !!${view>/rc/code} }" class="repoioMono repoioRcCode" textDirection="LTR" renderWhitespace="true"/>
+			<HBox alignItems="Center" class="repoioRcToken">
+				<core:Icon src="sap-icon://key" class="repoioRcKey" decorative="true"/>
+				<Text text="{i18n>rc.tokenAdmin}"/>
+				<Link text="{i18n>rc.createToken}" press=".onRcToken" class="sapUiTinyMarginBegin"/>
+			</HBox>
+		</VBox>
+		<endButton><Button text="{i18n>common.close}" type="Emphasized" press=".onRcClose"/></endButton>
+	</Dialog>
+</core:FragmentDefinition>
