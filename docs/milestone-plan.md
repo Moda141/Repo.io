@@ -103,9 +103,12 @@ ingest for SAP C4C.
         Business Partner based, one delta token per view; Basis
         prerequisites (view list, ODP/OData enabled, read-only
         communication user) confirmed before the ERP DAG is built.
-      - SQL Server: incremental pull on a reliable change column or SQL
-        Server change tracking — still open; log-based CDC (Debezium on
-        Kafka Connect) only through its own ADR.
+      - SQL Server: **Change Tracking** (ADR-0008), one stored version
+        per table, deletes emitted, out-of-retention version stops the run
+        for a governed re-initialisation; DBA prerequisites (Change
+        Tracking enabled, retention, read-only login) confirmed before the
+        SQL Server DAG is built. `rowversion` fallback only for listed
+        tables. Debezium only through its own ADR.
 - [ ] Airflow 3.4 patch pinned with its constraints file; providers and
       Python 3.11 verified against it (ADR-0005).
 - [ ] DAG folder layout `dags/<domain>/<repository>/{sync,dq}/`,

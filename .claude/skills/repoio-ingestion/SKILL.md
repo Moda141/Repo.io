@@ -27,6 +27,10 @@ SAP ERP is **S/4HANA**: the pull DAG reads delta-enabled CDS views
 through **ODP over OData** (ADR-0007) — Business Partner based for
 customers and vendors, one delta token per view. Never the ODP RFC API,
 never ERP database tables or logs, never a full extract-and-compare.
+SQL Server pulls through **Change Tracking** (ADR-0008): one stored
+version per table, deletes emitted as delete events, a version out of
+retention stops the run for a governed re-initialisation; `rowversion`
+plus key reconciliation only for listed fallback tables.
 
 Push and pull converge on the **same** `raw.<entity>` topic. One subject
 per entity. Downstream stages subscribe; they never call connectors.

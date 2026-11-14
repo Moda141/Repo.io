@@ -283,7 +283,8 @@ an honest "not verified" is acceptable; an unverified "done" is not.
   ADR-0005: Airflow 3.4, DAGs organised in domain → repository folders;
   ADR-0006: data platforms read golden records through repository
   connection details, not connection records; ADR-0007: S/4HANA change
-  capture through ODP / CDS delta over OData).
+  capture through ODP / CDS delta over OData; ADR-0008: SQL Server
+  change capture through Change Tracking).
 - **Docs:** every module gets a README following
   `docs/module-readme-template.md` — update it when adding entry points,
   config or commands.
