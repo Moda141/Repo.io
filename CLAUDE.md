@@ -282,7 +282,8 @@ an honest "not verified" is acceptable; an unverified "done" is not.
   screen, the Python runtime serves workflow Script steps only;
   ADR-0005: Airflow 3.4, DAGs organised in domain → repository folders;
   ADR-0006: data platforms read golden records through repository
-  connection details, not connection records).
+  connection details, not connection records; ADR-0007: S/4HANA change
+  capture through ODP / CDS delta over OData).
 - **Docs:** every module gets a README following
   `docs/module-readme-template.md` — update it when adding entry points,
   config or commands.
