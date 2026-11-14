@@ -98,6 +98,17 @@ ingest for SAP C4C.
 - [ ] Outbox consumer pattern implemented for SAP C4C callbacks.
 - [ ] Airflow DAG scaffolding for pull sources (ERP, SQL Server) —
       config-driven from `ingestion/pipelines/` YAML.
+- [ ] **Change-capture method per pull source decided** (open decision,
+      needs the SAP Basis team and the ERP release — ECC or S/4HANA):
+      - SAP ERP: **ODP / CDS delta** (delta-enabled CDS views, pulled by
+        the DAG) **or IDoc / Change Pointers** (ALE — DEBMAS, CREMAS,
+        MATMAS — pushed to the ingest API). No full extract-and-compare,
+        no direct reads of ERP database tables or logs.
+      - SQL Server: incremental pull on a reliable change column or SQL
+        Server change tracking; log-based CDC (Debezium on Kafka Connect)
+        only through its own ADR.
+      - The choice is recorded in the module README before the ERP DAG
+        is built.
 - [ ] Airflow 3.4 patch pinned with its constraints file; providers and
       Python 3.11 verified against it (ADR-0005).
 - [ ] DAG folder layout `dags/<domain>/<repository>/{sync,dq}/`,
