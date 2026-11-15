@@ -844,6 +844,8 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioFolderCrumbs .sapMLnk, .repoioFolderCrumbs .sapMBreadcrumbsCurrentLocation { font-family: "72Mono", "72", monospace; font-size: 0.8125rem; }
 .repoioFolderCrumbIcon { margin-inline-start: 1rem; }
 .repoioJrBody { display: flex; align-items: stretch; gap: 1rem; }
+.repoioJrFoldHead { padding-inline-end: 0.25rem; }
+.repoioJrFoldHead .repoioFacetGroup { flex: 1; }
 .repoioJrFolders { flex: none; background: #fff; border: 1px solid #e5e5e5; border-radius: 0.25rem; padding-bottom: 0.5rem; }
 .repoioJrMain { flex: 1 1 auto; min-width: 0; }
 

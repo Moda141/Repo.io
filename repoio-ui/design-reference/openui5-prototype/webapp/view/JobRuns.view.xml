@@ -14,7 +14,6 @@
 							<SegmentedButtonItem key="streams" text="{i18n>st.seg.streams}" icon="sap-icon://process"/>
 						</items>
 					</SegmentedButton>
-					<ToggleButton icon="sap-icon://open-folder" type="Transparent" pressed="{view>/jr/showFolders}" tooltip="{i18n>fld.toggle}" press=".onToggleFolders"/>
 					<Button icon="sap-icon://refresh" type="Transparent" tooltip="{i18n>jr.a.refresh}" press=".onRefresh"/>
 				</f:actions>
 			</f:DynamicPageTitle>
@@ -75,7 +74,10 @@
 			<HBox renderType="Bare" class="repoioJrBody">
 			<!-- Folders (ADR-0005): the same domain / repository / kind tree as the Airflow Folders panel. -->
 			<VBox renderType="Bare" width="15rem" visible="{view>/jr/showFolders}" class="repoioJrFolders">
-				<Title text="{i18n>fld.title}" level="H3" class="repoioFacetGroup"/>
+				<HBox alignItems="Center" justifyContent="SpaceBetween" renderType="Bare" class="repoioJrFoldHead">
+					<Title text="{i18n>fld.title}" level="H3" class="repoioFacetGroup"/>
+					<Button icon="sap-icon://close-command-field" type="Transparent" tooltip="{i18n>fld.hide}" press=".onToggleFolders"/>
+				</HBox>
 				<Tree id="jrTree" items="{path: 'view>/jr/tree', parameters: {arrayNames: ['nodes']}}" mode="SingleSelectMaster"
 					selectionChange=".onFolder" showSeparators="None" class="repoioFacetList repoioFolderTree">
 					<StandardTreeItem title="{view>text}" icon="{view>icon}" counter="{view>count}" selected="{view>selected}" tooltip="{view>tip}"/>
@@ -112,6 +114,7 @@
 					noDataText="{i18n>jr.noData}">
 					<headerToolbar>
 						<OverflowToolbar>
+							<Button text="{i18n>fld.title}" icon="sap-icon://open-folder" tooltip="{i18n>fld.show}" visible="{= !${view>/jr/showFolders} }" press=".onToggleFolders"/>
 							<Title text="{path: 'view>/jr/count', formatter: '.listTitle'}" level="H2"/>
 							<Breadcrumbs links="{view>/jr/crumbs/links}" currentLocationText="{view>/jr/crumbs/current}" visible="{= !!${view>/jr/f/folder} }"
 								separatorStyle="Slash" class="repoioFolderCrumbs">

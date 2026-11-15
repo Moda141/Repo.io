@@ -64,7 +64,12 @@ sap.ui.define([
 		/* The folders panel starts open on wide screens; below 1440px it starts closed so the runs table keeps every column. A saved choice wins. */
 		_foldersDefault: function () { var v = this.store("repoio-jr-folders"); return v === null ? window.innerWidth >= 1440 : v !== false; },
 		onSwitch: function (oEvent) { if (oEvent.getParameter("item").getKey() === "streams") { this.router().navTo("streams"); } },
-		onToggleFolders: function () { this.store("repoio-jr-folders", this.viewModel().getProperty("/jr/showFolders")); },
+		/* Hide from the panel's own header; show again from the "Folders" button on the runs toolbar. The choice is remembered. */
+		onToggleFolders: function () {
+			var b = !this.viewModel().getProperty("/jr/showFolders");
+			this.viewModel().setProperty("/jr/showFolders", b);
+			this.store("repoio-jr-folders", b);
+		},
 
 		/* One page of runs (Previous / Next instead of "More"). */
 		_slice: function () {
