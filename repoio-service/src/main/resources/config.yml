@@ -12,10 +12,25 @@ database:
   password: ${DB_PASSWORD:-repoio}
   url: jdbc:postgresql://${DB_HOST:-localhost}:5432/${DB_NAME:-repoio}
 
+# Deployment values (ADR-0009, J18). Identity, hosts and secrets are set here
+# through environment variables (Helm values on AKS), never in the console or
+# the database. No defaults: the service must refuse to start when one is
+# missing (wire Dropwizard's EnvironmentVariableSubstitutor in strict mode).
 authentication:
   provider: entra
-  tenantId: ${ENTRA_TENANT_ID:-nahdetmisr}
+  tenantId: ${ENTRA_TENANT_ID}
   clientId: ${ENTRA_CLIENT_ID}
+  redirectUri: ${REPOIO_CONSOLE_URL}/auth/callback
+  # Client secret: Azure Key Vault; only the reference is configured.
+  clientSecretRef: ${ENTRA_CLIENT_SECRET_REF}
+
+# Corporate SMTP relay for notifications and broadcasts (ADR-0003).
+# Sender, reply-to and TLS mode are console settings (System configuration).
+mail:
+  host: ${SMTP_RELAY_HOST}
+  port: ${SMTP_RELAY_PORT}
+  # Relay credentials: Azure Key Vault; only the reference is configured.
+  credentialsRef: ${SMTP_RELAY_SECRET_REF}
 
 logging:
   level: INFO
