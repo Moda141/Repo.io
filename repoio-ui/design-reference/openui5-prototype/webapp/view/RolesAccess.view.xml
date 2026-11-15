@@ -20,6 +20,8 @@
 						<OverflowToolbar>
 							<Title text="{view>/ra/title}" level="H2"/>
 							<ToolbarSpacer/>
+							<Button text="{i18n>ra.create}" icon="sap-icon://add" type="Emphasized" press=".onCreateRole"/>
+							<ToolbarSeparator/>
 							<SearchField width="13rem" value="{view>/ra/q}" liveChange=".onFilter" placeholder="{i18n>common.search}"/>
 							<Select selectedKey="{view>/ra/dom}" change=".onFilter" width="12rem" items="{view>/ra/domFilter}" tooltip="{i18n>um.col.domains}">
 								<core:Item key="{view>key}" text="{view>text}"/>
@@ -28,12 +30,14 @@
 								<core:Item key="all" text="{i18n>ra.kind.all}"/>
 								<core:Item key="inherit" text="{i18n>ra.assign.units}"/>
 								<core:Item key="sensitive" text="{i18n>ra.userOnly}"/>
+								<core:Item key="custom" text="{i18n>ra.type.custom}"/>
 							</Select>
 						</OverflowToolbar>
 					</headerToolbar>
 					<columns>
 						<Column width="17rem"><Text text="{i18n>um.col.role}"/></Column>
-						<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>ra.col.desc}"/></Column>
+						<Column width="7rem"><Text text="{i18n>ra.col.type}"/></Column>
+						<Column minScreenWidth="1500px"><Text text="{i18n>ra.col.desc}"/></Column>
 						<Column minScreenWidth="Tablet" demandPopin="true" width="14rem"><Text text="{i18n>um.col.domains}"/></Column>
 						<Column width="12rem"><Text text="{i18n>ra.col.assignable}"/></Column>
 						<Column width="6rem" hAlign="End"><Text text="{i18n>ra.col.users}"/></Column>
@@ -45,6 +49,7 @@
 								<core:Icon src="{view>icon}" class="repoioExRowIcon"/>
 								<Link text="{view>text}" press=".onOpen" wrapping="false"/>
 							</HBox>
+							<ObjectStatus text="{view>typeText}" state="{view>typeState}"/>
 							<Text text="{view>desc}" wrapping="false" tooltip="{view>desc}"/>
 							<Text text="{view>domainsText}" wrapping="false" tooltip="{view>domainsText}"/>
 							<ObjectStatus text="{view>assignText}" icon="{view>assignIcon}" state="{view>assignState}"/>

@@ -7,9 +7,18 @@
 					<Avatar src="{view>/ra/d/icon}" displaySize="M" displayShape="Square" backgroundColor="Accent6"/>
 					<VBox renderType="Bare" class="repoioUmUserWho">
 						<Title text="{view>/ra/d/text}" level="H2"/>
-						<Text text="{view>/ra/d/id}" class="repoioMono repoioUmMuted"/>
+						<HBox renderType="Bare" alignItems="Center" class="repoioRaIdRow">
+							<Text text="{view>/ra/d/id}" class="repoioMono repoioUmMuted"/>
+							<ObjectStatus text="{view>/ra/d/typeText}" state="{view>/ra/d/typeState}" class="sapUiSmallMarginBegin"/>
+						</HBox>
 					</VBox>
-					<ObjectStatus text="{view>/ra/d/assignText}" icon="{view>/ra/d/assignIcon}" state="{view>/ra/d/assignState}" inverted="true" class="repoioUmUserLink"/>
+					<VBox renderType="Bare" alignItems="End" class="repoioUmUserLink">
+						<ObjectStatus text="{view>/ra/d/assignText}" icon="{view>/ra/d/assignIcon}" state="{view>/ra/d/assignState}" inverted="true"/>
+						<HBox renderType="Bare" class="repoioRaHeadBtns">
+							<Button text="{i18n>ra.copy}" icon="sap-icon://copy" type="Transparent" press=".onCopyRole"/>
+							<Button text="{i18n>common.delete}" icon="sap-icon://delete" type="Transparent" press=".onDeleteRole" visible="{= !${view>/ra/d/delivered} }" enabled="{= ${view>/ra/d/users}.length === 0 }" tooltip="{view>/ra/d/deleteTip}"/>
+						</HBox>
+					</VBox>
 				</HBox>
 			</VBox>
 			<IconTabBar selectedKey="{view>/ra/d/tab}" expandable="false" headerMode="Inline" applyContentPadding="false" class="repoioUmUserTabs">
@@ -22,12 +31,27 @@
 							<Label text="{i18n>ra.col.users}"/><Text text="{view>/ra/d/usersText}"/>
 						</f:SimpleForm>
 					</IconTabFilter>
+					<IconTabFilter key="perms" text="{i18n>ra.tab.perms}" count="{view>/ra/d/permCount}">
+						<MessageStrip text="{i18n>ra.perm.delivered}" type="Information" showIcon="true" visible="{view>/ra/d/delivered}" class="sapUiSmallMargin"/>
+						<VBox items="{view>/ra/d/pgroups}" renderType="Bare" class="repoioRaPerms">
+							<VBox renderType="Bare" class="repoioRaPermGroup">
+								<Title text="{view>title}" level="H5"/>
+								<VBox items="{path: 'view>perms', templateShareable: false}" renderType="Bare">
+									<HBox alignItems="Center" renderType="Bare">
+										<CheckBox text="{view>text}" selected="{view>on}" enabled="{= !${view>/ra/d/delivered} }" select=".onPerm"/>
+										<core:Icon src="sap-icon://locked" visible="{view>sensitive}" tooltip="{i18n>ra.perm.sensitiveTip}" class="repoioUmLock"/>
+									</HBox>
+								</VBox>
+							</VBox>
+						</VBox>
+					</IconTabFilter>
 					<IconTabFilter key="domains" text="{i18n>ra.tab.domains}" count="{view>/ra/d/domCount}">
 						<VBox class="sapUiSmallMargin" renderType="Bare">
 							<Text text="{i18n>ra.dom.hint}" class="repoioUmMuted sapUiTinyMarginBottom"/>
-							<CheckBox text="{i18n>ra.allDomains}" selected="{view>/ra/d/all}" select=".onDomainsAll"/>
+							<MessageStrip text="{i18n>ra.perm.delivered}" type="Information" showIcon="true" visible="{view>/ra/d/delivered}" class="sapUiTinyMarginBottom"/>
+							<CheckBox text="{i18n>ra.allDomains}" selected="{view>/ra/d/all}" select=".onDomainsAll" enabled="{= !${view>/ra/d/delivered} }"/>
 							<VBox items="{view>/ra/d/domains}" renderType="Bare" class="repoioRaDoms">
-								<CheckBox text="{view>text}" selected="{view>on}" enabled="{= !${view>/ra/d/all} }" select=".onDomain"/>
+								<CheckBox text="{view>text}" selected="{view>on}" enabled="{= !${view>/ra/d/all} &amp;&amp; !${view>/ra/d/delivered} }" select=".onDomain"/>
 							</VBox>
 						</VBox>
 					</IconTabFilter>
@@ -92,5 +116,60 @@
 			</IconTabBar>
 		</content>
 		<endButton><Button text="{i18n>common.close}" press=".onClose"/></endButton>
+	</Dialog>
+
+	<!-- Create role: blank or a copy; permissions come from the fixed catalog the server defines.
+	     A role with any sensitive permission becomes user-only (never on a department or team). -->
+	<Dialog id="raNewDlg" title="{view>/ra/n/title}" contentWidth="44rem" contentHeight="34rem" class="repoioUmDlg">
+		<content>
+			<VBox renderType="Bare" class="sapUiSmallMargin">
+				<f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="3" labelSpanM="3" labelSpanS="12" columnsL="1" columnsM="1">
+					<Label text="{i18n>ra.n.start}"/>
+					<HBox alignItems="Center" renderType="Bare" class="repoioRaStart">
+						<SegmentedButton selectedKey="{view>/ra/n/mode}" selectionChange=".onNewMode">
+							<items>
+								<SegmentedButtonItem key="blank" text="{i18n>ra.n.blank}"/>
+								<SegmentedButtonItem key="copy" text="{i18n>ra.n.copyOf}"/>
+							</items>
+						</SegmentedButton>
+						<Select selectedKey="{view>/ra/n/from}" items="{view>/ra/n/roles}" change=".onNewFrom" enabled="{= ${view>/ra/n/mode} === 'copy' }" width="15rem" class="sapUiSmallMarginBegin">
+							<core:Item key="{view>key}" text="{view>text}"/>
+						</Select>
+					</HBox>
+					<Label text="{i18n>ra.n.nameEn}" required="true"/>
+					<Input value="{view>/ra/n/en}" liveChange=".onNewName" textDirection="LTR" valueState="{view>/ra/n/vs/en}"/>
+					<Label text="{i18n>ra.n.nameAr}" required="true"/>
+					<Input value="{view>/ra/n/ar}" textDirection="RTL" valueState="{view>/ra/n/vs/ar}"/>
+					<Label text="{i18n>ra.n.id}" required="true"/>
+					<Input value="{view>/ra/n/id}" liveChange=".onNewId" textDirection="LTR" class="repoioMono" valueState="{view>/ra/n/vs/id}" valueStateText="{view>/ra/n/idMsg}"/>
+					<Label text="{i18n>ra.n.descEn}"/>
+					<Input value="{view>/ra/n/desc_en}" textDirection="LTR"/>
+					<Label text="{i18n>ra.n.descAr}"/>
+					<Input value="{view>/ra/n/desc_ar}" textDirection="RTL"/>
+					<Label text="{i18n>um.col.domains}" required="true"/>
+					<VBox renderType="Bare">
+						<CheckBox text="{i18n>ra.allDomains}" selected="{view>/ra/n/all}"/>
+						<HBox wrap="Wrap" items="{view>/ra/n/domains}" renderType="Bare" class="repoioRaNewDoms">
+							<CheckBox text="{view>text}" selected="{view>on}" enabled="{= !${view>/ra/n/all} }"/>
+						</HBox>
+					</VBox>
+				</f:SimpleForm>
+				<Title text="{i18n>ra.tab.perms}" level="H4" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+				<MessageStrip text="{i18n>ra.n.sensitive}" type="Warning" showIcon="true" visible="{view>/ra/n/sensitive}" class="sapUiTinyMarginBottom"/>
+				<VBox items="{view>/ra/n/pgroups}" renderType="Bare" class="repoioRaPerms">
+					<VBox renderType="Bare" class="repoioRaPermGroup">
+						<Title text="{view>title}" level="H5"/>
+						<VBox items="{path: 'view>perms', templateShareable: false}" renderType="Bare">
+							<HBox alignItems="Center" renderType="Bare">
+								<CheckBox text="{view>text}" selected="{view>on}" select=".onNewPerm"/>
+								<core:Icon src="sap-icon://locked" visible="{view>sensitive}" tooltip="{i18n>ra.perm.sensitiveTip}" class="repoioUmLock"/>
+							</HBox>
+						</VBox>
+					</VBox>
+				</VBox>
+			</VBox>
+		</content>
+		<beginButton><Button text="{i18n>ra.n.create}" type="Emphasized" press=".onNewSave"/></beginButton>
+		<endButton><Button text="{i18n>common.cancel}" press=".onNewCancel"/></endButton>
 	</Dialog>
 </core:FragmentDefinition>

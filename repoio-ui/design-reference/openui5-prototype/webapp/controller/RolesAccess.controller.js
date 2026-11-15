@@ -53,10 +53,12 @@ sap.ui.define([
 				if (f.dom && r.domains.indexOf("*") < 0 && r.domains.indexOf(f.dom) < 0) { return false; }
 				if (f.kind === "sensitive" && !r.sensitive) { return false; }
 				if (f.kind === "inherit" && r.sensitive) { return false; }
+				if (f.kind === "custom" && r.delivered) { return false; }
 				return !q || [r.id, r.en, r.ar, r.desc_en, r.desc_ar].join(" ").toLowerCase().indexOf(q) > -1;
 			}).map(function (r) {
 				var h = A.holders(d, that._idx, r.id), a = that._assign(r), units = A.unitsWithRole(d, r.id).length;
 				return { id: r.id, text: that._t(r), icon: r.icon, desc: that._ar() ? r.desc_ar : r.desc_en, domainsText: that._domainsText(r),
+					typeText: that.text(r.delivered ? "ra.type.delivered" : "ra.type.custom"), typeState: r.delivered ? "None" : "Information",
 					assignText: a.text, assignIcon: a.icon, assignState: a.state, users: h.length, units: r.sensitive ? "—" : units };
 			});
 			vm.setProperty("/ra/rows", rows);
@@ -69,8 +71,9 @@ sap.ui.define([
 		_dlg: function () {
 			var that = this;
 			if (!this._pDlg) {
-				this._pDlg = Fragment.load({ id: this.getView().getId(), name: "repoio.proto.fragment.RoleDetails", controller: this }).then(function (o) {
-					that.getView().addDependent(o);
+				this._pDlg = Fragment.load({ id: this.getView().getId(), name: "repoio.proto.fragment.RoleDetails", controller: this }).then(function (a) {
+					a.forEach(function (x) { that.getView().addDependent(x); });
+					var o = that.byId("raDlg");
 					o.attachAfterClose(function () { if (!that._noBack && /^admin\/roles\/./.test(that.router().getHashChanger().getHash())) { that.router().navTo("roles", {}, true); } that._noBack = false; });
 					return o;
 				});
@@ -88,6 +91,9 @@ sap.ui.define([
 			this.viewModel().setProperty("/ra/d", {
 				tab: sTab || this.viewModel().getProperty("/ra/d/tab") || "general",
 				id: r.id, text: this._t(r), icon: r.icon, desc: this._ar() ? r.desc_ar : r.desc_en, sensitive: r.sensitive,
+				delivered: !!r.delivered, typeText: this.text(r.delivered ? "ra.type.delivered" : "ra.type.custom"), typeState: r.delivered ? "None" : "Information",
+				permCount: (r.perms || []).length, pgroups: this._pgroups(r.perms || []),
+				deleteTip: h.length ? this.text("ra.del.blocked", [h.length]) : this.text("ra.del.tip"),
 				domainsText: this._domainsText(r), assignText: a.text, assignIcon: a.icon, assignState: a.state, assignNote: a.note,
 				usersText: this.text("ra.usersText", [h.length, h.filter(function (x) { return x.via.type === "direct"; }).length]),
 				all: all, domCount: all ? this._doms.length : r.domains.length,
@@ -174,6 +180,102 @@ sap.ui.define([
 				that._fill("units"); that._apply();
 			} });
 		},
+		/* ---------- permissions (fixed catalog from the server; sensitivity is derived, never chosen) ---------- */
+		_sens: function (aPerms) { var d = this._d; return aPerms.some(function (id) { var p = d.permissions.filter(function (x) { return x.id === id; })[0]; return p && p.sensitive; }); },
+		_pgroups: function (aOn) {
+			var that = this, groups = [];
+			this._d.permissions.forEach(function (p) {
+				var g = groups.filter(function (x) { return x.key === p.group; })[0];
+				if (!g) { g = { key: p.group, title: that.text("ra.pg." + p.group), perms: [] }; groups.push(g); }
+				g.perms.push({ id: p.id, text: that._t(p), sensitive: !!p.sensitive, on: aOn.indexOf(p.id) > -1 });
+			});
+			return groups;
+		},
+		_picked: function (aGroups) { var out = []; aGroups.forEach(function (g) { g.perms.forEach(function (p) { if (p.on) { out.push(p.id); } }); }); return out; },
+		onPerm: function () {
+			var r = A.role(this._d, this._role), perms = this._picked(this.viewModel().getProperty("/ra/d/pgroups")), sens = this._sens(perms),
+				units = A.unitsWithRole(this._d, r.id);
+			if (!perms.length) { MessageBox.warning(this.text("ra.perm.none")); this._fill("perms"); return; }
+			if (sens && units.length) { MessageBox.error(this.text("ra.perm.blockedUnits", [units.length])); this._fill("perms"); return; }
+			r.perms = perms; r.sensitive = sens;
+			this._audit("Permissions of " + r.en + " set to " + perms.join(", "), "تعديل صلاحيات الدور " + r.ar);
+			this._fill("perms"); this._apply();
+			MessageToast.show(this.text(sens ? "ra.t.permsSensitive" : "ra.t.perms"));
+		},
+
+		/* ---------- create / copy / delete ---------- */
+		onCreateRole: function () { this._newRole(""); },
+		onCopyRole: function () { this._newRole(this._role); },
+		_newRole: function (sFrom) {
+			var that = this, vm = this.viewModel();
+			vm.setProperty("/ra/n", { title: this.text("ra.create"), mode: sFrom ? "copy" : "blank", from: sFrom || this._d.roles[0].id, idTouched: false, vs: {},
+				roles: this._d.roles.map(function (r) { return { key: r.id, text: that._t(r) }; }) });
+			this._seed(sFrom);
+			var go = function () { that._dlg().then(function () { that.byId("raNewDlg").open(); }); };
+			var o = this.byId("raDlg");
+			if (o && o.isOpen()) { this._noBack = true; o.close(); this.router().navTo("roles", {}, true); setTimeout(go, 300); } else { go(); }
+		},
+		_seed: function (sFrom) {
+			var that = this, vm = this.viewModel(), r = sFrom ? A.role(this._d, sFrom) : null, all = r ? r.domains.indexOf("*") > -1 : false;
+			vm.setProperty("/ra/n/en", r ? this.text("ra.n.copyName", [r.en]) : "");
+			vm.setProperty("/ra/n/ar", r ? "نسخة من " + r.ar : "");
+			vm.setProperty("/ra/n/desc_en", r ? r.desc_en : "");
+			vm.setProperty("/ra/n/desc_ar", r ? r.desc_ar : "");
+			vm.setProperty("/ra/n/all", all);
+			vm.setProperty("/ra/n/domains", this._doms.map(function (x) { return { id: x.id, text: that.domainName(x), on: !!r && (all || r.domains.indexOf(x.id) > -1) }; }));
+			vm.setProperty("/ra/n/pgroups", this._pgroups(r ? r.perms || [] : ["gr.read"]));
+			vm.setProperty("/ra/n/sensitive", r ? this._sens(r.perms || []) : false);
+			vm.setProperty("/ra/n/idTouched", false);
+			this.onNewName();
+		},
+		onNewMode: function () { var vm = this.viewModel(); this._seed(vm.getProperty("/ra/n/mode") === "copy" ? vm.getProperty("/ra/n/from") : ""); },
+		onNewFrom: function () { this._seed(this.viewModel().getProperty("/ra/n/from")); },
+		onNewName: function () {
+			var vm = this.viewModel();
+			if (vm.getProperty("/ra/n/idTouched")) { return; }
+			var id = String(vm.getProperty("/ra/n/en") || "").toUpperCase().replace(/[^A-Z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 40);
+			vm.setProperty("/ra/n/id", id);
+		},
+		onNewId: function (oEvent) {
+			var vm = this.viewModel(), v = String(oEvent.getParameter("value") || "").toUpperCase().replace(/[^A-Z0-9_]/g, "");
+			vm.setProperty("/ra/n/id", v); vm.setProperty("/ra/n/idTouched", true);
+		},
+		onNewPerm: function () { this.viewModel().setProperty("/ra/n/sensitive", this._sens(this._picked(this.viewModel().getProperty("/ra/n/pgroups")))); },
+		onNewCancel: function () { this.byId("raNewDlg").close(); },
+		onNewSave: function () {
+			var vm = this.viewModel(), n = vm.getProperty("/ra/n"), d = this._d, err = [], perms = this._picked(n.pgroups),
+				doms = n.all ? ["*"] : n.domains.filter(function (x) { return x.on; }).map(function (x) { return x.id; }),
+				idOk = /^[A-Z][A-Z0-9_]{2,39}$/.test(n.id || ""), idFree = !A.role(d, n.id);
+			if (!n.en || !n.ar) { err.push(this.text("ra.v.name")); }
+			if (!idOk) { err.push(this.text("ra.v.id")); } else if (!idFree) { err.push(this.text("ra.v.idDup")); }
+			if (!doms.length) { err.push(this.text("ra.dom.none")); }
+			if (!perms.length) { err.push(this.text("ra.perm.none")); }
+			vm.setProperty("/ra/n/vs", { en: n.en ? "None" : "Error", ar: n.ar ? "None" : "Error", id: idOk && idFree ? "None" : "Error" });
+			vm.setProperty("/ra/n/idMsg", !idOk ? this.text("ra.v.id") : !idFree ? this.text("ra.v.idDup") : "");
+			if (err.length) { MessageBox.error(err.join("\n")); return; }
+			var sens = this._sens(perms), src = n.mode === "copy" ? A.role(d, n.from) : null;
+			d.roles.push({ id: n.id, en: n.en, ar: n.ar, desc_en: n.desc_en || "", desc_ar: n.desc_ar || "", domains: doms, perms: perms, sensitive: sens,
+				icon: src ? src.icon : "sap-icon://role", delivered: false });
+			this._audit("Role created: " + n.en + " (" + n.id + ")" + (src ? " as a copy of " + src.en : ""), "إنشاء دور: " + n.ar + (src ? " (نسخة من " + src.ar + ")" : ""));
+			this.byId("raNewDlg").close();
+			this._apply();
+			MessageToast.show(this.text("ra.t.created", [n.en]));
+			this.router().navTo("roles", { role: n.id }, true);
+		},
+		onDeleteRole: function () {
+			var that = this, d = this._d, r = A.role(d, this._role);
+			if (r.delivered || A.holders(d, this._idx, r.id).length) { return; }
+			MessageBox.confirm(this.text("ra.del.confirm", [this._t(r)]), { onClose: function (a) {
+				if (a !== MessageBox.Action.OK) { return; }
+				d.roles = d.roles.filter(function (x) { return x.id !== r.id; });
+				Object.keys(d.unitRoles).forEach(function (k) { d.unitRoles[k] = d.unitRoles[k].filter(function (x) { return x !== r.id; }); });
+				that._audit("Role deleted: " + r.en, "حذف الدور: " + r.ar);
+				that.byId("raDlg").close();
+				that._apply();
+				MessageToast.show(that.text("ra.t.deleted", [that._t(r)]));
+			} });
+		},
+
 		onUnit: function (oEvent) {
 			this.viewModel().setProperty("/umPending", oEvent.getSource().getBindingContext("view").getProperty("id"));
 			this._noBack = true; this.byId("raDlg").close();
