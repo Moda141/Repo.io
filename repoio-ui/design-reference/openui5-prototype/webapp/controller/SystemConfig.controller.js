@@ -10,8 +10,11 @@ sap.ui.define([
 	"sap/m/CheckBox",
 	"sap/m/TextArea",
 	"sap/ui/core/Item",
-	"sap/ui/layout/form/SimpleForm"
-], function (BaseController, MessageToast, MessageBox, Dialog, Button, Label, Input, Select, CheckBox, TextArea, Item, SimpleForm) {
+	"sap/ui/layout/form/SimpleForm",
+	"sap/m/MultiComboBox",
+	"sap/m/MessageStrip",
+	"repoio/proto/util/access"
+], function (BaseController, MessageToast, MessageBox, Dialog, Button, Label, Input, Select, CheckBox, TextArea, Item, SimpleForm, MultiComboBox, MessageStrip, Access) {
 	"use strict";
 
 	var ME = "محمد",
@@ -32,7 +35,8 @@ sap.ui.define([
 		},
 		_onMatched: function (oEvent) {
 			var that = this, oM = this.getOwnerComponent().getModel("admin"), sec = oEvent.getParameter("arguments").section;
-			oM.dataLoaded().then(function () {
+			// The users model feeds the "Person" property reference (role names, eligible users).
+			Promise.all([oM.dataLoaded(), this.getOwnerComponent().getModel("users").dataLoaded()]).then(function () {
 				that._d = oM.getData();
 				if (!that.viewModel().getProperty("/sc/dirty")) { that._load(); }
 				if (sec && SECTIONS.some(function (s) { return s[0] === sec; })) { that.viewModel().setProperty("/sc/sec", sec); }
@@ -89,6 +93,26 @@ sap.ui.define([
 			this._sections();
 		},
 		typeText: function (s) { return s ? this.text("sc.type." + s) : ""; },
+		/* Values column: the list for "List of values", the users-list reference for "Person". */
+		valuesText: function (sType, sValues, oRef, bMulti) {
+			if (sType !== "user") { return sValues || ""; }
+			var ar = this.lang() === "ar", d = this.getOwnerComponent().getModel("users").getData() || {},
+				t = !oRef || oRef.from !== "roles" ? this.text("sc.props.refAll") : this.text("sc.props.refRoles", [(oRef.roles || []).map(function (id) {
+					var r = (d.roles || []).filter(function (x) { return x.id === id; })[0]; return r ? (ar ? r.ar : r.en) : id; }).join(ar ? "، " : ", ")]);
+			return bMulti ? t + " " + this.text("sc.props.refMulti") : t;
+		},
+		/* Who a Person property would offer: active users, optionally narrowed to holders of the chosen roles. The product asks
+		   the users API for this list (server-filtered); the console only previews it. */
+		_eligible: function (sFrom, aRoles) {
+			var d = this.getOwnerComponent().getModel("users").getData(), idx = Access.index(d.org), seen = {};
+			d.users.forEach(function (u) {
+				var e = d.employees.filter(function (x) { return x.id === u.employee; })[0];
+				if (!e || Access.status(d, u, e) !== "active") { return; }
+				if (sFrom === "roles" && !Access.effective(d, idx, u, e).some(function (x) { return aRoles.indexOf(x.role) > -1; })) { return; }
+				seen[e.id] = 1;
+			});
+			return Object.keys(seen).length;
+		},
 		appliesText: function (s) { return s ? this.text("sc.applies." + s) : ""; },
 
 		/* Save every changed section; each becomes one audited change with before / after. */
@@ -133,7 +157,8 @@ sap.ui.define([
 		onAddProp: function () { this._prop(null); },
 		onEditProp: function (oEvent) { this._prop(oEvent.getSource().getBindingContext("view").getObject()); },
 		_prop: function (oEdit) {
-			var that = this, vm = this.viewModel(), list = vm.getProperty("/sc/w/customProps"), o = oEdit ? clone(oEdit) : { name: "", en: "", ar: "", type: "string", appliesTo: "repository", required: false, values: "", desc_en: "", desc_ar: "" };
+			var that = this, vm = this.viewModel(), list = vm.getProperty("/sc/w/customProps"), o = oEdit ? clone(oEdit) : { name: "", en: "", ar: "", type: "string", appliesTo: "repository", required: false, values: "", ref: null, multiple: false, desc_en: "", desc_ar: "" },
+				ud = this.getOwnerComponent().getModel("users").getData(), ref = o.ref || { list: "users", from: "all", roles: [] }, ar = this.lang() === "ar";
 			var opt = function (k, pre) { return new Item({ key: k, text: that.text(pre + k) }); };
 			var c = {
 				name: new Input({ value: o.name, textDirection: "LTR", editable: !oEdit, placeholder: "costCenter" }).addStyleClass("repoioMono"),
@@ -142,13 +167,33 @@ sap.ui.define([
 				applies: new Select({ selectedKey: o.appliesTo, width: "100%", items: APPLIES.map(function (k) { return opt(k, "sc.applies."); }), enabled: !oEdit }),
 				required: new CheckBox({ selected: o.required, text: this.text("sc.props.requiredText") }),
 				values: new Input({ value: o.values, placeholder: "A, B, C" }),
+				from: new Select({ selectedKey: ref.from, width: "100%", items: ["all", "roles"].map(function (k) { return opt(k, "sc.props.from."); }) }),
+				roles: new MultiComboBox({ selectedKeys: ref.roles || [], width: "100%", placeholder: this.text("sc.props.rolesPh"),
+					items: ud.roles.map(function (r) { return new Item({ key: r.id, text: ar ? r.ar : r.en }); }) }),
+				multiple: new CheckBox({ selected: !!o.multiple, text: this.text("sc.props.multiple") }),
+				hint: new MessageStrip({ type: "Information", showIcon: true }).addStyleClass("sapUiTinyMarginTop"),
 				den: new TextArea({ value: o.desc_en, rows: 2, width: "100%", textDirection: "LTR" }), dar: new TextArea({ value: o.desc_ar, rows: 2, width: "100%", textDirection: "RTL" })
 			};
 			var lbl = function (k, req) { return new Label({ text: that.text(k), required: !!req }); };
+			var lValues = lbl("sc.props.col.values"), lFrom = lbl("sc.props.pickFrom", true), lRoles = lbl("sc.props.roles", true), lMulti = new Label({ text: "" }), lHint = new Label({ text: "" });
+			/* Values depend on the type: a typed list for "List of values", a users-list reference for "Person", nothing otherwise. */
+			var sync = function () {
+				var t = c.type.getSelectedKey(), u = t === "user", byRole = u && c.from.getSelectedKey() === "roles";
+				lValues.setVisible(t === "enum"); c.values.setVisible(t === "enum");
+				[lFrom, c.from, lMulti, c.multiple, lHint, c.hint].forEach(function (x) { x.setVisible(u); });
+				lRoles.setVisible(byRole); c.roles.setVisible(byRole);
+				if (u) {
+					var n = that._eligible(c.from.getSelectedKey(), c.roles.getSelectedKeys());
+					c.roles.setValueState("None");
+					c.hint.setType(n ? "Information" : "Warning").setText(that.text("sc.props.refCount", [n]) + "\n" + that.text("sc.props.userHint"));
+				}
+			};
+			c.type.attachChange(sync); c.from.attachChange(sync); c.roles.attachSelectionChange(sync);
 			var oDlg = new Dialog({ title: this.text(oEdit ? "sc.props.edit" : "sc.props.add"), contentWidth: "34rem",
 				content: [new SimpleForm({ editable: true, layout: "ResponsiveGridLayout", labelSpanL: 4, labelSpanM: 4, columnsL: 1, columnsM: 1, content: [
 					lbl("sc.props.col.name", true), c.name, lbl("sc.props.labelEn", true), c.en, lbl("sc.props.labelAr", true), c.ar,
-					lbl("sc.props.col.type", true), c.type, lbl("sc.props.col.applies", true), c.applies, lbl("sc.props.col.values"), c.values,
+					lbl("sc.props.col.type", true), c.type, lbl("sc.props.col.applies", true), c.applies, lValues, c.values,
+					lFrom, c.from, lRoles, c.roles, lMulti, c.multiple, lHint, c.hint,
 					new Label({ text: "" }), c.required, lbl("sc.props.descEn"), c.den, lbl("sc.props.descAr"), c.dar
 				] })],
 				beginButton: new Button({ text: this.text(oEdit ? "common.save" : "sc.props.addBtn"), type: "Emphasized", press: function () {
@@ -157,9 +202,13 @@ sap.ui.define([
 					else if (!oEdit && list.some(function (p) { return p.name === name; })) { err.push(that.text("sc.v.propDup")); c.name.setValueState("Error"); }
 					if (!c.en.getValue().trim() || !c.ar.getValue().trim()) { err.push(that.text("sc.v.propLabel")); }
 					if (c.type.getSelectedKey() === "enum" && c.values.getValue().split(",").filter(function (x) { return x.trim(); }).length < 2) { err.push(that.text("sc.v.propEnum")); c.values.setValueState("Error"); }
+					var isUser = c.type.getSelectedKey() === "user", byRole = isUser && c.from.getSelectedKey() === "roles";
+					if (byRole && !c.roles.getSelectedKeys().length) { err.push(that.text("sc.v.propRoles")); c.roles.setValueState("Error"); }
 					if (err.length) { MessageBox.error(err.join("\n")); return; }
 					var n = { id: oEdit ? oEdit.id : "cp" + Date.now(), name: name, en: c.en.getValue().trim(), ar: c.ar.getValue().trim(), type: c.type.getSelectedKey(), appliesTo: c.applies.getSelectedKey(),
 						required: c.required.getSelected(), values: c.type.getSelectedKey() === "enum" ? c.values.getValue().split(",").map(function (x) { return x.trim(); }).filter(Boolean).join(", ") : "",
+						ref: isUser ? { list: "users", from: byRole ? "roles" : "all", roles: byRole ? c.roles.getSelectedKeys() : [] } : null,
+						multiple: isUser && c.multiple.getSelected(),
 						desc_en: c.den.getValue().trim(), desc_ar: c.dar.getValue().trim() };
 					vm.setProperty("/sc/w/customProps", oEdit ? list.map(function (p) { return p.id === oEdit.id ? n : p; }) : list.concat([n]));
 					oDlg.close(); that._propsTitle(); that._setDirty(true);
@@ -167,6 +216,7 @@ sap.ui.define([
 				endButton: new Button({ text: this.text("common.cancel"), press: function () { oDlg.close(); } }),
 				afterClose: function () { oDlg.destroy(); } });
 			this.getView().addDependent(oDlg);
+			sync();
 			oDlg.open();
 		},
 		onDeleteProp: function (oEvent) {

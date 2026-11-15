@@ -50,7 +50,9 @@
 				"required": false,
 				"values": "",
 				"desc_en": "Finance cost center that funds the repository.",
-				"desc_ar": "مركز التكلفة اللي بيموّل الـ repository."
+				"desc_ar": "مركز التكلفة اللي بيموّل الـ repository.",
+				"ref": null,
+				"multiple": false
 			},
 			{
 				"id": "cp2",
@@ -62,7 +64,9 @@
 				"required": true,
 				"values": "Public, Internal, Confidential, Restricted",
 				"desc_en": "Highest classification of data the source holds.",
-				"desc_ar": "أعلى تصنيف للبيانات اللي في المصدر."
+				"desc_ar": "أعلى تصنيف للبيانات اللي في المصدر.",
+				"ref": null,
+				"multiple": false
 			},
 			{
 				"id": "cp3",
@@ -74,7 +78,33 @@
 				"required": false,
 				"values": "",
 				"desc_en": "When the domain owner reviews scope and stewardship.",
-				"desc_ar": "ميعاد مراجعة مالك الدومين للنطاق والأمانة."
+				"desc_ar": "ميعاد مراجعة مالك الدومين للنطاق والأمانة.",
+				"ref": null,
+				"multiple": false
+			},
+			{
+				"id": "cp4",
+				"name": "businessOwner",
+				"en": "Business owner",
+				"ar": "مالك البيانات من البيزنس",
+				"type": "user",
+				"appliesTo": "domain",
+				"required": true,
+				"values": "",
+				"ref": {
+					"list": "users",
+					"from": "roles",
+					"roles": [
+						"STEWARD_CUSTOMER",
+						"STEWARD_VENDOR",
+						"STEWARD_PRODUCT",
+						"HR_STEWARD",
+						"STORE_STEWARD"
+					]
+				},
+				"multiple": false,
+				"desc_en": "The accountable business owner of the domain, picked from the users directory.",
+				"desc_ar": "المسؤول من البيزنس عن الدومين، بيتختار من دليل المستخدمين."
 			}
 		]
 	},

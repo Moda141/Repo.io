@@ -152,7 +152,7 @@
 									<Text text="{path: 'view>type', formatter: '.typeText'}"/>
 									<Text text="{path: 'view>appliesTo', formatter: '.appliesText'}"/>
 									<core:Icon src="{= ${view>required} ? 'sap-icon://accept' : '' }"/>
-									<Text text="{view>values}" wrapping="false"/>
+									<Text text="{parts: ['view>type', 'view>values', 'view>ref', 'view>multiple'], formatter: '.valuesText'}" wrapping="false" tooltip="{parts: ['view>type', 'view>values', 'view>ref', 'view>multiple'], formatter: '.valuesText'}"/>
 									<HBox justifyContent="End">
 										<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>common.edit}" press=".onEditProp"/>
 										<Button icon="sap-icon://delete" type="Transparent" tooltip="{i18n>common.delete}" press=".onDeleteProp"/>
