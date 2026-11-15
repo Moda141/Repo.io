@@ -148,7 +148,9 @@
      - **(→) Reports** *(was "Reports lists")* — report definitions over
        golden data and platform metrics.
      - **Broadcasts** — scheduled distribution of reports to stakeholders
-       (delivery, not operational alerts).
+       (delivery, not operational alerts). A strip shows the sender and
+       export retention from System configuration and warns when the
+       last test email failed.
    - **Administration**
      - **User management** — the SAP IBP flow (ADR-0009): an org tree
        (Org › Business unit › Department › Team) beside two tabs.
@@ -175,7 +177,9 @@
        users** (*Add*) and **Assigned org units** (departments and teams;
        sensitive roles are user-only). Delivered roles are read-only;
        custom roles are edited or deleted (when nobody holds them). A
-       role also has a **History** tab. [J17, M5]
+       role also has a **History** tab (with *Open in audit log*) and
+       **Preview access**: the console pages its permissions open, from
+       the server's page → permission map (display only). [J17, M5]
      - **System configuration** — Admin-only (`system configuration`):
        sections on the left, one working copy, *Save* / *Discard* in the
        footer, each saved section audited with before / after. Identity,
@@ -209,7 +213,10 @@
        or the directory sync), area, action, what happened, object,
        version; filters by text, period, area and actor; an entry opens
        with its before / after; CSV export; retention from System
-       configuration. [J18, cross-cutting UX rule 4]
+       configuration. An entry opens the object it is about (user, role,
+       announcement, setting, broadcast, story). Pages of this section
+       append their actions (including broadcasts and story saves).
+       [J18, cross-cutting UX rule 4]
    - **Integration Hub**
      - **(→) Connections** *(was "Data source")* — one registry entry per
        external system Repo.io calls (SAP C4C, SAP ERP / HANA, SQL

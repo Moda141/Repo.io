@@ -766,6 +766,10 @@ log). **Pages:** Administration → System configuration, Audit log.
 6. *Save* writes one audited change per section with before / after.
 7. **Audit log** lists every entry newest first; filters narrow by
    text, period, area and actor; an entry opens with its before / after
-   values; *Export* downloads the filtered entries as CSV. Nothing on
-   the page edits or deletes an entry.
+   values and *Open* goes to the object; *Export* downloads the filtered
+   entries as CSV. Nothing on the page edits or deletes an entry. A user
+   or role opens its own entries with *Open in audit log*.
+8. **Preview access** on a role, or on a user's Effective access tab,
+   lists the console pages the permissions open (from the server's page
+   → permission map). It is a preview; the API enforces access.
 
