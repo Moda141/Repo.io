@@ -840,6 +840,15 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioFolderTree .sapMLIBCounter { font-size: 0.75rem; color: #6a6d70; }
 .repoioFolderTree .sapMSLIIcon { color: #6a6d70; font-size: 0.875rem; }
 .repoioFolderTree .sapMLIBSelected .sapMSLIIcon { color: #0a6ed1; }
+/* Tree items render their text in .sapMLIBContent: keep one line with an ellipsis (full name in the tooltip). */
+.repoioFolderTree .sapMLIBContent { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.repoioFolderTree .sapMSTIIcon { color: #6a6d70; margin-inline-end: 0.375rem; }
+/* The selected folder must read at a glance: tinted row, accent bar on the start edge, bold blue text. */
+.repoioFolderTree .sapMLIB.sapMLIBSelected { background: #dceafa; box-shadow: inset 3px 0 0 #0a6ed1; }
+[dir="rtl"] .repoioFolderTree .sapMLIB.sapMLIBSelected { box-shadow: inset -3px 0 0 #0a6ed1; }
+.repoioFolderTree .sapMLIBSelected .sapMLIBContent { color: #0a6ed1; font-weight: 600; }
+.repoioFolderTree .sapMLIBSelected .sapMSTIIcon, .repoioFolderTree .sapMLIBSelected .sapMLIBCounter { color: #0a6ed1; }
+.repoioFolderTree .sapMLIB:not(.sapMLIBSelected):hover { background: #f2f6fb; }
 .repoioFolderCrumbs { margin-inline-start: 0.5rem; direction: ltr; }
 .repoioFolderCrumbs .sapMLnk, .repoioFolderCrumbs .sapMBreadcrumbsCurrentLocation { font-family: "72Mono", "72", monospace; font-size: 0.8125rem; }
 .repoioFolderCrumbIcon { margin-inline-start: 1rem; }

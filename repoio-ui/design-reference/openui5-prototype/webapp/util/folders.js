@@ -44,7 +44,7 @@ sap.ui.define([], function () {
 				aSeg.forEach(function (s, i) {
 					var k = F.key(aSeg.slice(0, i + 1)), n = level.nodes.filter(function (x) { return x.key === k; })[0];
 					if (!n) {
-						n = { key: k, text: s, tip: F._label(c, aSeg, i), count: 0, nodes: [], selected: k === sSelected,
+						n = { key: k, text: s, tip: [s, F._label(c, aSeg, i)].filter(Boolean).join(" — "), count: 0, nodes: [], selected: k === sSelected,
 							icon: i === aSeg.length - 1 && KIND_ICON[s] ? KIND_ICON[s] : "sap-icon://folder-blank" };
 						level.nodes.push(n);
 					}
