@@ -8,6 +8,7 @@
 				<f:heading><Title text="{i18n>nav.rolesAccess}" level="H1"/></f:heading>
 				<f:expandedContent><Text text="{i18n>ra.subtitle}"/></f:expandedContent>
 				<f:actions>
+					<ObjectStatus text="{i18n>api.adminOnly}" icon="sap-icon://locked" state="Information" class="repoioApiAdminTag"/>
 					<Button text="{i18n>nav.users}" icon="sap-icon://employee-lookup" type="Transparent" press=".onUsers"/>
 				</f:actions>
 			</f:DynamicPageTitle>

@@ -42,10 +42,12 @@ sap.ui.define([
 				: { text: this.text("ra.assign.units"), icon: "sap-icon://org-chart", state: "None", note: this.text("ra.assign.unitsNote") };
 		},
 		_unitPath: function (k) { var that = this; return this._idx[k].path.slice(1).map(function (x) { return that._t(that._idx[x].unit); }).join(" › "); },
-		_audit: function (en, ar) {
+		_audit: function (en, ar, sUser) {
 			var n = new Date(this._d.now), p = function (x) { return (x < 10 ? "0" : "") + x; };
-			this._d.history.unshift({ at: this._d.now.slice(0, 11) + p(n.getHours()) + ":" + p(n.getMinutes()) + ":00", by: ME, user: "", en: en, ar: ar });
+			this._d.history.unshift({ at: this._d.now.slice(0, 11) + p(n.getHours()) + ":" + p(n.getMinutes()) + ":00", by: ME, user: sUser || "", role: this._role || "", en: en, ar: ar });
 		},
+		_today: function () { return (this._d.now || "").slice(0, 10); },
+		_noAdminLeft: function () { MessageBox.error(this.text("um.v.lastAdmin")); },
 
 		_apply: function () {
 			var that = this, vm = this.viewModel(), f = vm.getProperty("/ra"), q = (f.q || "").toLowerCase(), d = this._d;
@@ -101,8 +103,14 @@ sap.ui.define([
 				users: h.map(function (x) {
 					return { id: x.emp.id, name: x.emp.name, nameText: that._pname(x.emp.name), type: x.via.type,
 						unitText: that._idx[x.emp.team] ? that._idx[x.emp.team].path.slice(2).map(function (k) { return that._t(that._idx[k].unit); }).join(" › ") : "",
-						viaText: x.via.type === "direct" ? that.text("um.via.direct") : that.text("um.via." + x.via.type, [that._t(x.via.unit)]),
-						viaState: x.via.type === "direct" ? "Information" : "None", viaIcon: x.via.type === "direct" ? "sap-icon://person-placeholder" : A.TYPE_ICON[x.via.type] };
+						viaText: (x.via.type === "direct" ? that.text("um.via.direct") : that.text("um.via." + x.via.type, [that._t(x.via.unit)])) + (x.via.until ? " · " + that.text("um.until.short", [x.via.until]) : ""),
+						viaState: x.via.until ? "Warning" : x.via.type === "direct" ? "Information" : "None",
+						viaIcon: x.via.until ? "sap-icon://fob-watch" : x.via.type === "direct" ? "sap-icon://person-placeholder" : A.TYPE_ICON[x.via.type],
+						statusText: that.text("um.st." + A.status(d, x.user, x.emp)), statusState: A.status(d, x.user, x.emp) === "active" ? "None" : "Error",
+						blocked: A.status(d, x.user, x.emp) !== "active" };
+				}),
+				history: d.history.filter(function (hh) { return hh.role === r.id; }).map(function (hh) {
+					return { text: that._ar() ? hh.ar : hh.en, meta: hh.at.replace("T", " ").slice(0, 16) + " · " + (hh.by === "sync" ? that.text("um.bySync") : that._pname(hh.by)), icon: hh.by === "sync" ? "sap-icon://synchronize" : "sap-icon://edit" };
 				}),
 				units: A.unitsWithRole(d, r.id).map(function (k) {
 					var u = that._idx[k].unit;
@@ -138,18 +146,27 @@ sap.ui.define([
 				return { id: u.employee, title: that._pname(e.name), description: e.email, icon: "sap-icon://person-placeholder", info: u.link !== "linked" ? that.text("um.link." + u.link) : "" };
 			});
 			A.pick(this, cand, this.text("ra.addUsersTo", [this._t(r)]), function (ids) {
-				ids.forEach(function (id) { A.user(d, id).direct.push(r.id); });
-				that._audit("Role " + r.en + " assigned directly to " + ids.length + " user(s)", "إسناد الدور " + r.ar + " مباشرة إلى " + ids.length + " مستخدم");
-				that._fill("users"); that._apply();
-				MessageToast.show(that.text("ra.t.usersAdded", [ids.length]));
+				A.askUntil(that, that.text("um.until.title"), that._today(), function (sUntil) {
+					var conf = function () { return ids.filter(function (id) { var u = A.user(d, id), e = d.employees.filter(function (x) { return x.id === id; })[0]; return A.conflicts(d, that._idx, u, e).length; }); },
+						before = conf();
+					ids.forEach(function (id) {
+						var u = A.user(d, id); u.direct.push(r.id); u.until = u.until || {}; if (sUntil) { u.until[r.id] = sUntil; }
+						that._audit("Direct role " + r.en + " assigned" + (sUntil ? " until " + sUntil : ""), "إسناد الدور " + r.ar + " مباشرة" + (sUntil ? " حتى " + sUntil : ""), id);
+					});
+					that._fill("users"); that._apply();
+					MessageToast.show(that.text("ra.t.usersAdded", [ids.length]));
+					var hit = conf().filter(function (id) { return before.indexOf(id) < 0; });
+					if (hit.length) { MessageBox.warning(that.text("um.sod.warn", [hit.map(function (id) { return that._pname(d.employees.filter(function (x) { return x.id === id; })[0].name); }).join(", ")])); }
+				});
 			});
 		},
 		onRemoveUser: function (oEvent) {
 			var that = this, o = oEvent.getSource().getBindingContext("view").getObject(), r = A.role(this._d, this._role);
+			if (!A.keepsAdmin(this._d, this._idx, function (c) { c.users.forEach(function (x) { if (x.employee === o.id) { x.direct = x.direct.filter(function (y) { return y !== r.id; }); } }); })) { this._noAdminLeft(); return; }
 			MessageBox.confirm(this.text("ra.removeUserConfirm", [this._t(r), o.nameText]), { onClose: function (a) {
 				if (a !== MessageBox.Action.OK) { return; }
-				var u = A.user(that._d, o.id); u.direct = u.direct.filter(function (x) { return x !== r.id; });
-				that._audit("Direct role " + r.en + " removed from " + o.id, "إزالة الدور " + r.ar + " من " + o.id);
+				var u = A.user(that._d, o.id); u.direct = u.direct.filter(function (x) { return x !== r.id; }); if (u.until) { delete u.until[r.id]; }
+				that._audit("Direct role " + r.en + " removed", "إزالة الدور " + r.ar, o.id);
 				that._fill("users"); that._apply();
 			} });
 		},
@@ -173,6 +190,7 @@ sap.ui.define([
 		},
 		onRemoveUnit: function (oEvent) {
 			var that = this, o = oEvent.getSource().getBindingContext("view").getObject(), r = A.role(this._d, this._role);
+			if (!A.keepsAdmin(this._d, this._idx, function (c) { c.unitRoles[o.id] = (c.unitRoles[o.id] || []).filter(function (x) { return x !== r.id; }); })) { this._noAdminLeft(); return; }
 			MessageBox.confirm(this.text("um.unit.removeConfirm", [this._t(r), o.people]), { onClose: function (a) {
 				if (a !== MessageBox.Action.OK) { return; }
 				that._d.unitRoles[o.id] = (that._d.unitRoles[o.id] || []).filter(function (x) { return x !== r.id; });
@@ -197,6 +215,7 @@ sap.ui.define([
 				units = A.unitsWithRole(this._d, r.id);
 			if (!perms.length) { MessageBox.warning(this.text("ra.perm.none")); this._fill("perms"); return; }
 			if (sens && units.length) { MessageBox.error(this.text("ra.perm.blockedUnits", [units.length])); this._fill("perms"); return; }
+			if (!A.keepsAdmin(this._d, this._idx, function (c) { c.roles.forEach(function (x) { if (x.id === r.id) { x.perms = perms; } }); })) { this._noAdminLeft(); this._fill("perms"); return; }
 			r.perms = perms; r.sensitive = sens;
 			this._audit("Permissions of " + r.en + " set to " + perms.join(", "), "تعديل صلاحيات الدور " + r.ar);
 			this._fill("perms"); this._apply();

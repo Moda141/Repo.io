@@ -1,16 +1,17 @@
 <mvc:View controllerName="repoio.proto.controller.UserManagement"
 	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
 	<!-- J17 / ADR-0009: user management in the SAP IBP order — employees → business users → identity (Entra ID) → roles.
-	     The directory syncs from Entra ID or SuccessFactors; manual create / import is a labelled fallback.
-	     Roles sit on departments, teams or users and are inherited downward. Admin-only; the API filters, not the UI. -->
+	     The directory syncs from Entra ID or SuccessFactors (previewed before it applies); manual create / import is a labelled fallback.
+	     Roles sit on departments, teams or users and are inherited downward. Admin-only (administer users and roles); the API filters, not the UI. -->
 	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="false" class="repoioEdge repoioUmPage">
 		<f:title>
 			<f:DynamicPageTitle>
 				<f:heading><Title text="{i18n>nav.users}" level="H1"/></f:heading>
 				<f:expandedContent><Text text="{i18n>um.subtitle}"/></f:expandedContent>
 				<f:actions>
+					<ObjectStatus text="{i18n>api.adminOnly}" icon="sap-icon://locked" state="Information" class="repoioApiAdminTag"/>
 					<ObjectStatus text="{view>/um/syncText}" icon="sap-icon://synchronize" state="{view>/um/syncState}" tooltip="{view>/um/syncTip}" class="repoioUmSync"/>
-					<Button text="{i18n>um.syncNow}" icon="sap-icon://refresh" type="Transparent" press=".onSyncNow" busy="{view>/um/syncing}" busyIndicatorDelay="0"/>
+					<Button text="{= ${view>/um/pending} > 0 ? ${i18n>um.syncPreview} : ${i18n>um.syncNow} }" icon="sap-icon://refresh" type="Transparent" press=".onSyncNow" busy="{view>/um/syncing}" busyIndicatorDelay="0"/>
 					<Button icon="sap-icon://action-settings" type="Transparent" tooltip="{i18n>um.syncSettings}" press=".onSyncSettings"/>
 				</f:actions>
 			</f:DynamicPageTitle>
@@ -77,6 +78,7 @@
 												<core:Item key="manual" text="{i18n>um.src.manual}"/>
 												<core:Item key="flagged" text="{i18n>um.src.flagged}"/>
 												<core:Item key="noUser" text="{i18n>um.src.noUser}"/>
+												<core:Item key="left" text="{i18n>um.src.left}"/>
 											</Select>
 											<ToolbarSeparator/>
 											<Button text="{i18n>um.maintainUser}" type="Emphasized" press=".onMaintainUser" enabled="{= ${view>/um/selNoUser} > 0 }"/>
@@ -99,6 +101,7 @@
 										<Column><Text text="{i18n>um.col.unit}" wrapping="false"/></Column>
 										<Column width="8.5rem"><Text text="{i18n>um.col.source}"/></Column>
 										<Column width="6.5rem" hAlign="Center"><Text text="{i18n>um.col.user}"/></Column>
+										<Column width="5.5rem" hAlign="End"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
 									</columns>
 									<items>
 										<ColumnListItem>
@@ -115,36 +118,48 @@
 												<Link text="{i18n>um.user.open}" press=".onOpenEmpUser" visible="{view>hasUser}"/>
 												<Text text="—" visible="{= !${view>hasUser} }" class="repoioUmMuted"/>
 											</HBox>
+											<HBox justifyContent="End">
+												<Button icon="sap-icon://merge" type="Transparent" tooltip="{i18n>um.rs.btn}" press=".onResolve" visible="{view>flagged}"/>
+												<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>um.edit.btn}" press=".onEditEmp" visible="{view>manual}"/>
+											</HBox>
 										</ColumnListItem>
 									</items>
 								</Table>
 							</IconTabFilter>
 
-							<!-- Steps 2–4: business users, their Entra ID link and their roles -->
+							<!-- Steps 2–4: business users, their sign-in status and their roles -->
 							<IconTabFilter key="users" text="{i18n>um.tab.users}" count="{view>/um/nUsers}">
-								<Table id="userTable" items="{view>/um/users}" class="repoioDenseTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" noDataText="{i18n>um.noData}">
+								<Table id="userTable" items="{view>/um/users}" mode="MultiSelect" selectionChange=".onUserSelect" class="repoioDenseTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" noDataText="{i18n>um.noData}">
 									<headerToolbar>
 										<OverflowToolbar>
 											<Title text="{view>/um/userTitle}" level="H2"/>
 											<ToolbarSpacer/>
 											<SearchField width="13rem" value="{view>/um/uq}" liveChange=".onFilter" placeholder="{i18n>um.searchPh}"/>
-											<Select selectedKey="{view>/um/link}" change=".onFilter" width="11rem" tooltip="{i18n>um.col.entra}">
-												<core:Item key="all" text="{i18n>um.link.all}"/>
-												<core:Item key="linked" text="{i18n>um.link.linked}"/>
-												<core:Item key="notFound" text="{i18n>um.link.notFound}"/>
-												<core:Item key="disabled" text="{i18n>um.link.disabled}"/>
+											<Select selectedKey="{view>/um/st}" change=".onFilter" width="10.5rem" tooltip="{i18n>um.col.status}">
+												<core:Item key="all" text="{i18n>um.st.all}"/>
+												<core:Item key="active" text="{i18n>um.st.active}"/>
+												<core:Item key="notFound" text="{i18n>um.st.notFound}"/>
+												<core:Item key="disabled" text="{i18n>um.st.disabled}"/>
+												<core:Item key="expired" text="{i18n>um.st.expired}"/>
+												<core:Item key="locked" text="{i18n>um.st.locked}"/>
+												<core:Item key="left" text="{i18n>um.st.left}"/>
+												<core:Item key="conflict" text="{i18n>um.st.conflict}"/>
 											</Select>
-											<Select selectedKey="{view>/um/roleF}" change=".onFilter" width="13rem" items="{view>/um/roleFilter}" tooltip="{i18n>um.col.roles}">
+											<Select selectedKey="{view>/um/roleF}" change=".onFilter" width="12rem" items="{view>/um/roleFilter}" tooltip="{i18n>um.col.roles}">
 												<core:Item key="{view>key}" text="{view>text}"/>
 											</Select>
+											<ToolbarSeparator/>
+											<Button text="{i18n>um.bulk.btn}" icon="sap-icon://add" type="Emphasized" press=".onBulkAssign" enabled="{= ${view>/um/selUsers} > 0 }"/>
+											<Button text="{i18n>um.asg.upload}" icon="sap-icon://upload" type="Transparent" press=".onUploadAsg"/>
+											<Button icon="sap-icon://excel-attachment" type="Transparent" tooltip="{i18n>um.export}" press=".onExport"/>
 										</OverflowToolbar>
 									</headerToolbar>
 									<columns>
 										<Column width="13rem"><Text text="{i18n>um.col.user}"/></Column>
 										<Column minScreenWidth="1680px"><Text text="{i18n>um.col.upn}"/></Column>
-										<Column width="11.5rem"><Text text="{i18n>um.col.entra}"/></Column>
+										<Column width="11.5rem"><Text text="{i18n>um.col.status}"/></Column>
 										<Column><Text text="{i18n>um.col.unit}" wrapping="false"/></Column>
-										<Column width="7.5rem"><Text text="{i18n>um.col.roles}"/></Column>
+										<Column width="8rem"><Text text="{i18n>um.col.roles}"/></Column>
 										<Column width="8rem" minScreenWidth="1360px"><Text text="{i18n>um.col.valid}"/></Column>
 										<Column width="7rem" minScreenWidth="1500px"><Text text="{i18n>um.col.lastSignIn}"/></Column>
 									</columns>
@@ -155,11 +170,43 @@
 												<Link text="{view>nameText}" press=".onOpenUser" wrapping="false" class="repoioUmName"/>
 											</HBox>
 											<Text text="{view>upn}" textDirection="LTR" wrapping="false" tooltip="{view>upn}"/>
-											<ObjectStatus text="{view>linkText}" state="{view>linkState}" icon="{view>linkIcon}"/>
+											<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}" tooltip="{view>statusTip}"/>
 											<Text text="{view>unitText}" wrapping="false" tooltip="{view>unitTip}"/>
-											<Text text="{view>rolesText}" tooltip="{view>rolesTip}"/>
+											<HBox alignItems="Center" renderType="Bare">
+												<Text text="{view>rolesText}" tooltip="{view>rolesTip}"/>
+												<core:Icon src="sap-icon://warning2" visible="{view>conflict}" tooltip="{view>conflictTip}" color="#e9730c" class="repoioUmSodIcon"/>
+											</HBox>
 											<ObjectStatus text="{view>validText}" state="{view>validState}"/>
 											<Text text="{view>lastText}" wrapping="false"/>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</IconTabFilter>
+
+							<!-- Periodic access reviews: each manager confirms or removes direct roles -->
+							<IconTabFilter key="reviews" text="{i18n>um.tab.reviews}" count="{view>/um/nReviews}">
+								<Table items="{view>/um/reviews}" class="repoioDenseTable" noDataText="{i18n>um.rv.none}">
+									<headerToolbar>
+										<OverflowToolbar>
+											<Text text="{i18n>um.rv.hint}" class="repoioUmMuted"/>
+											<ToolbarSpacer/>
+											<Button text="{i18n>um.rv.start}" icon="sap-icon://survey" type="Emphasized" press=".onStartReview"/>
+										</OverflowToolbar>
+									</headerToolbar>
+									<columns>
+										<Column><Text text="{i18n>um.rv.col.name}"/></Column>
+										<Column width="12rem"><Text text="{i18n>um.rv.col.period}"/></Column>
+										<Column width="14rem"><Text text="{i18n>um.rv.col.progress}"/></Column>
+										<Column width="7rem" hAlign="End"><Text text="{i18n>um.rv.col.removed}"/></Column>
+										<Column width="9rem"><Text text="{i18n>um.col.status}"/></Column>
+									</columns>
+									<items>
+										<ColumnListItem type="Navigation" press=".onOpenReview">
+											<Link text="{view>text}" press=".onOpenReview"/>
+											<Text text="{view>period}" textDirection="LTR"/>
+											<ProgressIndicator percentValue="{view>pct}" displayValue="{view>progress}" state="{= ${view>pct} === 100 ? 'Success' : 'Information' }" height="1.25rem" class="repoioUmProg"/>
+											<Text text="{view>removed}"/>
+											<ObjectStatus text="{view>statusText}" state="{view>statusState}"/>
 										</ColumnListItem>
 									</items>
 								</Table>

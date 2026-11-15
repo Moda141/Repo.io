@@ -18,12 +18,15 @@ sap.ui.define([], function () {
 		"رانيا يوسف": { initials: "RY", en: "Rania Youssef", role_ar: "منسقة الحقوق", role_en: "Rights coordinator", team_ar: "التحرير", team_en: "Editorial", email: "rania.youssef@example.com", phone: "+20 2 0000 0114" },
 		"حسام الدين": { initials: "HD", en: "Hossam El-Din", role_ar: "محلل بيانات العملاء", role_en: "Customer data analyst", team_ar: "عمليات المبيعات", team_en: "Sales operations", email: "hossam.eldin@example.com", phone: "+20 2 0000 0115" },
 		"إيمان سعيد": { initials: "ES", en: "Eman Said", role_ar: "مسؤولة مشتريات", role_en: "Procurement officer", team_ar: "المشتريات", team_en: "Procurement", email: "eman.said@example.com", phone: "+20 2 0000 0116" },
+		"نادين عاطف": { initials: "NA", en: "Nadine Atef", role_ar: "محللة تسويق", role_en: "Marketing analyst", team_ar: "التسويق", team_en: "Marketing", email: "nadine.atef@example.com", phone: "+20 2 0000 0118" },
 		"شريف لطفي": { initials: "SL", en: "Sherif Lotfy", role_ar: "استشاري خارجي", role_en: "External consultant", team_ar: "إدارة البيانات", team_en: "Data Management", email: "sherif.lotfy@example.com", phone: "+20 2 0000 0117" }
 	};
 	return {
 		get: function (name) { return P[name]; },
 		names: function () { return Object.keys(P); },
 		/* Add a person created in the console (manual fallback, ADR-0009) so avatars and quick views work for them. */
-		add: function (name, o) { if (!P[name]) { P[name] = o; } }
+		add: function (name, o) { if (!P[name]) { P[name] = o; } },
+		/* Replace a manual person after an edit. */
+		put: function (name, o, sOld) { if (sOld && sOld !== name) { delete P[sOld]; } P[name] = o; }
 	};
 });

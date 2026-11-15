@@ -76,7 +76,10 @@
 										<rc:PersonLink name="{view>name}"/>
 										<Link text="{view>nameText}" press=".onUser" wrapping="false" class="repoioUmName"/>
 									</HBox>
-									<Text text="{view>unitText}" wrapping="false"/>
+									<HBox alignItems="Center" renderType="Bare">
+										<Text text="{view>unitText}" wrapping="false"/>
+										<ObjectStatus text="{view>statusText}" state="{view>statusState}" visible="{view>blocked}" class="sapUiTinyMarginBegin"/>
+									</HBox>
 									<ObjectStatus text="{view>viaText}" state="{view>viaState}" icon="{view>viaIcon}"/>
 									<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>um.ud.removeRole}" press=".onRemoveUser" visible="{= ${view>type} === 'direct' }"/>
 								</ColumnListItem>
@@ -111,6 +114,11 @@
 								</ColumnListItem>
 							</items>
 						</Table>
+					</IconTabFilter>
+					<IconTabFilter key="history" text="{i18n>um.ud.history}">
+						<List items="{view>/ra/d/history}" noDataText="{i18n>um.ud.noHistory}" showSeparators="Inner" class="repoioUmHist">
+							<StandardListItem title="{view>text}" description="{view>meta}" icon="{view>icon}" wrapping="true"/>
+						</List>
 					</IconTabFilter>
 				</items>
 			</IconTabBar>

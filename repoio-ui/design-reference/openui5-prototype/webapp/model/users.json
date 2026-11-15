@@ -4,144 +4,1100 @@
 		"source": "entra",
 		"schedule": "6h",
 		"lastSync": "2026-11-15T08:00:00",
-		"lastResult": { "added": 2, "updated": 5, "moved": 1, "flagged": 1 },
+		"lastResult": {
+			"added": 2,
+			"updated": 5,
+			"moved": 1,
+			"flagged": 1
+		},
 		"secretRef": "secret/repoio/directory-sync",
-		"endpoint": { "entra": "https://graph.microsoft.com/v1.0 · tenant ${ENTRA_TENANT_ID}", "sf": "${SF_API_URL}/odata/v2 · company ${SF_COMPANY_ID}" },
+		"endpoint": {
+			"entra": "https://graph.microsoft.com/v1.0 · tenant ${ENTRA_TENANT_ID}",
+			"sf": "${SF_API_URL}/odata/v2 · company ${SF_COMPANY_ID}"
+		},
 		"mapping": [
-			{ "field": "employeeId", "entra": "employeeId", "sf": "userId" },
-			{ "field": "businessUnit", "entra": "companyName", "sf": "division" },
-			{ "field": "department", "entra": "department", "sf": "department" },
-			{ "field": "team", "entra": "onPremisesExtensionAttributes.extensionAttribute1", "sf": "custom01" },
-			{ "field": "jobTitle", "entra": "jobTitle", "sf": "title" },
-			{ "field": "manager", "entra": "manager", "sf": "managerId" }
+			{
+				"field": "employeeId",
+				"entra": "employeeId",
+				"sf": "userId"
+			},
+			{
+				"field": "businessUnit",
+				"entra": "companyName",
+				"sf": "division"
+			},
+			{
+				"field": "department",
+				"entra": "department",
+				"sf": "department"
+			},
+			{
+				"field": "team",
+				"entra": "onPremisesExtensionAttributes.extensionAttribute1",
+				"sf": "custom01"
+			},
+			{
+				"field": "jobTitle",
+				"entra": "jobTitle",
+				"sf": "title"
+			},
+			{
+				"field": "manager",
+				"entra": "manager",
+				"sf": "managerId"
+			}
+		],
+		"teamFrom": "attribute",
+		"groups": [
+			{
+				"group": "SG-Repoio-MasterData",
+				"team": "t-mdm"
+			},
+			{
+				"group": "SG-Repoio-CustomerData",
+				"team": "t-custdata"
+			},
+			{
+				"group": "SG-Repoio-VendorData",
+				"team": "t-vendordata"
+			},
+			{
+				"group": "SG-Repoio-BookMetadata",
+				"team": "t-bookmeta"
+			}
+		],
+		"pending": [
+			{
+				"kind": "add",
+				"employee": {
+					"id": "E-1018",
+					"name": "نادين عاطف",
+					"email": "nadine.atef@example.com",
+					"title_en": "Marketing analyst",
+					"title_ar": "محللة تسويق",
+					"team": "t-campaigns",
+					"source": "entra",
+					"manager": "دينا فاروق",
+					"name_en": "Nadine Atef"
+				},
+				"en": "New employee: Nadine Atef — Marketing › Campaigns",
+				"ar": "موظفة جديدة: نادين عاطف — التسويق › الحملات"
+			},
+			{
+				"kind": "move",
+				"id": "E-1015",
+				"to": "t-keyacc",
+				"en": "Moved: Hossam El-Din — Customer data → Key accounts",
+				"ar": "نقل: حسام الدين — بيانات العملاء ← كبار العملاء"
+			},
+			{
+				"kind": "left",
+				"id": "E-1014",
+				"date": "2026-11-14",
+				"en": "Left the organization: Rania Youssef (has a user and 1 direct role)",
+				"ar": "غادرت المؤسسة: رانيا يوسف (لها مستخدم ودور مباشر واحد)"
+			}
 		]
 	},
 	"org": {
-		"id": "nm", "type": "org", "en": "Nahdet Misr Publishing Group", "ar": "مجموعة نهضة مصر للنشر",
+		"id": "nm",
+		"type": "org",
+		"en": "Nahdet Misr Publishing Group",
+		"ar": "مجموعة نهضة مصر للنشر",
 		"units": [
-			{ "id": "bu-corp", "type": "bu", "en": "Corporate services", "ar": "الخدمات المشتركة", "units": [
-				{ "id": "d-data", "type": "department", "en": "Data Management", "ar": "إدارة البيانات", "units": [
-					{ "id": "t-mdm", "type": "team", "en": "Master data", "ar": "البيانات الرئيسية" },
-					{ "id": "t-eng", "type": "team", "en": "Data engineering", "ar": "هندسة البيانات" },
-					{ "id": "t-bi", "type": "team", "en": "Analytics & BI", "ar": "التحليلات وذكاء الأعمال" }
-				] },
-				{ "id": "d-hr", "type": "department", "en": "Human resources", "ar": "الموارد البشرية", "units": [
-					{ "id": "t-hrops", "type": "team", "en": "HR operations", "ar": "عمليات الموارد البشرية" }
-				] },
-				{ "id": "d-it", "type": "department", "en": "IT", "ar": "تكنولوجيا المعلومات", "units": [
-					{ "id": "t-platform", "type": "team", "en": "Platform", "ar": "المنصات" }
-				] }
-			] },
-			{ "id": "bu-sales", "type": "bu", "en": "Sales & marketing", "ar": "المبيعات والتسويق", "units": [
-				{ "id": "d-salesops", "type": "department", "en": "Sales operations", "ar": "عمليات المبيعات", "units": [
-					{ "id": "t-custdata", "type": "team", "en": "Customer data", "ar": "بيانات العملاء" },
-					{ "id": "t-keyacc", "type": "team", "en": "Key accounts", "ar": "كبار العملاء" }
-				] },
-				{ "id": "d-marketing", "type": "department", "en": "Marketing", "ar": "التسويق", "units": [
-					{ "id": "t-campaigns", "type": "team", "en": "Campaigns", "ar": "الحملات" }
-				] }
-			] },
-			{ "id": "bu-pub", "type": "bu", "en": "Publishing", "ar": "النشر", "units": [
-				{ "id": "d-editorial", "type": "department", "en": "Editorial", "ar": "التحرير", "units": [
-					{ "id": "t-bookmeta", "type": "team", "en": "Book metadata", "ar": "بيانات الكتب" },
-					{ "id": "t-rights", "type": "team", "en": "Authors & rights", "ar": "المؤلفون والحقوق" }
-				] }
-			] },
-			{ "id": "bu-ops", "type": "bu", "en": "Operations", "ar": "العمليات", "units": [
-				{ "id": "d-procurement", "type": "department", "en": "Procurement", "ar": "المشتريات", "units": [
-					{ "id": "t-vendordata", "type": "team", "en": "Vendor data", "ar": "بيانات الموردين" }
-				] },
-				{ "id": "d-retail", "type": "department", "en": "Retail", "ar": "التجزئة", "units": [
-					{ "id": "t-stores", "type": "team", "en": "Store network", "ar": "شبكة المتاجر" }
-				] }
-			] }
+			{
+				"id": "bu-corp",
+				"type": "bu",
+				"en": "Corporate services",
+				"ar": "الخدمات المشتركة",
+				"units": [
+					{
+						"id": "d-data",
+						"type": "department",
+						"en": "Data Management",
+						"ar": "إدارة البيانات",
+						"units": [
+							{
+								"id": "t-mdm",
+								"type": "team",
+								"en": "Master data",
+								"ar": "البيانات الرئيسية"
+							},
+							{
+								"id": "t-eng",
+								"type": "team",
+								"en": "Data engineering",
+								"ar": "هندسة البيانات"
+							},
+							{
+								"id": "t-bi",
+								"type": "team",
+								"en": "Analytics & BI",
+								"ar": "التحليلات وذكاء الأعمال"
+							}
+						]
+					},
+					{
+						"id": "d-hr",
+						"type": "department",
+						"en": "Human resources",
+						"ar": "الموارد البشرية",
+						"units": [
+							{
+								"id": "t-hrops",
+								"type": "team",
+								"en": "HR operations",
+								"ar": "عمليات الموارد البشرية"
+							}
+						]
+					},
+					{
+						"id": "d-it",
+						"type": "department",
+						"en": "IT",
+						"ar": "تكنولوجيا المعلومات",
+						"units": [
+							{
+								"id": "t-platform",
+								"type": "team",
+								"en": "Platform",
+								"ar": "المنصات"
+							}
+						]
+					}
+				]
+			},
+			{
+				"id": "bu-sales",
+				"type": "bu",
+				"en": "Sales & marketing",
+				"ar": "المبيعات والتسويق",
+				"units": [
+					{
+						"id": "d-salesops",
+						"type": "department",
+						"en": "Sales operations",
+						"ar": "عمليات المبيعات",
+						"units": [
+							{
+								"id": "t-custdata",
+								"type": "team",
+								"en": "Customer data",
+								"ar": "بيانات العملاء"
+							},
+							{
+								"id": "t-keyacc",
+								"type": "team",
+								"en": "Key accounts",
+								"ar": "كبار العملاء"
+							}
+						]
+					},
+					{
+						"id": "d-marketing",
+						"type": "department",
+						"en": "Marketing",
+						"ar": "التسويق",
+						"units": [
+							{
+								"id": "t-campaigns",
+								"type": "team",
+								"en": "Campaigns",
+								"ar": "الحملات"
+							}
+						]
+					}
+				]
+			},
+			{
+				"id": "bu-pub",
+				"type": "bu",
+				"en": "Publishing",
+				"ar": "النشر",
+				"units": [
+					{
+						"id": "d-editorial",
+						"type": "department",
+						"en": "Editorial",
+						"ar": "التحرير",
+						"units": [
+							{
+								"id": "t-bookmeta",
+								"type": "team",
+								"en": "Book metadata",
+								"ar": "بيانات الكتب"
+							},
+							{
+								"id": "t-rights",
+								"type": "team",
+								"en": "Authors & rights",
+								"ar": "المؤلفون والحقوق"
+							}
+						]
+					}
+				]
+			},
+			{
+				"id": "bu-ops",
+				"type": "bu",
+				"en": "Operations",
+				"ar": "العمليات",
+				"units": [
+					{
+						"id": "d-procurement",
+						"type": "department",
+						"en": "Procurement",
+						"ar": "المشتريات",
+						"units": [
+							{
+								"id": "t-vendordata",
+								"type": "team",
+								"en": "Vendor data",
+								"ar": "بيانات الموردين"
+							}
+						]
+					},
+					{
+						"id": "d-retail",
+						"type": "department",
+						"en": "Retail",
+						"ar": "التجزئة",
+						"units": [
+							{
+								"id": "t-stores",
+								"type": "team",
+								"en": "Store network",
+								"ar": "شبكة المتاجر"
+							}
+						]
+					}
+				]
+			}
 		]
 	},
 	"permissions": [
-		{ "id": "gr.read", "group": "data", "en": "Read golden records", "ar": "قراءة السجلات الذهبية" },
-		{ "id": "cr.create", "group": "data", "en": "Create change requests", "ar": "إنشاء طلبات التغيير" },
-		{ "id": "cr.approve", "group": "data", "en": "Approve change requests", "ar": "اعتماد طلبات التغيير" },
-		{ "id": "match.review", "group": "data", "en": "Review potential matches", "ar": "مراجعة التطابقات المحتملة" },
-		{ "id": "rel.edit", "group": "data", "en": "Edit relationships", "ar": "تعديل العلاقات" },
-		{ "id": "dq.manage", "group": "data", "en": "Manage data quality rules", "ar": "إدارة قواعد جودة البيانات" },
-		{ "id": "wf.design", "group": "process", "en": "Design and publish workflows", "ar": "تصميم ونشر سير العمل" },
-		{ "id": "tpl.author", "group": "process", "en": "Author and publish request templates", "ar": "تأليف ونشر قوالب الطلبات", "sensitive": true },
-		{ "id": "sync.manage", "group": "integration", "en": "Configure data syncs", "ar": "ضبط مزامنة البيانات" },
-		{ "id": "jobs.monitor", "group": "integration", "en": "Monitor data jobs and streams", "ar": "متابعة مهام البيانات والتدفقات" },
-		{ "id": "conn.admin", "group": "integration", "en": "Administer connections", "ar": "إدارة الاتصالات", "sensitive": true },
-		{ "id": "api.admin", "group": "integration", "en": "Administer API access (tokens, apps, webhooks)", "ar": "إدارة الوصول للـ API (الرموز والتطبيقات والـ webhooks)", "sensitive": true },
-		{ "id": "rpt.build", "group": "analytics", "en": "Build reports and stories", "ar": "بناء التقارير والقصص" },
-		{ "id": "rpt.broadcast", "group": "analytics", "en": "Schedule broadcasts", "ar": "جدولة البث" },
-		{ "id": "ann.publish", "group": "admin", "en": "Publish announcements", "ar": "نشر الإعلانات" },
-		{ "id": "users.admin", "group": "admin", "en": "Administer users and roles", "ar": "إدارة المستخدمين والأدوار", "sensitive": true },
-		{ "id": "sys.admin", "group": "admin", "en": "System configuration", "ar": "إعدادات النظام", "sensitive": true }
+		{
+			"id": "gr.read",
+			"group": "data",
+			"en": "Read golden records",
+			"ar": "قراءة السجلات الذهبية"
+		},
+		{
+			"id": "cr.create",
+			"group": "data",
+			"en": "Create change requests",
+			"ar": "إنشاء طلبات التغيير"
+		},
+		{
+			"id": "cr.approve",
+			"group": "data",
+			"en": "Approve change requests",
+			"ar": "اعتماد طلبات التغيير"
+		},
+		{
+			"id": "match.review",
+			"group": "data",
+			"en": "Review potential matches",
+			"ar": "مراجعة التطابقات المحتملة"
+		},
+		{
+			"id": "rel.edit",
+			"group": "data",
+			"en": "Edit relationships",
+			"ar": "تعديل العلاقات"
+		},
+		{
+			"id": "dq.manage",
+			"group": "data",
+			"en": "Manage data quality rules",
+			"ar": "إدارة قواعد جودة البيانات"
+		},
+		{
+			"id": "wf.design",
+			"group": "process",
+			"en": "Design and publish workflows",
+			"ar": "تصميم ونشر سير العمل"
+		},
+		{
+			"id": "tpl.author",
+			"group": "process",
+			"en": "Author and publish request templates",
+			"ar": "تأليف ونشر قوالب الطلبات",
+			"sensitive": true
+		},
+		{
+			"id": "sync.manage",
+			"group": "integration",
+			"en": "Configure data syncs",
+			"ar": "ضبط مزامنة البيانات"
+		},
+		{
+			"id": "jobs.monitor",
+			"group": "integration",
+			"en": "Monitor data jobs and streams",
+			"ar": "متابعة مهام البيانات والتدفقات"
+		},
+		{
+			"id": "conn.admin",
+			"group": "integration",
+			"en": "Administer connections",
+			"ar": "إدارة الاتصالات",
+			"sensitive": true
+		},
+		{
+			"id": "api.admin",
+			"group": "integration",
+			"en": "Administer API access (tokens, apps, webhooks)",
+			"ar": "إدارة الوصول للـ API (الرموز والتطبيقات والـ webhooks)",
+			"sensitive": true
+		},
+		{
+			"id": "rpt.build",
+			"group": "analytics",
+			"en": "Build reports and stories",
+			"ar": "بناء التقارير والقصص"
+		},
+		{
+			"id": "rpt.broadcast",
+			"group": "analytics",
+			"en": "Schedule broadcasts",
+			"ar": "جدولة البث"
+		},
+		{
+			"id": "ann.publish",
+			"group": "admin",
+			"en": "Publish announcements",
+			"ar": "نشر الإعلانات"
+		},
+		{
+			"id": "users.admin",
+			"group": "admin",
+			"en": "Administer users and roles",
+			"ar": "إدارة المستخدمين والأدوار",
+			"sensitive": true
+		},
+		{
+			"id": "sys.admin",
+			"group": "admin",
+			"en": "System configuration",
+			"ar": "إعدادات النظام",
+			"sensitive": true
+		}
 	],
 	"roles": [
-		{ "id": "ADMIN", "en": "Administrator", "ar": "مسؤول النظام", "desc_en": "Platform administration: connections, users, roles, system settings.", "desc_ar": "إدارة المنصة: الاتصالات والمستخدمون والأدوار وإعدادات النظام.", "domains": ["*"], "perms": ["gr.read", "users.admin", "sys.admin", "conn.admin", "ann.publish"], "delivered": true, "sensitive": true, "icon": "sap-icon://key-user-settings" },
-		{ "id": "API_ADMIN", "en": "API access administrator", "ar": "مسؤول الوصول للـ API", "desc_en": "Issues and revokes access tokens, approves app registrations, manages webhooks.", "desc_ar": "يصدر رموز الوصول ويلغيها، ويوافق على تسجيل التطبيقات، ويدير الـ webhooks.", "domains": ["*"], "perms": ["gr.read", "api.admin"], "delivered": true, "sensitive": true, "icon": "sap-icon://shield" },
-		{ "id": "TEMPLATE_AUTHOR", "en": "Template author", "ar": "مؤلف القوالب", "desc_en": "Authors and publishes request templates in the granted domains.", "desc_ar": "يكتب قوالب الطلبات وينشرها في الدومينات الممنوحة.", "domains": ["customers", "vendors", "products"], "perms": ["gr.read", "tpl.author"], "delivered": true, "sensitive": true, "icon": "sap-icon://form" },
-		{ "id": "STEWARD_CUSTOMER", "en": "Data steward — Customer", "ar": "أمين بيانات — العملاء", "desc_en": "Reviews matches, approves change requests and edits relationships for customers.", "desc_ar": "يراجع التطابقات ويعتمد طلبات التغيير ويعدّل العلاقات للعملاء.", "domains": ["customers"], "perms": ["gr.read", "cr.approve", "match.review", "rel.edit", "dq.manage"], "delivered": true, "sensitive": false, "icon": "sap-icon://customer" },
-		{ "id": "STEWARD_VENDOR", "en": "Data steward — Vendor", "ar": "أمين بيانات — الموردين", "desc_en": "Reviews matches, approves change requests and edits relationships for vendors.", "desc_ar": "يراجع التطابقات ويعتمد طلبات التغيير ويعدّل العلاقات للموردين.", "domains": ["vendors"], "perms": ["gr.read", "cr.approve", "match.review", "rel.edit", "dq.manage"], "delivered": true, "sensitive": false, "icon": "sap-icon://supplier" },
-		{ "id": "STEWARD_PRODUCT", "en": "Data steward — Product & Author", "ar": "أمين بيانات — المنتجات والمؤلفين", "desc_en": "Stewardship for books and authors.", "desc_ar": "أمانة بيانات الكتب والمؤلفين.", "domains": ["products", "authors"], "perms": ["gr.read", "cr.approve", "match.review", "rel.edit", "dq.manage"], "delivered": true, "sensitive": false, "icon": "sap-icon://course-book" },
-		{ "id": "REQUESTER", "en": "Requester", "ar": "مقدّم طلبات", "desc_en": "Creates change requests from the templates of the granted domains.", "desc_ar": "ينشئ طلبات التغيير من قوالب الدومينات الممنوحة.", "domains": ["customers", "vendors", "products", "authors", "stores"], "perms": ["gr.read", "cr.create"], "delivered": true, "sensitive": false, "icon": "sap-icon://request" },
-		{ "id": "VIEWER", "en": "Golden record viewer", "ar": "مستعرض السجلات الذهبية", "desc_en": "Reads golden records and their lineage in the granted domains.", "desc_ar": "يقرأ السجلات الذهبية ومصادرها في الدومينات الممنوحة.", "domains": ["*"], "perms": ["gr.read"], "delivered": true, "sensitive": false, "icon": "sap-icon://show" },
-		{ "id": "DATA_ENGINEER", "en": "Data engineer", "ar": "مهندس بيانات", "desc_en": "Configures data syncs, monitors data jobs and streams.", "desc_ar": "يضبط مزامنة البيانات ويتابع مهام البيانات والتدفقات.", "domains": ["*"], "perms": ["gr.read", "sync.manage", "jobs.monitor"], "delivered": true, "sensitive": false, "icon": "sap-icon://it-system" },
-		{ "id": "ANALYST", "en": "Report analyst", "ar": "محلل تقارير", "desc_en": "Builds reports and stories; schedules broadcasts.", "desc_ar": "يبني التقارير والقصص ويجدول البث.", "domains": ["*"], "perms": ["gr.read", "rpt.build", "rpt.broadcast"], "delivered": true, "sensitive": false, "icon": "sap-icon://business-objects-experience" },
-		{ "id": "HR_STEWARD", "en": "Data steward — Employee", "ar": "أمين بيانات — الموظفين", "desc_en": "Stewardship for employee master data.", "desc_ar": "أمانة البيانات الرئيسية للموظفين.", "domains": ["employees"], "perms": ["gr.read", "cr.approve", "match.review", "rel.edit", "dq.manage"], "delivered": true, "sensitive": false, "icon": "sap-icon://employee" },
-		{ "id": "STORE_STEWARD", "en": "Data steward — Store", "ar": "أمين بيانات — المتاجر", "desc_en": "Stewardship for stores and outlets.", "desc_ar": "أمانة بيانات المتاجر ونقاط البيع.", "domains": ["stores"], "perms": ["gr.read", "cr.approve", "match.review", "rel.edit", "dq.manage"], "delivered": true, "sensitive": false, "icon": "sap-icon://retail-store" }
+		{
+			"id": "ADMIN",
+			"en": "Administrator",
+			"ar": "مسؤول النظام",
+			"desc_en": "Platform administration: connections, users, roles, system settings.",
+			"desc_ar": "إدارة المنصة: الاتصالات والمستخدمون والأدوار وإعدادات النظام.",
+			"domains": [
+				"*"
+			],
+			"perms": [
+				"gr.read",
+				"users.admin",
+				"sys.admin",
+				"conn.admin",
+				"ann.publish"
+			],
+			"delivered": true,
+			"sensitive": true,
+			"icon": "sap-icon://key-user-settings"
+		},
+		{
+			"id": "API_ADMIN",
+			"en": "API access administrator",
+			"ar": "مسؤول الوصول للـ API",
+			"desc_en": "Issues and revokes access tokens, approves app registrations, manages webhooks.",
+			"desc_ar": "يصدر رموز الوصول ويلغيها، ويوافق على تسجيل التطبيقات، ويدير الـ webhooks.",
+			"domains": [
+				"*"
+			],
+			"perms": [
+				"gr.read",
+				"api.admin"
+			],
+			"delivered": true,
+			"sensitive": true,
+			"icon": "sap-icon://shield"
+		},
+		{
+			"id": "TEMPLATE_AUTHOR",
+			"en": "Template author",
+			"ar": "مؤلف القوالب",
+			"desc_en": "Authors and publishes request templates in the granted domains.",
+			"desc_ar": "يكتب قوالب الطلبات وينشرها في الدومينات الممنوحة.",
+			"domains": [
+				"customers",
+				"vendors",
+				"products"
+			],
+			"perms": [
+				"gr.read",
+				"tpl.author"
+			],
+			"delivered": true,
+			"sensitive": true,
+			"icon": "sap-icon://form"
+		},
+		{
+			"id": "STEWARD_CUSTOMER",
+			"en": "Data steward — Customer",
+			"ar": "أمين بيانات — العملاء",
+			"desc_en": "Reviews matches, approves change requests and edits relationships for customers.",
+			"desc_ar": "يراجع التطابقات ويعتمد طلبات التغيير ويعدّل العلاقات للعملاء.",
+			"domains": [
+				"customers"
+			],
+			"perms": [
+				"gr.read",
+				"cr.approve",
+				"match.review",
+				"rel.edit",
+				"dq.manage"
+			],
+			"delivered": true,
+			"sensitive": false,
+			"icon": "sap-icon://customer"
+		},
+		{
+			"id": "STEWARD_VENDOR",
+			"en": "Data steward — Vendor",
+			"ar": "أمين بيانات — الموردين",
+			"desc_en": "Reviews matches, approves change requests and edits relationships for vendors.",
+			"desc_ar": "يراجع التطابقات ويعتمد طلبات التغيير ويعدّل العلاقات للموردين.",
+			"domains": [
+				"vendors"
+			],
+			"perms": [
+				"gr.read",
+				"cr.approve",
+				"match.review",
+				"rel.edit",
+				"dq.manage"
+			],
+			"delivered": true,
+			"sensitive": false,
+			"icon": "sap-icon://supplier"
+		},
+		{
+			"id": "STEWARD_PRODUCT",
+			"en": "Data steward — Product & Author",
+			"ar": "أمين بيانات — المنتجات والمؤلفين",
+			"desc_en": "Stewardship for books and authors.",
+			"desc_ar": "أمانة بيانات الكتب والمؤلفين.",
+			"domains": [
+				"products",
+				"authors"
+			],
+			"perms": [
+				"gr.read",
+				"cr.approve",
+				"match.review",
+				"rel.edit",
+				"dq.manage"
+			],
+			"delivered": true,
+			"sensitive": false,
+			"icon": "sap-icon://course-book"
+		},
+		{
+			"id": "REQUESTER",
+			"en": "Requester",
+			"ar": "مقدّم طلبات",
+			"desc_en": "Creates change requests from the templates of the granted domains.",
+			"desc_ar": "ينشئ طلبات التغيير من قوالب الدومينات الممنوحة.",
+			"domains": [
+				"customers",
+				"vendors",
+				"products",
+				"authors",
+				"stores"
+			],
+			"perms": [
+				"gr.read",
+				"cr.create"
+			],
+			"delivered": true,
+			"sensitive": false,
+			"icon": "sap-icon://request"
+		},
+		{
+			"id": "VIEWER",
+			"en": "Golden record viewer",
+			"ar": "مستعرض السجلات الذهبية",
+			"desc_en": "Reads golden records and their lineage in the granted domains.",
+			"desc_ar": "يقرأ السجلات الذهبية ومصادرها في الدومينات الممنوحة.",
+			"domains": [
+				"*"
+			],
+			"perms": [
+				"gr.read"
+			],
+			"delivered": true,
+			"sensitive": false,
+			"icon": "sap-icon://show"
+		},
+		{
+			"id": "DATA_ENGINEER",
+			"en": "Data engineer",
+			"ar": "مهندس بيانات",
+			"desc_en": "Configures data syncs, monitors data jobs and streams.",
+			"desc_ar": "يضبط مزامنة البيانات ويتابع مهام البيانات والتدفقات.",
+			"domains": [
+				"*"
+			],
+			"perms": [
+				"gr.read",
+				"sync.manage",
+				"jobs.monitor"
+			],
+			"delivered": true,
+			"sensitive": false,
+			"icon": "sap-icon://it-system"
+		},
+		{
+			"id": "ANALYST",
+			"en": "Report analyst",
+			"ar": "محلل تقارير",
+			"desc_en": "Builds reports and stories; schedules broadcasts.",
+			"desc_ar": "يبني التقارير والقصص ويجدول البث.",
+			"domains": [
+				"*"
+			],
+			"perms": [
+				"gr.read",
+				"rpt.build",
+				"rpt.broadcast"
+			],
+			"delivered": true,
+			"sensitive": false,
+			"icon": "sap-icon://business-objects-experience"
+		},
+		{
+			"id": "HR_STEWARD",
+			"en": "Data steward — Employee",
+			"ar": "أمين بيانات — الموظفين",
+			"desc_en": "Stewardship for employee master data.",
+			"desc_ar": "أمانة البيانات الرئيسية للموظفين.",
+			"domains": [
+				"employees"
+			],
+			"perms": [
+				"gr.read",
+				"cr.approve",
+				"match.review",
+				"rel.edit",
+				"dq.manage"
+			],
+			"delivered": true,
+			"sensitive": false,
+			"icon": "sap-icon://employee"
+		},
+		{
+			"id": "STORE_STEWARD",
+			"en": "Data steward — Store",
+			"ar": "أمين بيانات — المتاجر",
+			"desc_en": "Stewardship for stores and outlets.",
+			"desc_ar": "أمانة بيانات المتاجر ونقاط البيع.",
+			"domains": [
+				"stores"
+			],
+			"perms": [
+				"gr.read",
+				"cr.approve",
+				"match.review",
+				"rel.edit",
+				"dq.manage"
+			],
+			"delivered": true,
+			"sensitive": false,
+			"icon": "sap-icon://retail-store"
+		}
 	],
 	"unitRoles": {
-		"d-data": ["VIEWER"],
-		"t-eng": ["DATA_ENGINEER"],
-		"t-bi": ["ANALYST"],
-		"t-mdm": ["STEWARD_CUSTOMER", "STEWARD_VENDOR"],
-		"d-salesops": ["REQUESTER"],
-		"t-custdata": ["STEWARD_CUSTOMER"],
-		"d-procurement": ["REQUESTER"],
-		"t-vendordata": ["STEWARD_VENDOR"],
-		"d-editorial": ["REQUESTER", "VIEWER"],
-		"t-bookmeta": ["STEWARD_PRODUCT"],
-		"t-hrops": ["HR_STEWARD"],
-		"t-stores": ["STORE_STEWARD"],
-		"t-platform": ["DATA_ENGINEER"]
+		"d-data": [
+			"VIEWER"
+		],
+		"t-eng": [
+			"DATA_ENGINEER"
+		],
+		"t-bi": [
+			"ANALYST"
+		],
+		"t-mdm": [
+			"STEWARD_CUSTOMER",
+			"STEWARD_VENDOR"
+		],
+		"d-salesops": [
+			"REQUESTER"
+		],
+		"t-custdata": [
+			"STEWARD_CUSTOMER"
+		],
+		"d-procurement": [
+			"REQUESTER"
+		],
+		"t-vendordata": [
+			"STEWARD_VENDOR"
+		],
+		"d-editorial": [
+			"REQUESTER",
+			"VIEWER"
+		],
+		"t-bookmeta": [
+			"STEWARD_PRODUCT"
+		],
+		"t-hrops": [
+			"HR_STEWARD"
+		],
+		"t-stores": [
+			"STORE_STEWARD"
+		],
+		"t-platform": [
+			"DATA_ENGINEER"
+		]
 	},
 	"employees": [
-		{ "id": "E-1001", "name": "محمد", "email": "mohamed@example.com", "title_en": "Data Management & Analytics Manager", "title_ar": "مدير إدارة البيانات والتحليلات", "team": "t-mdm", "source": "entra", "manager": "" },
-		{ "id": "E-1002", "name": "سارة عادل", "email": "sara.adel@example.com", "title_en": "Customer data steward", "title_ar": "أمينة بيانات العملاء", "team": "t-custdata", "source": "entra", "manager": "محمد" },
-		{ "id": "E-1003", "name": "أحمد ناصر", "email": "ahmed.nasser@example.com", "title_en": "Data engineer", "title_ar": "مهندس بيانات", "team": "t-eng", "source": "entra", "manager": "محمد" },
-		{ "id": "E-1004", "name": "هالة سمير", "email": "hala.samir@example.com", "title_en": "Vendor and partner data steward", "title_ar": "أمينة بيانات الموردين والشركاء", "team": "t-vendordata", "source": "entra", "manager": "محمد" },
-		{ "id": "E-1005", "name": "كريم فوزي", "email": "karim.fawzy@example.com", "title_en": "Product data steward", "title_ar": "أمين بيانات المنتجات", "team": "t-bookmeta", "source": "entra", "manager": "ليلى منصور" },
-		{ "id": "E-1006", "name": "نور الدين", "email": "nour.eldin@example.com", "title_en": "Data analyst", "title_ar": "محلل بيانات", "team": "t-bi", "source": "entra", "manager": "محمد" },
-		{ "id": "E-1007", "name": "عمر طارق", "email": "omar.tarek@example.com", "title_en": "Vendor data steward", "title_ar": "أمين بيانات الموردين", "team": "t-vendordata", "source": "entra", "manager": "هالة سمير" },
-		{ "id": "E-1008", "name": "منى حسن", "email": "mona.hassan@example.com", "title_en": "Employee data owner", "title_ar": "مالكة بيانات الموظفين", "team": "t-hrops", "source": "entra", "manager": "" },
-		{ "id": "E-1009", "name": "ياسر جمال", "email": "yasser.gamal@example.com", "title_en": "Store data owner", "title_ar": "مالك بيانات المتاجر", "team": "t-stores", "source": "entra", "manager": "" },
-		{ "id": "E-1010", "name": "ليلى منصور", "email": "laila.mansour@example.com", "title_en": "Editorial director", "title_ar": "مديرة التحرير", "team": "t-rights", "source": "entra", "manager": "" },
-		{ "id": "E-1011", "name": "طارق عبد الله", "email": "tarek.abdallah@example.com", "title_en": "Key account manager", "title_ar": "مدير حسابات كبار العملاء", "team": "t-keyacc", "source": "entra", "manager": "" },
-		{ "id": "E-1012", "name": "دينا فاروق", "email": "dina.farouk@example.com", "title_en": "Campaign specialist", "title_ar": "أخصائية حملات", "team": "t-campaigns", "source": "entra", "manager": "" },
-		{ "id": "E-1013", "name": "مصطفى علي", "email": "mostafa.ali@example.com", "title_en": "Platform engineer", "title_ar": "مهندس منصات", "team": "t-platform", "source": "entra", "manager": "" },
-		{ "id": "E-1014", "name": "رانيا يوسف", "email": "rania.youssef@example.com", "title_en": "Rights coordinator", "title_ar": "منسقة الحقوق", "team": "t-rights", "source": "entra", "manager": "ليلى منصور" },
-		{ "id": "E-1015", "name": "حسام الدين", "email": "hossam.eldin@example.com", "title_en": "Customer data analyst", "title_ar": "محلل بيانات العملاء", "team": "t-custdata", "source": "entra", "manager": "سارة عادل" },
-		{ "id": "E-1016", "name": "إيمان سعيد", "email": "eman.said@example.com", "title_en": "Procurement officer", "title_ar": "مسؤولة مشتريات", "team": "t-vendordata", "source": "entra", "manager": "هالة سمير" },
-		{ "id": "M-0001", "name": "شريف لطفي", "email": "sherif.lotfy@example.com", "title_en": "External consultant", "title_ar": "استشاري خارجي", "team": "t-mdm", "source": "manual", "manager": "محمد", "flagged": true }
+		{
+			"id": "E-1001",
+			"name": "محمد",
+			"email": "mohamed@example.com",
+			"title_en": "Data Management & Analytics Manager",
+			"title_ar": "مدير إدارة البيانات والتحليلات",
+			"team": "t-mdm",
+			"source": "entra",
+			"manager": ""
+		},
+		{
+			"id": "E-1002",
+			"name": "سارة عادل",
+			"email": "sara.adel@example.com",
+			"title_en": "Customer data steward",
+			"title_ar": "أمينة بيانات العملاء",
+			"team": "t-custdata",
+			"source": "entra",
+			"manager": "محمد"
+		},
+		{
+			"id": "E-1003",
+			"name": "أحمد ناصر",
+			"email": "ahmed.nasser@example.com",
+			"title_en": "Data engineer",
+			"title_ar": "مهندس بيانات",
+			"team": "t-eng",
+			"source": "entra",
+			"manager": "محمد"
+		},
+		{
+			"id": "E-1004",
+			"name": "هالة سمير",
+			"email": "hala.samir@example.com",
+			"title_en": "Vendor and partner data steward",
+			"title_ar": "أمينة بيانات الموردين والشركاء",
+			"team": "t-vendordata",
+			"source": "entra",
+			"manager": "محمد"
+		},
+		{
+			"id": "E-1005",
+			"name": "كريم فوزي",
+			"email": "karim.fawzy@example.com",
+			"title_en": "Product data steward",
+			"title_ar": "أمين بيانات المنتجات",
+			"team": "t-bookmeta",
+			"source": "entra",
+			"manager": "ليلى منصور"
+		},
+		{
+			"id": "E-1006",
+			"name": "نور الدين",
+			"email": "nour.eldin@example.com",
+			"title_en": "Data analyst",
+			"title_ar": "محلل بيانات",
+			"team": "t-bi",
+			"source": "entra",
+			"manager": "محمد"
+		},
+		{
+			"id": "E-1007",
+			"name": "عمر طارق",
+			"email": "omar.tarek@example.com",
+			"title_en": "Vendor data steward",
+			"title_ar": "أمين بيانات الموردين",
+			"team": "t-vendordata",
+			"source": "entra",
+			"manager": "هالة سمير"
+		},
+		{
+			"id": "E-1008",
+			"name": "منى حسن",
+			"email": "mona.hassan@example.com",
+			"title_en": "Employee data owner",
+			"title_ar": "مالكة بيانات الموظفين",
+			"team": "t-hrops",
+			"source": "entra",
+			"manager": ""
+		},
+		{
+			"id": "E-1009",
+			"name": "ياسر جمال",
+			"email": "yasser.gamal@example.com",
+			"title_en": "Store data owner",
+			"title_ar": "مالك بيانات المتاجر",
+			"team": "t-stores",
+			"source": "entra",
+			"manager": ""
+		},
+		{
+			"id": "E-1010",
+			"name": "ليلى منصور",
+			"email": "laila.mansour@example.com",
+			"title_en": "Editorial director",
+			"title_ar": "مديرة التحرير",
+			"team": "t-rights",
+			"source": "entra",
+			"manager": ""
+		},
+		{
+			"id": "E-1011",
+			"name": "طارق عبد الله",
+			"email": "tarek.abdallah@example.com",
+			"title_en": "Key account manager",
+			"title_ar": "مدير حسابات كبار العملاء",
+			"team": "t-keyacc",
+			"source": "entra",
+			"manager": ""
+		},
+		{
+			"id": "E-1012",
+			"name": "دينا فاروق",
+			"email": "dina.farouk@example.com",
+			"title_en": "Campaign specialist",
+			"title_ar": "أخصائية حملات",
+			"team": "t-campaigns",
+			"source": "entra",
+			"manager": ""
+		},
+		{
+			"id": "E-1013",
+			"name": "مصطفى علي",
+			"email": "mostafa.ali@example.com",
+			"title_en": "Platform engineer",
+			"title_ar": "مهندس منصات",
+			"team": "t-platform",
+			"source": "entra",
+			"manager": ""
+		},
+		{
+			"id": "E-1014",
+			"name": "رانيا يوسف",
+			"email": "rania.youssef@example.com",
+			"title_en": "Rights coordinator",
+			"title_ar": "منسقة الحقوق",
+			"team": "t-rights",
+			"source": "entra",
+			"manager": "ليلى منصور"
+		},
+		{
+			"id": "E-1015",
+			"name": "حسام الدين",
+			"email": "hossam.eldin@example.com",
+			"title_en": "Customer data analyst",
+			"title_ar": "محلل بيانات العملاء",
+			"team": "t-custdata",
+			"source": "entra",
+			"manager": "سارة عادل"
+		},
+		{
+			"id": "E-1016",
+			"name": "إيمان سعيد",
+			"email": "eman.said@example.com",
+			"title_en": "Procurement officer",
+			"title_ar": "مسؤولة مشتريات",
+			"team": "t-vendordata",
+			"source": "entra",
+			"manager": "هالة سمير"
+		},
+		{
+			"id": "M-0001",
+			"name": "شريف لطفي",
+			"email": "sherif.lotfy@example.com",
+			"title_en": "External consultant",
+			"title_ar": "استشاري خارجي",
+			"team": "t-mdm",
+			"source": "manual",
+			"manager": "محمد",
+			"flagged": true,
+			"match": "E-1017"
+		},
+		{
+			"id": "E-1017",
+			"name": "شريف لطفي",
+			"email": "sherif.lotfy@example.com",
+			"title_en": "Data governance consultant",
+			"title_ar": "استشاري حوكمة البيانات",
+			"team": "t-mdm",
+			"source": "entra",
+			"manager": "محمد"
+		}
 	],
 	"users": [
-		{ "employee": "E-1001", "upn": "mohamed@example.com", "link": "linked", "validFrom": "2026-01-01", "validTo": "", "lastSignIn": "2026-11-15T09:12:00", "direct": ["ADMIN", "API_ADMIN", "TEMPLATE_AUTHOR"] },
-		{ "employee": "E-1002", "upn": "sara.adel@example.com", "link": "linked", "validFrom": "2026-01-01", "validTo": "", "lastSignIn": "2026-11-15T08:41:00", "direct": ["TEMPLATE_AUTHOR"] },
-		{ "employee": "E-1003", "upn": "ahmed.nasser@example.com", "link": "linked", "validFrom": "2026-01-01", "validTo": "", "lastSignIn": "2026-11-14T17:05:00", "direct": [] },
-		{ "employee": "E-1004", "upn": "hala.samir@example.com", "link": "linked", "validFrom": "2026-01-01", "validTo": "", "lastSignIn": "2026-11-15T07:58:00", "direct": [] },
-		{ "employee": "E-1005", "upn": "karim.fawzy@example.com", "link": "linked", "validFrom": "2026-02-01", "validTo": "", "lastSignIn": "2026-11-13T11:20:00", "direct": [] },
-		{ "employee": "E-1006", "upn": "nour.eldin@example.com", "link": "linked", "validFrom": "2026-03-15", "validTo": "", "lastSignIn": "2026-11-15T09:30:00", "direct": [] },
-		{ "employee": "E-1007", "upn": "omar.tarek@example.com", "link": "linked", "validFrom": "2026-04-01", "validTo": "", "lastSignIn": "2026-11-12T14:02:00", "direct": [] },
-		{ "employee": "E-1008", "upn": "mona.hassan@example.com", "link": "linked", "validFrom": "2026-01-01", "validTo": "", "lastSignIn": "2026-11-10T10:45:00", "direct": [] },
-		{ "employee": "E-1009", "upn": "yasser.gamal@example.com", "link": "disabled", "validFrom": "2026-01-01", "validTo": "2026-10-31", "lastSignIn": "2026-10-29T16:00:00", "direct": [] },
-		{ "employee": "E-1013", "upn": "mostafa.ali@example.com", "link": "linked", "validFrom": "2026-06-01", "validTo": "", "lastSignIn": "2026-11-14T22:10:00", "direct": [] },
-		{ "employee": "M-0001", "upn": "sherif.lotfy@example.com", "link": "notFound", "validFrom": "2026-11-01", "validTo": "2027-01-31", "lastSignIn": "", "direct": [] }
+		{
+			"employee": "E-1001",
+			"upn": "mohamed@example.com",
+			"link": "linked",
+			"validFrom": "2026-01-01",
+			"validTo": "",
+			"lastSignIn": "2026-11-15T09:12:00",
+			"direct": [
+				"ADMIN",
+				"API_ADMIN",
+				"TEMPLATE_AUTHOR"
+			],
+			"until": {}
+		},
+		{
+			"employee": "E-1002",
+			"upn": "sara.adel@example.com",
+			"link": "linked",
+			"validFrom": "2026-01-01",
+			"validTo": "",
+			"lastSignIn": "2026-11-15T08:41:00",
+			"direct": [
+				"TEMPLATE_AUTHOR"
+			],
+			"until": {}
+		},
+		{
+			"employee": "E-1003",
+			"upn": "ahmed.nasser@example.com",
+			"link": "linked",
+			"validFrom": "2026-01-01",
+			"validTo": "",
+			"lastSignIn": "2026-11-14T17:05:00",
+			"direct": [
+				"REQUESTER",
+				"STEWARD_CUSTOMER"
+			],
+			"until": {}
+		},
+		{
+			"employee": "E-1004",
+			"upn": "hala.samir@example.com",
+			"link": "linked",
+			"validFrom": "2026-01-01",
+			"validTo": "",
+			"lastSignIn": "2026-11-15T07:58:00",
+			"direct": [],
+			"until": {}
+		},
+		{
+			"employee": "E-1005",
+			"upn": "karim.fawzy@example.com",
+			"link": "linked",
+			"validFrom": "2026-02-01",
+			"validTo": "",
+			"lastSignIn": "2026-11-13T11:20:00",
+			"direct": [],
+			"until": {}
+		},
+		{
+			"employee": "E-1006",
+			"upn": "nour.eldin@example.com",
+			"link": "linked",
+			"validFrom": "2026-03-15",
+			"validTo": "",
+			"lastSignIn": "2026-11-15T09:30:00",
+			"direct": [],
+			"until": {}
+		},
+		{
+			"employee": "E-1007",
+			"upn": "omar.tarek@example.com",
+			"link": "linked",
+			"validFrom": "2026-04-01",
+			"validTo": "",
+			"lastSignIn": "2026-11-12T14:02:00",
+			"direct": [
+				"STEWARD_CUSTOMER"
+			],
+			"until": {
+				"STEWARD_CUSTOMER": "2026-11-30"
+			}
+		},
+		{
+			"employee": "E-1008",
+			"upn": "mona.hassan@example.com",
+			"link": "linked",
+			"validFrom": "2026-01-01",
+			"validTo": "",
+			"lastSignIn": "2026-11-10T10:45:00",
+			"direct": [],
+			"until": {}
+		},
+		{
+			"employee": "E-1009",
+			"upn": "yasser.gamal@example.com",
+			"link": "disabled",
+			"validFrom": "2026-01-01",
+			"validTo": "2026-10-31",
+			"lastSignIn": "2026-10-29T16:00:00",
+			"direct": [],
+			"until": {}
+		},
+		{
+			"employee": "E-1013",
+			"upn": "mostafa.ali@example.com",
+			"link": "linked",
+			"validFrom": "2026-06-01",
+			"validTo": "",
+			"lastSignIn": "2026-11-14T22:10:00",
+			"direct": [],
+			"until": {}
+		},
+		{
+			"employee": "M-0001",
+			"upn": "sherif.lotfy@example.com",
+			"link": "notFound",
+			"validFrom": "2026-11-01",
+			"validTo": "2027-01-31",
+			"lastSignIn": "",
+			"direct": [],
+			"until": {}
+		},
+		{
+			"employee": "E-1014",
+			"upn": "rania.youssef@example.com",
+			"link": "linked",
+			"validFrom": "2026-05-01",
+			"validTo": "",
+			"lastSignIn": "2026-11-13T15:20:00",
+			"direct": [
+				"TEMPLATE_AUTHOR"
+			],
+			"until": {}
+		}
 	],
 	"history": [
-		{ "at": "2026-11-15T08:00:00", "by": "sync", "user": "", "en": "Directory sync from Entra ID: 2 added, 5 updated, 1 moved, 1 manual record flagged", "ar": "مزامنة الدليل من Entra ID: إضافة 2، تحديث 5، نقل 1، تمييز سجل يدوي واحد" },
-		{ "at": "2026-11-14T13:22:00", "by": "محمد", "user": "E-1002", "en": "Direct role added: Template author", "ar": "إضافة دور مباشر: مؤلف القوالب" },
-		{ "at": "2026-11-12T10:05:00", "by": "sync", "user": "E-1007", "en": "Moved from Procurement › Vendor data (no change) — manager updated", "ar": "تحديث المدير من المصدر" },
-		{ "at": "2026-11-01T09:00:00", "by": "محمد", "user": "M-0001", "en": "Created manually and made a business user (valid until 2027-01-31)", "ar": "أُنشئ يدويًا وتحوّل لمستخدم (صالح حتى 2027-01-31)" },
-		{ "at": "2026-10-31T23:59:00", "by": "sync", "user": "E-1009", "en": "Account disabled in Entra ID — sign-in blocked", "ar": "الحساب معطّل في Entra ID — الدخول ممنوع" }
+		{
+			"at": "2026-11-15T08:00:00",
+			"by": "sync",
+			"user": "",
+			"en": "Directory sync from Entra ID: 2 added, 5 updated, 1 moved, 1 manual record flagged",
+			"ar": "مزامنة الدليل من Entra ID: إضافة 2، تحديث 5، نقل 1، تمييز سجل يدوي واحد"
+		},
+		{
+			"at": "2026-11-14T13:22:00",
+			"by": "محمد",
+			"user": "E-1002",
+			"en": "Direct role added: Template author",
+			"ar": "إضافة دور مباشر: مؤلف القوالب",
+			"role": "TEMPLATE_AUTHOR"
+		},
+		{
+			"at": "2026-11-12T10:05:00",
+			"by": "sync",
+			"user": "E-1007",
+			"en": "Moved from Procurement › Vendor data (no change) — manager updated",
+			"ar": "تحديث المدير من المصدر"
+		},
+		{
+			"at": "2026-11-01T09:00:00",
+			"by": "محمد",
+			"user": "M-0001",
+			"en": "Created manually and made a business user (valid until 2027-01-31)",
+			"ar": "أُنشئ يدويًا وتحوّل لمستخدم (صالح حتى 2027-01-31)"
+		},
+		{
+			"at": "2026-10-31T23:59:00",
+			"by": "sync",
+			"user": "E-1009",
+			"en": "Account disabled in Entra ID — sign-in blocked",
+			"ar": "الحساب معطّل في Entra ID — الدخول ممنوع"
+		}
+	],
+	"sod": [
+		{
+			"id": "SOD-1",
+			"a": "cr.create",
+			"b": "cr.approve",
+			"sameDomain": true,
+			"en": "Creates and approves change requests in the same domain",
+			"ar": "ينشئ ويعتمد طلبات التغيير في نفس الدومين"
+		},
+		{
+			"id": "SOD-2",
+			"a": "users.admin",
+			"b": "api.admin",
+			"sameDomain": false,
+			"en": "Administers users and issues API tokens",
+			"ar": "يدير المستخدمين ويصدر رموز الـ API"
+		}
+	],
+	"reviews": [
+		{
+			"id": "AR-2026-Q3",
+			"en": "Q3 2026 access review",
+			"ar": "مراجعة الصلاحيات — الربع الثالث 2026",
+			"start": "2026-09-15",
+			"due": "2026-09-30",
+			"status": "closed",
+			"items": []
+		},
+		{
+			"id": "AR-2026-Q4",
+			"en": "Q4 2026 access review",
+			"ar": "مراجعة الصلاحيات — الربع الرابع 2026",
+			"start": "2026-11-10",
+			"due": "2026-11-24",
+			"status": "open",
+			"items": [
+				{
+					"user": "E-1002",
+					"role": "TEMPLATE_AUTHOR",
+					"reviewer": "محمد",
+					"decision": "keep",
+					"at": "2026-11-11"
+				},
+				{
+					"user": "E-1003",
+					"role": "STEWARD_CUSTOMER",
+					"reviewer": "محمد",
+					"decision": "",
+					"at": ""
+				},
+				{
+					"user": "E-1003",
+					"role": "REQUESTER",
+					"reviewer": "محمد",
+					"decision": "",
+					"at": ""
+				},
+				{
+					"user": "E-1007",
+					"role": "STEWARD_CUSTOMER",
+					"reviewer": "هالة سمير",
+					"decision": "",
+					"at": ""
+				},
+				{
+					"user": "E-1001",
+					"role": "API_ADMIN",
+					"reviewer": "محمد",
+					"decision": "keep",
+					"at": "2026-11-10"
+				},
+				{
+					"user": "M-0001",
+					"role": "",
+					"reviewer": "محمد",
+					"decision": "",
+					"at": "",
+					"note": "inherited"
+				}
+			]
+		}
 	]
 }
