@@ -1,18 +1,20 @@
 /*
  * PersonLink — a person shown as an Avatar only (the name is in the tooltip and the quick view). Hovering (or focusing) opens a
- * sap.m.QuickView business card with role, team and contact details; clicking
- * pins it open. Usable inside forms (IFormContent).
+ * compact business card (sap.m.Popover, fixed width, flips instead of shrinking near an edge) with role, team and contact
+ * details; clicking pins it open. Usable inside forms (IFormContent).
  */
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/Avatar",
 	"sap/m/Link",
-	"sap/m/QuickView",
-	"sap/m/QuickViewPage",
-	"sap/m/QuickViewGroup",
-	"sap/m/QuickViewGroupElement",
+	"sap/m/Popover",
+	"sap/m/VBox",
+	"sap/m/HBox",
+	"sap/m/Text",
+	"sap/m/Title",
+	"sap/ui/core/Icon",
 	"repoio/proto/util/people"
-], function (Control, Avatar, Link, QuickView, QuickViewPage, QuickViewGroup, QuickViewGroupElement, people) {
+], function (Control, Avatar, Link, Popover, VBox, HBox, Text, Title, Icon, people) {
 	"use strict";
 
 	var isAr = function () { return sap.ui.getCore().getConfiguration().getLanguage().indexOf("ar") === 0; };
@@ -60,7 +62,7 @@ sap.ui.define([
 		},
 
 		_closeIfAway: function () {
-			var q = this._qv, d = q && q.getDomRef && document.querySelector("#" + q.getId() + "-quickView-popover");
+			var q = this._qv, d = q && q.getDomRef();
 			if (q && !this._pinned && !(d && d.matches(":hover"))) { q.close(); }
 		},
 
@@ -69,24 +71,31 @@ sap.ui.define([
 			var t = isAr() ? T.ar : T.en, ar = isAr();
 			this._pinned = bPinned;
 			if (this._qv) { this._qv.destroy(); }
-			this._qv = new QuickView({
+			var row = function (sIcon, sTip, oValue) {
+				return new HBox({ alignItems: "Center", renderType: "Bare", items: [new Icon({ src: sIcon, tooltip: sTip, decorative: false }).addStyleClass("repoioPcIcon"), oValue] }).addStyleClass("repoioPcRow");
+			};
+			this._qv = new Popover({
+				showHeader: false, contentWidth: "16rem", placement: "VerticalPreferredBottom", showArrow: true,
 				afterClose: function () { this._pinned = false; }.bind(this),
-				pages: [new QuickViewPage({
-					header: ar ? "بطاقة الشخص" : "Person", title: ar ? n : p.en, description: ar ? p.role_ar : p.role_en,
-					avatar: new Avatar({ initials: p.initials }),
-					groups: [new QuickViewGroup({ heading: t.contact, elements: [
-						new QuickViewGroupElement({ label: t.email, value: p.email, type: "email", emailSubject: "Repo.io" }),
-						new QuickViewGroupElement({ label: t.phone, value: p.phone, type: "phone" }),
-						new QuickViewGroupElement({ label: t.team, value: ar ? p.team_ar : p.team_en }),
-						new QuickViewGroupElement({ label: t.org, value: ar ? "مجموعة نهضة مصر للنشر" : "Nahdet Misr Publishing Group" })
-					] })]
-				})]
-			});
+				content: [new VBox({ renderType: "Bare", items: [
+					new HBox({ alignItems: "Center", renderType: "Bare", items: [
+						new Avatar({ initials: p.initials, displaySize: "S" }),
+						new VBox({ renderType: "Bare", items: [
+							new Title({ text: ar ? n : p.en, level: "H5", wrapping: true }),
+							new Text({ text: ar ? p.role_ar : p.role_en, maxLines: 2 }).addStyleClass("repoioPcRole")
+						] }).addStyleClass("repoioPcWho")
+					] }).addStyleClass("repoioPcHead"),
+					row("sap-icon://email", t.email, new Link({ text: p.email, href: "mailto:" + p.email + "?subject=Repo.io", wrapping: false, textDirection: "LTR" }).addStyleClass("repoioPcVal")),
+					row("sap-icon://call", t.phone, new Link({ text: "\u2066" + p.phone + "\u2069", href: "tel:" + p.phone.replace(/\s/g, ""), wrapping: false, textDirection: "LTR" }).addStyleClass("repoioPcVal")),
+					row("sap-icon://group", t.team, new Text({ text: ar ? p.team_ar : p.team_en, wrapping: false }).addStyleClass("repoioPcVal")),
+					row("sap-icon://building", t.org, new Text({ text: ar ? "مجموعة نهضة مصر للنشر" : "Nahdet Misr Publishing Group", wrapping: false }).addStyleClass("repoioPcVal"))
+				] }).addStyleClass("repoioPcBody")]
+			}).addStyleClass("repoioPersonCard");
 			this.addDependent(this._qv);
 			this._qv.openBy(this.getAggregation("_avatar").getVisible() ? this.getAggregation("_avatar") : this);
 			var that = this;
 			setTimeout(function () {
-				var d = document.getElementById(that._qv.getId() + "-quickView-popover");
+				var d = that._qv.getDomRef();
 				if (d) { d.addEventListener("mouseleave", function () { that._t = setTimeout(that._closeIfAway.bind(that), 300); }); d.addEventListener("mouseenter", function () { clearTimeout(that._t); }); }
 			}, 0);
 		},
