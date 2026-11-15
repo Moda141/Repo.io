@@ -274,6 +274,17 @@ and API contracts preserved — demonstrated via the parity checklist.
       retried, logged, and filtered by the owner's grants; they have no
       write path to source systems.
 - [ ] Rate limits per client are enforced and visible on the Usage tab.
+- [ ] User directory (J17, ADR-0009): employees and the org hierarchy
+      sync from the configured source (Entra ID or SuccessFactors) with a
+      field mapping; manual create / CSV import labelled *Manual* and
+      flagged by the next sync; source credentials in the secret store.
+- [ ] Business users link to Entra ID by email / UPN; Repo.io creates no
+      identities or passwords; link state and validity are enforced.
+- [ ] Roles assigned on Department, Team or User only; effective roles =
+      direct ∪ team ∪ department, verified with a direct API call after a
+      team move; sensitive roles (Admin, API access administration,
+      template authoring) rejected on org units by the API.
+- [ ] Every user, org-unit and role assignment change is audited.
 
 **Exit gate:** "AI agents can read/write golden records with per-user
 scopes" — demonstrated with both the happy path and the denials.

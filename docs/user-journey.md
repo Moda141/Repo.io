@@ -83,6 +83,7 @@ detection** · Connections hub = **Connections**.
 | J14 | Analyse & broadcast reports | Data Analyst, Data Steward, Manager | M4 (reports, studio, broadcasts UI); reports API + governed views (M5 grants) |
 | J15 | Configure a data sync (replication flow) | Data Engineer | M2 (pull / push ingest, raw layer), M4 (UI) |
 | J16 | Manage API access (tokens, webhooks, MCP) | Admin, Data Engineer, Consumer | M5 (identity, tokens, MCP), M4 (UI) |
+| J17 | Manage users, org units & roles | Admin | M5 (Entra ID, directory sync, RBAC), M4 (UI) |
 
 A journey is "available" only when its milestone's acceptance criteria
 in `docs/milestone-plan.md` pass — never before.
@@ -671,3 +672,41 @@ When a screen's journey changes, update this file in the same change;
 when an architecture decision conflicts with a journey, the README wins
 and the journey is rewritten. Add journeys for new console areas rather
 than stretching an existing one past its milestone.
+
+## J17 — Manage users, org units & roles
+
+**Persona:** Admin. **Pages:** System & Administration → User
+management, Roles & access. **Decision:** ADR-0009. Follows the SAP IBP
+steps: employees → business users → identity → business roles.
+
+1. **Directory.** User management opens on the org tree (Org › Business
+   unit › Department › Team) and the **Employees** tab. The toolbar shows
+   the sync source (Entra ID or SuccessFactors), the last sync and
+   *Sync now*; **sync settings** pick the source and map its fields
+   (business unit, department, team, job title, manager); credentials
+   sit in the secret store.
+2. **Manual fallback.** *Create* adds one employee; *Import* uploads a
+   CSV built from *Download template*, with per-row validation. Both are
+   labelled *Manual*; the next sync flags a manual record that the
+   source also has.
+3. **Business user.** The Admin selects employees without a user and
+   chooses *Maintain business user*. The user is linked to Entra ID by
+   email / UPN; the **Users** tab shows the link state (linked, not
+   found in Entra ID, disabled) and validity dates. Repo.io never
+   creates an identity or a password.
+4. **Roles from the user.** A user opens on General, **Assigned roles**
+   and History. Assigned roles lists every effective role with its
+   source — *Direct*, *Team: …* or *Department: …*. *Add* assigns a
+   direct role; only direct roles can be removed here.
+5. **Roles on org units.** Selecting a department or team shows its
+   **default roles**; *Add role* assigns one to everyone below.
+   Sensitive roles (Admin, API access administration, template
+   authoring) are not offered there — they are assigned to a named user.
+6. **Roles from the role.** Roles & access lists the roles with their
+   domain grants and counts. A role opens on General, **Domain grants**,
+   **Assigned users** (*Add* one or more users) and **Assigned org
+   units**.
+7. Every change is audited (who, what, when, before / after). Effective
+   roles take effect on the user's next token; nothing in the UI is
+   authorization — the API filters every page by the same grants.
+

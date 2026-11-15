@@ -150,9 +150,22 @@
      - **Broadcasts** — scheduled distribution of reports to stakeholders
        (delivery, not operational alerts).
    - **Administration**
-     - **User management** — users, teams, invites.
+     - **User management** — the SAP IBP flow (ADR-0009): an org tree
+       (Org › Business unit › Department › Team) beside two tabs.
+       **Employees**: synced from Entra ID or SuccessFactors (sync
+       status, *Sync now*, sync settings); *Create* and *Import* (CSV,
+       *Download template*) as a manual fallback, labelled *Manual*;
+       *Maintain business user* turns an employee into a user.
+       **Users**: Entra ID link state, team, roles (direct + inherited),
+       validity, last sign-in; a user opens on General, **Assigned
+       roles** (source of each role: direct, team or department) and
+       History. Selecting a department or team shows its **default
+       roles**, inherited by everyone below. [J17, M5]
      - **(+) Roles & access** — roles, domain grants, delegation; the
-       server-side source of every page's visibility. [M5]
+       server-side source of every page's visibility. Like SAP IBP's
+       Maintain Business Roles: a role opens on General, Domain grants,
+       **Assigned users** (*Add*) and **Assigned org units** (departments
+       and teams; sensitive roles are user-only). [J17, M5]
      - **System configuration** — platform-wide settings: auth / SSO,
        preferences, custom properties.
      - **(+) Announcements** — authoring side of the read views on
