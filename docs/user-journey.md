@@ -84,6 +84,7 @@ detection** · Connections hub = **Connections**.
 | J15 | Configure a data sync (replication flow) | Data Engineer | M2 (pull / push ingest, raw layer), M4 (UI) |
 | J16 | Manage API access (tokens, webhooks, MCP) | Admin, Data Engineer, Consumer | M5 (identity, tokens, MCP), M4 (UI) |
 | J17 | Manage users, org units & roles | Admin | M5 (Entra ID, directory sync, RBAC), M4 (UI) |
+| J18 | Configure the platform & read the audit log | Admin, Auditor | M5 (settings, audit API), M4 (UI) |
 
 A journey is "available" only when its milestone's acceptance criteria
 in `docs/milestone-plan.md` pass — never before.
@@ -734,4 +735,33 @@ steps: employees → business users → identity → business roles.
     History tab lists the changes to that role. Effective
    roles take effect on the user's next token; nothing in the UI is
    authorization — the API filters every page by the same grants.
+
+## J18 — Configure the platform & read the audit log
+
+**Persona:** Admin (configuration); Admin or a granted auditor (audit
+log). **Pages:** Administration → System configuration, Audit log.
+
+1. **System configuration** lists its sections on the left —
+   Authentication, Email, Regional defaults, Custom properties, Data
+   retention. Editing marks the section *Unsaved* and opens a footer
+   with *Save* and *Discard*.
+2. **Authentication** shows the Entra ID tenant, client ID and redirect
+   URI as deployment values and the client secret as a secret-store
+   reference; MFA comes from Conditional Access. The Admin sets the
+   session lifetime, the idle sign-out and the allowed email domains.
+3. **Email** shows the corporate SMTP relay (host and port are
+   deployment values) and the sender; *Send test email* records the
+   result. Attachments over 10 MB go as a link (ADR-0003).
+4. **Custom properties** add fields to catalog objects (domains,
+   repositories, sources, tables) with a technical name, labels in both
+   languages, a type and whether they are required. Golden-record
+   attributes stay in `repoio-spec`.
+5. **Data retention** sets how long the audit log, feed, job runs and
+   broadcast exports are kept; audit entries are never edited or deleted
+   before then.
+6. *Save* writes one audited change per section with before / after.
+7. **Audit log** lists every entry newest first; filters narrow by
+   text, period, area and actor; an entry opens with its before / after
+   values; *Export* downloads the filtered entries as CSV. Nothing on
+   the page edits or deletes an entry.
 

@@ -305,6 +305,11 @@ and API contracts preserved — demonstrated via the parity checklist.
 - [ ] Separation-of-duties rules are configuration; warnings returned by
       the API, not computed only in the UI.
 - [ ] Every user, org-unit and role assignment change is audited.
+- [ ] System configuration (J18): settings API, Admin-only; secrets only
+      as secret-store references; each saved section audited with
+      before / after; custom properties limited to catalog objects.
+- [ ] Audit log API (J18): append-only, filterable, exportable, filtered
+      by the viewer's grants; retention enforced from configuration.
 
 **Exit gate:** "AI agents can read/write golden records with per-user
 scopes" — demonstrated with both the happy path and the denials.

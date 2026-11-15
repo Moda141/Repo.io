@@ -176,15 +176,36 @@
        sensitive roles are user-only). Delivered roles are read-only;
        custom roles are edited or deleted (when nobody holds them). A
        role also has a **History** tab. [J17, M5]
-     - **System configuration** — platform-wide settings: auth / SSO,
-       preferences, custom properties.
+     - **System configuration** — Admin-only (`system configuration`):
+       sections on the left, one working copy, *Save* / *Discard* in the
+       footer, each saved section audited with before / after.
+       **Authentication** (Entra ID tenant, client ID and redirect URI as
+       deployment placeholders, secret-store reference, MFA by Conditional
+       Access, session lifetime, idle sign-out, allowed email domains);
+       **Email** (corporate SMTP relay, sender, reply-to, 10 MB attachment
+       rule from ADR-0003, *Send test email*); **Regional defaults**
+       (language, time zone, date / number formats, week start, reporting
+       currency); **Custom properties** on catalog objects — domains,
+       repositories, sources, tables — never golden-record attributes;
+       **Data retention** (audit log, feed, job runs, broadcast exports).
+       [J18, M5]
      - **(+) Announcements** — authoring side of the read views on
        Feeds and Home: draft → audience (all users, a role, a
        domain) → publish window (from / until) → publish; pinned
        flag, retire, history. Publishing is an RBAC action (admin or
-       a granted steward), audited like every governed artifact. [J13]
+       a granted steward), audited like every governed artifact. The
+       list shows live / scheduled / draft / ended with audience, window
+       and author; the editor has type (information, maintenance, new
+       feature), titles and messages in both languages, audience (all
+       users, a role, a domain) with its reach, window, pin, preview,
+       *Publish* / *Update* / *Save draft* / *Retire* / *Duplicate*, and a
+       History tab. The Home strip shows the live pinned one. [J13]
      - **Audit log** — platform-wide audit trail: who, what, when, which
-       version. [cross-cutting UX rule 4]
+       version. Read-only and append-only: time, actor (person, Repo.io
+       or the directory sync), area, action, what happened, object,
+       version; filters by text, period, area and actor; an entry opens
+       with its before / after; CSV export; retention from System
+       configuration. [J18, cross-cutting UX rule 4]
    - **Integration Hub**
      - **(→) Connections** *(was "Data source")* — one registry entry per
        external system Repo.io calls (SAP C4C, SAP ERP / HANA, SQL
