@@ -74,7 +74,7 @@ sap.ui.define([
 			if (d === "domain") { return this._doms.map(function (x) { return x.id; }); }
 			if (d === "week") { return WEEKS; }
 			if (d === "source" && this._source === GOV_SOURCE) { return ["c4c", "erp", "sql"]; }
-			return this._alp.dims[d].map(function (v) { return v.key; });
+			return (this._alp.dims[d] || []).map(function (v) { return v.key; });
 		},
 		_dimLabel: function (d, k) {
 			var ar = this.lang() === "ar";
@@ -86,8 +86,9 @@ sap.ui.define([
 		},
 		_data: function (t) {
 			if (t.data && t.dataFor === undefined) { t.dataFor = t.measure + "/" + t.dim + "/" + (t.chart === "stacked"); }
+			var keys = this._dimKeys(t.dim);
 			if (t.data && t.dataFor === t.measure + "/" + t.dim + "/" + (t.chart === "stacked")) { return t.data; }
-			var keys = this._dimKeys(t.dim), u = MEASURES[t.measure], rnd = seeded(t.measure + t.dim), d;
+			var u = MEASURES[t.measure], rnd = seeded(t.measure + t.dim), d;
 			if (t.measure === "customers") {
 				var m = {};
 				keys.forEach(function (k) { m[k] = 0; });
@@ -118,7 +119,7 @@ sap.ui.define([
 			if (t.chart === "donut") {
 				return { animation: false, color: pal, tooltip: { trigger: "item" },
 					legend: { show: t.legend !== false, orient: "vertical", [rtl ? "left" : "right"]: 4, top: "middle", itemWidth: 10, itemHeight: 10, textStyle: lbl,
-						formatter: function (n) { var i = names.indexOf(n); return showLbl ? n + "   " + vals[i].toLocaleString("en") + unit : n; } },
+						formatter: function (n) { var v = vals[names.indexOf(n)]; return showLbl && typeof v === "number" ? n + "   " + v.toLocaleString("en") + unit : n; } },
 					series: [{ type: "pie", radius: ["45%", "75%"], center: [rtl ? "65%" : "35%", "52%"], label: { show: false },
 						data: names.map(function (n, i) { return { name: n, value: vals[i] }; }) }] };
 			}

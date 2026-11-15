@@ -213,7 +213,7 @@ sap.ui.define([
 				content: [new SimpleForm({ editable: true, layout: "ResponsiveGridLayout", labelSpanL: 6, labelSpanM: 6, content: [
 					new Label({ text: this.text("ds.ts.deltaCapture") }), new Switch({ state: true, enabled: false }),
 					new Label({ text: this.text("ds.ts.quarantine") }), new Switch({ state: true, enabled: false }),
-					new Label({ text: this.text("ds.ts.topic") }), new Text({ text: this.viewModel().getProperty("/sf/objects").map(function (o) { return "raw." + o.entity; }).filter(function (x, i, a) { return a.indexOf(x) === i; }).join(", ") || "raw.<entity>" }).addStyleClass("repoioMono")
+					new Label({ text: this.text("ds.ts.topic") }), new Text({ text: ((this._f && this._f.objects) || []).map(function (o) { return "raw." + o.entity; }).filter(function (x, i, a) { return a.indexOf(x) === i; }).join(", ") || "raw.<entity>" }).addStyleClass("repoioMono")
 				] }), new MessageStrip({ text: this.text("ds.ts.note"), type: "Information", showIcon: true }).addStyleClass("sapUiSmallMargin")],
 				endButton: new Button({ text: this.text("common.close"), press: function () { oDlg.close(); } }),
 				afterClose: function () { oDlg.destroy(); } });

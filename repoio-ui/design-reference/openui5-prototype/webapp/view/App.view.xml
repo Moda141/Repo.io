@@ -23,7 +23,7 @@
 				</Text>
 				<Button icon="sap-icon://inbox" text="4" type="Transparent" tooltip="{i18n>shell.inbox}"
 					ariaLabel="{i18n>shell.inbox}" press=".onInbox"/>
-				<Button icon="sap-icon://bell" type="Transparent" tooltip="{i18n>shell.notifications}" ariaLabel="{i18n>shell.notifications}"/>
+				<Button icon="sap-icon://bell" type="Transparent" tooltip="{i18n>shell.notifications}" ariaLabel="{i18n>shell.notifications}" press=".onNotifications"/>
 				<Button text="{i18n>shell.language}" type="Transparent" press=".onSwitchLanguage"/>
 				<Avatar initials="MM" displaySize="XS" tooltip="{i18n>shell.user}" ariaLabel="{i18n>shell.user}"/>
 			</tnt:ToolHeader>

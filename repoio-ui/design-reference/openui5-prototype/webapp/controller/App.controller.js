@@ -119,6 +119,11 @@ sap.ui.define([
 			this.getOwnerComponent().getRouter().navTo("page", { key: "awaitingApproval" });
 		},
 
+		/* Notifications open Feeds: the awareness stream (README §2.7). */
+		onNotifications: function () {
+			this.getOwnerComponent().getRouter().navTo("page", { key: "feeds" });
+		},
+
 		onSwitchLanguage: function () {
 			var sNext = sap.ui.getCore().getConfiguration().getLanguage().indexOf("ar") === 0 ? "en" : "ar";
 			try { localStorage.setItem("repoio-lang", sNext); } catch (e) { /* storage blocked */ }

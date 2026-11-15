@@ -933,9 +933,9 @@ sap.ui.define([
 			var samples = this._W.samples.filter(function (s) { return s.template === key; });
 			if (!key || !samples.length) { MessageToast.show(T("fd.test.noSamples")); return; }
 			var approvals = this._flow.ordered().filter(function (n) { return n.type === "approval"; });
-			var oSample = new Select({ width: "100%", items: samples.map(function (s) { return new Item({ key: s.key, text: s.id + " · " + (that.lang() === "ar" ? s.ar : s.en) }); }) });
+			var oSample = new Select({ width: "100%", selectedKey: samples[0].key, items: samples.map(function (s) { return new Item({ key: s.key, text: s.id + " · " + (that.lang() === "ar" ? s.ar : s.en) }); }) });
 			var oReq = new Select({ width: "100%", items: People.names().map(function (n) { return new Item({ key: n, text: that._personText(n) }); }) });
-			var syncReq = function () { var s = samples.filter(function (x) { return x.key === oSample.getSelectedKey(); })[0]; oReq.setSelectedKey(s.requester); };
+			var syncReq = function () { var s = samples.filter(function (x) { return x.key === oSample.getSelectedKey(); })[0] || samples[0]; oReq.setSelectedKey(s.requester); };
 			oSample.attachChange(syncReq); syncReq();
 			var decisions = approvals.map(function (a) {
 				return { id: a.id, sel: new Select({ width: "100%", selectedKey: "approved", items: ["approved", "returned", "rejected"].map(function (k) { return new Item({ key: k, text: T("fd.test.dec." + k) }); }) }) };

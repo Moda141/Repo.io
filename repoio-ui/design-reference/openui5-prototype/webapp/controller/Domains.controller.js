@@ -189,7 +189,7 @@ sap.ui.define([
 		onRcTab: function (oEvent) { this.store("repoio-rc-tab", oEvent.getParameter("key")); this._rcFill(); },
 		_copy: function (s) {
 			var that = this;
-			try { navigator.clipboard.writeText(s).then(function () { MessageToast.show(that.text("api.t.copied")); }); } catch (e) { MessageToast.show(this.text("api.t.copyFail")); }
+			try { navigator.clipboard.writeText(s).then(function () { MessageToast.show(that.text("api.t.copied")); }, function () { MessageToast.show(that.text("api.t.copyFail")); }); } catch (e) { MessageToast.show(this.text("api.t.copyFail")); }
 		},
 		onRcCopy: function (oEvent) { this._copy(oEvent.getSource().getBindingContext("view").getProperty("value")); },
 		onRcCopyCode: function () { this._copy(this.viewModel().getProperty("/rc/code")); },

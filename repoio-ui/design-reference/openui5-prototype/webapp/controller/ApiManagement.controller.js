@@ -381,7 +381,7 @@ sap.ui.define([
 		},
 		onCopyToken: function () {
 			var v = this.viewModel().getProperty("/api/shown/value"), that = this;
-			try { navigator.clipboard.writeText(v).then(function () { MessageToast.show(that.text("api.t.copied")); }); } catch (e) { MessageToast.show(this.text("api.t.copyFail")); }
+			try { navigator.clipboard.writeText(v).then(function () { MessageToast.show(that.text("api.t.copied")); }, function () { MessageToast.show(that.text("api.t.copyFail")); }); } catch (e) { MessageToast.show(this.text("api.t.copyFail")); }
 		},
 		onShownClose: function () {
 			this.viewModel().setProperty("/api/shown", { value: "", meta: "" }); // the value is gone for good

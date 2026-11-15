@@ -62,7 +62,7 @@ sap.ui.define([
 		},
 		onCopyLink: function () {
 			var that = this, link = window.location.href.split("#")[0] + "#/integration/api/reference/" + this.viewModel().getProperty("/ref/sel/id");
-			try { navigator.clipboard.writeText(link).then(function () { MessageToast.show(that.text("api.t.copied")); }); } catch (e) { MessageToast.show(link); }
+			try { navigator.clipboard.writeText(link).then(function () { MessageToast.show(that.text("api.t.copied")); }, function () { MessageToast.show(that.text("api.t.copyFail")); }); } catch (e) { MessageToast.show(link); }
 		}
 	});
 });

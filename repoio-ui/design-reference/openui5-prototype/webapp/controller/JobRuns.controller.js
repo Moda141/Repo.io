@@ -229,7 +229,7 @@ sap.ui.define([
 				new MenuItem({ text: oFix ? this.text("jr.fix.menu", [oFix.text]) : "", icon: "sap-icon://wrench", visible: !!oFix, press: function () { R.runFix(that, oRun.error, oJob, oRun, that.lang()); } }),
 				new MenuItem({ text: this.text("jr.a.stop"), icon: "sap-icon://stop", visible: o.active, press: function () { MessageToast.show(that.text("jr.t.stopped", [o.id])); } }),
 				new MenuItem({ text: this.text("jr.a.copyId"), icon: "sap-icon://copy", press: function () {
-					try { navigator.clipboard.writeText(o.id); } catch (e) { /* clipboard blocked */ }
+					try { navigator.clipboard.writeText(o.id).catch(function () { /* clipboard blocked */ }); } catch (e) { /* clipboard blocked */ }
 					MessageToast.show(that.text("jr.t.copied", [o.id]));
 				} })
 			], closed: function () { oMenu.destroy(); } });
