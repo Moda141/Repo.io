@@ -284,6 +284,11 @@ and API contracts preserved — demonstrated via the parity checklist.
       direct ∪ team ∪ department, verified with a direct API call after a
       team move; sensitive roles (Admin, API access administration,
       template authoring) rejected on org units by the API.
+- [ ] Custom roles (Admin only): permissions only from the server's
+      catalog; sensitivity derived from permissions; a change that makes
+      a role sensitive is rejected while it sits on an org unit; delivered
+      roles read-only; delete only when unheld — each verified by a
+      direct API call.
 - [ ] Every user, org-unit and role assignment change is audited.
 
 **Exit gate:** "AI agents can read/write golden records with per-user

@@ -706,7 +706,14 @@ steps: employees → business users → identity → business roles.
    domain grants and counts. A role opens on General, **Domain grants**,
    **Assigned users** (*Add* one or more users) and **Assigned org
    units**.
-7. Every change is audited (who, what, when, before / after). Effective
+7. **Create a role.** *Create role* starts blank or as a copy of
+   another role: name (English and Arabic), technical ID, description,
+   domain grants and permissions ticked from the server's permission
+   catalog. Picking a sensitive permission (lock icon) shows that the
+   role will be user-only. Delivered roles are read-only — *Copy* makes
+   an editable custom role; a custom role is deleted only when nobody
+   holds it.
+8. Every change is audited (who, what, when, before / after). Effective
    roles take effect on the user's next token; nothing in the UI is
    authorization — the API filters every page by the same grants.
 

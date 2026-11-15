@@ -163,9 +163,13 @@
        roles**, inherited by everyone below. [J17, M5]
      - **(+) Roles & access** — roles, domain grants, delegation; the
        server-side source of every page's visibility. Like SAP IBP's
-       Maintain Business Roles: a role opens on General, Domain grants,
-       **Assigned users** (*Add*) and **Assigned org units** (departments
-       and teams; sensitive roles are user-only). [J17, M5]
+       Maintain Business Roles: *Create role* (blank or a copy: name,
+       technical ID, domains, permissions from the server's catalog); a
+       role opens on General, **Permissions**, Domain grants, **Assigned
+       users** (*Add*) and **Assigned org units** (departments and teams;
+       sensitive roles are user-only). Delivered roles are read-only;
+       custom roles are edited or deleted (when nobody holds them).
+       [J17, M5]
      - **System configuration** — platform-wide settings: auth / SSO,
        preferences, custom properties.
      - **(+) Announcements** — authoring side of the read views on

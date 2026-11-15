@@ -53,6 +53,18 @@ User, and access should follow it without granting more than needed.
    Assigned org units tabs) — the same control-plane record either way.
    Every change is audited.
 
+7. **Custom roles.** An Admin creates roles — blank or as a copy of
+   another role — with a name, a technical ID, domain grants and
+   permissions picked from a **fixed permission catalog defined by the
+   server** (no free-text permissions). Delivered roles are read-only;
+   copy one to change it. A role is **sensitive when any of its
+   permissions is sensitive** (administer users and roles, system
+   configuration, connections, API access, template authoring): the
+   Admin never sets the flag by hand, and a permission change that would
+   make a role sensitive is rejected while the role is assigned to a
+   department or team. A custom role can be deleted only when nobody
+   holds it.
+
 ## Consequences
 
 - Moving a person between teams in the source changes their inherited
