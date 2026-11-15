@@ -195,6 +195,9 @@
        (language, time zone, date / number formats, week start, reporting
        currency); **Custom properties** on catalog objects — domains,
        repositories, sources, tables — never golden-record attributes;
+       a *Person* property references the users list (all active users
+       or holders of chosen roles, one or several people), never free
+       text;
        **Data retention** (audit log, feed, job runs, broadcast exports).
        [J18, M5]
      - **(+) Announcements** — authoring side of the read views on

@@ -759,7 +759,11 @@ log). **Pages:** Administration → System configuration, Audit log.
 4. **Custom properties** add fields to catalog objects (domains,
    repositories, sources, tables) with a technical name, labels in both
    languages, a type and whether they are required. Golden-record
-   attributes stay in `repoio-spec`.
+   attributes stay in `repoio-spec`. A *Person* property is a reference
+   to the users list — all active users, or only holders of chosen roles,
+   with an option for more than one person; the dialog shows how many
+   users are eligible now. Locked and leaver accounts are never offered,
+   and the server re-checks the chosen person on save.
 5. **Data retention** sets how long the audit log, feed, job runs and
    broadcast exports are kept; audit entries are never edited or deleted
    before then.
