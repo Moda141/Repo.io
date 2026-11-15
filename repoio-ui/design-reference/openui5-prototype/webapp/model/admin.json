@@ -5,7 +5,7 @@
 		"auth": {
 			"provider": "Microsoft Entra ID (OIDC)",
 			"tenant": "${ENTRA_TENANT_ID}",
-			"clientId": "${ENTRA_CLIENT_ID_CONSOLE}",
+			"clientId": "${ENTRA_CLIENT_ID}",
 			"redirect": "${REPOIO_CONSOLE_URL}/auth/callback",
 			"secretRef": "secret/repoio/entra-console",
 			"mfaNote": "Enforced by Entra ID Conditional Access",

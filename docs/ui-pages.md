@@ -178,7 +178,11 @@
        role also has a **History** tab. [J17, M5]
      - **System configuration** — Admin-only (`system configuration`):
        sections on the left, one working copy, *Save* / *Discard* in the
-       footer, each saved section audited with before / after.
+       footer, each saved section audited with before / after. Identity,
+       hosts and secrets are deployment values (environment variables in
+       `repoio-service` config, Helm values on AKS, Key Vault references)
+       shown read-only with the variable that sets them; behaviour
+       settings are edited here.
        **Authentication** (Entra ID tenant, client ID and redirect URI as
        deployment placeholders, secret-store reference, MFA by Conditional
        Access, session lifetime, idle sign-out, allowed email domains);

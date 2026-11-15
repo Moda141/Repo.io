@@ -747,10 +747,14 @@ log). **Pages:** Administration → System configuration, Audit log.
    with *Save* and *Discard*.
 2. **Authentication** shows the Entra ID tenant, client ID and redirect
    URI as deployment values and the client secret as a secret-store
-   reference; MFA comes from Conditional Access. The Admin sets the
+   reference; MFA comes from Conditional Access. Each deployment value
+   names the variable that sets it (`ENTRA_TENANT_ID`,
+   `ENTRA_CLIENT_ID`, `REPOIO_CONSOLE_URL`, `ENTRA_CLIENT_SECRET_REF`);
+   changing one is a deployment change with IT, not a console edit. The Admin sets the
    session lifetime, the idle sign-out and the allowed email domains.
 3. **Email** shows the corporate SMTP relay (host and port are
-   deployment values) and the sender; *Send test email* records the
+   deployment values: `SMTP_RELAY_HOST`, `SMTP_RELAY_PORT`,
+   `SMTP_RELAY_SECRET_REF`) and the sender; *Send test email* records the
    result. Attachments over 10 MB go as a link (ADR-0003).
 4. **Custom properties** add fields to catalog objects (domains,
    repositories, sources, tables) with a technical name, labels in both

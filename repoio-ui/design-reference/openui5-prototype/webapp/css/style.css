@@ -1044,3 +1044,4 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioAnPreview { max-width: 46rem; }
 .repoioAuBefore { color: #bb0000; text-decoration: line-through; text-decoration-color: rgba(187, 0, 0, 0.4); }
 .repoioAuAfter { color: #107e3e; }
+.repoioScVar { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); margin-top: 0.125rem; }

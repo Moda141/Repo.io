@@ -28,11 +28,11 @@
 						<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" labelSpanS="12" columnsL="1" columnsM="1" class="repoioScForm">
 							<core:Title text="{i18n>sc.auth.provider}"/>
 							<Label text="{i18n>sc.auth.provider}"/><Text text="{view>/sc/w/auth/provider}"/>
-							<Label text="{i18n>sc.auth.tenant}"/><Text text="{view>/sc/w/auth/tenant}" class="repoioMono" textDirection="LTR"/>
-							<Label text="{i18n>sc.auth.client}"/><Text text="{view>/sc/w/auth/clientId}" class="repoioMono" textDirection="LTR"/>
-							<Label text="{i18n>sc.auth.redirect}"/><Text text="{view>/sc/w/auth/redirect}" class="repoioMono" textDirection="LTR"/>
+							<Label text="{i18n>sc.auth.tenant}"/><VBox renderType="Bare"><Text text="{view>/sc/w/auth/tenant}" class="repoioMono" textDirection="LTR"/><Text text="{= ${i18n>sc.deployVar} + ' ENTRA_TENANT_ID' }" class="repoioScVar"/></VBox>
+							<Label text="{i18n>sc.auth.client}"/><VBox renderType="Bare"><Text text="{view>/sc/w/auth/clientId}" class="repoioMono" textDirection="LTR"/><Text text="{= ${i18n>sc.deployVar} + ' ENTRA_CLIENT_ID' }" class="repoioScVar"/></VBox>
+							<Label text="{i18n>sc.auth.redirect}"/><VBox renderType="Bare"><Text text="{view>/sc/w/auth/redirect}" class="repoioMono" textDirection="LTR"/><Text text="{i18n>sc.auth.redirectVar}" class="repoioScVar"/></VBox>
 							<Label text="{i18n>sc.secret}"/>
-							<HBox alignItems="Center"><core:Icon src="sap-icon://locked" class="sapUiTinyMarginEnd"/><Text text="{view>/sc/w/auth/secretRef}" class="repoioMono" textDirection="LTR"/></HBox>
+							<VBox renderType="Bare"><HBox alignItems="Center"><core:Icon src="sap-icon://locked" class="sapUiTinyMarginEnd"/><Text text="{view>/sc/w/auth/secretRef}" class="repoioMono" textDirection="LTR"/></HBox><Text text="{= ${i18n>sc.deployVar} + ' ENTRA_CLIENT_SECRET_REF' }" class="repoioScVar"/></VBox>
 							<Label text="{i18n>sc.auth.mfa}"/><Text text="{i18n>sc.auth.mfaNote}"/>
 							<core:Title text="{i18n>sc.auth.sessions}"/>
 							<Label text="{i18n>sc.auth.session}"/>
@@ -55,15 +55,15 @@
 						<ObjectStatus text="{view>/sc/mailTest}" state="{view>/sc/mailTestState}" icon="{view>/sc/mailTestIcon}" class="sapUiTinyMarginBottom"/>
 						<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" labelSpanS="12" columnsL="1" columnsM="1" class="repoioScForm">
 							<core:Title text="{i18n>sc.mail.relay}"/>
-							<Label text="{i18n>sc.mail.host}"/><Text text="{view>/sc/w/mail/host}" class="repoioMono" textDirection="LTR"/>
-							<Label text="{i18n>sc.mail.port}"/><Text text="{view>/sc/w/mail/port}" class="repoioMono" textDirection="LTR"/>
+							<Label text="{i18n>sc.mail.host}"/><VBox renderType="Bare"><Text text="{view>/sc/w/mail/host}" class="repoioMono" textDirection="LTR"/><Text text="{= ${i18n>sc.deployVar} + ' SMTP_RELAY_HOST' }" class="repoioScVar"/></VBox>
+							<Label text="{i18n>sc.mail.port}"/><VBox renderType="Bare"><Text text="{view>/sc/w/mail/port}" class="repoioMono" textDirection="LTR"/><Text text="{= ${i18n>sc.deployVar} + ' SMTP_RELAY_PORT' }" class="repoioScVar"/></VBox>
 							<Label text="{i18n>sc.mail.tls}"/>
 							<Select selectedKey="{view>/sc/w/mail/tls}" width="12rem">
 								<core:Item key="starttls" text="STARTTLS"/>
 								<core:Item key="tls" text="TLS"/>
 							</Select>
 							<Label text="{i18n>sc.secret}"/>
-							<HBox alignItems="Center"><core:Icon src="sap-icon://locked" class="sapUiTinyMarginEnd"/><Text text="{view>/sc/w/mail/secretRef}" class="repoioMono" textDirection="LTR"/></HBox>
+							<VBox renderType="Bare"><HBox alignItems="Center"><core:Icon src="sap-icon://locked" class="sapUiTinyMarginEnd"/><Text text="{view>/sc/w/mail/secretRef}" class="repoioMono" textDirection="LTR"/></HBox><Text text="{= ${i18n>sc.deployVar} + ' SMTP_RELAY_SECRET_REF' }" class="repoioScVar"/></VBox>
 							<core:Title text="{i18n>sc.mail.sender}"/>
 							<Label text="{i18n>sc.mail.from}" required="true"/>
 							<Input value="{view>/sc/w/mail/from}" type="Email" textDirection="LTR" valueState="{view>/sc/vs/from}"/>
