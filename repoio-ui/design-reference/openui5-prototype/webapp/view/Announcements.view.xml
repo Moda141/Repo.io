@@ -1,0 +1,67 @@
+<mvc:View controllerName="repoio.proto.controller.Announcements"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- J13 / README §2.7: the authoring side of Feeds and the Home strip. Draft → audience → publish window → publish; pinned; retire.
+	     Awareness, never authority: nothing here writes master data, requests or workflows. Publishing needs `publish announcements`. -->
+	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="false" class="repoioEdge repoioAnPage">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading><Title text="{i18n>nav.announcements}" level="H1"/></f:heading>
+				<f:expandedContent><Text text="{i18n>an.subtitle}"/></f:expandedContent>
+				<f:actions>
+					<ObjectStatus text="{i18n>an.permTag}" icon="sap-icon://locked" state="Information" class="repoioApiAdminTag"/>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:content>
+			<VBox renderType="Bare">
+				<MessageStrip text="{view>/an/liveText}" type="Information" showIcon="true" class="repoioApiStrip" visible="{= !!${view>/an/liveText} }"/>
+				<Table items="{view>/an/rows}" class="repoioDenseTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" noDataText="{i18n>an.none}">
+					<headerToolbar>
+						<OverflowToolbar>
+							<Title text="{view>/an/title}" level="H2"/>
+							<ToolbarSpacer/>
+							<Button text="{i18n>an.create}" icon="sap-icon://add" type="Emphasized" press=".onCreate"/>
+							<ToolbarSeparator/>
+							<SearchField width="13rem" value="{view>/an/q}" liveChange=".onFilter" placeholder="{i18n>common.search}"/>
+							<SegmentedButton selectedKey="{view>/an/st}" selectionChange=".onFilter">
+								<items>
+									<SegmentedButtonItem key="all" text="{i18n>an.st.all}"/>
+									<SegmentedButtonItem key="live" text="{i18n>an.st.live}"/>
+									<SegmentedButtonItem key="scheduled" text="{i18n>an.st.scheduled}"/>
+									<SegmentedButtonItem key="draft" text="{i18n>an.st.draft}"/>
+									<SegmentedButtonItem key="ended" text="{i18n>an.st.ended}"/>
+								</items>
+							</SegmentedButton>
+						</OverflowToolbar>
+					</headerToolbar>
+					<columns>
+						<Column><Text text="{i18n>an.col.title}"/></Column>
+						<Column width="12rem" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>an.col.audience}"/></Column>
+						<Column width="15rem" minScreenWidth="1360px"><Text text="{i18n>an.col.window}"/></Column>
+						<Column width="8.5rem"><Text text="{i18n>um.col.status}"/></Column>
+						<Column width="4.5rem" hAlign="Center"><Text text="{i18n>an.col.pinned}"/></Column>
+						<Column width="5rem" hAlign="Center"><Text text="{i18n>an.col.author}"/></Column>
+						<Column width="8rem" minScreenWidth="1500px"><Text text="{i18n>an.col.updated}"/></Column>
+					</columns>
+					<items>
+						<ColumnListItem type="Navigation" press=".onOpen">
+							<HBox alignItems="Center" renderType="Bare" class="repoioUmWho">
+								<core:Icon src="{view>icon}" color="{view>iconColor}" class="repoioExRowIcon"/>
+								<VBox renderType="Bare" class="repoioUmName">
+									<Link text="{view>titleText}" press=".onOpen" wrapping="false"/>
+									<Text text="{view>bodyText}" wrapping="false" class="repoioUmMuted"/>
+								</VBox>
+							</HBox>
+							<Text text="{view>audienceText}" wrapping="false" tooltip="{view>audienceText}"/>
+							<Text text="{view>windowText}" textDirection="LTR"/>
+							<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+							<core:Icon src="{= ${view>pinned} ? 'sap-icon://pushpin-on' : '' }" tooltip="{i18n>an.col.pinned}"/>
+							<rc:PersonLink name="{view>author}"/>
+							<Text text="{view>updatedText}"/>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</VBox>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

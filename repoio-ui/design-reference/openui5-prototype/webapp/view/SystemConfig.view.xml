@@ -1,0 +1,193 @@
+<mvc:View controllerName="repoio.proto.controller.SystemConfig"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
+	<!-- System configuration: platform-wide settings (Admin only, `system configuration` permission).
+	     Hosts and secrets are deployment values shown as placeholders; credentials live in the secret store and appear here only
+	     as references. Every saved change is audited with before / after. -->
+	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="false" showFooter="{view>/sc/dirty}" class="repoioEdge repoioScPage">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading><Title text="{i18n>nav.systemConfiguration}" level="H1"/></f:heading>
+				<f:expandedContent><Text text="{i18n>sc.subtitle}"/></f:expandedContent>
+				<f:actions>
+					<ObjectStatus text="{i18n>api.adminOnly}" icon="sap-icon://locked" state="Information" class="repoioApiAdminTag"/>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:content>
+			<HBox renderType="Bare" class="repoioUmBody">
+				<VBox renderType="Bare" class="repoioUmTree repoioScNav">
+					<List id="scNav" items="{view>/sc/sections}" mode="SingleSelectMaster" selectionChange=".onSection" showSeparators="None" class="repoioFacetList">
+						<StandardListItem title="{view>text}" icon="{view>icon}" selected="{view>selected}" info="{view>info}" infoState="Warning"/>
+					</List>
+				</VBox>
+				<VBox renderType="Bare" class="repoioUmMain repoioScMain">
+					<!-- Authentication -->
+					<VBox visible="{= ${view>/sc/sec} === 'auth' }" renderType="Bare" class="repoioScSec">
+						<Title text="{i18n>sc.sec.auth}" level="H2"/>
+						<Text text="{i18n>sc.auth.intro}" class="repoioUmMuted sapUiTinyMarginBottom"/>
+						<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" labelSpanS="12" columnsL="1" columnsM="1" class="repoioScForm">
+							<core:Title text="{i18n>sc.auth.provider}"/>
+							<Label text="{i18n>sc.auth.provider}"/><Text text="{view>/sc/w/auth/provider}"/>
+							<Label text="{i18n>sc.auth.tenant}"/><Text text="{view>/sc/w/auth/tenant}" class="repoioMono" textDirection="LTR"/>
+							<Label text="{i18n>sc.auth.client}"/><Text text="{view>/sc/w/auth/clientId}" class="repoioMono" textDirection="LTR"/>
+							<Label text="{i18n>sc.auth.redirect}"/><Text text="{view>/sc/w/auth/redirect}" class="repoioMono" textDirection="LTR"/>
+							<Label text="{i18n>sc.secret}"/>
+							<HBox alignItems="Center"><core:Icon src="sap-icon://locked" class="sapUiTinyMarginEnd"/><Text text="{view>/sc/w/auth/secretRef}" class="repoioMono" textDirection="LTR"/></HBox>
+							<Label text="{i18n>sc.auth.mfa}"/><Text text="{i18n>sc.auth.mfaNote}"/>
+							<core:Title text="{i18n>sc.auth.sessions}"/>
+							<Label text="{i18n>sc.auth.session}"/>
+							<StepInput value="{view>/sc/w/auth/sessionHours}" min="1" max="24" width="9rem"/>
+							<Label text="{i18n>sc.auth.idle}"/>
+							<StepInput value="{view>/sc/w/auth/idleMinutes}" min="5" max="240" step="5" width="9rem"/>
+							<Label text="{i18n>sc.auth.domains}"/>
+							<Input value="{view>/sc/w/auth/allowedDomains}" textDirection="LTR" placeholder="example.com, partner.example" description="{i18n>sc.auth.domainsHint}"/>
+						</form:SimpleForm>
+						<MessageStrip text="{i18n>sc.auth.note}" type="Information" showIcon="true" class="repoioScStrip"/>
+					</VBox>
+
+					<!-- Email (SMTP relay, ADR-0003) -->
+					<VBox visible="{= ${view>/sc/sec} === 'mail' }" renderType="Bare" class="repoioScSec">
+						<HBox alignItems="Center" justifyContent="SpaceBetween" renderType="Bare">
+							<Title text="{i18n>sc.sec.mail}" level="H2"/>
+							<Button text="{i18n>sc.mail.test}" icon="sap-icon://email" press=".onTestMail"/>
+						</HBox>
+						<Text text="{i18n>sc.mail.intro}" class="repoioUmMuted sapUiTinyMarginBottom"/>
+						<ObjectStatus text="{view>/sc/mailTest}" state="{view>/sc/mailTestState}" icon="{view>/sc/mailTestIcon}" class="sapUiTinyMarginBottom"/>
+						<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" labelSpanS="12" columnsL="1" columnsM="1" class="repoioScForm">
+							<core:Title text="{i18n>sc.mail.relay}"/>
+							<Label text="{i18n>sc.mail.host}"/><Text text="{view>/sc/w/mail/host}" class="repoioMono" textDirection="LTR"/>
+							<Label text="{i18n>sc.mail.port}"/><Text text="{view>/sc/w/mail/port}" class="repoioMono" textDirection="LTR"/>
+							<Label text="{i18n>sc.mail.tls}"/>
+							<Select selectedKey="{view>/sc/w/mail/tls}" width="12rem">
+								<core:Item key="starttls" text="STARTTLS"/>
+								<core:Item key="tls" text="TLS"/>
+							</Select>
+							<Label text="{i18n>sc.secret}"/>
+							<HBox alignItems="Center"><core:Icon src="sap-icon://locked" class="sapUiTinyMarginEnd"/><Text text="{view>/sc/w/mail/secretRef}" class="repoioMono" textDirection="LTR"/></HBox>
+							<core:Title text="{i18n>sc.mail.sender}"/>
+							<Label text="{i18n>sc.mail.from}" required="true"/>
+							<Input value="{view>/sc/w/mail/from}" type="Email" textDirection="LTR" valueState="{view>/sc/vs/from}"/>
+							<Label text="{i18n>sc.mail.fromName}"/>
+							<Input value="{view>/sc/w/mail/fromName}"/>
+							<Label text="{i18n>sc.mail.replyTo}"/>
+							<Input value="{view>/sc/w/mail/replyTo}" type="Email" textDirection="LTR" valueState="{view>/sc/vs/replyTo}"/>
+							<Label text="{i18n>sc.mail.attach}"/>
+							<Text text="{i18n>sc.mail.attachText}"/>
+						</form:SimpleForm>
+					</VBox>
+
+					<!-- Regional defaults -->
+					<VBox visible="{= ${view>/sc/sec} === 'regional' }" renderType="Bare" class="repoioScSec">
+						<Title text="{i18n>sc.sec.regional}" level="H2"/>
+						<Text text="{i18n>sc.reg.intro}" class="repoioUmMuted sapUiTinyMarginBottom"/>
+						<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" labelSpanS="12" columnsL="1" columnsM="1" class="repoioScForm">
+							<Label text="{i18n>sc.reg.language}"/>
+							<Select selectedKey="{view>/sc/w/regional/language}" width="14rem">
+								<core:Item key="ar" text="العربية (RTL)"/>
+								<core:Item key="en" text="English (LTR)"/>
+							</Select>
+							<Label text="{i18n>sc.reg.timezone}"/>
+							<Select selectedKey="{view>/sc/w/regional/timezone}" width="14rem">
+								<core:Item key="Africa/Cairo" text="Africa/Cairo"/>
+								<core:Item key="Asia/Riyadh" text="Asia/Riyadh"/>
+								<core:Item key="Asia/Dubai" text="Asia/Dubai"/>
+								<core:Item key="UTC" text="UTC"/>
+							</Select>
+							<Label text="{i18n>sc.reg.date}"/>
+							<Select selectedKey="{view>/sc/w/regional/dateFormat}" width="14rem">
+								<core:Item key="yyyy-MM-dd" text="2026-11-15"/>
+								<core:Item key="dd/MM/yyyy" text="15/11/2026"/>
+								<core:Item key="dd MMM yyyy" text="15 Nov 2026"/>
+							</Select>
+							<Label text="{i18n>sc.reg.number}"/>
+							<Select selectedKey="{view>/sc/w/regional/numberFormat}" width="14rem">
+								<core:Item key="1,234.56" text="1,234.56"/>
+								<core:Item key="1.234,56" text="1.234,56"/>
+								<core:Item key="١٬٢٣٤٫٥٦" text="١٬٢٣٤٫٥٦"/>
+							</Select>
+							<Label text="{i18n>sc.reg.week}"/>
+							<Select selectedKey="{view>/sc/w/regional/weekStart}" width="14rem">
+								<core:Item key="sat" text="{i18n>sc.day.sat}"/>
+								<core:Item key="sun" text="{i18n>sc.day.sun}"/>
+								<core:Item key="mon" text="{i18n>sc.day.mon}"/>
+							</Select>
+							<Label text="{i18n>sc.reg.currency}"/>
+							<Select selectedKey="{view>/sc/w/regional/currency}" width="14rem">
+								<core:Item key="EGP" text="EGP"/>
+								<core:Item key="USD" text="USD"/>
+								<core:Item key="SAR" text="SAR"/>
+								<core:Item key="AED" text="AED"/>
+							</Select>
+						</form:SimpleForm>
+					</VBox>
+
+					<!-- Custom properties on catalog objects -->
+					<VBox visible="{= ${view>/sc/sec} === 'props' }" renderType="Bare" class="repoioScSec repoioScSecWide">
+						<Title text="{i18n>sc.sec.props}" level="H2"/>
+						<Text text="{i18n>sc.props.intro}" class="repoioUmMuted sapUiTinyMarginBottom"/>
+						<Table items="{view>/sc/w/customProps}" class="repoioDenseTable" noDataText="{i18n>sc.props.none}">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="{view>/sc/propsTitle}" level="H3"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>sc.props.add}" icon="sap-icon://add" type="Emphasized" press=".onAddProp"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>sc.props.col.label}"/></Column>
+								<Column width="10rem"><Text text="{i18n>sc.props.col.name}"/></Column>
+								<Column width="7rem"><Text text="{i18n>sc.props.col.type}"/></Column>
+								<Column width="9rem"><Text text="{i18n>sc.props.col.applies}"/></Column>
+								<Column width="6rem" hAlign="Center"><Text text="{i18n>sc.props.col.required}"/></Column>
+								<Column minScreenWidth="1360px"><Text text="{i18n>sc.props.col.values}"/></Column>
+								<Column width="5.5rem" hAlign="End"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<VBox renderType="Bare">
+										<Text text="{= ${view>/lang} === 'ar' ? ${view>ar} : ${view>en} }"/>
+										<Text text="{= ${view>/lang} === 'ar' ? ${view>desc_ar} : ${view>desc_en} }" class="repoioUmMuted" wrapping="false"/>
+									</VBox>
+									<Text text="{view>name}" class="repoioMono"/>
+									<Text text="{path: 'view>type', formatter: '.typeText'}"/>
+									<Text text="{path: 'view>appliesTo', formatter: '.appliesText'}"/>
+									<core:Icon src="{= ${view>required} ? 'sap-icon://accept' : '' }"/>
+									<Text text="{view>values}" wrapping="false"/>
+									<HBox justifyContent="End">
+										<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>common.edit}" press=".onEditProp"/>
+										<Button icon="sap-icon://delete" type="Transparent" tooltip="{i18n>common.delete}" press=".onDeleteProp"/>
+									</HBox>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</VBox>
+
+					<!-- Data retention -->
+					<VBox visible="{= ${view>/sc/sec} === 'retention' }" renderType="Bare" class="repoioScSec">
+						<Title text="{i18n>sc.sec.retention}" level="H2"/>
+						<Text text="{i18n>sc.ret.intro}" class="repoioUmMuted sapUiTinyMarginBottom"/>
+						<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" labelSpanS="12" columnsL="1" columnsM="1" class="repoioScForm">
+							<Label text="{i18n>sc.ret.audit}"/>
+							<StepInput value="{view>/sc/w/retention/auditYears}" min="1" max="15" width="9rem"/>
+							<Label text="{i18n>sc.ret.feed}"/>
+							<StepInput value="{view>/sc/w/retention/feedDays}" min="7" max="365" step="7" width="9rem"/>
+							<Label text="{i18n>sc.ret.runs}"/>
+							<StepInput value="{view>/sc/w/retention/runDays}" min="30" max="730" step="30" width="9rem"/>
+							<Label text="{i18n>sc.ret.exports}"/>
+							<StepInput value="{view>/sc/w/retention/exportDays}" min="1" max="90" width="9rem"/>
+						</form:SimpleForm>
+						<MessageStrip text="{i18n>sc.ret.note}" type="Information" showIcon="true" class="repoioScStrip"/>
+					</VBox>
+				</VBox>
+			</HBox>
+		</f:content>
+		<f:footer>
+			<OverflowToolbar>
+				<ObjectStatus text="{view>/sc/dirtyText}" state="Warning" icon="sap-icon://edit"/>
+				<ToolbarSpacer/>
+				<Button text="{i18n>common.save}" type="Emphasized" press=".onSave"/>
+				<Button text="{i18n>sc.discard}" press=".onDiscard"/>
+			</OverflowToolbar>
+		</f:footer>
+	</f:DynamicPage>
+</mvc:View>

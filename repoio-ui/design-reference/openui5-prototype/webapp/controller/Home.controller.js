@@ -24,6 +24,18 @@ sap.ui.define([
 			var oHome = this.getOwnerComponent().getModel("home");
 			oHome.dataLoaded().then(this._onData.bind(this));
 			this._restoreLayout();
+			this.router().getRoute("home").attachPatternMatched(this._pinned, this);
+		},
+
+		/* The strip shows the live pinned announcement authored in Administration → Announcements (J13). In the product the
+		   announcements API returns only what the viewer's audience allows; with none live, the strip hides. */
+		_pinned: function () {
+			var oHome = this.getOwnerComponent().getModel("home"), oA = this.getOwnerComponent().getModel("admin");
+			Promise.all([oHome.dataLoaded(), oA.dataLoaded()]).then(function () {
+				var d = oA.getData(), now = d.now.slice(0, 16);
+				var a = d.announcements.filter(function (x) { return x.status === "published" && x.pinned && (!x.from || x.from <= now) && (!x.until || x.until > now); })[0];
+				oHome.setProperty("/announcement", a ? { text_ar: a.ar + (a.body_ar ? " — " + a.body_ar : ""), text_en: a.en + (a.body_en ? " — " + a.body_en : "") } : null);
+			});
 		},
 
 		_onData: function () {

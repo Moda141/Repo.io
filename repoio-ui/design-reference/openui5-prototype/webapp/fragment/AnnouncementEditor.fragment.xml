@@ -1,0 +1,71 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form">
+	<!-- Announcement editor: content → audience → publish window → publish; preview shows the Feeds / Home strip. -->
+	<Dialog id="anDlg" title="{view>/an/e/dlgTitle}" contentWidth="54rem" contentHeight="36rem" class="repoioUmDlg">
+		<content>
+			<IconTabBar selectedKey="{view>/an/e/tab}" expandable="false" headerMode="Inline" applyContentPadding="false" class="repoioUmUserTabs">
+				<items>
+					<IconTabFilter key="edit" text="{i18n>an.tab.content}">
+						<VBox renderType="Bare" class="sapUiSmallMargin">
+							<MessageStrip text="{view>/an/e/lockText}" type="Information" showIcon="true" visible="{= !${view>/an/e/editable} }" class="sapUiSmallMarginBottom"/>
+							<f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="3" labelSpanM="3" labelSpanS="12" columnsL="1" columnsM="1">
+								<core:Title text="{i18n>an.sec.content}"/>
+								<Label text="{i18n>an.f.type}"/>
+								<SegmentedButton selectedKey="{view>/an/e/type}" enabled="{view>/an/e/editable}" selectionChange=".onPreview">
+									<items>
+										<SegmentedButtonItem key="info" text="{i18n>an.type.info}" icon="sap-icon://message-information"/>
+										<SegmentedButtonItem key="maintenance" text="{i18n>an.type.maintenance}" icon="sap-icon://wrench"/>
+										<SegmentedButtonItem key="release" text="{i18n>an.type.release}" icon="sap-icon://notification-2"/>
+									</items>
+								</SegmentedButton>
+								<Label text="{i18n>an.f.titleEn}" required="true"/>
+								<Input value="{view>/an/e/en}" maxLength="120" showValueStateMessage="false" valueState="{view>/an/e/vs/en}" textDirection="LTR" editable="{view>/an/e/editable}" liveChange=".onPreview"/>
+								<Label text="{i18n>an.f.titleAr}" required="true"/>
+								<Input value="{view>/an/e/ar}" maxLength="120" valueState="{view>/an/e/vs/ar}" textDirection="RTL" editable="{view>/an/e/editable}" liveChange=".onPreview"/>
+								<Label text="{i18n>an.f.bodyEn}"/>
+								<TextArea value="{view>/an/e/body_en}" rows="2" maxLength="400" showExceededText="true" width="100%" textDirection="LTR" editable="{view>/an/e/editable}" liveChange=".onPreview"/>
+								<Label text="{i18n>an.f.bodyAr}"/>
+								<TextArea value="{view>/an/e/body_ar}" rows="2" maxLength="400" showExceededText="true" width="100%" textDirection="RTL" editable="{view>/an/e/editable}" liveChange=".onPreview"/>
+								<core:Title text="{i18n>an.sec.audience}"/>
+								<Label text="{i18n>an.col.audience}"/>
+								<HBox alignItems="Center" renderType="Bare" class="repoioAnAud">
+									<Select selectedKey="{view>/an/e/aud}" change=".onAudKind" width="11rem" enabled="{view>/an/e/editable}">
+										<core:Item key="all" text="{i18n>an.aud.all}"/>
+										<core:Item key="role" text="{i18n>an.aud.role}"/>
+										<core:Item key="domain" text="{i18n>an.aud.domain}"/>
+									</Select>
+									<Select selectedKey="{view>/an/e/audValue}" items="{view>/an/e/audItems}" visible="{= ${view>/an/e/aud} !== 'all' }" width="16rem" enabled="{view>/an/e/editable}" change=".onPreview" valueState="{view>/an/e/vs/aud}">
+										<core:Item key="{view>key}" text="{view>text}"/>
+									</Select>
+								</HBox>
+								<Label text=""/>
+								<Text text="{view>/an/e/reachText}" class="repoioUmMuted"/>
+								<core:Title text="{i18n>an.sec.window}"/>
+								<Label text="{i18n>an.f.from}" required="true"/>
+								<DateTimePicker value="{view>/an/e/from}" valueFormat="yyyy-MM-dd'T'HH:mm" displayFormat="yyyy-MM-dd HH:mm" width="14rem" valueState="{view>/an/e/vs/from}" editable="{view>/an/e/editable}" change=".onPreview"/>
+								<Label text="{i18n>an.f.until}"/>
+								<DateTimePicker value="{view>/an/e/until}" valueFormat="yyyy-MM-dd'T'HH:mm" displayFormat="yyyy-MM-dd HH:mm" width="14rem" placeholder="{i18n>an.f.noEnd}" valueState="{view>/an/e/vs/until}" editable="{view>/an/e/editable}" change=".onPreview"/>
+								<Label text=""/>
+								<CheckBox text="{i18n>an.f.pinned}" selected="{view>/an/e/pinned}" enabled="{view>/an/e/editable}"/>
+							</f:SimpleForm>
+							<Title text="{i18n>an.preview}" level="H4" class="sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+							<MessageStrip text="{view>/an/e/previewText}" type="{view>/an/e/previewType}" showIcon="true" class="repoioAnPreview"/>
+						</VBox>
+					</IconTabFilter>
+					<IconTabFilter key="history" text="{i18n>um.ud.history}" visible="{= !${view>/an/e/isNew} }">
+						<List items="{view>/an/e/history}" noDataText="{i18n>um.ud.noHistory}" showSeparators="Inner" class="repoioUmHist">
+							<StandardListItem title="{view>text}" description="{view>meta}" icon="{view>icon}" wrapping="true"/>
+						</List>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</content>
+		<buttons>
+			<Button text="{view>/an/e/publishText}" type="Emphasized" press=".onPublish" visible="{view>/an/e/editable}"/>
+			<Button text="{i18n>an.saveDraft}" press=".onSaveDraft" visible="{= ${view>/an/e/editable} &amp;&amp; ${view>/an/e/status} === 'draft' }"/>
+			<Button text="{i18n>an.retire}" type="Reject" press=".onRetire" visible="{view>/an/e/canRetire}"/>
+			<Button text="{i18n>an.duplicate}" press=".onDuplicate" visible="{= !${view>/an/e/isNew} }"/>
+			<Button text="{i18n>common.delete}" press=".onDelete" visible="{= ${view>/an/e/status} === 'draft' &amp;&amp; !${view>/an/e/isNew} }"/>
+			<Button text="{i18n>common.close}" press=".onClose"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

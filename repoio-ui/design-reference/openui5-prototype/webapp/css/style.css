@@ -1032,3 +1032,15 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioUmRsKeep { border-color: #a9d5b5; background: #f5faf6; }
 .repoioUmRsArrow { font-size: 1.25rem; color: var(--sapContent_IconColor, #0854a0); }
 [dir="rtl"] .repoioUmRsArrow { transform: scaleX(-1); }
+
+/* ---------- System configuration, Announcements, Audit log ---------- */
+.repoioScNav { width: 14rem; padding-top: 0.5rem; }
+.repoioScMain { background: #fff; }
+.repoioScSec { padding: 1rem 1.25rem 2rem; max-width: 52rem; }
+.repoioScSecWide { max-width: none; }
+.repoioScForm .sapUiFormCLTitle, .repoioScForm .sapUiFormTitle { margin-top: 0.5rem; }
+.repoioScStrip { margin-top: 0.75rem; }
+.repoioAnAud { gap: 0.5rem; flex-wrap: wrap; }
+.repoioAnPreview { max-width: 46rem; }
+.repoioAuBefore { color: #bb0000; text-decoration: line-through; text-decoration-color: rgba(187, 0, 0, 0.4); }
+.repoioAuAfter { color: #107e3e; }

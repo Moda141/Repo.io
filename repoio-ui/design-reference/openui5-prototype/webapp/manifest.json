@@ -88,6 +88,10 @@
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/sync.json"
 			},
+			"admin": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/admin.json"
+			},
 			"users": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/users.json"
@@ -218,6 +222,21 @@
 					"target": "roles"
 				},
 				{
+					"name": "system",
+					"pattern": "admin/system/:section:",
+					"target": "system"
+				},
+				{
+					"name": "announcements",
+					"pattern": "admin/announcements/:id:",
+					"target": "announcements"
+				},
+				{
+					"name": "audit",
+					"pattern": "admin/audit:?query:",
+					"target": "audit"
+				},
+				{
 					"name": "page",
 					"pattern": "page/{key}",
 					"target": "placeholder"
@@ -303,6 +322,21 @@
 					"id": "dataSyncFlow",
 					"name": "DataSync",
 					"level": 3
+				},
+				"system": {
+					"id": "system",
+					"name": "SystemConfig",
+					"level": 2
+				},
+				"announcements": {
+					"id": "announcements",
+					"name": "Announcements",
+					"level": 2
+				},
+				"audit": {
+					"id": "audit",
+					"name": "AuditLog",
+					"level": 2
 				},
 				"users": {
 					"id": "users",

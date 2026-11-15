@@ -1,0 +1,111 @@
+<mvc:View controllerName="repoio.proto.controller.AuditLog"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:rc="repoio.proto.control">
+	<!-- Audit log (UX rule 4): the platform-wide, append-only trail — who, what, when, which version, before / after.
+	     Read-only for everyone; Admins (and auditors granted the view) see all areas, filtered server-side. The Feeds page is
+	     awareness; this is the forensic record. -->
+	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="false" class="repoioEdge repoioAuPage">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading><Title text="{i18n>nav.auditLog}" level="H1"/></f:heading>
+				<f:expandedContent><Text text="{i18n>au.subtitle}"/></f:expandedContent>
+				<f:actions>
+					<ObjectStatus text="{i18n>au.readOnly}" icon="sap-icon://locked" state="Information" class="repoioApiAdminTag"/>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:content>
+			<VBox renderType="Bare">
+				<MessageStrip text="{view>/au/retText}" type="Information" showIcon="true" class="repoioApiStrip"/>
+				<Table id="auTable" items="{view>/au/rows}" class="repoioDenseTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar"
+					growing="true" growingThreshold="25" growingScrollToLoad="true" noDataText="{i18n>au.none}">
+					<headerToolbar>
+						<OverflowToolbar>
+							<Title text="{view>/au/title}" level="H2"/>
+							<ToolbarSpacer/>
+							<SearchField width="13rem" value="{view>/au/q}" liveChange=".onFilter" placeholder="{i18n>au.searchPh}"/>
+							<DateRangeSelection dateValue="{view>/au/from}" secondDateValue="{view>/au/to}" change=".onFilter" width="15rem" displayFormat="yyyy-MM-dd" placeholder="{i18n>au.period}"/>
+							<Select selectedKey="{view>/au/area}" change=".onFilter" width="11rem" tooltip="{i18n>au.col.area}">
+								<core:Item key="all" text="{i18n>au.area.all}"/>
+								<core:Item key="users" text="{i18n>au.area.users}"/>
+								<core:Item key="data" text="{i18n>au.area.data}"/>
+								<core:Item key="workflow" text="{i18n>au.area.workflow}"/>
+								<core:Item key="integration" text="{i18n>au.area.integration}"/>
+								<core:Item key="system" text="{i18n>au.area.system}"/>
+								<core:Item key="auth" text="{i18n>au.area.auth}"/>
+							</Select>
+							<ComboBox selectedKey="{view>/au/actor}" items="{view>/au/actors}" change=".onFilter" width="11rem" placeholder="{i18n>au.col.actor}" showClearIcon="true">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</ComboBox>
+							<ToolbarSeparator/>
+							<Button icon="sap-icon://clear-filter" type="Transparent" tooltip="{i18n>au.clear}" press=".onClear"/>
+							<Button icon="sap-icon://excel-attachment" type="Transparent" tooltip="{i18n>au.export}" press=".onExport"/>
+						</OverflowToolbar>
+					</headerToolbar>
+					<columns>
+						<Column width="9.5rem"><Text text="{i18n>au.col.time}"/></Column>
+						<Column width="4.5rem" hAlign="Center"><Text text="{i18n>au.col.actor}"/></Column>
+						<Column width="9rem"><Text text="{i18n>au.col.area}"/></Column>
+						<Column width="8rem"><Text text="{i18n>au.col.action}"/></Column>
+						<Column><Text text="{i18n>au.col.what}"/></Column>
+						<Column minScreenWidth="1360px"><Text text="{i18n>au.col.object}"/></Column>
+						<Column width="5rem" hAlign="End" minScreenWidth="1500px"><Text text="{i18n>au.col.version}"/></Column>
+					</columns>
+					<items>
+						<ColumnListItem type="Navigation" press=".onOpen" highlight="{view>highlight}">
+							<Text text="{view>atText}" textDirection="LTR"/>
+							<HBox justifyContent="Center">
+								<rc:PersonLink name="{view>actor}" visible="{view>person}"/>
+								<core:Icon src="{view>actorIcon}" tooltip="{view>actorText}" visible="{= !${view>person} }"/>
+							</HBox>
+							<ObjectStatus text="{view>areaText}" icon="{view>areaIcon}"/>
+							<ObjectStatus text="{view>actionText}" state="{view>actionState}"/>
+							<Text text="{view>text}" wrapping="false" tooltip="{view>text}"/>
+							<Text text="{view>objectText}" wrapping="false" tooltip="{view>objectText}" class="repoioMono"/>
+							<Text text="{view>versionText}"/>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</VBox>
+		</f:content>
+		<f:dependents>
+			<Dialog id="auDlg" title="{view>/au/d/title}" contentWidth="40rem" class="repoioUmDlg">
+				<content>
+					<VBox renderType="Bare" class="sapUiSmallMargin">
+						<form:SimpleForm editable="false" layout="ResponsiveGridLayout" labelSpanL="3" labelSpanM="3" columnsL="1" columnsM="1">
+							<Label text="{i18n>au.col.time}"/><Text text="{view>/au/d/atText}" textDirection="LTR"/>
+							<Label text="{i18n>au.col.actor}"/>
+							<HBox alignItems="Center" renderType="Bare" class="repoioUmWho">
+								<rc:PersonLink name="{view>/au/d/actor}" visible="{view>/au/d/person}"/>
+								<Text text="{view>/au/d/actorText}"/>
+							</HBox>
+							<Label text="{i18n>au.col.area}"/><Text text="{view>/au/d/areaText}"/>
+							<Label text="{i18n>au.col.action}"/><Text text="{view>/au/d/actionText}"/>
+							<Label text="{i18n>au.col.type}"/><Text text="{view>/au/d/typeText}"/>
+							<Label text="{i18n>au.col.object}"/><Text text="{view>/au/d/objectText}" class="repoioMono"/>
+							<Label text="{i18n>au.col.version}"/><Text text="{view>/au/d/versionText}"/>
+							<Label text="{i18n>au.col.ip}" visible="{= !!${view>/au/d/ip} }"/><Text text="{view>/au/d/ip}" class="repoioMono" textDirection="LTR" visible="{= !!${view>/au/d/ip} }"/>
+							<Label text="{i18n>au.col.what}"/><Text text="{view>/au/d/text}"/>
+						</form:SimpleForm>
+						<Table items="{view>/au/d/diff}" class="repoioDenseTable sapUiSmallMarginTop" visible="{= ${view>/au/d/diff}.length > 0 }">
+							<headerToolbar><OverflowToolbar><Title text="{i18n>au.changes}" level="H4"/></OverflowToolbar></headerToolbar>
+							<columns>
+								<Column width="30%"><Text text="{i18n>au.field}"/></Column>
+								<Column><Text text="{i18n>au.before}"/></Column>
+								<Column><Text text="{i18n>au.after}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<Text text="{view>field}" class="repoioMono"/>
+									<Text text="{view>before}" class="repoioAuBefore"/>
+									<Text text="{view>after}" class="repoioAuAfter"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+						<Text text="{i18n>au.immutable}" class="repoioUmMuted sapUiSmallMarginTop"/>
+					</VBox>
+				</content>
+				<endButton><Button text="{i18n>common.close}" press=".onCloseDlg"/></endButton>
+			</Dialog>
+		</f:dependents>
+	</f:DynamicPage>
+</mvc:View>

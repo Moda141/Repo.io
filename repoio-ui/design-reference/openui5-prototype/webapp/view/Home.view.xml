@@ -25,7 +25,7 @@
 				</FlexBox>
 			</VBox>
 			<MessageStrip text="{= ${view>/lang} === 'ar' ? ${home>/announcement/text_ar} : ${home>/announcement/text_en} }"
-				type="Information" showIcon="true" customIcon="sap-icon://marketing-campaign" showCloseButton="true" class="repoioHeroStrip">
+				type="Information" showIcon="true" customIcon="sap-icon://marketing-campaign" showCloseButton="true" class="repoioHeroStrip" visible="{= !!${home>/announcement} }">
 				<link><Link text="{i18n>home.allAnnouncements}" press=".onNavKey" app:key="feeds" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/></link>
 			</MessageStrip>
 			<!-- J1: what needs me now. Each tile opens its list (counts are permission-filtered server-side). -->

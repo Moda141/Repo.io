@@ -1,0 +1,351 @@
+{
+	"_comment": "Illustrative sample data for the Administration prototype pages. Hosts and secrets are deployment placeholders.",
+	"now": "2026-11-15T09:40:00",
+	"system": {
+		"auth": {
+			"provider": "Microsoft Entra ID (OIDC)",
+			"tenant": "${ENTRA_TENANT_ID}",
+			"clientId": "${ENTRA_CLIENT_ID_CONSOLE}",
+			"redirect": "${REPOIO_CONSOLE_URL}/auth/callback",
+			"secretRef": "secret/repoio/entra-console",
+			"mfaNote": "Enforced by Entra ID Conditional Access",
+			"sessionHours": 8,
+			"idleMinutes": 30,
+			"allowedDomains": "example.com"
+		},
+		"mail": {
+			"host": "${SMTP_RELAY_HOST}",
+			"port": "${SMTP_RELAY_PORT}",
+			"tls": "starttls",
+			"from": "repoio-noreply@example.com",
+			"fromName": "Repo.io",
+			"replyTo": "data-management@example.com",
+			"secretRef": "secret/repoio/smtp-relay",
+			"maxAttachMb": 10,
+			"lastTest": "2026-11-12T10:02:00",
+			"lastTestOk": true
+		},
+		"regional": {
+			"language": "ar",
+			"timezone": "Africa/Cairo",
+			"dateFormat": "yyyy-MM-dd",
+			"numberFormat": "1,234.56",
+			"weekStart": "sat",
+			"currency": "EGP"
+		},
+		"retention": {
+			"auditYears": 7,
+			"feedDays": 90,
+			"runDays": 180,
+			"exportDays": 30
+		},
+		"customProps": [
+			{
+				"id": "cp1",
+				"name": "costCenter",
+				"en": "Cost center",
+				"ar": "مركز التكلفة",
+				"type": "string",
+				"appliesTo": "repository",
+				"required": false,
+				"values": "",
+				"desc_en": "Finance cost center that funds the repository.",
+				"desc_ar": "مركز التكلفة اللي بيموّل الـ repository."
+			},
+			{
+				"id": "cp2",
+				"name": "dataClassification",
+				"en": "Data classification",
+				"ar": "تصنيف البيانات",
+				"type": "enum",
+				"appliesTo": "source",
+				"required": true,
+				"values": "Public, Internal, Confidential, Restricted",
+				"desc_en": "Highest classification of data the source holds.",
+				"desc_ar": "أعلى تصنيف للبيانات اللي في المصدر."
+			},
+			{
+				"id": "cp3",
+				"name": "reviewDate",
+				"en": "Next review date",
+				"ar": "تاريخ المراجعة القادمة",
+				"type": "date",
+				"appliesTo": "domain",
+				"required": false,
+				"values": "",
+				"desc_en": "When the domain owner reviews scope and stewardship.",
+				"desc_ar": "ميعاد مراجعة مالك الدومين للنطاق والأمانة."
+			}
+		]
+	},
+	"announcements": [
+		{
+			"id": "AN-104",
+			"type": "maintenance",
+			"en": "Scheduled maintenance of the SAP S/4HANA sync",
+			"ar": "صيانة مجدولة لمزامنة SAP S/4HANA",
+			"body_en": "Thursday 20 November, 01:00–03:00. Vendor data may be delayed.",
+			"body_ar": "الخميس 20 نوفمبر من 01:00 إلى 03:00 — قد تتأخر بيانات الموردين.",
+			"audience": {
+				"kind": "all",
+				"value": ""
+			},
+			"from": "2026-11-14T08:00",
+			"until": "2026-11-20T03:00",
+			"pinned": true,
+			"status": "published",
+			"author": "محمد",
+			"updated": "2026-11-14T07:55:00"
+		},
+		{
+			"id": "AN-103",
+			"type": "release",
+			"en": "New: role-based access reviews",
+			"ar": "جديد: مراجعة الصلاحيات حسب الدور",
+			"body_en": "Managers now confirm their team’s direct roles every quarter from User management.",
+			"body_ar": "المديرين بقوا يأكدوا أدوار فريقهم المباشرة كل ربع سنة من إدارة المستخدمين.",
+			"audience": {
+				"kind": "role",
+				"value": "ADMIN"
+			},
+			"from": "2026-11-15T09:00",
+			"until": "2026-11-30T23:59",
+			"pinned": false,
+			"status": "published",
+			"author": "محمد",
+			"updated": "2026-11-15T08:40:00"
+		},
+		{
+			"id": "AN-105",
+			"type": "info",
+			"en": "Customer duplicate clean-up week",
+			"ar": "أسبوع تنظيف تكرارات العملاء",
+			"body_en": "Stewards: please clear the customer match queue before the month-end close.",
+			"body_ar": "أمناء البيانات: برجاء إنهاء قائمة تطابقات العملاء قبل إقفال الشهر.",
+			"audience": {
+				"kind": "domain",
+				"value": "customers"
+			},
+			"from": "2026-11-23T08:00",
+			"until": "2026-11-27T18:00",
+			"pinned": false,
+			"status": "published",
+			"author": "سارة عادل",
+			"updated": "2026-11-15T09:10:00"
+		},
+		{
+			"id": "AN-106",
+			"type": "info",
+			"en": "Vendor bank details template v2",
+			"ar": "قالب بيانات البنك للموردين — الإصدار 2",
+			"body_en": "",
+			"body_ar": "",
+			"audience": {
+				"kind": "domain",
+				"value": "vendors"
+			},
+			"from": "",
+			"until": "",
+			"pinned": false,
+			"status": "draft",
+			"author": "هالة سمير",
+			"updated": "2026-11-13T16:20:00"
+		},
+		{
+			"id": "AN-099",
+			"type": "maintenance",
+			"en": "C4C push ingest paused",
+			"ar": "إيقاف مؤقت لاستقبال بيانات C4C",
+			"body_en": "Push ingest from SAP C4C was paused for the certificate rotation.",
+			"body_ar": "استقبال البيانات من SAP C4C اتوقف مؤقتًا لتجديد الشهادة.",
+			"audience": {
+				"kind": "all",
+				"value": ""
+			},
+			"from": "2026-11-02T22:00",
+			"until": "2026-11-03T02:00",
+			"pinned": false,
+			"status": "published",
+			"author": "أحمد ناصر",
+			"updated": "2026-11-02T21:30:00"
+		},
+		{
+			"id": "AN-097",
+			"type": "release",
+			"en": "Golden record export to Excel",
+			"ar": "تصدير السجلات الذهبية لـ Excel",
+			"body_en": "Retired: replaced by broadcasts.",
+			"body_ar": "تم الإلغاء: حلّ محله البث.",
+			"audience": {
+				"kind": "all",
+				"value": ""
+			},
+			"from": "2026-10-20T09:00",
+			"until": "2026-11-20T09:00",
+			"pinned": false,
+			"status": "retired",
+			"author": "محمد",
+			"updated": "2026-10-28T12:00:00"
+		}
+	],
+	"audit": [
+		{
+			"at": "2026-11-15T09:12:44",
+			"actor": "محمد",
+			"area": "auth",
+			"action": "signIn",
+			"type": "session",
+			"object": "mohamed@example.com",
+			"en": "Signed in (Entra ID, MFA)",
+			"ar": "تسجيل دخول (Entra ID، تحقق ثنائي)",
+			"ip": "10.20.4.18"
+		},
+		{
+			"at": "2026-11-15T09:10:02",
+			"actor": "سارة عادل",
+			"area": "system",
+			"action": "create",
+			"type": "announcement",
+			"object": "AN-105",
+			"version": 1,
+			"en": "Announcement created and scheduled",
+			"ar": "إنشاء إعلان وجدولته",
+			"after": {
+				"status": "published",
+				"from": "2026-11-23T08:00"
+			}
+		},
+		{
+			"at": "2026-11-15T08:58:13",
+			"actor": "سارة عادل",
+			"area": "data",
+			"action": "approve",
+			"type": "changeRequest",
+			"object": "CR-2026-01482",
+			"version": 3,
+			"en": "Approved change request: customer address update",
+			"ar": "اعتماد طلب تغيير: تعديل عنوان عميل",
+			"before": {
+				"status": "inReview"
+			},
+			"after": {
+				"status": "approved"
+			}
+		},
+		{
+			"at": "2026-11-15T08:41:27",
+			"actor": "system",
+			"area": "data",
+			"action": "merge",
+			"type": "goldenRecord",
+			"object": "CUST-000912 ← CUST-004417",
+			"version": 7,
+			"en": "Auto-merged two customer records (match score 0.97)",
+			"ar": "دمج آلي لسجلين عملاء (درجة التطابق 0.97)"
+		},
+		{
+			"at": "2026-11-14T17:22:09",
+			"actor": "أحمد ناصر",
+			"area": "integration",
+			"action": "update",
+			"type": "dataSync",
+			"object": "SYNC_SQL_TITLES",
+			"version": 12,
+			"en": "Data sync mapping changed (2 columns)",
+			"ar": "تعديل ربط مزامنة البيانات (عمودين)",
+			"before": {
+				"edition_isbn": "isbn13"
+			},
+			"after": {
+				"edition_isbn": "isbn"
+			}
+		},
+		{
+			"at": "2026-11-14T15:05:31",
+			"actor": "محمد",
+			"area": "integration",
+			"action": "issue",
+			"type": "apiToken",
+			"object": "tok_…7f2a (Power BI service)",
+			"en": "API token issued, expires 2027-02-14",
+			"ar": "إصدار رمز API، ينتهي 2027-02-14"
+		},
+		{
+			"at": "2026-11-14T11:47:52",
+			"actor": "هالة سمير",
+			"area": "workflow",
+			"action": "publish",
+			"type": "workflow",
+			"object": "WF Vendor create — ERP",
+			"version": 4,
+			"en": "Workflow published (version 4)",
+			"ar": "نشر سير العمل (الإصدار 4)",
+			"before": {
+				"version": 3
+			},
+			"after": {
+				"version": 4
+			}
+		},
+		{
+			"at": "2026-11-13T09:30:15",
+			"actor": "محمد",
+			"area": "system",
+			"action": "update",
+			"type": "setting",
+			"object": "Email · reply-to",
+			"version": 5,
+			"en": "System setting changed",
+			"ar": "تغيير إعداد النظام",
+			"before": {
+				"replyTo": "mdm@example.com"
+			},
+			"after": {
+				"replyTo": "data-management@example.com"
+			}
+		},
+		{
+			"at": "2026-11-12T22:14:03",
+			"actor": "anonymous",
+			"area": "auth",
+			"action": "denied",
+			"type": "session",
+			"object": "api /v1/golden/customers",
+			"en": "Request denied: token revoked",
+			"ar": "رفض طلب: الرمز ملغي",
+			"ip": "41.33.12.7"
+		},
+		{
+			"at": "2026-11-12T10:02:40",
+			"actor": "محمد",
+			"area": "system",
+			"action": "test",
+			"type": "setting",
+			"object": "Email · SMTP relay",
+			"en": "Test email sent",
+			"ar": "إرسال إيميل تجريبي"
+		},
+		{
+			"at": "2026-11-11T14:18:26",
+			"actor": "كريم فوزي",
+			"area": "data",
+			"action": "submit",
+			"type": "changeRequest",
+			"object": "CR-2026-01455",
+			"version": 1,
+			"en": "Submitted change request: new book (ISBN 978-977-…)",
+			"ar": "تقديم طلب تغيير: كتاب جديد"
+		},
+		{
+			"at": "2026-11-10T16:40:11",
+			"actor": "منى حسن",
+			"area": "data",
+			"action": "retire",
+			"type": "relationship",
+			"object": "Employee E-2211 → Store S-031",
+			"version": 2,
+			"en": "Relationship retired: works at",
+			"ar": "إلغاء علاقة: يعمل في"
+		}
+	]
+}
