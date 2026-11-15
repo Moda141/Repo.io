@@ -88,6 +88,10 @@
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/sync.json"
 			},
+			"users": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/users.json"
+			},
 			"api": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/api.json"
@@ -204,6 +208,16 @@
 					"target": "apiManagement"
 				},
 				{
+					"name": "users",
+					"pattern": "admin/users/:user:",
+					"target": "users"
+				},
+				{
+					"name": "roles",
+					"pattern": "admin/roles/:role:",
+					"target": "roles"
+				},
+				{
 					"name": "page",
 					"pattern": "page/{key}",
 					"target": "placeholder"
@@ -289,6 +303,16 @@
 					"id": "dataSyncFlow",
 					"name": "DataSync",
 					"level": 3
+				},
+				"users": {
+					"id": "users",
+					"name": "UserManagement",
+					"level": 2
+				},
+				"roles": {
+					"id": "roles",
+					"name": "RolesAccess",
+					"level": 2
 				},
 				"apiManagement": {
 					"id": "apiManagement",

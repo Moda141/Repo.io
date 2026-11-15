@@ -1,0 +1,59 @@
+<mvc:View controllerName="repoio.proto.controller.RolesAccess"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- J17 / ADR-0009: Roles & access, like SAP IBP Maintain Business Roles. A role carries its domain grants;
+	     it is assigned to users and (unless sensitive) to departments and teams. The server enforces every grant. -->
+	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="false" class="repoioEdge repoioRaPage">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading><Title text="{i18n>nav.rolesAccess}" level="H1"/></f:heading>
+				<f:expandedContent><Text text="{i18n>ra.subtitle}"/></f:expandedContent>
+				<f:actions>
+					<Button text="{i18n>nav.users}" icon="sap-icon://employee-lookup" type="Transparent" press=".onUsers"/>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:content>
+			<VBox renderType="Bare">
+				<MessageStrip text="{i18n>ra.rule}" type="Information" showIcon="true" class="repoioApiStrip"/>
+				<Table items="{view>/ra/rows}" class="repoioDenseTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" noDataText="{i18n>um.noData}">
+					<headerToolbar>
+						<OverflowToolbar>
+							<Title text="{view>/ra/title}" level="H2"/>
+							<ToolbarSpacer/>
+							<SearchField width="13rem" value="{view>/ra/q}" liveChange=".onFilter" placeholder="{i18n>common.search}"/>
+							<Select selectedKey="{view>/ra/dom}" change=".onFilter" width="12rem" items="{view>/ra/domFilter}" tooltip="{i18n>um.col.domains}">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</Select>
+							<Select selectedKey="{view>/ra/kind}" change=".onFilter" width="12rem" tooltip="{i18n>ra.col.assignable}">
+								<core:Item key="all" text="{i18n>ra.kind.all}"/>
+								<core:Item key="inherit" text="{i18n>ra.assign.units}"/>
+								<core:Item key="sensitive" text="{i18n>ra.userOnly}"/>
+							</Select>
+						</OverflowToolbar>
+					</headerToolbar>
+					<columns>
+						<Column width="17rem"><Text text="{i18n>um.col.role}"/></Column>
+						<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>ra.col.desc}"/></Column>
+						<Column minScreenWidth="Tablet" demandPopin="true" width="14rem"><Text text="{i18n>um.col.domains}"/></Column>
+						<Column width="12rem"><Text text="{i18n>ra.col.assignable}"/></Column>
+						<Column width="6rem" hAlign="End"><Text text="{i18n>ra.col.users}"/></Column>
+						<Column width="6.5rem" hAlign="End"><Text text="{i18n>ra.col.units}"/></Column>
+					</columns>
+					<items>
+						<ColumnListItem type="Navigation" press=".onOpen">
+							<HBox alignItems="Center" renderType="Bare">
+								<core:Icon src="{view>icon}" class="repoioExRowIcon"/>
+								<Link text="{view>text}" press=".onOpen" wrapping="false"/>
+							</HBox>
+							<Text text="{view>desc}" wrapping="false" tooltip="{view>desc}"/>
+							<Text text="{view>domainsText}" wrapping="false" tooltip="{view>domainsText}"/>
+							<ObjectStatus text="{view>assignText}" icon="{view>assignIcon}" state="{view>assignState}"/>
+							<Text text="{view>users}"/>
+							<Text text="{view>units}"/>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</VBox>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

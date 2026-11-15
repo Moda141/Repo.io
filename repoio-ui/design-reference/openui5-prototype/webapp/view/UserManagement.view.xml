@@ -1,0 +1,173 @@
+<mvc:View controllerName="repoio.proto.controller.UserManagement"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- J17 / ADR-0009: user management in the SAP IBP order — employees → business users → identity (Entra ID) → roles.
+	     The directory syncs from Entra ID or SuccessFactors; manual create / import is a labelled fallback.
+	     Roles sit on departments, teams or users and are inherited downward. Admin-only; the API filters, not the UI. -->
+	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="false" class="repoioEdge repoioUmPage">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading><Title text="{i18n>nav.users}" level="H1"/></f:heading>
+				<f:expandedContent><Text text="{i18n>um.subtitle}"/></f:expandedContent>
+				<f:actions>
+					<ObjectStatus text="{view>/um/syncText}" icon="sap-icon://synchronize" state="{view>/um/syncState}" tooltip="{view>/um/syncTip}" class="repoioUmSync"/>
+					<Button text="{i18n>um.syncNow}" icon="sap-icon://refresh" type="Transparent" press=".onSyncNow" busy="{view>/um/syncing}" busyIndicatorDelay="0"/>
+					<Button icon="sap-icon://action-settings" type="Transparent" tooltip="{i18n>um.syncSettings}" press=".onSyncSettings"/>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:content>
+			<HBox renderType="Bare" class="repoioUmBody">
+				<!-- Org hierarchy: Org › Business unit › Department › Team -->
+				<VBox renderType="Bare" class="repoioUmTree">
+					<Title text="{i18n>um.org}" level="H3" class="repoioFacetGroup"/>
+					<Tree id="umTree" items="{path: 'view>/um/tree', parameters: {arrayNames: ['nodes']}}" mode="SingleSelectMaster"
+						selectionChange=".onUnit" showSeparators="None" class="repoioFacetList repoioFolderTree">
+						<StandardTreeItem title="{view>text}" icon="{view>icon}" counter="{view>count}" selected="{view>selected}" tooltip="{view>tip}"/>
+					</Tree>
+				</VBox>
+
+				<VBox renderType="Bare" class="repoioUmMain">
+					<!-- Selected org unit and its default roles (departments and teams only) -->
+					<VBox class="repoioUmUnit" renderType="Bare">
+						<HBox alignItems="Center" renderType="Bare" class="repoioUmUnitHead">
+							<core:Icon src="{view>/um/u/icon}" class="repoioUmUnitIcon"/>
+							<VBox renderType="Bare">
+								<Title text="{view>/um/u/title}" level="H2" wrapping="false"/>
+								<Text text="{view>/um/u/sub}" class="repoioUmMuted"/>
+							</VBox>
+						</HBox>
+						<MessageStrip text="{i18n>um.unit.noRoles}" type="Information" showIcon="true" visible="{= !${view>/um/u/assignable} }" class="repoioUmStrip"/>
+						<VBox visible="{view>/um/u/assignable}" renderType="Bare">
+							<HBox alignItems="Center" renderType="Bare" class="repoioUmRolesHead">
+								<Text text="{view>/um/u/rolesTitle}" class="repoioUmLabel"/>
+								<Button text="{i18n>um.unit.addRole}" icon="sap-icon://add" type="Transparent" press=".onUnitAddRole"/>
+							</HBox>
+							<HBox wrap="Wrap" items="{view>/um/u/roles}" renderType="Bare" class="repoioUmChips">
+								<HBox alignItems="Center" renderType="Bare" class="repoioUmChip">
+									<customData><core:CustomData key="inh" value="{= ${view>own} ? 'no' : 'yes' }" writeToDom="true"/></customData>
+									<core:Icon src="{view>icon}" class="repoioUmChipIcon"/>
+									<Link text="{view>text}" press=".onRoleLink" tooltip="{view>tip}"/>
+									<Text text="{view>fromText}" visible="{= !${view>own} }" class="repoioUmChipFrom"/>
+									<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>um.unit.removeRole}" press=".onUnitRemoveRole" visible="{view>own}" class="repoioUmChipX"/>
+								</HBox>
+							</HBox>
+							<Text text="{i18n>um.unit.none}" visible="{= ${view>/um/u/roles}.length === 0 }" class="repoioUmMuted"/>
+						</VBox>
+					</VBox>
+
+					<MessageStrip text="{view>/um/flagText}" type="Warning" showIcon="true" visible="{= ${view>/um/flagged} > 0 }" class="repoioUmStrip">
+						<link><Link text="{i18n>um.flag.show}" press=".onShowFlagged"/></link>
+					</MessageStrip>
+
+					<IconTabBar id="umTabs" selectedKey="{view>/um/tab}" select=".onTab" expandable="false" headerMode="Inline" applyContentPadding="false" class="repoioApiTabs">
+						<items>
+							<!-- Step 1: employees (Maintain Employees) -->
+							<IconTabFilter key="employees" text="{i18n>um.tab.employees}" count="{view>/um/nEmp}">
+								<Table id="empTable" items="{view>/um/emps}" mode="MultiSelect" selectionChange=".onEmpSelect" class="repoioDenseTable"
+									popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" noDataText="{i18n>um.noData}">
+									<headerToolbar>
+										<OverflowToolbar>
+											<Title text="{view>/um/empTitle}" level="H2"/>
+											<ToolbarSpacer/>
+											<SearchField width="13rem" value="{view>/um/q}" liveChange=".onFilter" placeholder="{i18n>um.searchPh}"/>
+											<Select selectedKey="{view>/um/src}" change=".onFilter" width="10rem" tooltip="{i18n>um.col.source}">
+												<core:Item key="all" text="{i18n>um.src.all}"/>
+												<core:Item key="entra" text="Entra ID"/>
+												<core:Item key="sf" text="SuccessFactors"/>
+												<core:Item key="manual" text="{i18n>um.src.manual}"/>
+												<core:Item key="flagged" text="{i18n>um.src.flagged}"/>
+												<core:Item key="noUser" text="{i18n>um.src.noUser}"/>
+											</Select>
+											<ToolbarSeparator/>
+											<Button text="{i18n>um.maintainUser}" type="Emphasized" press=".onMaintainUser" enabled="{= ${view>/um/selNoUser} > 0 }"/>
+											<MenuButton text="{i18n>um.manual}" icon="sap-icon://add-employee" type="Transparent" tooltip="{i18n>um.manualTip}">
+												<menu>
+													<Menu itemSelected=".onManual">
+														<MenuItem key="create" text="{i18n>um.create}" icon="sap-icon://add"/>
+														<MenuItem key="import" text="{i18n>um.import}" icon="sap-icon://upload"/>
+														<MenuItem key="template" text="{i18n>um.template}" icon="sap-icon://download"/>
+													</Menu>
+												</menu>
+											</MenuButton>
+										</OverflowToolbar>
+									</headerToolbar>
+									<columns>
+										<Column width="13rem"><Text text="{i18n>um.col.employee}"/></Column>
+										<Column width="5.5rem"><Text text="{i18n>um.col.empId}"/></Column>
+										<Column minScreenWidth="1680px"><Text text="{i18n>um.col.email}"/></Column>
+										<Column minScreenWidth="1360px"><Text text="{i18n>um.col.title}"/></Column>
+										<Column><Text text="{i18n>um.col.unit}" wrapping="false"/></Column>
+										<Column width="8.5rem"><Text text="{i18n>um.col.source}"/></Column>
+										<Column width="6.5rem" hAlign="Center"><Text text="{i18n>um.col.user}"/></Column>
+									</columns>
+									<items>
+										<ColumnListItem>
+											<HBox alignItems="Center" renderType="Bare" class="repoioUmWho">
+												<rc:PersonLink name="{view>name}"/>
+												<Text text="{view>nameText}" wrapping="false" class="repoioUmName"/>
+											</HBox>
+											<Text text="{view>id}" class="repoioMono"/>
+											<Text text="{view>email}" textDirection="LTR" wrapping="false" tooltip="{view>email}"/>
+											<Text text="{view>title}" wrapping="false" tooltip="{view>title}"/>
+											<Text text="{view>unitText}" wrapping="false" tooltip="{view>unitTip}"/>
+											<ObjectStatus text="{view>sourceText}" state="{view>sourceState}" icon="{view>sourceIcon}" tooltip="{view>sourceTip}"/>
+											<HBox justifyContent="Center">
+												<Link text="{i18n>um.user.open}" press=".onOpenEmpUser" visible="{view>hasUser}"/>
+												<Text text="—" visible="{= !${view>hasUser} }" class="repoioUmMuted"/>
+											</HBox>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</IconTabFilter>
+
+							<!-- Steps 2–4: business users, their Entra ID link and their roles -->
+							<IconTabFilter key="users" text="{i18n>um.tab.users}" count="{view>/um/nUsers}">
+								<Table id="userTable" items="{view>/um/users}" class="repoioDenseTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" noDataText="{i18n>um.noData}">
+									<headerToolbar>
+										<OverflowToolbar>
+											<Title text="{view>/um/userTitle}" level="H2"/>
+											<ToolbarSpacer/>
+											<SearchField width="13rem" value="{view>/um/uq}" liveChange=".onFilter" placeholder="{i18n>um.searchPh}"/>
+											<Select selectedKey="{view>/um/link}" change=".onFilter" width="11rem" tooltip="{i18n>um.col.entra}">
+												<core:Item key="all" text="{i18n>um.link.all}"/>
+												<core:Item key="linked" text="{i18n>um.link.linked}"/>
+												<core:Item key="notFound" text="{i18n>um.link.notFound}"/>
+												<core:Item key="disabled" text="{i18n>um.link.disabled}"/>
+											</Select>
+											<Select selectedKey="{view>/um/roleF}" change=".onFilter" width="13rem" items="{view>/um/roleFilter}" tooltip="{i18n>um.col.roles}">
+												<core:Item key="{view>key}" text="{view>text}"/>
+											</Select>
+										</OverflowToolbar>
+									</headerToolbar>
+									<columns>
+										<Column width="13rem"><Text text="{i18n>um.col.user}"/></Column>
+										<Column minScreenWidth="1680px"><Text text="{i18n>um.col.upn}"/></Column>
+										<Column width="11.5rem"><Text text="{i18n>um.col.entra}"/></Column>
+										<Column><Text text="{i18n>um.col.unit}" wrapping="false"/></Column>
+										<Column width="7.5rem"><Text text="{i18n>um.col.roles}"/></Column>
+										<Column width="8rem" minScreenWidth="1360px"><Text text="{i18n>um.col.valid}"/></Column>
+										<Column width="7rem" minScreenWidth="1500px"><Text text="{i18n>um.col.lastSignIn}"/></Column>
+									</columns>
+									<items>
+										<ColumnListItem type="Navigation" press=".onOpenUser">
+											<HBox alignItems="Center" renderType="Bare" class="repoioUmWho">
+												<rc:PersonLink name="{view>name}"/>
+												<Link text="{view>nameText}" press=".onOpenUser" wrapping="false" class="repoioUmName"/>
+											</HBox>
+											<Text text="{view>upn}" textDirection="LTR" wrapping="false" tooltip="{view>upn}"/>
+											<ObjectStatus text="{view>linkText}" state="{view>linkState}" icon="{view>linkIcon}"/>
+											<Text text="{view>unitText}" wrapping="false" tooltip="{view>unitTip}"/>
+											<Text text="{view>rolesText}" tooltip="{view>rolesTip}"/>
+											<ObjectStatus text="{view>validText}" state="{view>validState}"/>
+											<Text text="{view>lastText}" wrapping="false"/>
+										</ColumnListItem>
+									</items>
+								</Table>
+							</IconTabFilter>
+						</items>
+					</IconTabBar>
+				</VBox>
+			</HBox>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

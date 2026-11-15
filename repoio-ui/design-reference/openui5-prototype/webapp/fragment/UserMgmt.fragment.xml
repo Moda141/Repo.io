@@ -1,0 +1,223 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:rc="repoio.proto.control">
+
+	<!-- Sync settings: one source per deployment, field mapping, credential reference (secret store). -->
+	<Dialog id="umSyncDlg" title="{i18n>um.syncSettings}" contentWidth="40rem" class="repoioUmDlg">
+		<content>
+			<VBox class="sapUiSmallMargin" renderType="Bare">
+				<Label text="{i18n>um.sync.source}"/>
+				<SegmentedButton selectedKey="{view>/um/sync/source}" selectionChange=".onSyncSource" class="sapUiTinyMarginBottom">
+					<items>
+						<SegmentedButtonItem key="entra" text="Microsoft Entra ID" icon="sap-icon://cloud"/>
+						<SegmentedButtonItem key="sf" text="SAP SuccessFactors" icon="sap-icon://employee"/>
+					</items>
+				</SegmentedButton>
+				<Text text="{view>/um/sync/sourceNote}" class="repoioUmMuted sapUiSmallMarginBottom"/>
+				<f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" labelSpanS="12" columnsL="1" columnsM="1">
+					<Label text="{i18n>um.sync.endpoint}"/>
+					<Text text="{view>/um/sync/endpointText}" class="repoioMono" textDirection="LTR"/>
+					<Label text="{i18n>um.sync.secret}"/>
+					<HBox alignItems="Center"><core:Icon src="sap-icon://locked" class="sapUiTinyMarginEnd"/><Text text="{view>/um/sync/secretRef}" class="repoioMono" textDirection="LTR"/></HBox>
+					<Label text="{i18n>um.sync.schedule}"/>
+					<Select selectedKey="{view>/um/sync/schedule}" width="14rem">
+						<core:Item key="1h" text="{i18n>um.sync.every1h}"/>
+						<core:Item key="6h" text="{i18n>um.sync.every6h}"/>
+						<core:Item key="24h" text="{i18n>um.sync.daily}"/>
+					</Select>
+				</f:SimpleForm>
+				<Title text="{i18n>um.sync.mapping}" level="H4" class="sapUiSmallMarginTop"/>
+				<Table items="{view>/um/sync/rows}" class="repoioDenseTable">
+					<columns>
+						<Column width="40%"><Text text="{i18n>um.sync.field}"/></Column>
+						<Column><Text text="{view>/um/sync/attrTitle}"/></Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<Text text="{view>fieldText}"/>
+							<Input value="{view>attr}" textDirection="LTR" class="repoioMono"/>
+						</ColumnListItem>
+					</items>
+				</Table>
+				<MessageStrip text="{i18n>um.sync.rule}" type="Information" showIcon="true" class="sapUiSmallMarginTop"/>
+			</VBox>
+		</content>
+		<beginButton><Button text="{i18n>common.save}" type="Emphasized" press=".onSyncSave"/></beginButton>
+		<endButton><Button text="{i18n>common.cancel}" press=".onCloseDlg"/></endButton>
+	</Dialog>
+
+	<!-- Manual fallback: create one employee -->
+	<Dialog id="umCreateDlg" title="{i18n>um.create}" contentWidth="34rem" class="repoioUmDlg">
+		<content>
+			<MessageStrip text="{i18n>um.create.note}" type="Warning" showIcon="true" class="sapUiSmallMargin"/>
+			<f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" labelSpanS="12" columnsL="1" columnsM="1">
+				<Label text="{i18n>um.f.nameAr}" required="true"/>
+				<Input value="{view>/um/c/nameAr}" textDirection="RTL" valueState="{view>/um/c/vs/nameAr}"/>
+				<Label text="{i18n>um.f.nameEn}" required="true"/>
+				<Input value="{view>/um/c/nameEn}" textDirection="LTR" valueState="{view>/um/c/vs/nameEn}"/>
+				<Label text="{i18n>um.col.empId}"/>
+				<Input value="{view>/um/c/id}" editable="false" class="repoioMono"/>
+				<Label text="{i18n>um.col.email}" required="true"/>
+				<Input value="{view>/um/c/email}" type="Email" textDirection="LTR" valueState="{view>/um/c/vs/email}" valueStateText="{view>/um/c/emailMsg}"/>
+				<Label text="{i18n>um.f.titleEn}"/>
+				<Input value="{view>/um/c/titleEn}" textDirection="LTR"/>
+				<Label text="{i18n>um.f.titleAr}"/>
+				<Input value="{view>/um/c/titleAr}" textDirection="RTL"/>
+				<Label text="{i18n>um.f.team}" required="true"/>
+				<Select selectedKey="{view>/um/c/team}" items="{view>/um/teams}" width="100%" forceSelection="false" valueState="{view>/um/c/vs/team}">
+					<core:Item key="{view>key}" text="{view>text}"/>
+				</Select>
+				<Label text="{i18n>um.f.manager}"/>
+				<ComboBox selectedKey="{view>/um/c/manager}" items="{view>/um/peopleList}" width="100%" showSecondaryValues="true">
+					<core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>email}"/>
+				</ComboBox>
+				<Label text=""/>
+				<CheckBox text="{i18n>um.f.makeUser}" selected="{view>/um/c/makeUser}"/>
+			</f:SimpleForm>
+		</content>
+		<beginButton><Button text="{i18n>um.create.btn}" type="Emphasized" press=".onCreateSave"/></beginButton>
+		<endButton><Button text="{i18n>common.cancel}" press=".onCloseDlg"/></endButton>
+	</Dialog>
+
+	<!-- Manual fallback: import a CSV built from the template; every row validated before anything is created -->
+	<Dialog id="umImportDlg" title="{i18n>um.import}" contentWidth="46rem" class="repoioUmDlg">
+		<content>
+			<VBox class="sapUiSmallMargin" renderType="Bare">
+				<MessageStrip text="{i18n>um.imp.note}" type="Warning" showIcon="true" class="sapUiSmallMarginBottom"/>
+				<HBox alignItems="Center" renderType="Bare" class="repoioUmImpRow">
+					<Button text="{i18n>um.template}" icon="sap-icon://download" press=".onTemplate"/>
+					<Button text="{i18n>um.imp.choose}" icon="sap-icon://upload" type="Emphasized" press=".onImportChoose" class="sapUiSmallMarginBegin"/>
+					<Text text="{view>/um/imp/fileName}" class="repoioMono sapUiSmallMarginBegin" textDirection="LTR"/>
+				</HBox>
+				<Text text="{i18n>um.imp.cols}" class="repoioUmMuted sapUiSmallMarginTop"/>
+				<Text text="employee_id, name_ar, name_en, email, job_title_en, job_title_ar, team_id, manager_email" class="repoioMono" textDirection="LTR"/>
+				<VBox visible="{= ${view>/um/imp/rows}.length > 0 }" renderType="Bare" class="sapUiSmallMarginTop">
+					<ObjectStatus text="{view>/um/imp/summary}" state="{view>/um/imp/state}" icon="sap-icon://inspect"/>
+					<Table items="{view>/um/imp/rows}" class="repoioDenseTable sapUiTinyMarginTop">
+						<columns>
+							<Column width="3.5rem"><Text text="{i18n>um.imp.line}"/></Column>
+							<Column width="6rem"><Text text="{i18n>um.col.empId}"/></Column>
+							<Column><Text text="{i18n>um.col.employee}"/></Column>
+							<Column><Text text="{i18n>um.col.email}"/></Column>
+							<Column width="13rem"><Text text="{i18n>um.imp.result}"/></Column>
+						</columns>
+						<items>
+							<ColumnListItem highlight="{= ${view>ok} ? 'Success' : 'Error' }">
+								<Text text="{view>line}"/>
+								<Text text="{view>id}" class="repoioMono"/>
+								<Text text="{view>name}" wrapping="false"/>
+								<Text text="{view>email}" textDirection="LTR" wrapping="false"/>
+								<ObjectStatus text="{view>msg}" state="{= ${view>ok} ? 'Success' : 'Error' }"/>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</VBox>
+			</VBox>
+		</content>
+		<beginButton><Button text="{view>/um/imp/btnText}" type="Emphasized" press=".onImportSave" enabled="{= ${view>/um/imp/valid} > 0 }"/></beginButton>
+		<endButton><Button text="{i18n>common.cancel}" press=".onCloseDlg"/></endButton>
+	</Dialog>
+
+	<!-- Step 2: Maintain business user for the selected employees -->
+	<Dialog id="umBuDlg" title="{i18n>um.maintainUser}" contentWidth="34rem" class="repoioUmDlg">
+		<content>
+			<VBox class="sapUiSmallMargin" renderType="Bare">
+				<Text text="{view>/um/bu/intro}"/>
+				<List items="{view>/um/bu/items}" class="sapUiTinyMarginTop repoioUmBuList" showSeparators="Inner">
+					<CustomListItem>
+						<HBox alignItems="Center" renderType="Bare" class="repoioUmBuItem">
+							<rc:PersonLink name="{view>name}"/>
+							<VBox renderType="Bare" class="repoioUmName">
+								<Text text="{view>nameText}"/>
+								<Text text="{view>email}" textDirection="LTR" class="repoioUmMuted"/>
+							</VBox>
+							<ObjectStatus text="{view>linkText}" state="{view>linkState}" icon="{view>linkIcon}" class="repoioUmBuLink"/>
+						</HBox>
+					</CustomListItem>
+				</List>
+				<f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" labelSpanS="12" columnsL="1" columnsM="1">
+					<Label text="{i18n>um.f.validFrom}" required="true"/>
+					<DatePicker value="{view>/um/bu/from}" valueFormat="yyyy-MM-dd" displayFormat="yyyy-MM-dd"/>
+					<Label text="{i18n>um.f.validTo}"/>
+					<DatePicker value="{view>/um/bu/to}" valueFormat="yyyy-MM-dd" displayFormat="yyyy-MM-dd" placeholder="{i18n>um.f.noEnd}"/>
+				</f:SimpleForm>
+				<MessageStrip text="{i18n>um.bu.note}" type="Information" showIcon="true"/>
+			</VBox>
+		</content>
+		<beginButton><Button text="{view>/um/bu/btnText}" type="Emphasized" press=".onMaintainUserSave"/></beginButton>
+		<endButton><Button text="{i18n>common.cancel}" press=".onCloseDlg"/></endButton>
+	</Dialog>
+
+	<!-- Business user: General · Assigned roles · History -->
+	<Dialog id="umUserDlg" contentWidth="48rem" contentHeight="32rem" showHeader="false" class="repoioUmDlg repoioUmUserDlg">
+		<content>
+			<VBox renderType="Bare" class="repoioUmUserHead">
+				<HBox alignItems="Center" renderType="Bare">
+					<Avatar initials="{view>/um/ud/initials}" displaySize="M"/>
+					<VBox renderType="Bare" class="repoioUmUserWho">
+						<Title text="{view>/um/ud/nameText}" level="H2"/>
+						<Text text="{view>/um/ud/sub}" class="repoioUmMuted"/>
+					</VBox>
+					<ObjectStatus text="{view>/um/ud/linkText}" state="{view>/um/ud/linkState}" icon="{view>/um/ud/linkIcon}" inverted="true" class="repoioUmUserLink"/>
+				</HBox>
+			</VBox>
+			<IconTabBar selectedKey="{view>/um/ud/tab}" expandable="false" headerMode="Inline" applyContentPadding="false" class="repoioUmUserTabs">
+				<items>
+					<IconTabFilter key="general" text="{i18n>um.ud.general}">
+						<f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" labelSpanS="12" columnsL="1" columnsM="1" class="repoioUmForm">
+							<core:Title text="{i18n>um.ud.employee}"/>
+							<Label text="{i18n>um.col.empId}"/><Text text="{view>/um/ud/id}" class="repoioMono"/>
+							<Label text="{i18n>um.col.email}"/><Text text="{view>/um/ud/email}" textDirection="LTR"/>
+							<Label text="{i18n>um.col.title}"/><Text text="{view>/um/ud/title}"/>
+							<Label text="{i18n>um.col.unit}"/><Text text="{view>/um/ud/path}"/>
+							<Label text="{i18n>um.f.manager}"/>
+							<HBox alignItems="Center"><rc:PersonLink name="{view>/um/ud/manager}" visible="{= !!${view>/um/ud/manager} }"/><Text text="—" visible="{= !${view>/um/ud/manager} }"/></HBox>
+							<Label text="{i18n>um.col.source}"/><ObjectStatus text="{view>/um/ud/sourceText}" state="{view>/um/ud/sourceState}" icon="{view>/um/ud/sourceIcon}"/>
+							<core:Title text="{i18n>um.ud.user}"/>
+							<Label text="{i18n>um.col.upn}"/><Text text="{view>/um/ud/upn}" textDirection="LTR"/>
+							<Label text="{i18n>um.col.entra}"/><Text text="{view>/um/ud/linkNote}"/>
+							<Label text="{i18n>um.f.validFrom}"/>
+							<DatePicker value="{view>/um/ud/validFrom}" valueFormat="yyyy-MM-dd" displayFormat="yyyy-MM-dd" change=".onValidity" width="12rem"/>
+							<Label text="{i18n>um.f.validTo}"/>
+							<DatePicker value="{view>/um/ud/validTo}" valueFormat="yyyy-MM-dd" displayFormat="yyyy-MM-dd" change=".onValidity" placeholder="{i18n>um.f.noEnd}" width="12rem"/>
+							<Label text="{i18n>um.col.lastSignIn}"/><Text text="{view>/um/ud/lastText}"/>
+						</f:SimpleForm>
+					</IconTabFilter>
+					<IconTabFilter key="roles" text="{i18n>um.ud.roles}" count="{= ${view>/um/ud/roles}.length }">
+						<Table items="{view>/um/ud/roles}" class="repoioDenseTable" noDataText="{i18n>um.ud.noRoles}">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Text text="{i18n>um.ud.rolesHint}" class="repoioUmMuted" wrapping="true"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>um.ud.addRole}" icon="sap-icon://add" type="Transparent" press=".onUserAddRole"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>um.col.role}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>um.col.domains}"/></Column>
+								<Column width="14rem"><Text text="{i18n>um.col.via}"/></Column>
+								<Column width="3rem" hAlign="End"><Text text="{i18n>common.delete}" class="sapUiInvisibleText"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<HBox alignItems="Center" renderType="Bare">
+										<core:Icon src="{view>icon}" class="repoioExRowIcon"/>
+										<Link text="{view>text}" press=".onRoleLink"/>
+										<core:Icon src="sap-icon://locked" visible="{view>sensitive}" tooltip="{i18n>ra.sensitive}" class="repoioUmLock"/>
+									</HBox>
+									<Text text="{view>domainsText}" wrapping="false" tooltip="{view>domainsText}"/>
+									<ObjectStatus text="{view>viaText}" state="{view>viaState}" icon="{view>viaIcon}" tooltip="{view>viaTip}"/>
+									<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>um.ud.removeRole}" press=".onUserRemoveRole" visible="{= ${view>type} === 'direct' }"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</IconTabFilter>
+					<IconTabFilter key="history" text="{i18n>um.ud.history}">
+						<List items="{view>/um/ud/history}" noDataText="{i18n>um.ud.noHistory}" showSeparators="Inner" class="repoioUmHist">
+							<StandardListItem title="{view>text}" description="{view>meta}" icon="{view>icon}" wrapping="true"/>
+						</List>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</content>
+		<endButton><Button text="{i18n>common.close}" press=".onCloseDlg"/></endButton>
+	</Dialog>
+</core:FragmentDefinition>

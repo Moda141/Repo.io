@@ -1,0 +1,96 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:rc="repoio.proto.control">
+	<!-- Business role: General · Domain grants · Assigned users · Assigned org units (SAP IBP Maintain Business Roles) -->
+	<Dialog id="raDlg" contentWidth="50rem" contentHeight="32rem" showHeader="false" class="repoioUmDlg repoioUmUserDlg">
+		<content>
+			<VBox renderType="Bare" class="repoioUmUserHead">
+				<HBox alignItems="Center" renderType="Bare">
+					<Avatar src="{view>/ra/d/icon}" displaySize="M" displayShape="Square" backgroundColor="Accent6"/>
+					<VBox renderType="Bare" class="repoioUmUserWho">
+						<Title text="{view>/ra/d/text}" level="H2"/>
+						<Text text="{view>/ra/d/id}" class="repoioMono repoioUmMuted"/>
+					</VBox>
+					<ObjectStatus text="{view>/ra/d/assignText}" icon="{view>/ra/d/assignIcon}" state="{view>/ra/d/assignState}" inverted="true" class="repoioUmUserLink"/>
+				</HBox>
+			</VBox>
+			<IconTabBar selectedKey="{view>/ra/d/tab}" expandable="false" headerMode="Inline" applyContentPadding="false" class="repoioUmUserTabs">
+				<items>
+					<IconTabFilter key="general" text="{i18n>um.ud.general}">
+						<f:SimpleForm editable="false" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" labelSpanS="12" columnsL="1" columnsM="1" class="repoioUmForm">
+							<Label text="{i18n>ra.col.desc}"/><Text text="{view>/ra/d/desc}"/>
+							<Label text="{i18n>um.col.domains}"/><Text text="{view>/ra/d/domainsText}"/>
+							<Label text="{i18n>ra.col.assignable}"/><Text text="{view>/ra/d/assignNote}"/>
+							<Label text="{i18n>ra.col.users}"/><Text text="{view>/ra/d/usersText}"/>
+						</f:SimpleForm>
+					</IconTabFilter>
+					<IconTabFilter key="domains" text="{i18n>ra.tab.domains}" count="{view>/ra/d/domCount}">
+						<VBox class="sapUiSmallMargin" renderType="Bare">
+							<Text text="{i18n>ra.dom.hint}" class="repoioUmMuted sapUiTinyMarginBottom"/>
+							<CheckBox text="{i18n>ra.allDomains}" selected="{view>/ra/d/all}" select=".onDomainsAll"/>
+							<VBox items="{view>/ra/d/domains}" renderType="Bare" class="repoioRaDoms">
+								<CheckBox text="{view>text}" selected="{view>on}" enabled="{= !${view>/ra/d/all} }" select=".onDomain"/>
+							</VBox>
+						</VBox>
+					</IconTabFilter>
+					<IconTabFilter key="users" text="{i18n>ra.tab.users}" count="{= ${view>/ra/d/users}.length }">
+						<Table items="{view>/ra/d/users}" class="repoioDenseTable" noDataText="{i18n>ra.noUsers}">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Text text="{i18n>ra.users.hint}" class="repoioUmMuted"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>ra.addUsers}" icon="sap-icon://add" type="Transparent" press=".onAddUsers"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>um.col.user}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>um.col.unit}"/></Column>
+								<Column width="14rem"><Text text="{i18n>um.col.via}"/></Column>
+								<Column width="3rem" hAlign="End"><Text text="{i18n>common.delete}" class="sapUiInvisibleText"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<HBox alignItems="Center" renderType="Bare" class="repoioUmWho">
+										<rc:PersonLink name="{view>name}"/>
+										<Link text="{view>nameText}" press=".onUser" wrapping="false" class="repoioUmName"/>
+									</HBox>
+									<Text text="{view>unitText}" wrapping="false"/>
+									<ObjectStatus text="{view>viaText}" state="{view>viaState}" icon="{view>viaIcon}"/>
+									<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>um.ud.removeRole}" press=".onRemoveUser" visible="{= ${view>type} === 'direct' }"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</IconTabFilter>
+					<IconTabFilter key="units" text="{i18n>ra.tab.units}" count="{= ${view>/ra/d/units}.length }">
+						<MessageStrip text="{i18n>ra.units.sensitive}" type="Warning" showIcon="true" visible="{view>/ra/d/sensitive}" class="sapUiSmallMargin"/>
+						<Table items="{view>/ra/d/units}" class="repoioDenseTable" noDataText="{i18n>ra.noUnits}" visible="{= !${view>/ra/d/sensitive} }">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Text text="{i18n>ra.units.hint}" class="repoioUmMuted"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>ra.addUnits}" icon="sap-icon://add" type="Transparent" press=".onAddUnits"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>ra.col.unit}"/></Column>
+								<Column width="9rem"><Text text="{i18n>ra.col.type}"/></Column>
+								<Column width="7rem" hAlign="End"><Text text="{i18n>ra.col.people}"/></Column>
+								<Column width="3rem" hAlign="End"><Text text="{i18n>common.delete}" class="sapUiInvisibleText"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<HBox alignItems="Center" renderType="Bare">
+										<core:Icon src="{view>icon}" class="repoioExRowIcon"/>
+										<Link text="{view>text}" press=".onUnit" wrapping="false" tooltip="{view>path}"/>
+									</HBox>
+									<Text text="{view>typeText}"/>
+									<Text text="{view>people}"/>
+									<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>ra.removeUnit}" press=".onRemoveUnit"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</content>
+		<endButton><Button text="{i18n>common.close}" press=".onClose"/></endButton>
+	</Dialog>
+</core:FragmentDefinition>
