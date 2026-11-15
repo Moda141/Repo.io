@@ -713,7 +713,25 @@ steps: employees → business users → identity → business roles.
    role will be user-only. Delivered roles are read-only — *Copy* makes
    an editable custom role; a custom role is deleted only when nobody
    holds it.
-8. Every change is audited (who, what, when, before / after). Effective
+8. **Keep the directory clean.** *Review changes* previews what the
+   sync brings (new, moved, left) before it applies; a leaver is blocked
+   at once and loses direct roles. A flagged manual record is resolved by
+   keeping the directory record (the user and direct roles move to it);
+   manual records can be edited. With Entra ID, teams can come from
+   group → team mappings in sync settings.
+9. **Control access.** Each user shows a sign-in status (active, not in
+   Entra ID, disabled, expired, locked, left). *Lock* blocks sign-in at
+   once with a reason. Direct roles may end on a date. The Users tab
+   assigns roles to several users at once, uploads assignments from CSV
+   and exports users with their roles. The **Effective access** tab shows
+   every permission with its domains and the roles granting it, and
+   separation-of-duties warnings. Nothing can remove the last active
+   administrator.
+10. **Access reviews.** The Admin starts a review; each manager keeps or
+    removes the direct roles of their people; the Admin closes it when
+    every item is decided.
+11. Every change is audited (who, what, when, before / after); a role's
+    History tab lists the changes to that role. Effective
    roles take effect on the user's next token; nothing in the UI is
    authorization — the API filters every page by the same grants.
 

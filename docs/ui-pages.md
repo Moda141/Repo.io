@@ -160,7 +160,13 @@
        validity, last sign-in; a user opens on General, **Assigned
        roles** (source of each role: direct, team or department) and
        History. Selecting a department or team shows its **default
-       roles**, inherited by everyone below. [J17, M5]
+       roles**, inherited by everyone below. Also: sync preview, Entra
+       ID group → team mapping, duplicate resolution, editing manual
+       records, sign-in status (left, locked, expired …), lock with a
+       reason, time-bound and bulk role assignment, CSV upload of
+       assignments, CSV export, an **Effective access** tab with
+       separation-of-duties warnings, an **Access reviews** tab, and a
+       guard against removing the last administrator. [J17, M5]
      - **(+) Roles & access** — roles, domain grants, delegation; the
        server-side source of every page's visibility. Like SAP IBP's
        Maintain Business Roles: *Create role* (blank or a copy: name,
@@ -168,8 +174,8 @@
        role opens on General, **Permissions**, Domain grants, **Assigned
        users** (*Add*) and **Assigned org units** (departments and teams;
        sensitive roles are user-only). Delivered roles are read-only;
-       custom roles are edited or deleted (when nobody holds them).
-       [J17, M5]
+       custom roles are edited or deleted (when nobody holds them). A
+       role also has a **History** tab. [J17, M5]
      - **System configuration** — platform-wide settings: auth / SSO,
        preferences, custom properties.
      - **(+) Announcements** — authoring side of the read views on

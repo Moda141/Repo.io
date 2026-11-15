@@ -289,6 +289,21 @@ and API contracts preserved — demonstrated via the parity checklist.
       a role sensitive is rejected while it sits on an org unit; delivered
       roles read-only; delete only when unheld — each verified by a
       direct API call.
+- [ ] No change (role removal, lock, validity, leaver, permission edit)
+      can leave zero active administrators — verified by direct API calls.
+- [ ] Sign-in status enforced at token issue: left, locked, expired, not
+      yet valid, disabled or missing in Entra ID → no access.
+- [ ] Directory sync previewed and applied on confirmation; leavers
+      blocked at once with direct roles removed; Entra ID group → team
+      mapping supported; manual duplicates resolved onto the directory
+      record.
+- [ ] Time-bound direct roles expire server-side; bulk and CSV role
+      assignment validate every row; users-and-roles export matches the
+      effective access API.
+- [ ] Access reviews: manager decisions applied and audited; one open
+      review at a time.
+- [ ] Separation-of-duties rules are configuration; warnings returned by
+      the API, not computed only in the UI.
 - [ ] Every user, org-unit and role assignment change is audited.
 
 **Exit gate:** "AI agents can read/write golden records with per-user

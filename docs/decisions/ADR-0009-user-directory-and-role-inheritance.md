@@ -65,6 +65,37 @@ User, and access should follow it without granting more than needed.
    department or team. A custom role can be deleted only when nobody
    holds it.
 
+8. **Never without an administrator.** Any change that would leave no
+   active user holding *administer users and roles* — removing a role,
+   locking, ending validity, a leaver from the sync, a permission change
+   — is rejected (a leaver is held for review instead of applied).
+9. **Sign-in status** is derived, strongest first: left › locked in
+   Repo.io › expired › not valid yet › disabled in Entra ID › not found in
+   Entra ID › active. Only *active* users get any access; their roles stay
+   visible but grant nothing.
+10. **Directory lifecycle.** The sync is previewed (new, moved, left)
+    and applied on confirmation. A leaver is blocked at once and loses
+    their direct roles. A manual record that the directory now has is
+    resolved by keeping the directory record; the business user and its
+    direct roles move to it. Manual records can be edited; directory
+    records change only at the source. With Entra ID, teams come from a
+    user attribute or from **Entra ID group → team** mappings.
+11. **Locking** blocks sign-in to Repo.io at once, with a mandatory
+    reason, without waiting for Entra ID; roles stay assigned.
+12. **Time-bound assignments.** A direct role may carry an end date and
+    ends by itself; bulk assignment and CSV upload (per-row validation)
+    use the same rule.
+13. **Effective access** (permission × domains × granting roles) is
+    shown per user and exported (CSV) with every assignment and its
+    source.
+14. **Access reviews.** An Admin starts a review; each person's manager
+    keeps or removes each direct role; removal applies at once; one open
+    review at a time; inherited roles are reviewed on the org unit.
+15. **Separation of duties** rules (server configuration) raise
+    warnings — for example creating and approving change requests in the
+    same domain, or administering users and issuing API tokens. They do
+    not block; the workflow still blocks approving one's own request.
+
 ## Consequences
 
 - Moving a person between teams in the source changes their inherited
