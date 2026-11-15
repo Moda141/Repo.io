@@ -76,7 +76,12 @@ sap.ui.define([
 			});
 		},
 
-		onSwitch: function (oEvent) { if (oEvent.getParameter("item").getKey() === "runs") { this.router().navTo("jobs"); } },
+		/* The switch always shows the page you are on: snap back to "streams" before leaving, since this view stays cached. */
+		onSwitch: function (oEvent) {
+			var k = oEvent.getParameter("item").getKey();
+			oEvent.getSource().setSelectedKey("streams");
+			if (k === "runs") { this.router().navTo("jobs"); }
+		},
 		onRefresh: function () { this._build(); MessageToast.show(this.text("st.refreshed")); },
 		onOpenRuns: function (oEvent) {
 			var job = oEvent.getSource().getBindingContext("view").getProperty("job"),
