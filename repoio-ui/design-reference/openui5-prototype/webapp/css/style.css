@@ -1045,3 +1045,5 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioAuBefore { color: #bb0000; text-decoration: line-through; text-decoration-color: rgba(187, 0, 0, 0.4); }
 .repoioAuAfter { color: #107e3e; }
 .repoioScVar { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); margin-top: 0.125rem; }
+.repoioBcMail { margin: 0.375rem 1rem; width: auto; flex: none; }
+.repoioPvList .repoioPvOff .sapMSLITitleOnly, .repoioPvList .repoioPvOff .sapMSLIIcon { opacity: 0.5; }

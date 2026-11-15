@@ -15,6 +15,7 @@
 					<VBox renderType="Bare" alignItems="End" class="repoioUmUserLink">
 						<ObjectStatus text="{view>/ra/d/assignText}" icon="{view>/ra/d/assignIcon}" state="{view>/ra/d/assignState}" inverted="true"/>
 						<HBox renderType="Bare" class="repoioRaHeadBtns">
+							<Button icon="sap-icon://show" type="Transparent" tooltip="{i18n>ra.pv.btn}" press=".onPreviewRole"/>
 							<Button text="{i18n>ra.copy}" icon="sap-icon://copy" type="Transparent" press=".onCopyRole"/>
 							<Button text="{i18n>common.delete}" icon="sap-icon://delete" type="Transparent" press=".onDeleteRole" visible="{= !${view>/ra/d/delivered} }" enabled="{= ${view>/ra/d/users}.length === 0 }" tooltip="{view>/ra/d/deleteTip}"/>
 						</HBox>
@@ -116,6 +117,7 @@
 						</Table>
 					</IconTabFilter>
 					<IconTabFilter key="history" text="{i18n>um.ud.history}">
+						<OverflowToolbar><ToolbarSpacer/><Link text="{i18n>au.openLog}" press=".onRoleAudit"/></OverflowToolbar>
 						<List items="{view>/ra/d/history}" noDataText="{i18n>um.ud.noHistory}" showSeparators="Inner" class="repoioUmHist">
 							<StandardListItem title="{view>text}" description="{view>meta}" icon="{view>icon}" wrapping="true"/>
 						</List>

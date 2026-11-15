@@ -5,7 +5,7 @@ sap.ui.define([
 ], function (BaseController, People, MessageToast) {
 	"use strict";
 
-	var AREA = { users: "sap-icon://employee", data: "sap-icon://database", workflow: "sap-icon://workflow-tasks", integration: "sap-icon://chain-link", system: "sap-icon://action-settings", auth: "sap-icon://shield" },
+	var AREA = { analytics: "sap-icon://business-objects-experience", users: "sap-icon://employee", data: "sap-icon://database", workflow: "sap-icon://workflow-tasks", integration: "sap-icon://chain-link", system: "sap-icon://action-settings", auth: "sap-icon://shield" },
 		BAD = ["denied", "delete", "retire", "lock"], GOOD = ["approve", "publish", "create", "issue"],
 		SYS = { system: "sap-icon://it-system", sync: "sap-icon://synchronize", anonymous: "sap-icon://question-mark" };
 
@@ -36,7 +36,8 @@ sap.ui.define([
 			var that = this, u = this._u;
 			var fromUsers = (u.history || []).map(function (h) {
 				var emp = h.user ? u.employees.filter(function (e) { return e.id === h.user; })[0] : null;
-				return { at: h.at, actor: h.by, area: "users", action: h.by === "sync" ? "sync" : (h.role ? "assign" : "update"), type: h.role ? "role" : h.user ? "user" : "directory",
+				return { ref: h.user && emp ? { route: "users", args: { user: emp.id } } : h.role ? { route: "roles", args: { role: h.role } } : null,
+					at: h.at, actor: h.by, area: "users", action: h.by === "sync" ? "sync" : (h.role ? "assign" : "update"), type: h.role ? "role" : h.user ? "user" : "directory",
 					object: [emp ? (People.get(emp.name) ? People.get(emp.name).en : emp.name) + " (" + emp.id + ")" : "", h.role || ""].filter(Boolean).join(" · ") || (h.by === "sync" ? "Directory" : "—"), en: h.en, ar: h.ar };
 			});
 			return this._a.audit.concat(fromUsers).sort(function (x, y) { return x.at < y.at ? 1 : -1; }).map(function (e, i) { e._i = i; return e; });
@@ -49,7 +50,8 @@ sap.ui.define([
 				action: act, actionText: this.text("au.act." + act), actionState: BAD.indexOf(act) > -1 ? "Error" : GOOD.indexOf(act) > -1 ? "Success" : "None",
 				highlight: act === "denied" ? "Error" : "None",
 				text: this._ar() ? e.ar : e.en, objectText: e.object || "", type: e.type, typeText: this.text("au.type." + (e.type || "other")),
-				versionText: e.version ? "v" + e.version : "—", ip: e.ip || "" };
+				versionText: e.version ? "v" + e.version : "—", ip: e.ip || "",
+				ref: e.ref || (e.type === "announcement" ? { route: "announcements", args: { id: e.object } } : null) };
 		},
 		_apply: function () {
 			var that = this, vm = this.viewModel(), f = vm.getProperty("/au"), q = (f.q || "").toLowerCase(),
@@ -84,6 +86,12 @@ sap.ui.define([
 			this.byId("auDlg").open();
 		},
 		onCloseDlg: function () { this.byId("auDlg").close(); },
+		/* Open the object the entry is about (when it still has a page in the console). */
+		onGoTo: function () {
+			var r = this.viewModel().getProperty("/au/d/ref");
+			this.byId("auDlg").close();
+			if (r) { this.router().navTo(r.route, r.args || {}); }
+		},
 		onExport: function () {
 			var that = this, lines = [["time", "actor", "area", "action", "type", "object", "version", "summary", "before", "after"].join(",")];
 			this._rows.forEach(function (e) {

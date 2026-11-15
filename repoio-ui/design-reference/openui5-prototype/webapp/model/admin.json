@@ -302,6 +302,12 @@
 			},
 			"after": {
 				"replyTo": "data-management@example.com"
+			},
+			"ref": {
+				"route": "system",
+				"args": {
+					"section": "mail"
+				}
 			}
 		},
 		{
@@ -323,7 +329,13 @@
 			"type": "setting",
 			"object": "Email · SMTP relay",
 			"en": "Test email sent",
-			"ar": "إرسال إيميل تجريبي"
+			"ar": "إرسال إيميل تجريبي",
+			"ref": {
+				"route": "system",
+				"args": {
+					"section": "mail"
+				}
+			}
 		},
 		{
 			"at": "2026-11-11T14:18:26",

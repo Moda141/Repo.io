@@ -175,6 +175,49 @@ sap.ui.define(["sap/m/SelectDialog", "sap/m/StandardListItem"], function (Select
 			});
 		},
 
+		/* Preview which console pages a set of permissions opens (navAccess is served by the RBAC API). Display only:
+		   the server filters every page and list by the same grants. */
+		preview: function (c, sTitle, aPerms, sDomains) {
+			sap.ui.require(["sap/m/Dialog", "sap/m/Button", "sap/m/List", "sap/m/StandardListItem", "sap/m/GroupHeaderListItem", "sap/m/MessageStrip", "sap/m/Text", "sap/m/VBox"],
+				function (Dialog, Button, List, SLI, GHLI, MessageStrip, Text, VBox) {
+					var d = c.getOwnerComponent().getModel("users").getData(), nav = c.getOwnerComponent().getModel("nav").getProperty("/items"),
+						acc = d.navAccess || {}, oList = new List({ showSeparators: "Inner" }).addStyleClass("repoioPvList"), open = 0, total = 0;
+					var can = function (k) { var need = acc[k]; return !need || !need.length || need.some(function (p) { return aPerms.indexOf(p) > -1; }); };
+					var leafs = function (it) { return it.items ? it.items.reduce(function (a, x) { return a.concat(leafs(x)); }, []) : [it]; };
+					var add = function (it, sGroup) {
+						var ls = leafs(it).filter(function (x) { return acc.hasOwnProperty(x.key); });
+						if (!ls.length) { return; }
+						oList.addItem(new GHLI({ title: sGroup === "pvGeneral" ? c.text("ra.pv.general") : c.text("nav." + (sGroup || it.key)) }));
+						ls.forEach(function (x) {
+							var ok = can(x.key); total++; if (ok) { open++; }
+							oList.addItem(new SLI({ title: c.text("nav." + x.key), icon: ok ? "sap-icon://accept" : "sap-icon://hide",
+								info: c.text(ok ? "ra.pv.visible" : "ra.pv.hidden"), infoState: ok ? "Success" : "None" }).addStyleClass(ok ? "" : "repoioPvOff"));
+						});
+					};
+					// Top-level pages without children share one "General" group; menus keep their own heading.
+					var flat = [];
+					nav.forEach(function (it) { (it.group ? it.items : [it]).forEach(function (x) { if (x.items) { add(x); } else { flat.push(x); } }); });
+					if (flat.length) {
+						var first = oList.getItems().length ? oList.getItems()[0] : null, tmp = new List();
+						oList.getItems().forEach(function (x) { tmp.addItem(x); });
+						oList.removeAllItems();
+						add({ key: "x", items: flat }, "pvGeneral");
+						tmp.getItems().forEach(function (x) { oList.addItem(x); });
+						tmp.destroy();
+					}
+					var oClose = new Button({ text: c.text("common.close"), press: function () { oDlg.close(); } });
+					var oDlg = new Dialog({ title: sTitle, contentWidth: "30rem", contentHeight: "34rem", initialFocus: oClose,
+						content: [new VBox({ items: [
+							new MessageStrip({ text: c.text("ra.pv.note"), type: "Information", showIcon: true }).addStyleClass("sapUiSmallMargin"),
+							new Text({ text: c.text("ra.pv.summary", [open, total]) + (sDomains ? " · " + sDomains : "") }).addStyleClass("sapUiSmallMarginBeginEnd sapUiTinyMarginBottom repoioUmMuted"),
+							oList] })],
+						endButton: oClose,
+						afterClose: function () { oDlg.destroy(); } });
+					c.getView().addDependent(oDlg);
+					oDlg.open();
+				});
+		},
+
 		pickRoles: function (c, aRoles, sTitle, fnDone) {
 			var ar = c.lang() === "ar";
 			A.pick(c, aRoles.map(function (r) {

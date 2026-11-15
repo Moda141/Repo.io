@@ -31,6 +31,7 @@
 								<core:Item key="workflow" text="{i18n>au.area.workflow}"/>
 								<core:Item key="integration" text="{i18n>au.area.integration}"/>
 								<core:Item key="system" text="{i18n>au.area.system}"/>
+								<core:Item key="analytics" text="{i18n>au.area.analytics}"/>
 								<core:Item key="auth" text="{i18n>au.area.auth}"/>
 							</Select>
 							<ComboBox selectedKey="{view>/au/actor}" items="{view>/au/actors}" change=".onFilter" width="11rem" placeholder="{i18n>au.col.actor}" showClearIcon="true">
@@ -104,6 +105,7 @@
 						<Text text="{i18n>au.immutable}" class="repoioUmMuted sapUiSmallMarginTop"/>
 					</VBox>
 				</content>
+				<beginButton><Button text="{i18n>au.goTo}" icon="sap-icon://action" press=".onGoTo" visible="{= !!${view>/au/d/ref} }"/></beginButton>
 				<endButton><Button text="{i18n>common.close}" press=".onCloseDlg"/></endButton>
 			</Dialog>
 		</f:dependents>

@@ -3,7 +3,9 @@ sap.ui.define([
 	"repoio/proto/control/EChart",
 	"sap/m/VBox", "sap/m/HBox", "sap/m/Title", "sap/m/Text", "sap/m/Button", "sap/m/Menu", "sap/m/MenuItem",
 	"sap/m/NumericContent", "sap/m/Dialog", "sap/m/MessageToast", "sap/m/MessageBox"
-], function (BaseController, EChart, VBox, HBox, Title, Text, Button, Menu, MenuItem, NumericContent, Dialog, MessageToast, MessageBox) {
+,
+	"repoio/proto/util/audit"
+], function (BaseController, EChart, VBox, HBox, Title, Text, Button, Menu, MenuItem, NumericContent, Dialog, MessageToast, MessageBox, Audit) {
 	"use strict";
 
 	/* Governed KPI catalog: the studio picks measures, it never defines formulas (CLAUDE.md §6.6). */
@@ -293,6 +295,9 @@ sap.ui.define([
 		onLinked: function () { MessageToast.show(this.text("st.t.linkedAll")); },
 		onBroadcast: function () { this.router().navTo("broadcasts", { query: { report: this._report.id } }); },
 		onSave: function () {
+			var r = this._report;
+			Audit.log(this, { area: "analytics", action: "update", type: "report", object: r ? r.id + " · " + r.en : this.viewModel().getProperty("/st/title"), en: r && r.status === "published" ? "Story saved as a draft version" : "Story saved", ar: "حفظ القصة",
+				ref: r ? { route: "studio", args: { id: r.id, mode: "edit" } } : null });
 			var vm = this.viewModel(), pub = this._report && this._report.status === "published";
 			vm.setProperty("/st/dirty", false);
 			vm.setProperty("/st/titleText", vm.getProperty("/st/title"));

@@ -255,7 +255,7 @@
 						<MessageStrip text="{view>/um/ud/conflictText}" type="Warning" showIcon="true" visible="{= ${view>/um/ud/conflicts}.length > 0 }" class="sapUiSmallMargin"/>
 						<Table items="{view>/um/ud/access}" class="repoioDenseTable" noDataText="{i18n>um.ud.noRoles}">
 							<headerToolbar>
-								<OverflowToolbar><Text text="{i18n>um.ud.accessHint}" class="repoioUmMuted"/></OverflowToolbar>
+								<OverflowToolbar><Text text="{i18n>um.ud.accessHint}" class="repoioUmMuted"/><ToolbarSpacer/><Button text="{i18n>ra.pv.btn}" icon="sap-icon://show" type="Transparent" press=".onPreviewUser"/></OverflowToolbar>
 							</headerToolbar>
 							<columns>
 								<Column><Text text="{i18n>um.col.perm}"/></Column>
@@ -277,6 +277,7 @@
 						</Table>
 					</IconTabFilter>
 					<IconTabFilter key="history" text="{i18n>um.ud.history}">
+						<OverflowToolbar><ToolbarSpacer/><Link text="{i18n>au.openLog}" press=".onUserAudit"/></OverflowToolbar>
 						<List items="{view>/um/ud/history}" noDataText="{i18n>um.ud.noHistory}" showSeparators="Inner" class="repoioUmHist">
 							<StandardListItem title="{view>text}" description="{view>meta}" icon="{view>icon}" wrapping="true"/>
 						</List>

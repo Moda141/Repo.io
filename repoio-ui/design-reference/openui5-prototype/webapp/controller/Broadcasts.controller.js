@@ -5,7 +5,9 @@ sap.ui.define([
 	"sap/m/Token",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox"
-], function (BaseController, people, Fragment, Token, MessageToast, MessageBox) {
+,
+	"repoio/proto/util/audit"
+], function (BaseController, people, Fragment, Token, MessageToast, MessageBox, Audit) {
 	"use strict";
 
 	var ME = "محمد",
@@ -42,6 +44,7 @@ sap.ui.define([
 					return { key: n, text: en ? p.en : n, role: en ? p.role_en : p.role_ar };
 				}));
 				that._apply(true);
+				that._mailInfo();
 				if (q.report) {
 					that.router().navTo("broadcasts", {}, true);
 					that._openDialog(null, q.report);
@@ -178,18 +181,19 @@ sap.ui.define([
 				b.last = that._skipped(b).length ? "partial" : "sent";
 				if (b.schedule === "none") { b.status = "completed"; } else if (b.status === "draft") { b.status = "active"; b.nextRun = that._next(b); }
 			});
+			s.forEach(function (b) { that._log(b, "publish", "Broadcast sent now", "إرسال البث الآن"); });
 			MessageToast.show(this.text("bc.t.started", [s.length]));
 			this._apply(false);
 		},
 		onPause: function () {
-			var s = this._selected();
-			s.forEach(function (b) { b.status = "paused"; });
+			var that = this, s = this._selected();
+			s.forEach(function (b) { b.status = "paused"; that._log(b, "update", "Broadcast paused", "إيقاف البث مؤقتًا", { status: "active" }, { status: "paused" }); });
 			MessageToast.show(this.text("bc.t.paused", [s.length]));
 			this._apply(false);
 		},
 		onResume: function () {
 			var that = this, s = this._selected();
-			s.forEach(function (b) { b.status = "active"; b.nextRun = that._next(b); });
+			s.forEach(function (b) { b.status = "active"; b.nextRun = that._next(b); that._log(b, "update", "Broadcast resumed", "استئناف البث", { status: "paused" }, { status: "active" }); });
 			MessageToast.show(this.text("bc.t.resumed", [s.length]));
 			this._apply(false);
 		},
@@ -200,6 +204,7 @@ sap.ui.define([
 				onClose: function (a) {
 					if (a !== MessageBox.Action.DELETE) { return; }
 					that._all = that._all.filter(function (b) { return s.indexOf(b) < 0; });
+					s.forEach(function (b) { that._log(b, "delete", "Broadcast deleted", "حذف البث"); });
 					MessageToast.show(that.text("bc.t.deleted", [s.length]));
 					that._apply(false);
 				}
@@ -308,6 +313,7 @@ sap.ui.define([
 			if (!this._editing) { b.status = d.sched === "none" ? "draft" : "active"; this._all.push(b); }
 			if (b.status === "active") { b.nextRun = this._next(b); }
 			this._dlg.close();
+			this._log(b, this._editing ? "update" : "create", this._editing ? "Broadcast changed" : "Broadcast created", this._editing ? "تعديل البث" : "إنشاء بث");
 			if (bStart) {
 				b.lastRun = stamp(NOW);
 				b.last = this._skipped(b).length ? "partial" : "sent";
@@ -316,6 +322,19 @@ sap.ui.define([
 			} else { MessageToast.show(this.text("bc.t.saved", [d.name])); }
 			this._apply(false);
 		},
-		onDlgCancel: function () { this._dlg.close(); }
+		onDlgCancel: function () { this._dlg.close(); },
+		/* Delivery comes from System configuration: sender, relay health and export retention. */
+		_mailInfo: function () {
+			var that = this, oA = this.getOwnerComponent().getModel("admin");
+			oA.dataLoaded().then(function () {
+				var s = oA.getData().system, ok = s.mail.lastTestOk !== false;
+				that.viewModel().setProperty("/bc/mailText", that.text(ok ? "bc.mail.ok" : "bc.mail.fail", [s.mail.from, s.retention.exportDays]));
+				that.viewModel().setProperty("/bc/mailType", ok ? "Information" : "Warning");
+			});
+		},
+		onMailSettings: function () { this.router().navTo("system", { section: "mail" }); },
+		_log: function (b, sAction, en, ar, before, after) {
+			Audit.log(this, { area: "analytics", action: sAction, type: "broadcast", object: b.id + " · " + (b.en || b.ar || ""), en: en, ar: ar, before: before, after: after, ref: { route: "broadcasts", args: {} } });
+		}
 	});
 });

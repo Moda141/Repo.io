@@ -24,6 +24,9 @@
 			<Button icon="sap-icon://media-play" type="Transparent" tooltip="{i18n>bc.resume}" enabled="{view>/bc/canResume}" press=".onResume"/>
 			<Button icon="sap-icon://delete" type="Transparent" tooltip="{i18n>common.delete}" enabled="{= ${view>/bc/selected} > 0 }" press=".onDelete"/>
 		</OverflowToolbar>
+		<MessageStrip text="{view>/bc/mailText}" type="{view>/bc/mailType}" showIcon="true" customIcon="sap-icon://email" class="repoioBcMail">
+			<link><Link text="{i18n>bc.mail.settings}" press=".onMailSettings"/></link>
+		</MessageStrip>
 		<HBox class="repoioExBody" renderType="Bare">
 			<ScrollContainer vertical="true" height="100%" width="15rem" visible="{view>/bc/showFilters}" class="repoioFacetPanel">
 				<Title text="{i18n>wl.collection}" level="H3" class="repoioFacetGroup"/>

@@ -119,6 +119,14 @@ sap.ui.define([
 			});
 		},
 		onClose: function () { this.byId("raDlg").close(); },
+		onPreviewRole: function () {
+			var r = A.role(this._d, this._role);
+			A.preview(this, this.text("ra.pv.titleRole", [this._t(r)]), r.perms || [], this._domainsText(r));
+		},
+		onRoleAudit: function () {
+			this._noBack = true; this.byId("raDlg").close();
+			this.router().navTo("audit", { query: { object: this._role } });
+		},
 
 		/* Domain grants */
 		_saveDomains: function (a) {

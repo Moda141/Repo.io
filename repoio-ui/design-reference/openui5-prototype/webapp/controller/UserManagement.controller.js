@@ -781,6 +781,16 @@ sap.ui.define([
 			MessageToast.show(this.text("um.t.rvClosed"));
 		},
 
+		onPreviewUser: function () {
+			var d = this._d, u = A.user(d, this._ud), e = this._emp(this._ud), acc = A.access(d, this._idx, u, e),
+				doms = {}; acc.forEach(function (a) { Object.keys(a.domains).forEach(function (k) { doms[k] = 1; }); });
+			A.preview(this, this.text("ra.pv.titleUser", [this._pname(e.name)]), A.status(d, u, e) === "active" ? acc.map(function (a) { return a.perm; }) : [],
+				A.status(d, u, e) === "active" ? this._domText(Object.keys(doms)) : this.text("um.ud.blocked"));
+		},
+		onUserAudit: function () {
+			var o = this.byId("umUserDlg"); this._noBack = true; if (o) { o.close(); }
+			this.router().navTo("audit", { query: { object: this._ud } });
+		},
 		onRoleLink: function (oEvent) {
 			var id = oEvent.getSource().getBindingContext("view").getProperty("id"), o = this.byId("umUserDlg");
 			if (o && o.isOpen()) { this._noBack = true; o.close(); }

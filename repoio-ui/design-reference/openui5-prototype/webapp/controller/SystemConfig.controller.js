@@ -79,8 +79,9 @@ sap.ui.define([
 			vm.setProperty("/sc/mailTestIcon", m.lastTestOk ? "sap-icon://message-success" : "sap-icon://message-error");
 		},
 		_propsTitle: function () { this.viewModel().setProperty("/sc/propsTitle", this.text("sc.props.title", [(this.viewModel().getProperty("/sc/w/customProps") || []).length])); },
-		_audit: function (sObject, en, ar, before, after) {
-			this._d.audit.unshift({ at: this._d.now.slice(0, 16) + ":00", actor: ME, area: "system", action: "update", type: "setting", object: sObject, en: en, ar: ar, before: before, after: after });
+		_audit: function (sObject, en, ar, before, after, sSection) {
+			this._d.audit.unshift({ at: this._d.now.slice(0, 16) + ":00", actor: ME, area: "system", action: "update", type: "setting", object: sObject, en: en, ar: ar, before: before, after: after,
+				ref: sSection ? { route: "system", args: { section: sSection } } : null });
 		},
 
 		onSection: function (oEvent) {
@@ -101,7 +102,7 @@ sap.ui.define([
 				var k = that._key(s), before = {}, after = {};
 				if (k === "customProps") { before = { count: that._d.system[k].length }; after = { count: w[k].length }; }
 				else { Object.keys(w[k]).forEach(function (f) { if (JSON.stringify(w[k][f]) !== JSON.stringify(that._d.system[k][f])) { before[f] = that._d.system[k][f]; after[f] = w[k][f]; } }); }
-				that._audit(that.text("sc.sec." + s), "System setting changed: " + s, "تغيير إعداد النظام: " + that.text("sc.sec." + s), before, after);
+				that._audit(that.text("sc.sec." + s), "System setting changed: " + s, "تغيير إعداد النظام: " + that.text("sc.sec." + s), before, after, s);
 				that._d.system[k] = clone(w[k]);
 			});
 			this._setDirty(false);
@@ -117,7 +118,7 @@ sap.ui.define([
 					if (!EMAIL.test(oIn.getValue())) { oIn.setValueState("Error"); return; }
 					var m = that._d.system.mail;
 					m.lastTest = that._d.now; m.lastTestOk = true;
-					that._d.audit.unshift({ at: that._d.now.slice(0, 16) + ":00", actor: ME, area: "system", action: "test", type: "setting", object: "Email · SMTP relay", en: "Test email sent to " + oIn.getValue(), ar: "إرسال إيميل تجريبي إلى " + oIn.getValue() });
+					that._d.audit.unshift({ at: that._d.now.slice(0, 16) + ":00", actor: ME, area: "system", action: "test", type: "setting", object: "Email · SMTP relay", en: "Test email sent to " + oIn.getValue(), ar: "إرسال إيميل تجريبي إلى " + oIn.getValue(), ref: { route: "system", args: { section: "mail" } } });
 					oDlg.close(); that._mailTest();
 					MessageToast.show(that.text("sc.t.testSent", [oIn.getValue()]));
 				} }),
