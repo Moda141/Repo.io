@@ -1,5 +1,5 @@
 {
-	"_comment": "Models & rules (J5): match models a steward creates per domain, each with its own match rules and change request duplicate check. In the product these are versioned configuration served by the rules API and run by the services (Splink for matching, the request service for the duplicate check); the console only edits drafts. Sample values only. Fields come from the columns of the model's repository (repoColumns: the staged table, including the columns the standardise step derives).",
+	"_comment": "Models & rules (J5): one match model per repository. Comparisons, blocking and Splink training are shared; customer types are segments of a code column with their own thresholds. The model also holds consolidation (repository -> golden records), the change request check and survivorship. In the product this is versioned configuration served by the rules API and run by the services (Splink matching, the request service, the survivorship job); the console edits drafts and shows previews. Sample values only.",
 	"methods": {
 		"jw": {
 			"en": "Similarity (Jaro-Winkler)",
@@ -47,16 +47,17 @@
 				"01122334455"
 			],
 			"by": "أحمد ناصر",
-			"result": "stopped",
-			"reasons": [
+			"model": "customer-master",
+			"segment": "teacher",
+			"best": 0.3,
+			"hits": [
 				{
 					"check": "phoneGolden",
 					"en": "Mobile 1 01001234567 is mobile 2 on golden record GR-C-004512 (أحمد محمود السيد)",
 					"ar": "موبايل 1 ‎01001234567‎ هو موبايل 2 على السجل الذهبي GR-C-004512 (أحمد محمود السيد)",
 					"ref": "GR-C-004512"
 				}
-			],
-			"model": "teacher"
+			]
 		},
 		{
 			"id": "CR-2026-0602",
@@ -67,16 +68,17 @@
 				"0225551234"
 			],
 			"by": "سارة عادل",
-			"result": "stopped",
-			"reasons": [
+			"model": "customer-master",
+			"segment": "retailer",
+			"best": 0.3,
+			"hits": [
 				{
 					"check": "phoneOpenCr",
 					"en": "WhatsApp 01223344556 is mobile 1 in open change request CR-2026-0598 (submitted by هشام سعيد, in approval)",
 					"ar": "واتساب ‎01223344556‎ هو موبايل 1 في طلب التغيير المفتوح CR-2026-0598 (قدّمه هشام سعيد، في الموافقة)",
 					"ref": "CR-2026-0598"
 				}
-			],
-			"model": "retailer"
+			]
 		},
 		{
 			"id": "CR-2026-0603",
@@ -86,10 +88,10 @@
 				"01099887766"
 			],
 			"by": "أحمد ناصر",
-			"result": "passed",
+			"model": "customer-master",
+			"segment": "teacher",
 			"best": 0.41,
-			"reasons": [],
-			"model": "teacher"
+			"hits": []
 		},
 		{
 			"id": "CR-2026-0604",
@@ -99,16 +101,18 @@
 				"01555123456"
 			],
 			"by": "كريم فؤاد",
-			"result": "stopped",
-			"reasons": [
+			"model": "customer-master",
+			"segment": "callCenter",
+			"best": 0.96,
+			"hits": [
 				{
 					"check": "similarGolden",
 					"en": "Similar to golden record GR-C-007731 (خالد ابراهيم فتحي): match probability 0.96 ≥ 0.90 — name 0.97, same governorate and territories, different numbers",
 					"ar": "مشابه للسجل الذهبي GR-C-007731 (خالد ابراهيم فتحي): احتمال التطابق 0.96 ≥ 0.90 — الاسم 0.97، نفس المحافظة والمناطق، أرقام مختلفة",
-					"ref": "GR-C-007731"
+					"ref": "GR-C-007731",
+					"score": 0.96
 				}
-			],
-			"model": "callCenter"
+			]
 		},
 		{
 			"id": "CR-2026-0605",
@@ -118,12 +122,20 @@
 				"01011112222"
 			],
 			"by": "هالة سمير",
-			"result": "passed",
+			"model": "customer-master",
+			"segment": "student",
 			"best": 0.38,
 			"noteEn": "Mobile 1 is on golden record GR-C-010220 (مريم أحمد علي) with the same parent name: siblings, so not a duplicate",
 			"noteAr": "موبايل 1 موجود على السجل الذهبي GR-C-010220 (مريم أحمد علي) بنفس اسم ولي الأمر: إخوة، فمش تكرار",
-			"reasons": [],
-			"model": "student"
+			"hits": [
+				{
+					"check": "phoneGolden",
+					"exception": "siblings",
+					"ref": "GR-C-010220",
+					"en": "Mobile 1 01011112222 is on golden record GR-C-010220 (مريم أحمد علي) with the same parent name",
+					"ar": "موبايل 1 ‎01011112222‎ موجود على السجل الذهبي GR-C-010220 (مريم أحمد علي) بنفس اسم ولي الأمر"
+				}
+			]
 		},
 		{
 			"id": "CR-2026-0606",
@@ -133,89 +145,155 @@
 				"01277665544"
 			],
 			"by": "هالة سمير",
-			"result": "stopped",
-			"reasons": [
+			"model": "customer-master",
+			"segment": "charityStudent",
+			"best": 0.3,
+			"hits": [
 				{
 					"check": "nationalId",
 					"en": "National ID 3010…4521 is already in open change request CR-2026-0590 (submitted by هالة سمير, waiting for write-back)",
 					"ar": "الرقم القومي 3010…4521 موجود في طلب التغيير المفتوح CR-2026-0590 (قدّمته هالة سمير، في انتظار الكتابة للنظام المصدر)",
 					"ref": "CR-2026-0590"
 				}
+			]
+		},
+		{
+			"id": "CR-2026-0607",
+			"template": "TPL_CUSTOMER_TEACHER",
+			"name": "محمد عبد العزيز سالم",
+			"phones": [
+				"01066554433"
 			],
-			"model": "charityStudent"
+			"by": "أحمد ناصر",
+			"model": "customer-master",
+			"segment": "teacher",
+			"best": 0.86,
+			"hits": [
+				{
+					"check": "similarGolden",
+					"score": 0.86,
+					"ref": "GR-C-008804",
+					"en": "Similar to golden record GR-C-008804 (محمد عبدالعزيز سالم): match probability 0.86 — name 0.98, same governorate, different main territory and numbers",
+					"ar": "مشابه للسجل الذهبي GR-C-008804 (محمد عبدالعزيز سالم): احتمال التطابق 0.86 — الاسم 0.98، نفس المحافظة، منطقة رئيسية وأرقام مختلفة"
+				}
+			]
+		},
+		{
+			"id": "CR-2026-0608",
+			"template": "TPL_CUSTOMER_RETAILER",
+			"name": "مكتبة الأمل",
+			"phones": [
+				"0225559876"
+			],
+			"by": "سارة عادل",
+			"model": "customer-master",
+			"segment": "retailer",
+			"best": 0.83,
+			"hits": [
+				{
+					"check": "similarGolden",
+					"score": 0.83,
+					"ref": "GR-C-002217",
+					"en": "Similar to golden record GR-C-002217 (مكتبه الامل): match probability 0.83 — name 0.97, same governorate and territories",
+					"ar": "مشابه للسجل الذهبي GR-C-002217 (مكتبه الامل): احتمال التطابق 0.83 — الاسم 0.97، نفس المحافظة والمناطق"
+				}
+			]
+		},
+		{
+			"id": "CR-2026-0609",
+			"template": "TPL_VENDOR_CREATE",
+			"name": "مطبعة الشروق",
+			"phones": [
+				"0233445566"
+			],
+			"by": "عمر طارق",
+			"model": "vendor-master",
+			"best": 0.52,
+			"hits": [
+				{
+					"check": "phoneGolden",
+					"ref": "GR-V-0221",
+					"en": "Phone 0233445566 is on golden record GR-V-0221 (مطابع الشروق الدولية)",
+					"ar": "التليفون ‎0233445566‎ موجود على السجل الذهبي GR-V-0221 (مطابع الشروق الدولية)"
+				}
+			]
 		}
 	],
 	"models": [
 		{
-			"key": "teacher",
-			"en": "Teacher or supervisor",
-			"ar": "مدرس أو موجّه",
-			"icon": "sap-icon://education",
-			"threshold": 0.9,
-			"templates": [
-				{
-					"key": "TPL_CUSTOMER_TEACHER",
-					"en": "New teacher",
-					"ar": "مدرس جديد"
-				},
-				{
-					"key": "TPL_CUSTOMER_SUPERVISOR",
-					"en": "New supervisor",
-					"ar": "موجّه جديد"
-				}
-			],
-			"blocking": [
-				{
-					"fields": [
-						"name_first_token",
-						"state_id"
-					]
-				},
-				{
-					"fields": [
-						"phones"
-					]
-				}
-			],
+			"key": "customer-master",
+			"en": "Customer master",
+			"ar": "العملاء الرئيسي",
+			"icon": "sap-icon://customer",
+			"domain": "customers",
+			"repo": "customer-master",
+			"descEn": "One match model for every customer type in Customer Master. Comparisons, blocking and training are shared; each customer type is a segment of account_type with its own thresholds.",
+			"descAr": "نموذج مطابقة واحد لكل أنواع العملاء في ريبو العملاء الرئيسي. المقارنات والحصر والتدريب مشتركة، وكل نوع عميل شريحة على نوع الحساب ليها حدودها.",
+			"status": "active",
+			"version": "4",
+			"changed": "2026-10-02",
+			"owner": "سارة عادل",
 			"comparisons": [
 				{
 					"field": "name_std",
 					"method": "jw",
+					"weight": 9.0,
+					"on": true,
 					"levels": [
 						0.95,
 						0.9
-					],
-					"weight": 9.1,
-					"on": true
+					]
 				},
 				{
 					"field": "phones",
 					"method": "array",
-					"weight": 11.6,
+					"weight": 11.4,
 					"on": true
+				},
+				{
+					"field": "contact_mobile",
+					"method": "exact",
+					"weight": 6.5,
+					"on": true
+				},
+				{
+					"field": "national_id",
+					"method": "exact",
+					"weight": 14.2,
+					"on": true
+				},
+				{
+					"field": "parent_name_std",
+					"method": "jw",
+					"weight": 4.6,
+					"on": true,
+					"levels": [
+						0.95,
+						0.9
+					]
 				},
 				{
 					"field": "state_id",
 					"method": "exact",
-					"weight": 3.2,
+					"weight": 3.1,
 					"on": true
 				},
 				{
 					"field": "main_territory_id",
 					"method": "exact",
-					"weight": 2.4,
+					"weight": 2.3,
 					"on": true
 				},
 				{
 					"field": "territory_1_id",
 					"method": "exact",
-					"weight": 2.1,
+					"weight": 2.0,
 					"on": true
 				},
 				{
 					"field": "territory_2_id",
 					"method": "exact",
-					"weight": 1.8,
+					"weight": 1.7,
 					"on": true
 				},
 				{
@@ -241,372 +319,12 @@
 					"method": "exact",
 					"weight": 1.4,
 					"on": true
-				}
-			],
-			"exceptions": [],
-			"domain": "customers",
-			"descEn": "Teachers and supervisors from field tasks (C4C customer type 01).",
-			"descAr": "المدرسين والموجّهين من مهام الميدان (نوع عميل C4C ‏01).",
-			"status": "active",
-			"version": "3",
-			"changed": "2026-10-02",
-			"owner": "سارة عادل",
-			"checks": [
-				{
-					"key": "phoneGolden",
-					"on": true
 				},
 				{
-					"key": "phoneOpenCr",
-					"on": true
-				},
-				{
-					"key": "similarGolden",
-					"on": true
-				},
-				{
-					"key": "nationalId",
-					"on": false
-				},
-				{
-					"key": "similarOpenCr",
-					"on": false
-				}
-			],
-			"repo": "customer-master"
-		},
-		{
-			"key": "retailer",
-			"en": "Bookstore (retailer)",
-			"ar": "مكتبة",
-			"icon": "sap-icon://retail-store",
-			"threshold": 0.85,
-			"templates": [
-				{
-					"key": "TPL_CUSTOMER_RETAILER",
-					"en": "New bookstore",
-					"ar": "مكتبة جديدة"
-				}
-			],
-			"blocking": [
-				{
-					"fields": [
-						"name_first_token",
-						"state_id"
-					]
-				},
-				{
-					"fields": [
-						"phones"
-					]
-				}
-			],
-			"comparisons": [
-				{
-					"field": "name_std",
-					"method": "jw",
-					"levels": [
-						0.95,
-						0.88
-					],
-					"weight": 8.2,
-					"on": true
-				},
-				{
-					"field": "phones",
-					"method": "array",
-					"weight": 11.2,
-					"on": true
-				},
-				{
-					"field": "contact_mobile",
+					"field": "linked_account_id",
 					"method": "exact",
-					"weight": 6.5,
+					"weight": 2.6,
 					"on": true
-				},
-				{
-					"field": "state_id",
-					"method": "exact",
-					"weight": 3.0,
-					"on": true
-				},
-				{
-					"field": "main_territory_id",
-					"method": "exact",
-					"weight": 2.3,
-					"on": true
-				},
-				{
-					"field": "territory_1_id",
-					"method": "exact",
-					"weight": 2.0,
-					"on": true
-				},
-				{
-					"field": "territory_2_id",
-					"method": "exact",
-					"weight": 1.7,
-					"on": true
-				}
-			],
-			"exceptions": [],
-			"domain": "customers",
-			"descEn": "Bookstores and their contact person (customer type 02).",
-			"descAr": "المكتبات ومسئولها (نوع عميل 02).",
-			"status": "active",
-			"version": "3",
-			"changed": "2026-10-02",
-			"owner": "سارة عادل",
-			"checks": [
-				{
-					"key": "phoneGolden",
-					"on": true
-				},
-				{
-					"key": "phoneOpenCr",
-					"on": true
-				},
-				{
-					"key": "similarGolden",
-					"on": true
-				},
-				{
-					"key": "nationalId",
-					"on": false
-				},
-				{
-					"key": "similarOpenCr",
-					"on": false
-				}
-			],
-			"repo": "customer-master"
-		},
-		{
-			"key": "callCenter",
-			"en": "Call center customer",
-			"ar": "عميل كول سنتر",
-			"icon": "sap-icon://call",
-			"threshold": 0.9,
-			"templates": [
-				{
-					"key": "TPL_CUSTOMER_CALLCENTER",
-					"en": "New call center customer",
-					"ar": "عميل كول سنتر جديد"
-				}
-			],
-			"blocking": [
-				{
-					"fields": [
-						"name_first_token",
-						"state_id"
-					]
-				},
-				{
-					"fields": [
-						"phones"
-					]
-				}
-			],
-			"comparisons": [
-				{
-					"field": "name_std",
-					"method": "jw",
-					"levels": [
-						0.95,
-						0.9
-					],
-					"weight": 8.8,
-					"on": true
-				},
-				{
-					"field": "phones",
-					"method": "array",
-					"weight": 11.4,
-					"on": true
-				},
-				{
-					"field": "state_id",
-					"method": "exact",
-					"weight": 3.1,
-					"on": true
-				},
-				{
-					"field": "main_territory_id",
-					"method": "exact",
-					"weight": 2.2,
-					"on": true
-				},
-				{
-					"field": "territory_1_id",
-					"method": "exact",
-					"weight": 2.0,
-					"on": true
-				},
-				{
-					"field": "territory_2_id",
-					"method": "exact",
-					"weight": 1.6,
-					"on": true
-				}
-			],
-			"exceptions": [],
-			"domain": "customers",
-			"descEn": "Customers created by the call center (customer type 03).",
-			"descAr": "العملاء اللي بيسجلهم الكول سنتر (نوع عميل 03).",
-			"status": "active",
-			"version": "3",
-			"changed": "2026-10-02",
-			"owner": "سارة عادل",
-			"checks": [
-				{
-					"key": "phoneGolden",
-					"on": true
-				},
-				{
-					"key": "phoneOpenCr",
-					"on": true
-				},
-				{
-					"key": "similarGolden",
-					"on": true
-				},
-				{
-					"key": "nationalId",
-					"on": false
-				},
-				{
-					"key": "similarOpenCr",
-					"on": false
-				}
-			],
-			"repo": "customer-master"
-		},
-		{
-			"key": "student",
-			"en": "Student",
-			"ar": "طالب",
-			"icon": "sap-icon://family-care",
-			"threshold": 0.92,
-			"templates": [
-				{
-					"key": "TPL_CUSTOMER_STUDENT",
-					"en": "New student",
-					"ar": "طالب جديد"
-				}
-			],
-			"blocking": [
-				{
-					"fields": [
-						"name_first_token",
-						"state_id"
-					]
-				},
-				{
-					"fields": [
-						"phones"
-					]
-				}
-			],
-			"comparisons": [
-				{
-					"field": "name_std",
-					"method": "jw",
-					"levels": [
-						0.96,
-						0.92
-					],
-					"weight": 7.9,
-					"on": true
-				},
-				{
-					"field": "parent_name_std",
-					"method": "jw",
-					"levels": [
-						0.95,
-						0.9
-					],
-					"weight": 4.6,
-					"on": true
-				},
-				{
-					"field": "phones",
-					"method": "array",
-					"weight": 6.8,
-					"on": true
-				},
-				{
-					"field": "state_id",
-					"method": "exact",
-					"weight": 2.9,
-					"on": true
-				},
-				{
-					"field": "main_territory_id",
-					"method": "exact",
-					"weight": 2.1,
-					"on": true
-				},
-				{
-					"field": "territory_1_id",
-					"method": "exact",
-					"weight": 1.9,
-					"on": true
-				},
-				{
-					"field": "territory_2_id",
-					"method": "exact",
-					"weight": 1.5,
-					"on": true
-				}
-			],
-			"exceptions": [
-				{
-					"key": "siblings",
-					"on": true
-				}
-			],
-			"domain": "customers",
-			"descEn": "Students registered by a parent (customer type 03-1).",
-			"descAr": "طلاب مسجلين عن طريق ولي الأمر (نوع عميل 03-1).",
-			"status": "active",
-			"version": "3",
-			"changed": "2026-10-02",
-			"owner": "سارة عادل",
-			"checks": [
-				{
-					"key": "phoneGolden",
-					"on": true
-				},
-				{
-					"key": "phoneOpenCr",
-					"on": true
-				},
-				{
-					"key": "similarGolden",
-					"on": true
-				},
-				{
-					"key": "nationalId",
-					"on": false
-				},
-				{
-					"key": "similarOpenCr",
-					"on": false
-				}
-			],
-			"repo": "customer-master"
-		},
-		{
-			"key": "charityStudent",
-			"en": "Charity student",
-			"ar": "طالب جمعية خيرية",
-			"icon": "sap-icon://heart",
-			"threshold": 0.92,
-			"templates": [
-				{
-					"key": "TPL_CUSTOMER_CHARITY_STUDENT",
-					"en": "New charity student",
-					"ar": "طالب جمعية جديد"
 				}
 			],
 			"blocking": [
@@ -627,111 +345,934 @@
 					]
 				}
 			],
+			"training": {
+				"run": "2026-10-01",
+				"pairs": 2140,
+				"stewardPairs": 1630,
+				"gate": {
+					"precision": 0.95,
+					"recall": 0.9
+				},
+				"eval": {
+					"all": [
+						0.972,
+						0.934
+					],
+					"teacher": [
+						0.978,
+						0.941
+					],
+					"retailer": [
+						0.969,
+						0.952
+					],
+					"callCenter": [
+						0.963,
+						0.921
+					],
+					"student": [
+						0.958,
+						0.904
+					],
+					"charityStudent": [
+						0.981,
+						0.947
+					]
+				}
+			},
+			"segmentBy": "account_type",
+			"segments": [
+				{
+					"key": "teacher",
+					"en": "Teacher or supervisor",
+					"ar": "مدرس أو موجّه",
+					"icon": "sap-icon://education",
+					"values": [
+						"01"
+					],
+					"descEn": "Teachers and supervisors from field tasks (C4C customer type 01).",
+					"descAr": "المدرسين والموجّهين من مهام الميدان (نوع عميل C4C ‏01).",
+					"templates": [
+						{
+							"key": "TPL_CUSTOMER_TEACHER",
+							"en": "New teacher",
+							"ar": "مدرس جديد"
+						},
+						{
+							"key": "TPL_CUSTOMER_SUPERVISOR",
+							"en": "New supervisor",
+							"ar": "موجّه جديد"
+						}
+					],
+					"own": null,
+					"scope": "segment",
+					"exceptions": [],
+					"share": 0.46
+				},
+				{
+					"key": "retailer",
+					"en": "Bookstore (retailer)",
+					"ar": "مكتبة",
+					"icon": "sap-icon://retail-store",
+					"values": [
+						"02"
+					],
+					"descEn": "Bookstores and their contact person (customer type 02).",
+					"descAr": "المكتبات ومسئولها (نوع عميل 02).",
+					"templates": [
+						{
+							"key": "TPL_CUSTOMER_RETAILER",
+							"en": "New bookstore",
+							"ar": "مكتبة جديدة"
+						}
+					],
+					"own": {
+						"request": 0.85
+					},
+					"scope": "segment",
+					"exceptions": [],
+					"share": 0.12
+				},
+				{
+					"key": "callCenter",
+					"en": "Call center customer",
+					"ar": "عميل كول سنتر",
+					"icon": "sap-icon://call",
+					"values": [
+						"03"
+					],
+					"descEn": "Customers created by the call center (customer type 03).",
+					"descAr": "العملاء اللي بيسجلهم الكول سنتر (نوع عميل 03).",
+					"templates": [
+						{
+							"key": "TPL_CUSTOMER_CALLCENTER",
+							"en": "New call center customer",
+							"ar": "عميل كول سنتر جديد"
+						}
+					],
+					"own": null,
+					"scope": "all",
+					"exceptions": [],
+					"share": 0.22
+				},
+				{
+					"key": "student",
+					"en": "Student",
+					"ar": "طالب",
+					"icon": "sap-icon://family-care",
+					"values": [
+						"03-1"
+					],
+					"descEn": "Students registered by a parent (customer type 03-1).",
+					"descAr": "طلاب مسجلين عن طريق ولي الأمر (نوع عميل 03-1).",
+					"templates": [
+						{
+							"key": "TPL_CUSTOMER_STUDENT",
+							"en": "New student",
+							"ar": "طالب جديد"
+						}
+					],
+					"own": {
+						"autoMerge": 0.97,
+						"review": 0.85,
+						"request": 0.92
+					},
+					"scope": "segment",
+					"exceptions": [
+						{
+							"key": "siblings",
+							"on": true
+						}
+					],
+					"share": 0.15
+				},
+				{
+					"key": "charityStudent",
+					"en": "Charity student",
+					"ar": "طالب جمعية خيرية",
+					"icon": "sap-icon://heart",
+					"values": [
+						"03-2"
+					],
+					"descEn": "Students sponsored by a charity (customer type 03-2).",
+					"descAr": "طلاب تابعين لجمعية خيرية (نوع عميل 03-2).",
+					"templates": [
+						{
+							"key": "TPL_CUSTOMER_CHARITY_STUDENT",
+							"en": "New charity student",
+							"ar": "طالب جمعية جديد"
+						}
+					],
+					"own": {
+						"autoMerge": 0.97,
+						"review": 0.85,
+						"request": 0.92
+					},
+					"scope": "segment",
+					"exceptions": [
+						{
+							"key": "siblings",
+							"on": true
+						}
+					],
+					"share": 0.05
+				}
+			],
+			"consolidation": {
+				"auto": true,
+				"autoMerge": 0.95,
+				"review": 0.8,
+				"learn": true
+			},
+			"requestCheck": {
+				"stop": 0.9,
+				"review": 0.8,
+				"checks": [
+					{
+						"key": "phoneGolden",
+						"on": true,
+						"outcome": "stop"
+					},
+					{
+						"key": "phoneOpenCr",
+						"on": true,
+						"outcome": "stop"
+					},
+					{
+						"key": "similarGolden",
+						"on": true,
+						"outcome": "band"
+					},
+					{
+						"key": "nationalId",
+						"on": true,
+						"outcome": "stop"
+					},
+					{
+						"key": "similarOpenCr",
+						"on": false,
+						"outcome": "band"
+					}
+				],
+				"staged": true
+			},
+			"survivorship": {
+				"priority": [
+					"c4c",
+					"s4",
+					"csv"
+				],
+				"dqGate": true,
+				"stewardLock": true,
+				"tieBreak": "recent",
+				"backfill": false,
+				"groups": [
+					{
+						"key": "address",
+						"cols": [
+							"state_id",
+							"main_territory_id",
+							"territory_1_id",
+							"territory_2_id",
+							"sales_district"
+						],
+						"rule": "sourcePriority"
+					},
+					{
+						"key": "phones",
+						"cols": [
+							"mobile_1",
+							"mobile_2",
+							"mobile_3",
+							"phone",
+							"whatsapp"
+						],
+						"rule": "recent"
+					}
+				],
+				"rules": [
+					{
+						"col": "name",
+						"rule": "sourcePriority"
+					},
+					{
+						"col": "contact_mobile",
+						"rule": "recent"
+					},
+					{
+						"col": "email",
+						"rule": "recent"
+					},
+					{
+						"col": "account_type",
+						"rule": "sourcePriority"
+					},
+					{
+						"col": "final_stages",
+						"rule": "union"
+					},
+					{
+						"col": "final_subject",
+						"rule": "frequent"
+					},
+					{
+						"col": "promotion_group",
+						"rule": "sourcePriority"
+					},
+					{
+						"col": "classification_group",
+						"rule": "sourcePriority"
+					},
+					{
+						"col": "parent_name",
+						"rule": "complete"
+					},
+					{
+						"col": "national_id",
+						"rule": "sourcePriority"
+					},
+					{
+						"col": "linked_account_id",
+						"rule": "sourcePriority"
+					},
+					{
+						"col": "wholesaler_id",
+						"rule": "sourcePriority"
+					},
+					{
+						"col": "distributor_id",
+						"rule": "sourcePriority"
+					}
+				]
+			},
+			"stats": {
+				"golden": 951247,
+				"pairs": [
+					136,
+					193,
+					303,
+					369,
+					540,
+					670,
+					780,
+					1029,
+					1084,
+					1324,
+					1333,
+					1408,
+					1536,
+					1634,
+					1349,
+					1268,
+					1225,
+					1120,
+					869,
+					675,
+					588,
+					367,
+					315,
+					198,
+					131,
+					86,
+					57,
+					39,
+					20,
+					12,
+					7,
+					3,
+					2,
+					0,
+					0,
+					0,
+					2,
+					6,
+					17,
+					43,
+					88,
+					165,
+					315,
+					485,
+					629,
+					864,
+					994,
+					1118,
+					1034,
+					815
+				],
+				"requests": [
+					7,
+					7,
+					9,
+					10,
+					9,
+					10,
+					9,
+					10,
+					9,
+					8,
+					7,
+					5,
+					4,
+					3,
+					2,
+					2,
+					1,
+					1,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					1,
+					1,
+					3,
+					4,
+					6,
+					7,
+					7,
+					6,
+					5,
+					4,
+					3,
+					2,
+					1
+				]
+			},
+			"impact": {
+				"name": {
+					"sourcePriority": 11624,
+					"recent": 14700,
+					"complete": 14776,
+					"frequent": 28659,
+					"union": 34405
+				},
+				"mobile_1": {
+					"sourcePriority": 16398,
+					"recent": 2128,
+					"complete": 25016,
+					"frequent": 22275,
+					"union": 33148
+				},
+				"mobile_2": {
+					"sourcePriority": 54487,
+					"recent": 39998,
+					"complete": 30343,
+					"frequent": 35976,
+					"union": 39210
+				},
+				"mobile_3": {
+					"sourcePriority": 4881,
+					"recent": 51531,
+					"complete": 44935,
+					"frequent": 50151,
+					"union": 45923
+				},
+				"phone": {
+					"sourcePriority": 23550,
+					"recent": 23915,
+					"complete": 7614,
+					"frequent": 36897,
+					"union": 5336
+				},
+				"whatsapp": {
+					"sourcePriority": 5618,
+					"recent": 13420,
+					"complete": 10857,
+					"frequent": 20664,
+					"union": 4803
+				},
+				"contact_mobile": {
+					"sourcePriority": 1915,
+					"recent": 10248,
+					"complete": 7500,
+					"frequent": 21963,
+					"union": 3309
+				},
+				"email": {
+					"sourcePriority": 50141,
+					"recent": 35782,
+					"complete": 10098,
+					"frequent": 15820,
+					"union": 21068
+				},
+				"state_id": {
+					"sourcePriority": 21994,
+					"recent": 8679,
+					"complete": 48740,
+					"frequent": 56694,
+					"union": 27612
+				},
+				"main_territory_id": {
+					"sourcePriority": 28596,
+					"recent": 6640,
+					"complete": 7540,
+					"frequent": 20806,
+					"union": 16509
+				},
+				"territory_1_id": {
+					"sourcePriority": 47632,
+					"recent": 10809,
+					"complete": 3176,
+					"frequent": 54370,
+					"union": 31047
+				},
+				"territory_2_id": {
+					"sourcePriority": 9990,
+					"recent": 31870,
+					"complete": 3394,
+					"frequent": 31039,
+					"union": 55888
+				},
+				"sales_district": {
+					"sourcePriority": 49534,
+					"recent": 40313,
+					"complete": 16308,
+					"frequent": 22134,
+					"union": 11118
+				},
+				"account_type": {
+					"sourcePriority": 44492,
+					"recent": 31286,
+					"complete": 44884,
+					"frequent": 20090,
+					"union": 14208
+				},
+				"final_stages": {
+					"sourcePriority": 46675,
+					"recent": 56243,
+					"complete": 48944,
+					"frequent": 46375,
+					"union": 47051
+				},
+				"final_subject": {
+					"sourcePriority": 42723,
+					"recent": 14412,
+					"complete": 30461,
+					"frequent": 21519,
+					"union": 3501
+				},
+				"promotion_group": {
+					"sourcePriority": 3443,
+					"recent": 17318,
+					"complete": 16201,
+					"frequent": 40110,
+					"union": 54675
+				},
+				"classification_group": {
+					"sourcePriority": 26577,
+					"recent": 53600,
+					"complete": 56414,
+					"frequent": 54592,
+					"union": 22020
+				},
+				"parent_name": {
+					"sourcePriority": 14065,
+					"recent": 14418,
+					"complete": 12755,
+					"frequent": 13178,
+					"union": 36333
+				},
+				"national_id": {
+					"sourcePriority": 51574,
+					"recent": 48271,
+					"complete": 28356,
+					"frequent": 37928,
+					"union": 46020
+				},
+				"linked_account_id": {
+					"sourcePriority": 6579,
+					"recent": 38348,
+					"complete": 52097,
+					"frequent": 45063,
+					"union": 43289
+				},
+				"wholesaler_id": {
+					"sourcePriority": 28276,
+					"recent": 11751,
+					"complete": 45440,
+					"frequent": 20248,
+					"union": 46085
+				},
+				"distributor_id": {
+					"sourcePriority": 55511,
+					"recent": 23741,
+					"complete": 24047,
+					"frequent": 54139,
+					"union": 41891
+				}
+			}
+		},
+		{
+			"key": "vendor-master",
+			"en": "Vendor master",
+			"ar": "الموردون الرئيسي",
+			"icon": "sap-icon://supplier",
+			"domain": "vendors",
+			"repo": "vendor-master",
+			"descEn": "Vendors from S/4HANA. No segments: every vendor uses the model thresholds.",
+			"descAr": "الموردين من S/4HANA. من غير شرائح: كل الموردين بيستخدموا حدود النموذج.",
+			"status": "active",
+			"version": "2",
+			"changed": "2026-07-30",
+			"owner": "هالة سمير",
 			"comparisons": [
 				{
 					"field": "name_std",
 					"method": "jw",
-					"levels": [
-						0.96,
-						0.92
-					],
-					"weight": 7.9,
-					"on": true
-				},
-				{
-					"field": "national_id",
-					"method": "exact",
-					"weight": 14.2,
-					"on": true
-				},
-				{
-					"field": "parent_name_std",
-					"method": "jw",
+					"weight": 8.4,
+					"on": true,
 					"levels": [
 						0.95,
 						0.9
-					],
-					"weight": 4.6,
+					]
+				},
+				{
+					"field": "tax_number",
+					"method": "exact",
+					"weight": 13.1,
 					"on": true
 				},
 				{
 					"field": "phones",
 					"method": "array",
-					"weight": 6.8,
+					"weight": 7.2,
 					"on": true
 				},
 				{
-					"field": "linked_account_id",
+					"field": "email",
 					"method": "exact",
-					"weight": 2.6,
+					"weight": 6.0,
 					"on": true
 				},
 				{
-					"field": "state_id",
+					"field": "city",
 					"method": "exact",
-					"weight": 2.9,
+					"weight": 2.2,
+					"on": true
+				},
+				{
+					"field": "country",
+					"method": "exact",
+					"weight": 0.9,
 					"on": true
 				}
 			],
-			"exceptions": [
+			"blocking": [
 				{
-					"key": "siblings",
-					"on": true
+					"fields": [
+						"name_first_token"
+					]
+				},
+				{
+					"fields": [
+						"tax_number"
+					]
+				},
+				{
+					"fields": [
+						"phones"
+					]
 				}
 			],
-			"domain": "customers",
-			"descEn": "Students sponsored by a charity (customer type 03-2).",
-			"descAr": "طلاب تابعين لجمعية خيرية (نوع عميل 03-2).",
-			"status": "active",
-			"version": "3",
-			"changed": "2026-10-02",
-			"owner": "سارة عادل",
-			"checks": [
-				{
-					"key": "phoneGolden",
-					"on": true
+			"training": {
+				"run": "2026-07-28",
+				"pairs": 260,
+				"stewardPairs": 190,
+				"gate": {
+					"precision": 0.95,
+					"recall": 0.9
 				},
-				{
-					"key": "phoneOpenCr",
-					"on": true
-				},
-				{
-					"key": "similarGolden",
-					"on": true
-				},
-				{
-					"key": "nationalId",
-					"on": true
-				},
-				{
-					"key": "similarOpenCr",
-					"on": false
+				"eval": {
+					"all": [
+						0.957,
+						0.912
+					]
 				}
-			],
-			"repo": "customer-master"
+			},
+			"segmentBy": "",
+			"segments": [],
+			"consolidation": {
+				"auto": false,
+				"autoMerge": 0.97,
+				"review": 0.85,
+				"learn": true
+			},
+			"requestCheck": {
+				"stop": 0.9,
+				"review": 0.8,
+				"checks": [
+					{
+						"key": "phoneGolden",
+						"on": true,
+						"outcome": "review"
+					},
+					{
+						"key": "phoneOpenCr",
+						"on": true,
+						"outcome": "review"
+					},
+					{
+						"key": "similarGolden",
+						"on": true,
+						"outcome": "band"
+					},
+					{
+						"key": "taxNumber",
+						"on": true,
+						"outcome": "stop"
+					},
+					{
+						"key": "nationalId",
+						"on": false,
+						"outcome": "stop"
+					},
+					{
+						"key": "similarOpenCr",
+						"on": false,
+						"outcome": "band"
+					}
+				],
+				"staged": false
+			},
+			"survivorship": {
+				"priority": [
+					"s4"
+				],
+				"dqGate": true,
+				"stewardLock": true,
+				"tieBreak": "recent",
+				"backfill": false,
+				"groups": [
+					{
+						"key": "phones",
+						"cols": [
+							"phone"
+						],
+						"rule": "recent"
+					}
+				],
+				"rules": [
+					{
+						"col": "name",
+						"rule": "sourcePriority"
+					},
+					{
+						"col": "tax_number",
+						"rule": "sourcePriority"
+					},
+					{
+						"col": "email",
+						"rule": "recent"
+					},
+					{
+						"col": "city",
+						"rule": "sourcePriority"
+					},
+					{
+						"col": "country",
+						"rule": "sourcePriority"
+					}
+				]
+			},
+			"stats": {
+				"golden": 612,
+				"pairs": [
+					4,
+					5,
+					7,
+					11,
+					13,
+					14,
+					19,
+					22,
+					23,
+					22,
+					24,
+					21,
+					20,
+					22,
+					18,
+					15,
+					14,
+					10,
+					8,
+					6,
+					4,
+					3,
+					2,
+					1,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					1,
+					2,
+					4,
+					6,
+					10,
+					13,
+					15,
+					15,
+					15,
+					13
+				],
+				"requests": [
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0,
+					1,
+					1,
+					1,
+					1,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0
+				]
+			},
+			"impact": {
+				"name": {
+					"sourcePriority": 13,
+					"recent": 8,
+					"complete": 12,
+					"frequent": 26,
+					"union": 1
+				},
+				"tax_number": {
+					"sourcePriority": 20,
+					"recent": 16,
+					"complete": 1,
+					"frequent": 12,
+					"union": 23
+				},
+				"email": {
+					"sourcePriority": 19,
+					"recent": 3,
+					"complete": 36,
+					"frequent": 29,
+					"union": 35
+				},
+				"phone": {
+					"sourcePriority": 4,
+					"recent": 10,
+					"complete": 2,
+					"frequent": 28,
+					"union": 10
+				},
+				"city": {
+					"sourcePriority": 5,
+					"recent": 16,
+					"complete": 33,
+					"frequent": 30,
+					"union": 10
+				},
+				"country": {
+					"sourcePriority": 6,
+					"recent": 33,
+					"complete": 21,
+					"frequent": 26,
+					"union": 4
+				}
+			}
 		}
 	],
 	"checkCatalog": [
 		{
 			"key": "phoneGolden",
-			"against": "golden"
+			"against": "golden",
+			"kind": "exact"
 		},
 		{
 			"key": "phoneOpenCr",
-			"against": "openCr"
+			"against": "openCr",
+			"kind": "exact"
 		},
 		{
 			"key": "similarGolden",
-			"against": "golden"
+			"against": "golden",
+			"kind": "score"
 		},
 		{
 			"key": "nationalId",
 			"against": "both",
+			"kind": "exact",
 			"needs": "national_id"
 		},
 		{
+			"key": "taxNumber",
+			"against": "both",
+			"kind": "exact",
+			"needs": "tax_number"
+		},
+		{
 			"key": "similarOpenCr",
-			"against": "openCr"
+			"against": "openCr",
+			"kind": "score"
 		}
 	],
 	"repoColumns": {
@@ -1276,5 +1817,157 @@
 				"kind": "text"
 			}
 		]
+	},
+	"rules": [
+		"sourcePriority",
+		"recent",
+		"complete",
+		"frequent",
+		"union"
+	],
+	"preview": {
+		"customer-master": {
+			"id": "GR-C-004512",
+			"values": [
+				{
+					"col": "name",
+					"v": [
+						[
+							"c4c",
+							"أحمد محمود السيد",
+							"2026-09-14",
+							true
+						],
+						[
+							"s4",
+							"احمد محمود السيد",
+							"2026-10-20",
+							true
+						],
+						[
+							"csv",
+							"أحمد محمود",
+							"2026-03-02",
+							true
+						]
+					]
+				},
+				{
+					"col": "email",
+					"v": [
+						[
+							"c4c",
+							"a.mahmoud@example.com",
+							"2026-02-10",
+							true
+						],
+						[
+							"s4",
+							"ahmed.m@example.com",
+							"2026-10-20",
+							true
+						]
+					]
+				},
+				{
+					"col": "national_id",
+					"v": [
+						[
+							"c4c",
+							"",
+							"2026-09-14",
+							false
+						],
+						[
+							"csv",
+							"2850…1187",
+							"2026-03-02",
+							true
+						]
+					]
+				},
+				{
+					"col": "final_stages",
+					"v": [
+						[
+							"c4c",
+							"إعدادي",
+							"2026-09-14",
+							true
+						],
+						[
+							"csv",
+							"إعدادي، ثانوي",
+							"2026-03-02",
+							true
+						]
+					]
+				},
+				{
+					"col": "final_subject",
+					"v": [
+						[
+							"c4c",
+							"رياضيات",
+							"2026-09-14",
+							true
+						],
+						[
+							"s4",
+							"رياضيات",
+							"2026-10-20",
+							true
+						],
+						[
+							"csv",
+							"علوم",
+							"2026-03-02",
+							true
+						]
+					]
+				},
+				{
+					"col": "group:address",
+					"v": [
+						[
+							"c4c",
+							"الجيزة · الهرم · فيصل",
+							"2026-09-14",
+							true
+						],
+						[
+							"s4",
+							"الجيزة · الهرم",
+							"2026-10-20",
+							true
+						]
+					]
+				},
+				{
+					"col": "group:phones",
+					"v": [
+						[
+							"c4c",
+							"01001234567 · 01122334455",
+							"2026-09-14",
+							true
+						],
+						[
+							"s4",
+							"0100123456",
+							"2026-10-20",
+							false
+						],
+						[
+							"csv",
+							"01001234567",
+							"2026-03-02",
+							true
+						]
+					]
+				}
+			],
+			"locked": []
+		}
 	}
 }

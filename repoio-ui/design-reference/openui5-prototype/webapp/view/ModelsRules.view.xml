@@ -1,9 +1,9 @@
 <mvc:View controllerName="repoio.proto.controller.ModelsRules"
 	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core">
-	<!-- J5: Models & rules. A steward creates match models (one domain each) and defines the rules inside them: Splink
-	     match rules and the change request duplicate check. A template picks the model its requests use. The console edits
-	     a draft; the rules API stores versions and the services run them (Splink for matching, the request service for the
-	     duplicate check). -->
+	<!-- J5: Models & rules. One match model per repository. Comparisons, blocking and Splink training are shared; customer types
+	     are segments of a code column with their own thresholds. The same model consolidates the repository into golden
+	     records, checks change requests and holds the survivorship rules. The console edits a draft and shows previews; the
+	     rules API stores versions and the services run them (Splink, the request service, the survivorship job). -->
 	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="false" showFooter="{= ${view>/mr/dirtyCount} > 0 }" class="repoioEdge repoioMrPage">
 		<f:title>
 			<f:DynamicPageTitle>
@@ -16,7 +16,7 @@
 		</f:title>
 		<f:content>
 			<HBox renderType="Bare" class="repoioUmBody">
-				<!-- The models -->
+				<!-- The models: one per repository -->
 				<VBox renderType="Bare" class="repoioUmTree repoioMrNav">
 					<SearchField value="{view>/mr/q}" liveChange=".onSearch" placeholder="{i18n>mr.searchModels}" class="repoioMrSearch"/>
 					<List items="{view>/mr/models}" mode="SingleSelectMaster" selectionChange=".onModel" showSeparators="None" class="repoioFacetList repoioMrList"
@@ -25,7 +25,7 @@
 					</List>
 				</VBox>
 
-				<!-- The selected model and its rules -->
+				<!-- The selected model -->
 				<VBox renderType="Bare" class="repoioUmMain repoioMrMain" visible="{= !!${view>/mr/m} }">
 					<VBox renderType="Bare" class="repoioMrSec repoioMrHead">
 						<HBox alignItems="Center" justifyContent="SpaceBetween" wrap="Wrap" renderType="Bare">
@@ -41,29 +41,19 @@
 						</HBox>
 						<Text text="{view>/mr/m/desc}"/>
 						<Text text="{view>/mr/m/meta}" class="repoioUmMuted"/>
-						<HBox alignItems="Center" wrap="Wrap" class="repoioMrTpls">
-							<Label text="{i18n>mr.templates}" class="sapUiTinyMarginEnd"/>
-							<HBox items="{view>/mr/m/templates}" wrap="Wrap" renderType="Bare">
-								<ObjectStatus text="{view>text}" icon="sap-icon://form" state="Information" inverted="true" class="repoioMrTpl"/>
-							</HBox>
-							<Text text="{i18n>mr.noTemplates}" class="repoioUmMuted" visible="{= ${view>/mr/m/templates}.length === 0 }"/>
+						<HBox wrap="Wrap" renderType="Bare" class="repoioMrUses">
+							<ObjectStatus text="{view>/mr/m/useConsolidate}" icon="sap-icon://combine" state="Information" inverted="true" class="repoioMrTpl"/>
+							<ObjectStatus text="{view>/mr/m/useRequest}" icon="sap-icon://request" state="Information" inverted="true" class="repoioMrTpl"/>
+							<ObjectStatus text="{view>/mr/m/useSurvive}" icon="sap-icon://badge" state="Information" inverted="true" class="repoioMrTpl"/>
 						</HBox>
 					</VBox>
 
 					<IconTabBar selectedKey="{view>/mr/tab}" expandable="false" headerMode="Inline" headerBackgroundDesign="Solid" class="repoioApiTabs repoioMrTabs">
 						<items>
-							<!-- Match rules (Splink) -->
-							<IconTabFilter key="match" text="{i18n>mr.tab.match}" icon="sap-icon://combine">
+							<!-- 1. Match: shared comparisons, blocking, training and evaluation -->
+							<IconTabFilter key="match" text="{i18n>mr.tab.match}" icon="sap-icon://compare">
 								<VBox renderType="Bare">
-									<VBox renderType="Bare" class="repoioMrSec">
-										<HBox alignItems="Center" wrap="Wrap" class="repoioMrThreshold">
-											<core:Icon src="sap-icon://stop" color="Negative" class="sapUiTinyMarginEnd"/>
-											<Label text="{i18n>mr.threshold}" class="sapUiSmallMarginEnd" labelFor="mrThreshold"/>
-											<StepInput id="mrThreshold" value="{view>/mr/m/threshold}" min="0.5" max="0.99" step="0.01" displayValuePrecision="2" width="8rem" change=".onEdit"/>
-										</HBox>
-										<Text text="{i18n>mr.thresholdHint}" class="repoioUmMuted"/>
-									</VBox>
-
+									<MessageStrip text="{i18n>mr.match.intro}" type="Information" showIcon="true" class="repoioMrStrip"/>
 									<Table items="{view>/mr/m/comparisons}" class="repoioDenseTable repoioMrTable" fixedLayout="false" popinLayout="GridSmall" noDataText="{i18n>mr.cmp.none}">
 										<headerToolbar>
 											<OverflowToolbar style="Clear">
@@ -100,7 +90,7 @@
 											</ColumnListItem>
 										</items>
 									</Table>
-									<Text text="{i18n>mr.cmp.trained}" class="repoioUmMuted repoioMrFoot"/>
+									<Text text="{i18n>mr.cmp.nulls}" class="repoioUmMuted repoioMrFoot"/>
 
 									<Table items="{view>/mr/m/blocking}" class="repoioDenseTable repoioMrTable" fixedLayout="false" noDataText="{i18n>mr.blk.none}">
 										<headerToolbar>
@@ -125,25 +115,195 @@
 									</Table>
 									<Text text="{i18n>mr.blk.hint}" class="repoioUmMuted repoioMrFoot"/>
 
-									<VBox renderType="Bare" class="repoioMrSec" visible="{= ${view>/mr/m/exceptions}.length > 0 }">
-										<Title text="{i18n>mr.exc.title}" level="H3"/>
-										<VBox items="{view>/mr/m/exceptions}" renderType="Bare">
-											<HBox alignItems="Center" class="repoioMrExc">
-												<Switch state="{view>on}" change=".onEdit" customTextOn=" " customTextOff=" "/>
-												<VBox renderType="Bare" class="sapUiSmallMarginBegin">
-													<Text text="{view>text}"/>
-													<Text text="{view>desc}" class="repoioUmMuted"/>
-												</VBox>
-											</HBox>
-										</VBox>
-									</VBox>
+									<!-- Training and the precision/recall gate -->
+									<Table items="{view>/mr/m/evalRows}" class="repoioDenseTable repoioMrTable" fixedLayout="false">
+										<headerToolbar>
+											<OverflowToolbar style="Clear">
+												<Title text="{i18n>mr.eval.title}" level="H3"/>
+												<ToolbarSpacer/>
+												<Text text="{view>/mr/m/trainText}" class="repoioUmMuted"/>
+											</OverflowToolbar>
+										</headerToolbar>
+										<columns>
+											<Column><Text text="{i18n>mr.eval.scope}"/></Column>
+											<Column hAlign="End" width="9rem"><Text text="{i18n>mr.eval.precision}" tooltip="{i18n>mr.eval.precisionTip}"/></Column>
+											<Column hAlign="End" width="9rem"><Text text="{i18n>mr.eval.recall}" tooltip="{i18n>mr.eval.recallTip}"/></Column>
+										</columns>
+										<items>
+											<ColumnListItem>
+												<Text text="{view>text}"/>
+												<ObjectNumber number="{view>p}" state="{view>pState}" textDirection="LTR"/>
+												<ObjectNumber number="{view>r}" state="{view>rState}" textDirection="LTR"/>
+											</ColumnListItem>
+										</items>
+									</Table>
+									<Text text="{view>/mr/m/gateText}" class="repoioUmMuted repoioMrFoot"/>
+									<MessageStrip text="{i18n>mr.eval.dirty}" type="Warning" showIcon="true" visible="{= !!${view>/mr/m/dirty} }" class="repoioMrStrip"/>
 								</VBox>
 							</IconTabFilter>
 
-							<!-- Duplicate check on change requests -->
+							<!-- 2. Segments: customer types inside the model -->
+							<IconTabFilter key="segments" text="{i18n>mr.tab.segments}" icon="sap-icon://group" count="{view>/mr/m/segCount}">
+								<VBox renderType="Bare">
+									<MessageStrip text="{i18n>mr.seg.intro}" type="Information" showIcon="true" class="repoioMrStrip"/>
+									<HBox alignItems="Center" wrap="Wrap" class="repoioMrSec">
+										<Label text="{i18n>mr.seg.by}" labelFor="mrSegBy" class="sapUiSmallMarginEnd"/>
+										<Select id="mrSegBy" selectedKey="{view>/mr/m/segmentBy}" items="{path: 'view>/mr/m/codeCols', templateShareable: false}" forceSelection="false"
+											showSecondaryValues="true" width="18rem" change=".onEdit">
+											<core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>key}"/>
+										</Select>
+									</HBox>
+									<Table items="{view>/mr/m/segRows}" class="repoioDenseTable repoioMrTable" fixedLayout="false" popinLayout="GridSmall" noDataText="{i18n>mr.seg.none}">
+										<headerToolbar>
+											<OverflowToolbar style="Clear">
+												<Title text="{path: 'view>/mr/m/segCount', formatter: '.segTitle'}" level="H3"/>
+												<ToolbarSpacer/>
+												<Button text="{i18n>mr.seg.add}" icon="sap-icon://add" press=".onAddSeg" enabled="{= !!${view>/mr/m/segmentBy} }"/>
+											</OverflowToolbar>
+										</headerToolbar>
+										<columns>
+											<Column><Text text="{i18n>mr.seg.col}"/></Column>
+											<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>mr.seg.tpls}"/></Column>
+											<Column hAlign="End" width="7rem"><Text text="{i18n>mr.seg.auto}"/></Column>
+											<Column hAlign="End" width="7rem"><Text text="{i18n>mr.seg.review}"/></Column>
+											<Column hAlign="End" width="7rem"><Text text="{i18n>mr.seg.request}"/></Column>
+											<Column minScreenWidth="Tablet" demandPopin="true" width="11rem"><Text text="{i18n>mr.seg.scope}"/></Column>
+											<Column hAlign="End" width="5.5rem"><Text text="{i18n>jr.col.actions}" class="sapUiInvisibleText"/></Column>
+										</columns>
+										<items>
+											<ColumnListItem>
+												<HBox alignItems="Center" renderType="Bare">
+													<core:Icon src="{view>icon}" class="sapUiSmallMarginEnd"/>
+													<VBox renderType="Bare">
+														<Text text="{view>text}" wrapping="false"/>
+														<Text text="{view>filterText}" class="repoioJrTech" wrapping="false" textDirection="LTR"/>
+														<Text text="{view>excText}" class="repoioUmMuted" visible="{= !!${view>excText} }"/>
+													</VBox>
+												</HBox>
+												<Text text="{view>tplText}"/>
+												<ObjectStatus text="{view>autoText}" state="{= ${view>autoOwn} ? 'Information' : 'None' }"/>
+												<ObjectStatus text="{view>reviewText}" state="{= ${view>reviewOwn} ? 'Information' : 'None' }"/>
+												<ObjectStatus text="{view>requestText}" state="{= ${view>requestOwn} ? 'Information' : 'None' }"/>
+												<Text text="{view>scopeText}"/>
+												<HBox justifyContent="End">
+													<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>common.edit}" press=".onEditSeg"/>
+													<Button icon="sap-icon://delete" type="Transparent" tooltip="{i18n>mr.remove}" enabled="{view>canDelete}" press=".onDelSeg"/>
+												</HBox>
+											</ColumnListItem>
+										</items>
+									</Table>
+									<Text text="{i18n>mr.seg.inherit}" class="repoioUmMuted repoioMrFoot"/>
+								</VBox>
+							</IconTabFilter>
+
+							<!-- 3. Consolidation: repository records into golden records -->
+							<IconTabFilter key="consolidate" text="{i18n>mr.tab.consolidate}" icon="sap-icon://combine">
+								<VBox renderType="Bare">
+									<MessageStrip text="{i18n>mr.con.intro}" type="Information" showIcon="true" class="repoioMrStrip"/>
+									<VBox renderType="Bare" class="repoioMrSec">
+										<core:HTML content="{view>/mr/m/conBands}" preferDOM="false"/>
+										<FlexBox wrap="Wrap" alignItems="End" class="repoioMrSteps">
+											<VBox class="repoioMrStep">
+												<Label text="{i18n>mr.con.autoAt}" labelFor="mrAuto"/>
+												<StepInput id="mrAuto" value="{view>/mr/m/consolidation/autoMerge}" min="0.6" max="0.99" step="0.01" displayValuePrecision="2" width="9rem"
+													enabled="{view>/mr/m/consolidation/auto}" change=".onEdit" valueState="{view>/mr/m/conState}" valueStateText="{i18n>mr.v.bands}"/>
+											</VBox>
+											<VBox class="repoioMrStep">
+												<Label text="{i18n>mr.con.reviewAt}" labelFor="mrReview"/>
+												<StepInput id="mrReview" value="{view>/mr/m/consolidation/review}" min="0.5" max="0.98" step="0.01" displayValuePrecision="2" width="9rem"
+													change=".onEdit" valueState="{view>/mr/m/conState}" valueStateText="{i18n>mr.v.bands}"/>
+											</VBox>
+											<VBox class="repoioMrStep">
+												<Label text="{i18n>mr.con.auto}"/>
+												<Switch state="{view>/mr/m/consolidation/auto}" change=".onEdit" customTextOn=" " customTextOff=" "/>
+											</VBox>
+										</FlexBox>
+										<Text text="{i18n>mr.con.autoHint}" class="repoioUmMuted"/>
+									</VBox>
+									<Table items="{view>/mr/m/conEst}" class="repoioDenseTable repoioMrTable" fixedLayout="false">
+										<headerToolbar>
+											<OverflowToolbar style="Clear">
+												<Title text="{i18n>mr.con.estTitle}" level="H3"/>
+												<ToolbarSpacer/>
+												<Text text="{view>/mr/m/conEstNote}" class="repoioUmMuted"/>
+											</OverflowToolbar>
+										</headerToolbar>
+										<columns>
+											<Column><Text text="{i18n>mr.con.band}"/></Column>
+											<Column hAlign="End" width="9rem"><Text text="{i18n>mr.imp.active}"/></Column>
+											<Column hAlign="End" width="9rem"><Text text="{i18n>mr.imp.draft}"/></Column>
+										</columns>
+										<items>
+											<ColumnListItem>
+												<ObjectStatus text="{view>text}" state="{view>state}" icon="{view>icon}"/>
+												<Text text="{view>activeText}" class="repoioMono" textDirection="LTR"/>
+												<ObjectNumber number="{view>draftText}" state="{view>deltaState}" textDirection="LTR"/>
+											</ColumnListItem>
+										</items>
+									</Table>
+									<VBox renderType="Bare" class="repoioMrSec">
+										<HBox alignItems="Center" class="repoioMrExc">
+											<Switch state="{view>/mr/m/consolidation/learn}" change=".onEdit" customTextOn=" " customTextOff=" "/>
+											<VBox renderType="Bare" class="sapUiSmallMarginBegin">
+												<Text text="{i18n>mr.con.learn}"/>
+												<Text text="{i18n>mr.con.learn.d}" class="repoioUmMuted"/>
+											</VBox>
+										</HBox>
+									</VBox>
+									<FlexBox wrap="Wrap" class="repoioMrNotes">
+										<VBox class="repoioMrNote">
+											<Title text="{i18n>mr.con.queue.title}" level="H4"/>
+											<Text text="{i18n>mr.con.queue.body}"/>
+										</VBox>
+										<VBox class="repoioMrNote">
+											<Title text="{i18n>mr.con.unmerge.title}" level="H4"/>
+											<Text text="{i18n>mr.con.unmerge.body}"/>
+										</VBox>
+										<VBox class="repoioMrNote">
+											<Title text="{i18n>mr.con.seg.title}" level="H4"/>
+											<Text text="{i18n>mr.con.seg.body}"/>
+										</VBox>
+									</FlexBox>
+								</VBox>
+							</IconTabFilter>
+
+							<!-- 4. Request check: a change request against golden records -->
 							<IconTabFilter key="gate" text="{i18n>mr.tab.gate}" icon="sap-icon://stop">
 								<VBox renderType="Bare">
 									<MessageStrip text="{i18n>mr.gate.intro}" type="Information" showIcon="true" class="repoioMrStrip"/>
+									<VBox renderType="Bare" class="repoioMrSec">
+										<core:HTML content="{view>/mr/m/reqBands}" preferDOM="false"/>
+										<FlexBox wrap="Wrap" alignItems="End" class="repoioMrSteps">
+											<VBox class="repoioMrStep">
+												<Label text="{i18n>mr.gate.stopAt}" labelFor="mrStop"/>
+												<StepInput id="mrStop" value="{view>/mr/m/requestCheck/stop}" min="0.6" max="0.99" step="0.01" displayValuePrecision="2" width="9rem"
+													change=".onEdit" valueState="{view>/mr/m/reqState}" valueStateText="{i18n>mr.v.reqBands}"/>
+											</VBox>
+											<VBox class="repoioMrStep">
+												<Label text="{i18n>mr.gate.reviewAt}" labelFor="mrReqReview"/>
+												<StepInput id="mrReqReview" value="{view>/mr/m/requestCheck/review}" min="0.5" max="0.98" step="0.01" displayValuePrecision="2" width="9rem"
+													change=".onEdit" valueState="{view>/mr/m/reqState}" valueStateText="{i18n>mr.v.reqBands}"/>
+											</VBox>
+										</FlexBox>
+										<Text text="{i18n>mr.gate.bandHint}" class="repoioUmMuted"/>
+									</VBox>
+									<VBox renderType="Bare" class="repoioMrSec">
+										<Title text="{i18n>mr.gate.with}" level="H3"/>
+										<HBox alignItems="Center" class="repoioMrExc">
+											<Switch state="true" enabled="false" customTextOn=" " customTextOff=" "/>
+											<VBox renderType="Bare" class="sapUiSmallMarginBegin">
+												<Text text="{i18n>mr.gate.withGolden}"/>
+												<Text text="{i18n>mr.gate.withGolden.d}" class="repoioUmMuted"/>
+											</VBox>
+										</HBox>
+										<HBox alignItems="Center" class="repoioMrExc">
+											<Switch state="{view>/mr/m/requestCheck/staged}" change=".onEdit" customTextOn=" " customTextOff=" "/>
+											<VBox renderType="Bare" class="sapUiSmallMarginBegin">
+												<Text text="{i18n>mr.gate.withStaged}"/>
+												<Text text="{i18n>mr.gate.withStaged.d}" class="repoioUmMuted"/>
+											</VBox>
+										</HBox>
+									</VBox>
 									<Table items="{view>/mr/m/checks}" class="repoioDenseTable repoioMrTable" fixedLayout="false" popinLayout="GridSmall">
 										<headerToolbar>
 											<OverflowToolbar style="Clear"><Title text="{i18n>mr.gate.title}" level="H3"/></OverflowToolbar>
@@ -151,7 +311,7 @@
 										<columns>
 											<Column><Text text="{i18n>mr.gate.check}"/></Column>
 											<Column minScreenWidth="Tablet" demandPopin="true" width="13rem"><Text text="{i18n>mr.gate.against}"/></Column>
-											<Column width="10rem"><Text text="{i18n>mr.gate.outcome}"/></Column>
+											<Column width="13rem"><Text text="{i18n>mr.gate.outcome}"/></Column>
 											<Column hAlign="Center" width="5rem"><Text text="{i18n>mr.cmp.on}"/></Column>
 										</columns>
 										<items>
@@ -161,7 +321,13 @@
 													<Text text="{view>desc}" class="repoioUmMuted"/>
 												</VBox>
 												<Text text="{view>againstText}"/>
-												<ObjectStatus text="{i18n>mr.gate.stop}" state="Error" icon="sap-icon://stop"/>
+												<VBox renderType="Bare">
+													<Select selectedKey="{view>outcome}" visible="{= ${view>kind} === 'exact' }" enabled="{view>on}" width="100%" change=".onEdit">
+														<core:Item key="stop" text="{i18n>mr.gate.stop}"/>
+														<core:Item key="review" text="{i18n>mr.gate.review}"/>
+													</Select>
+													<Text text="{view>bandText}" visible="{= ${view>kind} === 'score' }"/>
+												</VBox>
 												<Switch state="{view>on}" enabled="{view>available}" tooltip="{view>unavailable}" change=".onEdit" customTextOn=" " customTextOff=" "/>
 											</ColumnListItem>
 										</items>
@@ -183,33 +349,172 @@
 								</VBox>
 							</IconTabFilter>
 
-							<!-- Sample results -->
+							<!-- 5. Survivorship: which value wins on the golden record -->
+							<IconTabFilter key="survive" text="{i18n>mr.tab.survive}" icon="sap-icon://badge">
+								<VBox renderType="Bare">
+									<MessageStrip text="{i18n>mr.sv.intro}" type="Information" showIcon="true" class="repoioMrStrip"/>
+									<FlexBox wrap="Wrap" class="repoioMrSvTop">
+										<Table items="{view>/mr/m/prioRows}" class="repoioDenseTable repoioMrTable repoioMrPrio" fixedLayout="false">
+											<headerToolbar>
+												<OverflowToolbar style="Clear"><Title text="{i18n>mr.sv.prio}" level="H3"/></OverflowToolbar>
+											</headerToolbar>
+											<columns>
+												<Column width="3rem"><Text text="#"/></Column>
+												<Column><Text text="{i18n>mr.sv.source}"/></Column>
+												<Column hAlign="End" width="6rem"><Text text="{i18n>jr.col.actions}" class="sapUiInvisibleText"/></Column>
+											</columns>
+											<items>
+												<ColumnListItem>
+													<Text text="{view>rank}" class="repoioMono"/>
+													<Text text="{view>text}"/>
+													<HBox justifyContent="End">
+														<Button icon="sap-icon://navigation-up-arrow" type="Transparent" tooltip="{i18n>mr.sv.up}" enabled="{view>canUp}" press=".onPrioUp"/>
+														<Button icon="sap-icon://navigation-down-arrow" type="Transparent" tooltip="{i18n>mr.sv.down}" enabled="{view>canDown}" press=".onPrioDown"/>
+													</HBox>
+												</ColumnListItem>
+											</items>
+										</Table>
+										<VBox renderType="Bare" class="repoioMrSec repoioMrSvOpts">
+											<HBox alignItems="Center" class="repoioMrExc">
+												<Switch state="{view>/mr/m/survivorship/dqGate}" change=".onEdit" customTextOn=" " customTextOff=" "/>
+												<VBox renderType="Bare" class="sapUiSmallMarginBegin">
+													<Text text="{i18n>mr.sv.dq}"/>
+													<Text text="{i18n>mr.sv.dq.d}" class="repoioUmMuted"/>
+												</VBox>
+											</HBox>
+											<HBox alignItems="Center" class="repoioMrExc">
+												<Switch state="{view>/mr/m/survivorship/stewardLock}" change=".onEdit" customTextOn=" " customTextOff=" "/>
+												<VBox renderType="Bare" class="sapUiSmallMarginBegin">
+													<Text text="{i18n>mr.sv.lock}"/>
+													<Text text="{i18n>mr.sv.lock.d}" class="repoioUmMuted"/>
+												</VBox>
+											</HBox>
+											<HBox alignItems="Center" wrap="Wrap" class="repoioMrExc">
+												<Label text="{i18n>mr.sv.tie}" labelFor="mrTie" class="sapUiSmallMarginEnd"/>
+												<Select id="mrTie" selectedKey="{view>/mr/m/survivorship/tieBreak}" width="14rem" change=".onEdit">
+													<core:Item key="recent" text="{i18n>mr.rule.recent}"/>
+													<core:Item key="sourcePriority" text="{i18n>mr.rule.sourcePriority}"/>
+												</Select>
+											</HBox>
+										</VBox>
+									</FlexBox>
+
+									<Table items="{view>/mr/m/groupRows}" class="repoioDenseTable repoioMrTable" fixedLayout="false" popinLayout="GridSmall" noDataText="{i18n>mr.sv.noGroups}">
+										<headerToolbar>
+											<OverflowToolbar style="Clear"><Title text="{i18n>mr.sv.groups}" level="H3"/></OverflowToolbar>
+										</headerToolbar>
+										<columns>
+											<Column width="12rem"><Text text="{i18n>mr.sv.group}"/></Column>
+											<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>mr.sv.groupCols}"/></Column>
+											<Column width="15rem"><Text text="{i18n>mr.sv.rule}"/></Column>
+										</columns>
+										<items>
+											<ColumnListItem>
+												<Text text="{view>text}"/>
+												<Text text="{view>colsText}"/>
+												<Select selectedKey="{view>rule}" items="{path: 'view>ruleItems', templateShareable: false}" width="100%" change=".onEdit">
+													<core:Item key="{view>key}" text="{view>text}"/>
+												</Select>
+											</ColumnListItem>
+										</items>
+									</Table>
+									<Text text="{i18n>mr.sv.groupHint}" class="repoioUmMuted repoioMrFoot"/>
+
+									<Table items="{view>/mr/m/ruleRows}" class="repoioDenseTable repoioMrTable" fixedLayout="false" popinLayout="GridSmall">
+										<headerToolbar>
+											<OverflowToolbar style="Clear"><Title text="{path: 'view>/mr/m/ruleCount', formatter: '.ruleTitle'}" level="H3"/></OverflowToolbar>
+										</headerToolbar>
+										<columns>
+											<Column><Text text="{i18n>mr.cmp.field}"/></Column>
+											<Column width="15rem"><Text text="{i18n>mr.sv.rule}"/></Column>
+											<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>mr.sv.means}"/></Column>
+										</columns>
+										<items>
+											<ColumnListItem>
+												<VBox renderType="Bare">
+													<Text text="{view>fieldText}" wrapping="false"/>
+													<Text text="{view>col}" class="repoioJrTech" wrapping="false" textDirection="LTR"/>
+												</VBox>
+												<Select selectedKey="{view>rule}" items="{path: 'view>ruleItems', templateShareable: false}" width="100%" change=".onEdit">
+													<core:Item key="{view>key}" text="{view>text}"/>
+												</Select>
+												<Text text="{view>means}" class="repoioUmMuted"/>
+											</ColumnListItem>
+										</items>
+									</Table>
+									<Text text="{i18n>mr.sv.notListed}" class="repoioUmMuted repoioMrFoot"/>
+
+									<Table items="{view>/mr/m/preview}" class="repoioDenseTable repoioMrTable" fixedLayout="false" popinLayout="GridSmall"
+										visible="{= ${view>/mr/m/preview}.length > 0 }">
+										<headerToolbar>
+											<OverflowToolbar style="Clear">
+												<Title text="{view>/mr/m/previewTitle}" level="H3"/>
+												<ToolbarSpacer/>
+												<Text text="{i18n>mr.sv.previewNote}" class="repoioUmMuted"/>
+											</OverflowToolbar>
+										</headerToolbar>
+										<columns>
+											<Column width="12rem"><Text text="{i18n>mr.cmp.field}"/></Column>
+											<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>mr.sv.candidates}"/></Column>
+											<Column><Text text="{i18n>mr.sv.wins}"/></Column>
+										</columns>
+										<items>
+											<ColumnListItem>
+												<Text text="{view>fieldText}"/>
+												<Text text="{view>candText}"/>
+												<VBox renderType="Bare">
+													<Text text="{view>winText}"/>
+													<Text text="{view>why}" class="repoioUmMuted"/>
+												</VBox>
+											</ColumnListItem>
+										</items>
+									</Table>
+									<FlexBox wrap="Wrap" class="repoioMrNotes">
+										<VBox class="repoioMrNote">
+											<Title text="{i18n>mr.sv.log.title}" level="H4"/>
+											<Text text="{i18n>mr.sv.log.body}"/>
+										</VBox>
+										<VBox class="repoioMrNote">
+											<Title text="{i18n>mr.sv.lockNote.title}" level="H4"/>
+											<Text text="{i18n>mr.sv.lockNote.body}"/>
+										</VBox>
+									</FlexBox>
+								</VBox>
+							</IconTabFilter>
+
+							<!-- 6. Impact test: this draft against the active version -->
 							<IconTabFilter key="test" text="{i18n>mr.tab.test}" icon="sap-icon://lab">
 								<VBox renderType="Bare">
 									<MessageStrip text="{i18n>mr.test.intro}" type="Information" showIcon="true" class="repoioMrStrip"/>
 									<Table items="{view>/mr/samples}" class="repoioDenseTable repoioMrTable" fixedLayout="false" popinLayout="GridSmall" noDataText="{i18n>mr.test.none}">
 										<headerToolbar>
-											<OverflowToolbar style="Clear"><Title text="{i18n>mr.test.title}" level="H3"/></OverflowToolbar>
+											<OverflowToolbar style="Clear">
+												<Title text="{i18n>mr.test.title}" level="H3"/>
+												<ToolbarSpacer/>
+												<Text text="{view>/mr/m/reqEstText}" class="repoioUmMuted"/>
+											</OverflowToolbar>
 										</headerToolbar>
 										<columns>
 											<Column width="9rem"><Text text="{i18n>mr.test.cr}"/></Column>
 											<Column><Text text="{i18n>mr.test.customer}"/></Column>
 											<Column minScreenWidth="Desktop" demandPopin="true" width="10rem"><Text text="{i18n>mr.test.phones}"/></Column>
-											<Column width="9rem"><Text text="{i18n>mr.test.result}"/></Column>
+											<Column width="8rem"><Text text="{i18n>mr.imp.active}"/></Column>
+											<Column width="8rem"><Text text="{i18n>mr.imp.draft}"/></Column>
 											<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>mr.test.why}"/></Column>
 										</columns>
 										<items>
-											<ColumnListItem highlight="{= ${view>result} === 'stopped' ? 'Error' : 'Success' }">
+											<ColumnListItem highlight="{view>highlight}">
 												<VBox renderType="Bare">
 													<Text text="{view>id}" class="repoioMono" wrapping="false" textDirection="LTR"/>
 													<Text text="{view>by}" class="repoioUmMuted" wrapping="false"/>
 												</VBox>
 												<VBox renderType="Bare">
 													<Text text="{view>name}" wrapping="false"/>
-													<Text text="{view>template}" class="repoioUmMuted" wrapping="false"/>
+													<Text text="{view>segText}" class="repoioUmMuted" wrapping="false"/>
 												</VBox>
 												<Text text="{view>phonesText}" class="repoioMono" textDirection="LTR"/>
-												<ObjectStatus text="{view>resultText}" state="{= ${view>result} === 'stopped' ? 'Error' : 'Success' }" icon="{= ${view>result} === 'stopped' ? 'sap-icon://stop' : 'sap-icon://accept' }"/>
+												<ObjectStatus text="{view>activeText}" state="{view>activeState}" icon="{view>activeIcon}"/>
+												<ObjectStatus text="{view>draftText}" state="{view>draftState}" icon="{view>draftIcon}" inverted="{view>changed}"/>
 												<VBox renderType="Bare">
 													<Text text="{view>why}"/>
 													<Text text="{view>note}" class="repoioUmMuted" visible="{= !!${view>note} }"/>
@@ -217,6 +522,55 @@
 											</ColumnListItem>
 										</items>
 									</Table>
+
+									<Table items="{view>/mr/m/conEst}" class="repoioDenseTable repoioMrTable" fixedLayout="false">
+										<headerToolbar>
+											<OverflowToolbar style="Clear">
+												<Title text="{i18n>mr.imp.conTitle}" level="H3"/>
+												<ToolbarSpacer/>
+												<Text text="{view>/mr/m/conEstNote}" class="repoioUmMuted"/>
+											</OverflowToolbar>
+										</headerToolbar>
+										<columns>
+											<Column><Text text="{i18n>mr.con.band}"/></Column>
+											<Column hAlign="End" width="9rem"><Text text="{i18n>mr.imp.active}"/></Column>
+											<Column hAlign="End" width="9rem"><Text text="{i18n>mr.imp.draft}"/></Column>
+										</columns>
+										<items>
+											<ColumnListItem>
+												<ObjectStatus text="{view>text}" state="{view>state}" icon="{view>icon}"/>
+												<Text text="{view>activeText}" class="repoioMono" textDirection="LTR"/>
+												<ObjectNumber number="{view>draftText}" state="{view>deltaState}" textDirection="LTR"/>
+											</ColumnListItem>
+										</items>
+									</Table>
+
+									<Table items="{view>/mr/m/svImpact}" class="repoioDenseTable repoioMrTable" fixedLayout="false" popinLayout="GridSmall" noDataText="{i18n>mr.imp.svNone}">
+										<headerToolbar>
+											<OverflowToolbar style="Clear"><Title text="{i18n>mr.imp.svTitle}" level="H3"/></OverflowToolbar>
+										</headerToolbar>
+										<columns>
+											<Column><Text text="{i18n>mr.imp.change}"/></Column>
+											<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>mr.imp.fromTo}"/></Column>
+											<Column hAlign="End" width="11rem"><Text text="{i18n>mr.imp.records}"/></Column>
+										</columns>
+										<items>
+											<ColumnListItem>
+												<Text text="{view>text}"/>
+												<Text text="{view>fromTo}"/>
+												<Text text="{view>countText}" class="repoioMono" textDirection="LTR"/>
+											</ColumnListItem>
+										</items>
+									</Table>
+									<VBox renderType="Bare" class="repoioMrSec">
+										<HBox alignItems="Center" class="repoioMrExc">
+											<Switch state="{view>/mr/m/survivorship/backfill}" change=".onEdit" customTextOn=" " customTextOff=" "/>
+											<VBox renderType="Bare" class="sapUiSmallMarginBegin">
+												<Text text="{i18n>mr.imp.backfill}"/>
+												<Text text="{i18n>mr.imp.backfill.d}" class="repoioUmMuted"/>
+											</VBox>
+										</HBox>
+									</VBox>
 								</VBox>
 							</IconTabFilter>
 						</items>

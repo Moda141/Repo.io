@@ -186,7 +186,7 @@ sap.ui.define([
 		_customerFlow: function (withScript) {
 			var T = this.text.bind(this), f = this._base("TPL_CUSTOMER_CREATE", "3"), that = this;
 			var notif = function (k) { return Object.assign({ channels: ["inApp", "email"], recipients: ["requester"] }, that._msg(k)); };
-			var v = f.insert("template_1", "out", "validation", { rule: "match_duplicate", model: "teacher", source: "golden", threshold: 0.9, severity: "block", fields: [] }, T("fd.ex.dupCheck"));
+			var v = f.insert("template_1", "out", "validation", { rule: "match_duplicate", model: "customer-master", source: "golden", threshold: 0.9, severity: "block", fields: [] }, T("fd.ex.dupCheck"));
 			f.insert(v, "failed", "notification", notif("dup"), T("fd.ex.tellRequester"));
 			var a = f.insert(v, "passed", "approval", { mode: "single", approverType: "team", approverTeam: "customer_stewards", approvers: [], rule: "any",
 				sla: "P3D", escalateTo: "team:governance_board", allowReturn: true, maxReturns: 2, sod: true, delegate: true, groups: [] }, T("fd.ex.stewardReview"));
@@ -343,7 +343,7 @@ sap.ui.define([
 					if (r.kind === "match") {
 						var mm = this._matchModel(p.model);
 						c.lines.push({ k: T("fd.matchModel"), v: this._matchModelText(mm) }, { k: T("fd.compareWith"), v: this._sourceText(p.source) },
-							{ k: T("fd.stopsAt"), v: mm ? Number(mm.threshold).toFixed(2) : "—" });
+							{ k: T("fd.stopsAt"), v: mm ? Number(mm.requestCheck.stop).toFixed(2) : "—" });
 					}
 					else { c.lines.push({ k: T("fd.onFail"), v: T("fd.sev." + (p.severity || "block")) }); }
 				}
@@ -461,11 +461,11 @@ sap.ui.define([
 					if (r.kind === "match") {
 						var mdl = this._matchModel(p.model), that2 = this;
 						sel.models = this._matchModels().map(function (m) {
-							return { key: m.key, text: that2._matchModelText(m), info: that2.text("fd.modelInfoShort", [Number(m.threshold).toFixed(2), m.comparisons.filter(function (c) { return c.on; }).length]) };
+							return { key: m.key, text: that2._matchModelText(m), info: that2.text("fd.modelInfoShort", [Number(m.requestCheck.stop).toFixed(2), Number(m.requestCheck.review).toFixed(2), (m.segments || []).length]) };
 						});
 						sel.model = p.model || "";
-						sel.modelInfo = mdl ? this.text("fd.modelInfo", [Number(mdl.threshold).toFixed(2), mdl.comparisons.filter(function (c) { return c.on; }).length,
-							mdl.checks.filter(function (c) { return c.on; }).length]) : this.text("fd.pickModel");
+						sel.modelInfo = mdl ? this.text("fd.modelInfo", [Number(mdl.requestCheck.stop).toFixed(2), Number(mdl.requestCheck.review).toFixed(2),
+							mdl.comparisons.filter(function (c) { return c.on; }).length, mdl.requestCheck.checks.filter(function (c) { return c.on; }).length]) : this.text("fd.pickModel");
 					}
 				}
 				if (n.type === "writeBack") {
@@ -603,7 +603,7 @@ sap.ui.define([
 		onThreshold: function (e) { this._upd({ threshold: Math.round(e.getParameter("value")) / 100 }); },
 		onMatchModel: function (e) {
 			var m = this._matchModel(e.getSource().getSelectedKey());
-			this._upd({ model: m ? m.key : "", threshold: m ? m.threshold : 0.85 });
+			this._upd({ model: m ? m.key : "", threshold: m ? m.requestCheck.stop : 0.85 });
 		},
 		onOpenModel: function () {
 			var k = this.viewModel().getProperty("/wf/sel/model");
@@ -1012,7 +1012,7 @@ sap.ui.define([
 					var r = that._rule(p.rule) || {}, fails = [], score = null;
 					if (r.key === "match_duplicate") {
 						score = sample.matchScore;
-						var thr = (that._matchModel(p.model) || {}).threshold || p.threshold || 0.85;
+						var thr = ((that._matchModel(p.model) || {}).requestCheck || {}).stop || p.threshold || 0.85;
 						if (score >= thr) { fails.push(T("fd.test.dup", [score, sample.matchWith || "—", thr])); }
 					} else if (r.key === "dq_required") {
 						that._tplFields().filter(function (x) { return x.req && !String(rec[x.name] || "").trim(); }).forEach(function (x) { fails.push(T("fd.test.missing", [x.label])); });
