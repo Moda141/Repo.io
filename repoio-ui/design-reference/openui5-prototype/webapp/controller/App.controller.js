@@ -26,7 +26,6 @@ sap.ui.define([
 			// The page title floats over the top of the scroll area, so a panel sticks just below it.
 			var measure = function (w) {
 					var t = w.parentElement && w.parentElement.querySelector(":scope > .sapFDynamicPageTitleWrapper"), top = t ? t.offsetHeight : 0;
-					w.style.setProperty("--repoioStickyTop", top + "px");
 					w.style.setProperty("--repoioScrollH", Math.max(0, w.clientHeight - top) + "px");
 				},
 				oSize = new ResizeObserver(function (entries) {
