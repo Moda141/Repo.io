@@ -16,6 +16,36 @@ sap.ui.define([
 			var oNav = this.getOwnerComponent().getModel("nav");
 			Promise.all([oNav.dataLoaded(), this.getOwnerComponent().bundleReady]).then(this._buildNavigation.bind(this, ""));
 			this.getOwnerComponent().getRouter().attachRouteMatched(this._onRouteMatched, this);
+			this._watchScrollAreas();
+		},
+
+		/* Side panels inside a page (models, users, settings, folders) stay in place while the page scrolls: CSS makes them
+		   sticky, and needs the visible height of the page's scroll area, which this keeps in --repoioScrollH. */
+		_watchScrollAreas: function () {
+			if (!window.ResizeObserver || !window.MutationObserver) { return; }
+			// The page title floats over the top of the scroll area, so a panel sticks just below it.
+			var measure = function (w) {
+					var t = w.parentElement && w.parentElement.querySelector(":scope > .sapFDynamicPageTitleWrapper"), top = t ? t.offsetHeight : 0;
+					w.style.setProperty("--repoioStickyTop", top + "px");
+					w.style.setProperty("--repoioScrollH", Math.max(0, w.clientHeight - top) + "px");
+				},
+				oSize = new ResizeObserver(function (entries) {
+					entries.forEach(function (e) { measure(e.target._repoioWrapper || e.target); });
+				}),
+				bQueued = false,
+				scan = function () {
+					bQueued = false;
+					document.querySelectorAll(".sapFDynamicPageContentWrapper:not([data-repoio-sh])").forEach(function (el) {
+						el.setAttribute("data-repoio-sh", "");
+						oSize.observe(el);
+						var t = el.parentElement && el.parentElement.querySelector(":scope > .sapFDynamicPageTitleWrapper");
+						if (t) { t._repoioWrapper = el; oSize.observe(t); }
+					});
+				};
+			new MutationObserver(function () {
+				if (!bQueued) { bQueued = true; window.requestAnimationFrame(scan); }
+			}).observe(document.body, { childList: true, subtree: true });
+			scan();
 		},
 
 		/* Navigation tree (docs/ui-pages.md) with a live filter from the header search field.
