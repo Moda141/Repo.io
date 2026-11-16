@@ -8,7 +8,7 @@
 
 A clickable OpenUI5 prototype of the Repo.io console, built only from OpenUI5
 1.136 (LTS) controls on the locked shell and theme: `sap.tnt.ToolPage` +
-`ToolHeader` + `SideNavigation`, theme `sap_fiori_3` (Quartz Light), Arabic RTL
+`ToolHeader` + `SideNavigation`, theme `sap_horizon` (Morning Horizon, ADR-0010), Arabic RTL
 and English LTR. It shows how each approved page looks and behaves before M4
 implements it against real APIs.
 
@@ -20,7 +20,7 @@ copy that data into `repoio-ui`.
 ## Pages
 
 Layouts follow SAP Datasphere, drawn with OpenUI5 controls on the locked
-Quartz Light theme. The kit's theme is unchanged; only the page layouts follow
+Morning Horizon theme (ADR-0010). The kit's theme is unchanged; only the page layouts follow
 Datasphere.
 
 Scope is deliberately narrow for now: only Home, Domain management,
@@ -121,7 +121,7 @@ None. No hosts, ports or credentials.
 
 - OpenUI5 1.136.22 (framework libraries in `ui5.yaml`): sap.ui.core, sap.m,
   sap.tnt, sap.f, sap.uxap, sap.ui.layout, sap.ui.table, sap.ui.unified,
-  themelib_sap_fiori_3.
+  themelib_sap_horizon.
 - `@ui5/cli` 4.0.33 (dev).
 - Apache ECharts 5.5.1, vendored in `webapp/thirdparty/` (Apache-2.0, licence
   file alongside).
@@ -138,7 +138,8 @@ None. No hosts, ports or credentials.
 
 ## Colors
 
-Charts use the SAP Quartz chart palette in its softer tints (`BaseController.colors`).
+Charts use a soft SAP chart palette (`BaseController.colors`). Custom CSS takes its colours from
+the theme parameters (`var(--sapTextColor)`, `--sapBrandColor`, …), with the old values only as fallbacks.
 Progress bars use light semantic fills (`css/style.css`), so status stays readable
 without saturated blocks of color.
 

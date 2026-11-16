@@ -89,7 +89,7 @@ introduce a parallel technology without an approved ADR.
 | Query engines | Trino, Spark SQL |
 | Entity schemas | JSON Schema (OpenAPI 3.1) |
 | Frontend | **OpenUI5** (Apache 2.0 edition) |
-| Console shell | **sap.tnt.ToolPage + sap.tnt.ToolHeader + sap.tnt.SideNavigation (with search)** — theme **sap_fiori_3** (Quartz Light) |
+| Console shell | **sap.tnt.ToolPage + sap.tnt.ToolHeader + sap.tnt.SideNavigation (with search)** — theme **sap_horizon** (Morning Horizon, light; ADR-0010) |
 | Entity matching | **Splink** |
 | Data quality | **Great Expectations** |
 | Workflow engine | **Flowable** (behind an adapter) |
@@ -108,7 +108,7 @@ Explicit traps to avoid:
   designing a screen around a control, verify it ships in the OpenUI5
   distribution; if not, document the exception. The console shell is
   `sap.tnt` (ToolPage / ToolHeader / SideNavigation with search) on the
-  `sap_fiori_3` theme — verified to ship in OpenUI5; do not replace it
+  `sap_horizon` theme (ADR-0010) — verified to ship in OpenUI5; do not replace it
   with a hand-built shell or a different theme.
 - **The Repo.io flow designer is the designer only; Flowable is the
   engine** (ADR-0002 replaced bpmn-js). Never execute workflow logic in
@@ -285,7 +285,8 @@ an honest "not verified" is acceptable; an unverified "done" is not.
   connection details, not connection records; ADR-0007: S/4HANA change
   capture through ODP / CDS delta over OData; ADR-0008: SQL Server
   change capture through Change Tracking; ADR-0009: user directory synced
-  from Entra ID or SuccessFactors, roles on Department, Team or User).
+  from Entra ID or SuccessFactors, roles on Department, Team or User;
+  ADR-0010: console theme Morning Horizon, `sap_horizon`).
 - **Docs:** every module gets a README following
   `docs/module-readme-template.md` — update it when adding entry points,
   config or commands.

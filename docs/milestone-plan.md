@@ -179,7 +179,7 @@ pages, Golden Record, Change Requests, Pipeline runs, Templates catalog.
 - [ ] Console shell = Tool Page Layout: `sap.tnt.ToolPage` +
       `sap.tnt.ToolHeader` + `sap.tnt.SideNavigation` with its search
       field (per `docs/ui-pages.md` §Shell & theme), theme
-      `sap_fiori_3` (Quartz Light) applied at bootstrap; the
+      `sap_horizon` (Morning Horizon, ADR-0010) applied at bootstrap; the
       navigation tree is served by the same role-filtered APIs as
       page content; expanded and collapsed-rail modes both verified in
       RTL and LTR.

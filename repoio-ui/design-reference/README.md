@@ -44,9 +44,10 @@ UI element.
 
 - Console shell: Tool Page Layout. That is `sap.tnt.ToolPage` +
   `sap.tnt.ToolHeader` + `sap.tnt.SideNavigation` with its search field.
-- Theme: **Quartz Light** (`sap_fiori_3`). No dark variant in v1.
+- Theme: **Morning Horizon** (`sap_horizon`, ADR-0010; was Quartz Light
+  until 2026-11-16). No dark variant in v1.
 - The visual contract is now the OpenUI5 prototype in `openui5-prototype/`
-  (real OpenUI5 1.136 controls, ToolPage shell, `sap_fiori_3`). The earlier
+  (real OpenUI5 1.136 controls, ToolPage shell, `sap_horizon`). The earlier
   HTML prototypes 01–02 (Horizon tokens, pop-over menu) are kept for history
   only.
 - Controls must exist in **OpenUI5**. Patterns used so far that are

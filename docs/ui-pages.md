@@ -2,7 +2,8 @@
 
 > v0.7 — added Feeds (Activity + Announcements) and Announcements
 > authoring in Administration; v0.6 — shell locked: Tool Page Layout +
-> sap.tnt.SideNavigation (with search) on the Quartz Light theme;
+> sap.tnt.SideNavigation (with search) on the Quartz Light theme (now
+> Morning Horizon, ADR-0010);
 > v0.5 — added the Relationships group (Relationships list +
 > Relationship builder): steward-owned governed instance links,
 > edited per record or by bulk upload — always as change requests;
@@ -298,12 +299,13 @@
   Ontology Explorer · Workflows · System & Administration) and carries the
   built-in search field that filters navigation items live. It is
   collapsible to an icon rail; in RTL the panel flips to the right
-  automatically. `sap.tnt` and `themelib_sap_fiori_3` both ship in
+  automatically. `sap.tnt` and `themelib_sap_horizon` both ship in
   the OpenUI5 distribution (verified in the SAP/openui5 repo) — no
   SAPUI5-only exception needed.
-- **Theme** — **Quartz Light** = `sap_fiori_3`, applied at bootstrap
-  for the whole console; dark mode (Quartz Dark, `sap_fiori_3_dark`)
-  is not scoped in v1.
+- **Theme** — **Morning Horizon** = `sap_horizon` (ADR-0010; was Quartz
+  Light, `sap_fiori_3`), applied at bootstrap for the whole console,
+  shell included; dark mode (Evening Horizon, `sap_horizon_dark`) is not
+  scoped in v1.
 - **Navigation items come from APIs** — the tree renders from the
   same server-filtered APIs that drive page visibility (role→domain
   grants); hiding an item client-side is presentation, never

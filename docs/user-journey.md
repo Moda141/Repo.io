@@ -45,7 +45,7 @@ the persona label in this file.
    your grants" is a valid, friendly state, not a blank page).
 7. **The console shell is locked:** a Tool Page Layout —
    `sap.tnt.ToolPage` + `sap.tnt.SideNavigation` with its built-in
-   search — on the **Quartz Light** theme (`sap_fiori_3`). Navigation
+   search — on the **Morning Horizon** theme (`sap_horizon`, ADR-0010). Navigation
    items render from the same server-filtered APIs as page content;
    the shell is presentation and owns no authority.
 8. **People are avatars with a quick view, never a name in text.** An
