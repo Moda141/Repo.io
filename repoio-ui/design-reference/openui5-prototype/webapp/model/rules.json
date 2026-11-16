@@ -1,0 +1,131 @@
+{
+	"_comment": "Models & rules (J5): match rules per customer type and the change request duplicate check. In the product these are versioned configuration served by the rules API and executed by the services (Splink for matching, the request service for the duplicate check); the console only edits drafts. Sample values only.",
+	"model": { "key": "customer", "en": "Customer", "ar": "العميل", "active": "3", "activeDate": "2026-10-02", "draft": "4" },
+	"fields": {
+		"name": { "en": "Name", "ar": "الاسم", "col": "name_std", "kind": "text", "hintEn": "Standardised: # removed, ي/ى and أ/ا unified, extra spaces dropped", "hintAr": "بعد التوحيد: حذف #، توحيد ي/ى و أ/ا، حذف المسافات الزائدة" },
+		"firstToken": { "en": "First word of the name", "ar": "أول كلمة في الاسم", "col": "name_first_token", "kind": "text" },
+		"phones": { "en": "All phone numbers", "ar": "كل الأرقام", "col": "phones", "kind": "array", "hintEn": "Mobile 1, mobile 2, mobile 3, phone and WhatsApp as one list, so a number matches whichever field it was typed in", "hintAr": "موبايل 1 و2 و3 والتليفون والواتساب كقائمة واحدة، فالرقم يطابق أيًّا كان الحقل اللي اتكتب فيه" },
+		"contactPhone": { "en": "Contact person mobile", "ar": "موبايل المسئول", "col": "contact_mobile", "kind": "text" },
+		"state": { "en": "Governorate", "ar": "المحافظة", "col": "state_id", "kind": "code" },
+		"mainTerritory": { "en": "Main territory", "ar": "المنطقة الرئيسية", "col": "main_territory_id", "kind": "code" },
+		"territory1": { "en": "Secondary territory 1", "ar": "المنطقة الفرعية 1", "col": "territory_1_id", "kind": "code" },
+		"territory2": { "en": "Secondary territory 2", "ar": "المنطقة الفرعية 2", "col": "territory_2_id", "kind": "code" },
+		"stages": { "en": "Grades taught", "ar": "المراحل", "col": "final_stages", "kind": "array" },
+		"subject": { "en": "Subject", "ar": "المادة", "col": "final_subject", "kind": "code" },
+		"promotionGroup": { "en": "Promotion group", "ar": "مجموعة نوع الدعاية", "col": "promotion_group", "kind": "code", "hintEn": "Lessons and schools · supervision · nurseries", "hintAr": "دروس ومدارس · توجيه · حضانات" },
+		"roleGroup": { "en": "Teacher or supervisor", "ar": "مدرس أو موجّه", "col": "classification_group", "kind": "code" },
+		"parentName": { "en": "Parent name", "ar": "اسم ولي الأمر", "col": "parent_name_std", "kind": "text" },
+		"nationalId": { "en": "National ID", "ar": "الرقم القومي", "col": "national_id", "kind": "text" },
+		"linkedAccount": { "en": "Linked school or charity", "ar": "المدرسة أو الجمعية المرتبطة", "col": "linked_account_id", "kind": "code" }
+	},
+	"methods": {
+		"exact": { "en": "Exact match", "ar": "تطابق تام", "splink": "ExactMatch", "kinds": ["text", "code"] },
+		"jw": { "en": "Similarity (Jaro-Winkler)", "ar": "تشابه (Jaro-Winkler)", "splink": "JaroWinklerAtThresholds", "kinds": ["text"], "levels": true },
+		"lev": { "en": "Typing distance (Levenshtein)", "ar": "فرق الكتابة (Levenshtein)", "splink": "LevenshteinAtThresholds", "kinds": ["text"], "levels": true },
+		"array": { "en": "Any value in common", "ar": "أي قيمة مشتركة", "splink": "ArrayIntersectAtSizes", "kinds": ["array"] }
+	},
+	"profiles": [
+		{
+			"key": "teacher", "en": "Teacher or supervisor", "ar": "مدرس أو موجّه", "code": "01", "accountTypes": "Z01 · Z13", "icon": "sap-icon://education",
+			"threshold": 0.90,
+			"templates": [{ "key": "TPL_CUSTOMER_TEACHER", "en": "New teacher", "ar": "مدرس جديد" }, { "key": "TPL_CUSTOMER_SUPERVISOR", "en": "New supervisor", "ar": "موجّه جديد" }],
+			"blocking": [{ "fields": ["firstToken", "state"] }, { "fields": ["phones"] }],
+			"comparisons": [
+				{ "field": "name", "method": "jw", "levels": [0.95, 0.90], "weight": 9.1, "on": true },
+				{ "field": "phones", "method": "array", "weight": 11.6, "on": true },
+				{ "field": "state", "method": "exact", "weight": 3.2, "on": true },
+				{ "field": "mainTerritory", "method": "exact", "weight": 2.4, "on": true },
+				{ "field": "territory1", "method": "exact", "weight": 2.1, "on": true },
+				{ "field": "territory2", "method": "exact", "weight": 1.8, "on": true },
+				{ "field": "stages", "method": "array", "weight": 1.6, "on": true },
+				{ "field": "subject", "method": "exact", "weight": 2.0, "on": true },
+				{ "field": "promotionGroup", "method": "exact", "weight": 1.2, "on": true },
+				{ "field": "roleGroup", "method": "exact", "weight": 1.4, "on": true }
+			],
+			"exceptions": []
+		},
+		{
+			"key": "retailer", "en": "Bookstore (retailer)", "ar": "مكتبة", "code": "02", "accountTypes": "Z04", "icon": "sap-icon://retail-store",
+			"threshold": 0.85,
+			"templates": [{ "key": "TPL_CUSTOMER_RETAILER", "en": "New bookstore", "ar": "مكتبة جديدة" }],
+			"blocking": [{ "fields": ["firstToken", "state"] }, { "fields": ["phones"] }],
+			"comparisons": [
+				{ "field": "name", "method": "jw", "levels": [0.95, 0.88], "weight": 8.2, "on": true },
+				{ "field": "phones", "method": "array", "weight": 11.2, "on": true },
+				{ "field": "contactPhone", "method": "exact", "weight": 6.5, "on": true },
+				{ "field": "state", "method": "exact", "weight": 3.0, "on": true },
+				{ "field": "mainTerritory", "method": "exact", "weight": 2.3, "on": true },
+				{ "field": "territory1", "method": "exact", "weight": 2.0, "on": true },
+				{ "field": "territory2", "method": "exact", "weight": 1.7, "on": true }
+			],
+			"exceptions": []
+		},
+		{
+			"key": "callCenter", "en": "Call center customer", "ar": "عميل كول سنتر", "code": "03", "accountTypes": "Z09", "icon": "sap-icon://call",
+			"threshold": 0.90,
+			"templates": [{ "key": "TPL_CUSTOMER_CALLCENTER", "en": "New call center customer", "ar": "عميل كول سنتر جديد" }],
+			"blocking": [{ "fields": ["firstToken", "state"] }, { "fields": ["phones"] }],
+			"comparisons": [
+				{ "field": "name", "method": "jw", "levels": [0.95, 0.90], "weight": 8.8, "on": true },
+				{ "field": "phones", "method": "array", "weight": 11.4, "on": true },
+				{ "field": "state", "method": "exact", "weight": 3.1, "on": true },
+				{ "field": "mainTerritory", "method": "exact", "weight": 2.2, "on": true },
+				{ "field": "territory1", "method": "exact", "weight": 2.0, "on": true },
+				{ "field": "territory2", "method": "exact", "weight": 1.6, "on": true }
+			],
+			"exceptions": []
+		},
+		{
+			"key": "student", "en": "Student", "ar": "طالب", "code": "03-1", "accountTypes": "Z14", "icon": "sap-icon://family-care",
+			"threshold": 0.92,
+			"templates": [{ "key": "TPL_CUSTOMER_STUDENT", "en": "New student", "ar": "طالب جديد" }],
+			"blocking": [{ "fields": ["firstToken", "state"] }, { "fields": ["phones"] }],
+			"comparisons": [
+				{ "field": "name", "method": "jw", "levels": [0.96, 0.92], "weight": 7.9, "on": true },
+				{ "field": "parentName", "method": "jw", "levels": [0.95, 0.90], "weight": 4.6, "on": true },
+				{ "field": "phones", "method": "array", "weight": 6.8, "on": true },
+				{ "field": "state", "method": "exact", "weight": 2.9, "on": true },
+				{ "field": "mainTerritory", "method": "exact", "weight": 2.1, "on": true },
+				{ "field": "territory1", "method": "exact", "weight": 1.9, "on": true },
+				{ "field": "territory2", "method": "exact", "weight": 1.5, "on": true }
+			],
+			"exceptions": [{ "key": "siblings", "on": true }]
+		},
+		{
+			"key": "charityStudent", "en": "Charity student", "ar": "طالب جمعية خيرية", "code": "03-2", "accountTypes": "Z14", "icon": "sap-icon://heart",
+			"threshold": 0.92,
+			"templates": [{ "key": "TPL_CUSTOMER_CHARITY_STUDENT", "en": "New charity student", "ar": "طالب جمعية جديد" }],
+			"blocking": [{ "fields": ["firstToken", "state"] }, { "fields": ["phones"] }, { "fields": ["nationalId"] }],
+			"comparisons": [
+				{ "field": "name", "method": "jw", "levels": [0.96, 0.92], "weight": 7.9, "on": true },
+				{ "field": "nationalId", "method": "exact", "weight": 14.2, "on": true },
+				{ "field": "parentName", "method": "jw", "levels": [0.95, 0.90], "weight": 4.6, "on": true },
+				{ "field": "phones", "method": "array", "weight": 6.8, "on": true },
+				{ "field": "linkedAccount", "method": "exact", "weight": 2.6, "on": true },
+				{ "field": "state", "method": "exact", "weight": 2.9, "on": true }
+			],
+			"exceptions": [{ "key": "siblings", "on": true }]
+		}
+	],
+	"checks": [
+		{ "key": "phoneGolden", "against": "golden", "on": true, "types": ["teacher", "retailer", "callCenter", "student", "charityStudent"] },
+		{ "key": "phoneOpenCr", "against": "openCr", "on": true, "types": ["teacher", "retailer", "callCenter", "student", "charityStudent"] },
+		{ "key": "similarGolden", "against": "golden", "on": true, "types": ["teacher", "retailer", "callCenter", "student", "charityStudent"] },
+		{ "key": "nationalId", "against": "both", "on": true, "types": ["charityStudent"] },
+		{ "key": "similarOpenCr", "against": "openCr", "on": false, "types": ["teacher", "retailer", "callCenter", "student", "charityStudent"] }
+	],
+	"samples": [
+		{ "id": "CR-2026-0601", "type": "teacher", "template": "TPL_CUSTOMER_TEACHER", "name": "أحمد محمود السيد", "phones": ["01001234567", "01122334455"], "by": "أحمد ناصر",
+			"result": "stopped", "reasons": [{ "check": "phoneGolden", "en": "Mobile 1 01001234567 is mobile 2 on golden record GR-C-004512 (أحمد محمود السيد)", "ar": "موبايل 1 ‎01001234567‎ هو موبايل 2 على السجل الذهبي GR-C-004512 (أحمد محمود السيد)", "ref": "GR-C-004512" }] },
+		{ "id": "CR-2026-0602", "type": "retailer", "template": "TPL_CUSTOMER_RETAILER", "name": "مكتبة النور الحديثة", "phones": ["01223344556", "0225551234"], "by": "سارة عادل",
+			"result": "stopped", "reasons": [{ "check": "phoneOpenCr", "en": "WhatsApp 01223344556 is mobile 1 in open change request CR-2026-0598 (submitted by هشام سعيد, in approval)", "ar": "واتساب ‎01223344556‎ هو موبايل 1 في طلب التغيير المفتوح CR-2026-0598 (قدّمه هشام سعيد، في الموافقة)", "ref": "CR-2026-0598" }] },
+		{ "id": "CR-2026-0603", "type": "teacher", "template": "TPL_CUSTOMER_TEACHER", "name": "منى عبد الرحمن خليل", "phones": ["01099887766"], "by": "أحمد ناصر",
+			"result": "passed", "best": 0.41, "reasons": [] },
+		{ "id": "CR-2026-0604", "type": "callCenter", "template": "TPL_CUSTOMER_CALLCENTER", "name": "خالد إبراهيم فتحى", "phones": ["01555123456"], "by": "كريم فؤاد",
+			"result": "stopped", "reasons": [{ "check": "similarGolden", "en": "Similar to golden record GR-C-007731 (خالد ابراهيم فتحي): match probability 0.96 ≥ 0.90 — name 0.97, same governorate and territories, different numbers", "ar": "مشابه للسجل الذهبي GR-C-007731 (خالد ابراهيم فتحي): احتمال التطابق 0.96 ≥ 0.90 — الاسم 0.97، نفس المحافظة والمناطق، أرقام مختلفة", "ref": "GR-C-007731" }] },
+		{ "id": "CR-2026-0605", "type": "student", "template": "TPL_CUSTOMER_STUDENT", "name": "يوسف أحمد على", "phones": ["01011112222"], "by": "هالة سمير",
+			"result": "passed", "best": 0.38, "noteEn": "Mobile 1 is on golden record GR-C-010220 (مريم أحمد علي) with the same parent name: siblings, so not a duplicate", "noteAr": "موبايل 1 موجود على السجل الذهبي GR-C-010220 (مريم أحمد علي) بنفس اسم ولي الأمر: إخوة، فمش تكرار", "reasons": [] },
+		{ "id": "CR-2026-0606", "type": "charityStudent", "template": "TPL_CUSTOMER_CHARITY_STUDENT", "name": "سلمى حسن عبد الله", "phones": ["01277665544"], "by": "هالة سمير",
+			"result": "stopped", "reasons": [{ "check": "nationalId", "en": "National ID 3010…4521 is already in open change request CR-2026-0590 (submitted by هالة سمير, waiting for write-back)", "ar": "الرقم القومي 3010…4521 موجود في طلب التغيير المفتوح CR-2026-0590 (قدّمته هالة سمير، في انتظار الكتابة للنظام المصدر)", "ref": "CR-2026-0590" }] }
+	]
+}

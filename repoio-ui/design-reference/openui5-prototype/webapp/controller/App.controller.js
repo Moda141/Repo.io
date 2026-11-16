@@ -81,6 +81,7 @@ sap.ui.define([
 			else if (sKey === "systemConfiguration") { oRouter.navTo("system"); }
 			else if (sKey === "announcements") { oRouter.navTo("announcements"); }
 			else if (sKey === "auditLog") { oRouter.navTo("audit"); }
+			else if (sKey === "modelsRules") { oRouter.navTo("models"); }
 			else { oRouter.navTo("page", { key: sKey }); }
 			if (this.getOwnerComponent().getModel("device").getProperty("/system/phone")) {
 				this.byId("toolPage").setSideExpanded(false);
@@ -94,7 +95,7 @@ sap.ui.define([
 					sRoute === "ontology" ? "ontologyExplorer" : sRoute === "workflow" ? "newWorkflow" :
 					sRoute === "jobs" || sRoute === "jobRun" || sRoute === "streams" ? "dataJobs" : sRoute === "workflows" ? "workflowsList" :
 					sRoute === "reports" || sRoute === "report" || sRoute === "studio" ? "reports" : sRoute === "broadcasts" ? "broadcasts" :
-					sRoute === "dataSync" || sRoute === "dataSyncFlow" ? "dataSync" : sRoute === "apiManagement" || sRoute === "apiReference" ? "apiManagement" : sRoute === "users" ? "users" : sRoute === "roles" ? "rolesAccess" : sRoute === "system" ? "systemConfiguration" : sRoute === "announcements" ? "announcements" : sRoute === "audit" ? "auditLog" : "domains";
+					sRoute === "dataSync" || sRoute === "dataSyncFlow" ? "dataSync" : sRoute === "apiManagement" || sRoute === "apiReference" ? "apiManagement" : sRoute === "users" ? "users" : sRoute === "roles" ? "rolesAccess" : sRoute === "system" ? "systemConfiguration" : sRoute === "announcements" ? "announcements" : sRoute === "audit" ? "auditLog" : sRoute === "models" ? "modelsRules" : "domains";
 			this._sSelectedKey = sKey;
 			if (this.byId("navList").getItems().length) { this._expandTo(sKey); this.byId("sideNavigation").setSelectedKey(sKey); }
 		},

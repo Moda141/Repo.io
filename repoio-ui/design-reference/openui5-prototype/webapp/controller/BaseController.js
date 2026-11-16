@@ -23,6 +23,7 @@ sap.ui.define([
 			else if (sKey === "dataJobs") { this.router().navTo("jobs"); }
 			else if (sKey === "workflowsList") { this.router().navTo("workflows"); }
 			else if (sKey === "apiManagement") { this.router().navTo("apiManagement"); }
+			else if (sKey === "modelsRules") { this.router().navTo("models"); }
 			else { this.router().navTo("page", { key: sKey }); }
 		},
 		onNavKey: function (oEvent) {

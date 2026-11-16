@@ -100,6 +100,10 @@
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/api.json"
 			},
+			"rules": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/rules.json"
+			},
 			"apidocs": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/apidocs.json"
@@ -237,6 +241,11 @@
 					"target": "audit"
 				},
 				{
+					"name": "models",
+					"pattern": "stewardship/models/:tab:",
+					"target": "models"
+				},
+				{
 					"name": "page",
 					"pattern": "page/{key}",
 					"target": "placeholder"
@@ -251,6 +260,11 @@
 				"domains": {
 					"id": "domains",
 					"name": "Domains",
+					"level": 2
+				},
+				"models": {
+					"id": "models",
+					"name": "ModelsRules",
 					"level": 2
 				},
 				"placeholder": {
