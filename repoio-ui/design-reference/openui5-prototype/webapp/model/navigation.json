@@ -8,7 +8,6 @@
 				{ "key": "awaitingApproval" }, { "key": "myRepo" }, { "key": "myRequests" }
 			] },
 			{ "key": "domains", "icon": "sap-icon://database", "route": "domains" },
-			{ "key": "dataProducts", "icon": "sap-icon://product" },
 			{ "key": "goldenRecords", "icon": "sap-icon://badge" },
 			{ "key": "relationships", "icon": "sap-icon://chain-link", "items": [
 				{ "key": "relationshipsList" }, { "key": "relationshipBuilder" }

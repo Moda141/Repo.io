@@ -25,7 +25,6 @@ sap.ui.define([
 			else if (sKey === "apiManagement") { this.router().navTo("apiManagement"); }
 			else if (sKey === "modelsRules") { this.router().navTo("models"); }
 			else if (sKey === "goldenRecords") { this.router().navTo("goldenRecords"); }
-			else if (sKey === "dataProducts") { this.router().navTo("dataProducts"); }
 			else if (sKey === "matchDetection") { this.router().navTo("matches"); }
 			else if (sKey === "quarantine") { this.router().navTo("quarantine"); }
 			else { this.router().navTo("page", { key: sKey }); }
