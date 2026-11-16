@@ -165,7 +165,7 @@ sap.ui.define([
 		onBanner: function () {
 			if (this._rec.status === "review") { this.onMatchDetection(); } else { MessageToast.show(this.text("go.t.openRequest", [this._d.requests[0].id])); }
 		},
-		onMatchDetection: function () { this.router().navTo("page", { key: "matchDetection" }); },
+		onMatchDetection: function () { this.router().navTo("matches"); },
 		onRelBuilder: function () { this.router().navTo("page", { key: "relationshipBuilder" }); },
 		onRules: function () { this.router().navTo("models", { model: this._repo }); },
 		onShare: function () {

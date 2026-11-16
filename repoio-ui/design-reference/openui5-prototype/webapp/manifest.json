@@ -111,6 +111,10 @@
 			"golden": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/golden.json"
+			},
+			"stewardship": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/stewardship.json"
 			}
 		},
 		"resources": {
@@ -265,6 +269,16 @@
 					"target": "goldenRecords"
 				},
 				{
+					"name": "matches",
+					"pattern": "stewardship/matches/:id::?query:",
+					"target": "matches"
+				},
+				{
+					"name": "quarantine",
+					"pattern": "stewardship/quarantine/:id:",
+					"target": "quarantine"
+				},
+				{
 					"name": "page",
 					"pattern": "page/{key}",
 					"target": "placeholder"
@@ -405,6 +419,16 @@
 					"id": "goldenLineage",
 					"name": "GoldenLineage",
 					"level": 4
+				},
+				"matches": {
+					"id": "matches",
+					"name": "MatchDetection",
+					"level": 2
+				},
+				"quarantine": {
+					"id": "quarantine",
+					"name": "Quarantine",
+					"level": 2
 				}
 			}
 		}

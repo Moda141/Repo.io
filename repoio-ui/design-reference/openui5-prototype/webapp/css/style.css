@@ -1203,3 +1203,24 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioGlHint { padding-bottom: 0.375rem; }
 .repoioGlPage .sapFDynamicPageContent { height: 100%; box-sizing: border-box; padding: 0.5rem 1rem 1rem; }
 .repoioGoSubTitle { margin-bottom: 0.75rem; }
+
+/* ---------- Stewardship queues (Match detection, Quarantine): Flexible Column Layout ---------- */
+.repoioMdFcl { height: 100%; }
+.repoioMdKpis { gap: 0.75rem; margin-bottom: 0.75rem; }
+.repoioMdKpi { min-width: 10rem; padding: 0.5rem 0.875rem; border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); border-radius: var(--sapElement_BorderCornerRadius, 0.5rem);
+	background: var(--sapGroup_ContentBackground, #fff); gap: 0.125rem; }
+.repoioMdFilters { margin-top: 0.25rem; }
+.repoioMdTabs.sapMITH { padding-inline: 1rem; }
+.repoioMdTable .sapMListHdrTBar.sapMTB { padding-inline: 1rem; }
+.repoioMdFlag { margin-inline-end: 0.5rem; }
+.repoioMdHead { gap: 1rem 2.5rem; }
+.repoioMdHeadNum { gap: 0.125rem; min-width: 9rem; }
+.repoioMdStrip.sapMMsgStrip { margin-top: 0.75rem; }
+.repoioMdBody { padding-bottom: 1rem; }
+.repoioMdCmp { margin-top: 1rem; }
+.repoioMdCmp .sapMListHdrTBar.sapMTB { padding-inline: 1rem; }
+.repoioMdSec { padding: 1rem 1rem 0; gap: 0.25rem; }
+.repoioMdImpact { padding: 0.25rem 0; }
+.repoioMdDiff.sapMText { color: var(--sapCriticalTextColor, #b44f00); font-weight: bold; }
+.repoioQaRuleLbl { margin-top: 0.25rem; }
+.repoioQaRules { gap: 0.375rem; margin: 0.25rem 0 0.5rem; }

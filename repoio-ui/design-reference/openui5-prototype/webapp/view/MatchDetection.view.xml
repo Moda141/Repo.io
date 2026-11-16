@@ -1,0 +1,281 @@
+<mvc:View controllerName="repoio.proto.controller.MatchDetection"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- J5: Match detection. The review queue on one side, the comparison on the other (Flexible Column Layout). Pairs come
+	     from Splink's review band, stopped change requests from the request check. A decision goes to the match review API:
+	     it merges or keeps records apart and becomes a labelled pair for the next training. Risky decisions need a second
+	     steward; nobody releases their own request. -->
+	<f:FlexibleColumnLayout id="fcl" layout="{view>/md/layout}" class="repoioMdFcl">
+		<f:beginColumnPages>
+			<f:DynamicPage id="mdQueue" headerExpanded="true" toggleHeaderOnTitleClick="true" class="repoioEdge repoioMdQueue">
+				<f:title>
+					<f:DynamicPageTitle>
+						<f:heading><Title text="{i18n>nav.matchDetection}" level="H1"/></f:heading>
+						<f:expandedContent><Text text="{i18n>md.subtitle}"/></f:expandedContent>
+						<f:actions>
+							<Button text="{view>/md/trainText}" icon="sap-icon://learning-assistant" type="Transparent" press=".onModels"/>
+						</f:actions>
+					</f:DynamicPageTitle>
+				</f:title>
+				<f:header>
+					<f:DynamicPageHeader pinnable="true">
+						<VBox renderType="Bare">
+							<FlexBox wrap="Wrap" class="repoioMdKpis" items="{view>/md/kpis}">
+								<VBox class="repoioMdKpi" renderType="Bare">
+									<Label text="{view>label}"/>
+									<ObjectNumber number="{view>value}" state="{view>state}" emphasized="true" class="sapMObjectNumberLarge" textDirection="LTR"/>
+									<Text text="{view>hint}" class="repoioUmMuted"/>
+								</VBox>
+							</FlexBox>
+							<FlexBox wrap="Wrap" alignItems="End" class="repoioGrFilters repoioMdFilters">
+								<VBox class="repoioGrFilter">
+									<Label text=""/>
+									<SearchField value="{view>/md/f/q}" liveChange=".onFilter" placeholder="{i18n>md.search}" width="100%"/>
+								</VBox>
+								<VBox class="repoioGrFilter">
+									<Label text="{i18n>gr.f.seg}" labelFor="mdSeg"/>
+									<MultiComboBox id="mdSeg" selectedKeys="{view>/md/f/seg}" items="{view>/md/segs}" width="100%" selectionFinish=".onFilter">
+										<core:Item key="{view>key}" text="{view>text}"/>
+									</MultiComboBox>
+								</VBox>
+								<VBox class="repoioGrFilter">
+									<Label text="{i18n>md.f.band}" labelFor="mdBand"/>
+									<Select id="mdBand" selectedKey="{view>/md/f/band}" width="100%" change=".onFilter">
+										<core:Item key="" text="{i18n>gr.st.all}"/>
+										<core:Item key="hi" text="{i18n>md.band.hi}"/>
+										<core:Item key="mid" text="{i18n>md.band.mid}"/>
+										<core:Item key="lo" text="{i18n>md.band.lo}"/>
+									</Select>
+								</VBox>
+								<VBox class="repoioGrFilter">
+									<Label text="{i18n>md.f.assigned}" labelFor="mdAs"/>
+									<Select id="mdAs" selectedKey="{view>/md/f/assigned}" width="100%" change=".onFilter">
+										<core:Item key="" text="{i18n>gr.st.all}"/>
+										<core:Item key="me" text="{i18n>md.as.me}"/>
+										<core:Item key="none" text="{i18n>md.as.none}"/>
+									</Select>
+								</VBox>
+								<VBox class="repoioGrFilter">
+									<Label text="{i18n>md.f.overdue}"/>
+									<Switch state="{view>/md/f/overdue}" change=".onFilter" customTextOn=" " customTextOff=" "/>
+								</VBox>
+							</FlexBox>
+						</VBox>
+					</f:DynamicPageHeader>
+				</f:header>
+				<f:content>
+					<VBox renderType="Bare">
+						<IconTabHeader selectedKey="{view>/md/tab}" select=".onTab" mode="Inline" backgroundDesign="Transparent" class="repoioMdTabs">
+							<items>
+								<IconTabFilter key="pairs" text="{i18n>md.tab.pairs}" count="{view>/md/count/pairs}"/>
+								<IconTabFilter key="requests" text="{i18n>md.tab.requests}" count="{view>/md/count/requests}"/>
+								<IconTabFilter key="second" text="{i18n>md.tab.second}" count="{view>/md/count/second}"/>
+								<IconTabFilter key="decided" text="{i18n>md.tab.decided}" count="{view>/md/count/decided}"/>
+							</items>
+						</IconTabHeader>
+						<Table id="mdTable" items="{view>/md/rows}" mode="{= ${view>/md/tab} === 'pairs' ? 'MultiSelect' : 'None' }" selectionChange=".onSelectRows"
+							fixedLayout="false" popinLayout="GridSmall" class="repoioDenseTable repoioMdTable" noDataText="{view>/md/noData}" sticky="ColumnHeaders,HeaderToolbar">
+							<headerToolbar>
+								<OverflowToolbar style="Clear">
+									<Title text="{view>/md/listTitle}" level="H2"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>md.a.selectEligible}" type="Transparent" visible="{= ${view>/md/tab} === 'pairs' }" press=".onSelectEligible"/>
+									<Button text="{view>/md/batchText}" type="Emphasized" visible="{= ${view>/md/tab} === 'pairs' }" enabled="{view>/md/batchOk}"
+										tooltip="{view>/md/batchWhy}" press=".onBatch"/>
+									<Button text="{i18n>md.a.assignMe}" type="Transparent" visible="{= ${view>/md/tab} === 'pairs' }" enabled="{= ${view>/md/selCount} > 0 }" press=".onAssignMe"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>md.c.records}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{view>/md/col2}"/></Column>
+								<Column hAlign="End" width="7rem"><Text text="{i18n>md.c.prob}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{view>/md/col4}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="10rem"><Text text="{view>/md/col5}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem type="Navigation" press=".onOpen" selected="{view>checked}" highlight="{view>highlight}" navigated="{view>navigated}">
+									<VBox renderType="Bare">
+										<Text text="{view>title}" class="repoioGrName"/>
+										<Text text="{view>sub}" class="repoioUmMuted repoioMono" textDirection="LTR"/>
+									</VBox>
+									<VBox renderType="Bare">
+										<Text text="{view>c2}"/>
+										<Text text="{view>c2b}" class="repoioUmMuted"/>
+									</VBox>
+									<ObjectNumber number="{view>probText}" state="{view>probState}" textDirection="LTR"/>
+									<VBox renderType="Bare">
+										<Text text="{view>c4}"/>
+										<HBox wrap="Wrap" items="{path: 'view>flags', templateShareable: false}" renderType="Bare">
+											<ObjectStatus text="{view>text}" state="Warning" icon="{view>icon}" class="repoioMdFlag"/>
+										</HBox>
+									</VBox>
+									<VBox renderType="Bare">
+										<ObjectStatus text="{view>c5}" state="{view>c5State}" icon="{view>c5Icon}"/>
+										<Text text="{view>c5b}" class="repoioUmMuted"/>
+									</VBox>
+								</ColumnListItem>
+							</items>
+						</Table>
+						<Text text="{i18n>md.keys}" class="repoioUmMuted repoioMrFoot"/>
+					</VBox>
+				</f:content>
+			</f:DynamicPage>
+		</f:beginColumnPages>
+
+		<f:midColumnPages>
+			<f:DynamicPage id="mdDetail" headerExpanded="true" toggleHeaderOnTitleClick="false" showFooter="{= !!${view>/md/it/actions} }" class="repoioEdge repoioMdDetail">
+				<f:title>
+					<f:DynamicPageTitle>
+						<f:heading><Title text="{view>/md/it/title}" level="H2" wrapping="true"/></f:heading>
+						<f:expandedContent><Text text="{view>/md/it/subtitle}" textDirection="Inherit"/></f:expandedContent>
+						<f:navigationActions>
+							<Button icon="sap-icon://navigation-up-arrow" type="Transparent" tooltip="{i18n>md.prev}" press=".onPrev"/>
+							<Button icon="sap-icon://navigation-down-arrow" type="Transparent" tooltip="{i18n>md.next}" press=".onNext"/>
+							<Button icon="{= ${view>/md/layout} === 'MidColumnFullScreen' ? 'sap-icon://exit-full-screen' : 'sap-icon://full-screen' }" type="Transparent"
+								tooltip="{i18n>md.full}" press=".onFull"/>
+							<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>go.close}" press=".onClose"/>
+						</f:navigationActions>
+					</f:DynamicPageTitle>
+				</f:title>
+				<f:header>
+					<f:DynamicPageHeader pinnable="false">
+						<VBox renderType="Bare">
+							<FlexBox wrap="Wrap" alignItems="Start" class="repoioMdHead">
+								<VBox class="repoioMdHeadNum">
+									<Label text="{i18n>md.c.prob}"/>
+									<ObjectNumber number="{view>/md/it/probText}" state="{view>/md/it/probState}" emphasized="true" class="sapMObjectNumberLarge" textDirection="LTR"/>
+									<Text text="{view>/md/it/weightText}" class="repoioUmMuted" textDirection="LTR"/>
+								</VBox>
+								<VBox class="repoioGoFacet" items="{path: 'view>/md/it/facts', templateShareable: false}">
+									<HBox class="repoioGoPair" renderType="Bare">
+										<Label text="{view>label}" showColon="true" class="sapUiTinyMarginEnd"/>
+										<Text text="{view>value}"/>
+									</HBox>
+								</VBox>
+							</FlexBox>
+							<MessageStrip text="{view>/md/it/strip}" type="{view>/md/it/stripType}" showIcon="true" visible="{= !!${view>/md/it/strip} }" class="repoioMdStrip"/>
+						</VBox>
+					</f:DynamicPageHeader>
+				</f:header>
+				<f:content>
+					<VBox renderType="Bare" class="repoioMdBody">
+						<!-- the records side by side -->
+						<Table items="{view>/md/it/fields}" fixedLayout="false" popinLayout="GridSmall" class="repoioDenseTable repoioMdCmp">
+							<headerToolbar>
+								<OverflowToolbar style="Clear">
+									<Title text="{i18n>md.s.fields}" level="H3"/>
+									<ToolbarSpacer/>
+									<Label text="{i18n>md.onlyDiff}" labelFor="mdOnlyDiff"/>
+									<Switch id="mdOnlyDiff" state="{view>/md/onlyDiff}" change=".onOnlyDiff" customTextOn=" " customTextOff=" "/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="11rem"><Text text="{i18n>mr.cmp.field}"/></Column>
+								<Column><Text text="{view>/md/it/colA}"/></Column>
+								<Column><Text text="{view>/md/it/colB}"/></Column>
+								<Column width="10rem" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>md.c.compare}"/></Column>
+								<Column hAlign="End" width="5.5rem" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>mr.cmp.weight}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem highlight="{view>highlight}">
+									<Text text="{view>label}"/>
+									<Text text="{view>a}" textDirection="{view>dir}" class="{view>aCls}"/>
+									<Text text="{view>b}" textDirection="{view>dir}" class="{view>bCls}"/>
+									<ObjectStatus text="{view>levelText}" state="{view>levelState}" icon="{view>levelIcon}"/>
+									<Text text="{view>wText}" class="repoioMono" textDirection="LTR"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+
+						<!-- the members of a group (three or more records that match each other) -->
+						<Table items="{view>/md/it/members}" visible="{= ${view>/md/it/members}.length > 0 }" fixedLayout="false" class="repoioDenseTable repoioMdCmp">
+							<headerToolbar>
+								<OverflowToolbar style="Clear">
+									<Title text="{i18n>md.s.cluster}" level="H3"/>
+									<ToolbarSpacer/>
+									<Text text="{i18n>md.clusterHint}" class="repoioUmMuted"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>md.c.record}"/></Column>
+								<Column><Text text="{i18n>md.c.links}"/></Column>
+								<Column hAlign="Center" width="7rem"><Text text="{i18n>md.c.include}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<VBox renderType="Bare">
+										<Text text="{view>name}"/>
+										<Text text="{view>idText}" class="repoioUmMuted repoioMono" textDirection="LTR"/>
+									</VBox>
+									<Text text="{view>links}" textDirection="Inherit"/>
+									<CheckBox selected="{view>on}" enabled="{view>canDrop}" select=".onMember"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+
+						<!-- why Splink scored it: the prior and every comparison's match weight -->
+						<VBox renderType="Bare" class="repoioMdSec">
+							<Title text="{i18n>md.s.why}" level="H3"/>
+							<Text text="{view>/md/it/whyText}" class="repoioUmMuted"/>
+							<rc:EChart id="mdWhy" height="{view>/md/it/whyHeight}"/>
+						</VBox>
+
+						<!-- the golden record after the merge, by the survivorship rules -->
+						<Table items="{view>/md/it/merged}" visible="{= ${view>/md/it/canMerge} === true }" fixedLayout="false" popinLayout="GridSmall" class="repoioDenseTable repoioMdCmp">
+							<headerToolbar>
+								<OverflowToolbar style="Clear">
+									<Title text="{i18n>md.s.merged}" level="H3"/>
+									<ToolbarSpacer/>
+									<Label text="{i18n>md.survivor}" labelFor="mdSurvivor"/>
+									<Select id="mdSurvivor" selectedKey="{view>/md/it/survivor}" items="{path: 'view>/md/it/survivors', templateShareable: false}" change=".onSurvivor" width="15rem">
+										<core:Item key="{view>key}" text="{view>text}"/>
+									</Select>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="11rem"><Text text="{i18n>mr.cmp.field}"/></Column>
+								<Column><Text text="{i18n>go.c.value}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>md.c.from}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>mr.sv.rule}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<Text text="{view>label}"/>
+									<Text text="{view>value}" textDirection="{view>dir}"/>
+									<Text text="{view>from}"/>
+									<Text text="{view>rule}"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+
+						<!-- what the decision changes -->
+						<VBox renderType="Bare" class="repoioMdSec">
+							<Title text="{i18n>md.s.impact}" level="H3"/>
+							<VBox items="{path: 'view>/md/it/impact', templateShareable: false}" renderType="Bare">
+								<HBox alignItems="Start" class="repoioMdImpact" renderType="Bare">
+									<core:Icon src="{view>icon}" class="sapUiTinyMarginEnd repoioGoDqIco"/>
+									<Text text="{view>text}"/>
+								</HBox>
+							</VBox>
+						</VBox>
+					</VBox>
+				</f:content>
+				<f:footer>
+					<OverflowToolbar>
+						<Text text="{view>/md/it/footNote}" class="repoioUmMuted"/>
+						<ToolbarSpacer/>
+						<Button text="{i18n>md.a.defer}" press=".onDefer" visible="{= ${view>/md/it/actions} === 'pair' }"/>
+						<Button text="{i18n>md.a.distinct}" press=".onDistinct" visible="{= ${view>/md/it/actions} === 'pair' }"/>
+						<Button text="{view>/md/it/mergeText}" type="Emphasized" press=".onMerge" visible="{= ${view>/md/it/actions} === 'pair' }"/>
+						<Button text="{i18n>md.a.reject}" press=".onRejectRequest" visible="{= ${view>/md/it/actions} === 'request' }"/>
+						<Button text="{view>/md/it/releaseText}" type="Emphasized" press=".onRelease" visible="{= ${view>/md/it/actions} === 'request' }"
+							enabled="{view>/md/it/canRelease}" tooltip="{view>/md/it/releaseWhy}"/>
+						<Button text="{i18n>md.a.sendBack}" press=".onSendBack" visible="{= ${view>/md/it/actions} === 'second' }" enabled="{view>/md/it/canSecond}"/>
+						<Button text="{i18n>md.a.approve}" type="Emphasized" press=".onApproveSecond" visible="{= ${view>/md/it/actions} === 'second' }"
+							enabled="{view>/md/it/canSecond}" tooltip="{view>/md/it/secondWhy}"/>
+						<Button text="{i18n>md.a.unmerge}" press=".onUnmerge" visible="{= ${view>/md/it/actions} === 'decidedMerge' }"/>
+					</OverflowToolbar>
+				</f:footer>
+			</f:DynamicPage>
+		</f:midColumnPages>
+	</f:FlexibleColumnLayout>
+</mvc:View>

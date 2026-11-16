@@ -1,0 +1,240 @@
+<mvc:View controllerName="repoio.proto.controller.Quarantine"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core">
+	<!-- J10: Quarantine. Records the data quality step (Great Expectations) held on the dead-letter path: never dropped,
+	     never blocking the stream. A steward reprocesses them, corrects and reprocesses (recorded, optionally written back
+	     to the source), or asks for an exception or a discard, which a second steward approves. -->
+	<f:FlexibleColumnLayout id="fcl" layout="{view>/qa/layout}" class="repoioMdFcl">
+		<f:beginColumnPages>
+			<f:DynamicPage id="qaQueue" headerExpanded="true" toggleHeaderOnTitleClick="true" class="repoioEdge repoioMdQueue">
+				<f:title>
+					<f:DynamicPageTitle>
+						<f:heading><Title text="{i18n>nav.quarantine}" level="H1"/></f:heading>
+						<f:expandedContent><Text text="{i18n>qa.subtitle}"/></f:expandedContent>
+						<f:actions>
+							<Button text="{i18n>qa.a.runs}" icon="sap-icon://process" type="Transparent" press=".onRuns"/>
+						</f:actions>
+					</f:DynamicPageTitle>
+				</f:title>
+				<f:header>
+					<f:DynamicPageHeader pinnable="true">
+						<VBox renderType="Bare">
+							<FlexBox wrap="Wrap" class="repoioMdKpis" items="{view>/qa/kpis}">
+								<VBox class="repoioMdKpi" renderType="Bare">
+									<Label text="{view>label}"/>
+									<ObjectNumber number="{view>value}" state="{view>state}" emphasized="true" class="sapMObjectNumberLarge" textDirection="LTR"/>
+									<Text text="{view>hint}" class="repoioUmMuted"/>
+								</VBox>
+							</FlexBox>
+							<Label text="{i18n>qa.byRule}" class="repoioQaRuleLbl"/>
+							<FlexBox wrap="Wrap" items="{view>/qa/ruleTags}" class="repoioQaRules">
+								<ToggleButton text="{view>text}" pressed="{view>on}" press=".onRuleTag" type="{= ${view>severity} === 'warning' ? 'Default' : 'Default' }" class="repoioQaRuleBtn"/>
+							</FlexBox>
+							<FlexBox wrap="Wrap" alignItems="End" class="repoioGrFilters repoioMdFilters">
+								<VBox class="repoioGrFilter">
+									<Label text=""/>
+									<SearchField value="{view>/qa/f/q}" liveChange=".onFilter" placeholder="{i18n>qa.search}" width="100%"/>
+								</VBox>
+								<VBox class="repoioGrFilter">
+									<Label text="{i18n>gr.f.repo}" labelFor="qaRepo"/>
+									<Select id="qaRepo" selectedKey="{view>/qa/f/repo}" items="{view>/qa/repos}" width="100%" change=".onFilter">
+										<core:Item key="{view>key}" text="{view>text}"/>
+									</Select>
+								</VBox>
+								<VBox class="repoioGrFilter">
+									<Label text="{i18n>gr.f.src}" labelFor="qaSrc"/>
+									<MultiComboBox id="qaSrc" selectedKeys="{view>/qa/f/src}" items="{view>/qa/srcs}" width="100%" selectionFinish=".onFilter">
+										<core:Item key="{view>key}" text="{view>text}"/>
+									</MultiComboBox>
+								</VBox>
+								<VBox class="repoioGrFilter">
+									<Label text="{i18n>qa.f.status}" labelFor="qaSt"/>
+									<Select id="qaSt" selectedKey="{view>/qa/f/status}" width="100%" change=".onFilter">
+										<core:Item key="" text="{i18n>gr.st.all}"/>
+										<core:Item key="held" text="{i18n>qa.st.held}"/>
+										<core:Item key="ready" text="{i18n>qa.st.ready}"/>
+										<core:Item key="pending" text="{i18n>qa.st.pending}"/>
+									</Select>
+								</VBox>
+								<VBox class="repoioGrFilter">
+									<Label text="{i18n>qa.f.severity}" labelFor="qaSev"/>
+									<Select id="qaSev" selectedKey="{view>/qa/f/severity}" width="100%" change=".onFilter">
+										<core:Item key="" text="{i18n>gr.st.all}"/>
+										<core:Item key="error" text="{i18n>qa.sev.error}"/>
+										<core:Item key="warning" text="{i18n>qa.sev.warning}"/>
+									</Select>
+								</VBox>
+							</FlexBox>
+						</VBox>
+					</f:DynamicPageHeader>
+				</f:header>
+				<f:content>
+					<Table id="qaTable" items="{view>/qa/rows}" mode="MultiSelect" selectionChange=".onSelectRows" fixedLayout="false" popinLayout="GridSmall"
+						class="repoioDenseTable repoioMdTable" noDataText="{i18n>qa.none}" sticky="ColumnHeaders,HeaderToolbar">
+						<headerToolbar>
+							<OverflowToolbar style="Clear">
+								<Title text="{view>/qa/listTitle}" level="H2"/>
+								<ToolbarSpacer/>
+								<Button text="{view>/qa/byRuleText}" type="Transparent" visible="{= !!${view>/qa/byRuleText} }" press=".onReprocessRule"/>
+								<Button text="{view>/qa/batchText}" type="Emphasized" enabled="{= ${view>/qa/selCount} > 0 }" press=".onReprocessSelected"/>
+							</OverflowToolbar>
+						</headerToolbar>
+						<columns>
+							<Column><Text text="{i18n>qa.c.record}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>qa.c.rule}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>qa.c.value}"/></Column>
+							<Column minScreenWidth="Desktop" demandPopin="true" width="8rem"><Text text="{i18n>qa.c.run}"/></Column>
+							<Column width="11rem"><Text text="{i18n>qa.c.status}"/></Column>
+						</columns>
+						<items>
+							<ColumnListItem type="Navigation" press=".onOpen" selected="{view>checked}" highlight="{view>highlight}" navigated="{view>navigated}">
+								<VBox renderType="Bare">
+									<Text text="{view>name}" class="repoioGrName"/>
+									<Text text="{view>src}" class="repoioUmMuted"/>
+								</VBox>
+								<VBox renderType="Bare">
+									<Text text="{view>ruleText}"/>
+									<Text text="{view>more}" class="repoioUmMuted" visible="{= !!${view>more} }"/>
+								</VBox>
+								<VBox renderType="Bare">
+									<Text text="{view>col}" class="repoioJrTech" textDirection="LTR"/>
+									<Text text="{view>value}" class="repoioMono repoioMdDiff" textDirection="LTR"/>
+								</VBox>
+								<Link text="{view>run}" press=".onRun"/>
+								<VBox renderType="Bare">
+									<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+									<Text text="{view>held}" class="repoioUmMuted" textDirection="LTR"/>
+								</VBox>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</f:content>
+			</f:DynamicPage>
+		</f:beginColumnPages>
+
+		<f:midColumnPages>
+			<f:DynamicPage id="qaDetail" headerExpanded="true" toggleHeaderOnTitleClick="false" showFooter="{= !!${view>/qa/it/id} }" class="repoioEdge repoioMdDetail">
+				<f:title>
+					<f:DynamicPageTitle>
+						<f:heading><Title text="{view>/qa/it/name}" level="H2" wrapping="true"/></f:heading>
+						<f:expandedContent><Text text="{view>/qa/it/subtitle}"/></f:expandedContent>
+						<f:navigationActions>
+							<Button icon="sap-icon://navigation-up-arrow" type="Transparent" tooltip="{i18n>md.prev}" press=".onPrev"/>
+							<Button icon="sap-icon://navigation-down-arrow" type="Transparent" tooltip="{i18n>md.next}" press=".onNext"/>
+							<Button icon="{= ${view>/qa/layout} === 'MidColumnFullScreen' ? 'sap-icon://exit-full-screen' : 'sap-icon://full-screen' }" type="Transparent"
+								tooltip="{i18n>md.full}" press=".onFull"/>
+							<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>go.close}" press=".onClose"/>
+						</f:navigationActions>
+					</f:DynamicPageTitle>
+				</f:title>
+				<f:header>
+					<f:DynamicPageHeader pinnable="false">
+						<VBox renderType="Bare">
+							<FlexBox wrap="Wrap" alignItems="Start" class="repoioMdHead">
+								<VBox class="repoioGoFacet" items="{path: 'view>/qa/it/facts', templateShareable: false}">
+									<HBox class="repoioGoPair" renderType="Bare">
+										<Label text="{view>label}" showColon="true" class="sapUiTinyMarginEnd"/>
+										<Text text="{view>value}" textDirection="{view>dir}"/>
+									</HBox>
+								</VBox>
+								<VBox class="repoioGoFacet">
+									<Label text="{i18n>qa.c.status}"/>
+									<ObjectStatus text="{view>/qa/it/statusText}" state="{view>/qa/it/statusState}" icon="{view>/qa/it/statusIcon}" class="sapMObjectStatusLarge"/>
+									<Link text="{view>/qa/it/run}" press=".onRun"/>
+								</VBox>
+							</FlexBox>
+							<MessageStrip text="{view>/qa/it/strip}" type="{view>/qa/it/stripType}" showIcon="true" visible="{= !!${view>/qa/it/strip} }" class="repoioMdStrip"/>
+						</VBox>
+					</f:DynamicPageHeader>
+				</f:header>
+				<f:content>
+					<VBox renderType="Bare" class="repoioMdBody">
+						<Table items="{view>/qa/it/checks}" fixedLayout="false" popinLayout="GridSmall" class="repoioDenseTable repoioMdCmp">
+							<headerToolbar>
+								<OverflowToolbar style="Clear">
+									<Title text="{i18n>qa.s.checks}" level="H3"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>qa.a.rule}" type="Transparent" press=".onRule"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>qa.c.rule}"/></Column>
+								<Column><Text text="{i18n>qa.c.value}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>qa.c.expected}"/></Column>
+								<Column width="7rem"><Text text="{i18n>qa.f.severity}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem highlight="{= ${view>severity} === 'error' ? 'Error' : 'Warning' }">
+									<VBox renderType="Bare">
+										<Text text="{view>text}"/>
+										<Text text="{view>ge}" class="repoioJrTech" textDirection="LTR"/>
+									</VBox>
+									<VBox renderType="Bare">
+										<Text text="{view>col}" class="repoioJrTech" textDirection="LTR"/>
+										<Text text="{view>value}" class="repoioMono repoioMdDiff" textDirection="LTR"/>
+									</VBox>
+									<Text text="{view>expect}" textDirection="LTR"/>
+									<ObjectStatus text="{view>sevText}" state="{= ${view>severity} === 'error' ? 'Error' : 'Warning' }"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+
+						<Table items="{view>/qa/it/fields}" fixedLayout="false" class="repoioDenseTable repoioMdCmp">
+							<headerToolbar>
+								<OverflowToolbar style="Clear"><Title text="{i18n>qa.s.record}" level="H3"/></OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="13rem"><Text text="{i18n>mr.cmp.field}"/></Column>
+								<Column><Text text="{i18n>go.c.value}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem highlight="{= ${view>bad} ? 'Error' : 'None' }">
+									<VBox renderType="Bare">
+										<Text text="{view>label}"/>
+										<Text text="{view>col}" class="repoioJrTech" textDirection="LTR"/>
+									</VBox>
+									<Text text="{view>value}" textDirection="{view>dir}" class="{= ${view>bad} ? 'repoioMdDiff' : '' }"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+
+						<VBox renderType="Bare" class="repoioMdSec">
+							<Title text="{i18n>qa.s.history}" level="H3"/>
+							<VBox items="{path: 'view>/qa/it/history', templateShareable: false}" renderType="Bare">
+								<HBox alignItems="Start" class="repoioMdImpact" renderType="Bare">
+									<core:Icon src="{view>icon}" class="sapUiTinyMarginEnd repoioGoDqIco"/>
+									<VBox renderType="Bare">
+										<Text text="{view>text}"/>
+										<Text text="{view>at}" class="repoioUmMuted" textDirection="LTR"/>
+									</VBox>
+								</HBox>
+							</VBox>
+						</VBox>
+						<FlexBox wrap="Wrap" class="repoioMrNotes">
+							<VBox class="repoioMrNote">
+								<Title text="{i18n>qa.n.source.title}" level="H4"/>
+								<Text text="{i18n>qa.n.source.body}"/>
+							</VBox>
+							<VBox class="repoioMrNote">
+								<Title text="{i18n>qa.n.never.title}" level="H4"/>
+								<Text text="{i18n>qa.n.never.body}"/>
+							</VBox>
+						</FlexBox>
+					</VBox>
+				</f:content>
+				<f:footer>
+					<OverflowToolbar>
+						<Text text="{view>/qa/it/footNote}" class="repoioUmMuted"/>
+						<ToolbarSpacer/>
+						<Button text="{i18n>qa.a.discard}" press=".onDiscard" visible="{= ${view>/qa/it/actions} === 'held' }"/>
+						<Button text="{i18n>qa.a.waive}" press=".onWaive" visible="{= ${view>/qa/it/actions} === 'held' }"/>
+						<Button text="{i18n>qa.a.correct}" press=".onCorrect" visible="{= ${view>/qa/it/actions} === 'held' }"/>
+						<Button text="{i18n>qa.a.reprocess}" type="Emphasized" press=".onReprocess" visible="{= ${view>/qa/it/actions} === 'held' }"/>
+						<Button text="{i18n>md.a.sendBack}" press=".onSendBack" visible="{= ${view>/qa/it/actions} === 'pending' }" enabled="{view>/qa/it/canSecond}"/>
+						<Button text="{view>/qa/it/approveText}" type="Emphasized" press=".onApprove" visible="{= ${view>/qa/it/actions} === 'pending' }"
+							enabled="{view>/qa/it/canSecond}" tooltip="{view>/qa/it/secondWhy}"/>
+					</OverflowToolbar>
+				</f:footer>
+			</f:DynamicPage>
+		</f:midColumnPages>
+	</f:FlexibleColumnLayout>
+</mvc:View>
