@@ -195,6 +195,31 @@ a role grant question, not a UI shortcut.
 *Edge cases:* records merged in error are recoverable via change
 history (unmerge is a governed change, not an undo button).
 
+**Match rules and the duplicate check (Models & rules).**
+
+1. The Data Steward opens **Models & rules** and picks a customer type
+   (teacher or supervisor, bookstore, call center, student, charity
+   student). The customer type is set in the template, so a change
+   request uses the match rules of its template's customer type.
+2. A match rule is a Splink model over several fields, not the name
+   alone: the name with governorate and territories, all phone numbers
+   as one list (a number matches whatever field it was typed in), and
+   the fields of that type (grades and subject, parent name, national
+   ID, linked school or charity). Blocking rules decide which pairs are
+   scored; the steward sets the probability at which a request stops.
+3. **Duplicate check on change requests:** when a request is submitted,
+   it stops ("Stopped: possible duplicate") if any phone number is on a
+   golden record or in another open change request (submitted, in
+   approval or waiting for write-back), if Splink finds a similar
+   customer at or above the threshold, or (charity students) if the
+   national ID is already used. Phone numbers are standardised first
+   (+20, 20 and a leading 0 removed). Siblings — same parent name — are
+   not duplicates.
+4. Edits are a draft version; the active version keeps running until
+   the draft is approved. A stopped request is released (with a reason,
+   audited) or rejected by a steward in Match detection, never by the
+   requester.
+
 ## J6 — Author & publish a request template
 
 1. The Data Steward (holding the template-authoring role the Admin

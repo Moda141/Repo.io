@@ -121,7 +121,11 @@
        modules per domain: entity schema authoring (against
        `repoio-spec`), model versions, match rules, survivorship rules.
        Domain management links a model to its domain; this page owns the
-       model itself. [J5]
+       model itself. Match rules are per customer type (the type is set
+       in the template) and compare several fields with Splink; the
+       change request duplicate check stops a request on a phone number
+       already on a golden record or in another open request, or on a
+       similar customer above the threshold. [J5]
 
 5. **Ontology Explorer** — business-concept graph: classes, properties,
    the relationship **type catalog** (including same-entity types:
