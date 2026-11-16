@@ -198,6 +198,23 @@ a role grant question, not a UI shortcut.
    be added.
 4. Decisions feed back into match-quality evaluation (M3 metric) —
    steward decisions are ground truth, not just clicks.
+5. **Match detection screen:** the queue and the comparison side by side
+   (Flexible Column Layout). Four views of the queue: consolidation
+   pairs (Splink review band, including groups of three or more
+   records), change requests the duplicate check stopped, decisions
+   waiting for a second steward, and recent decisions. The comparison
+   shows both records field by field with Splink's level and weight per
+   comparison, a chart of how the prior and each comparison add up to
+   the probability, the golden record after the merge (survivorship
+   preview, with the record to keep), and what the decision changes.
+6. **Batch and four-eyes:** pairs at 0.93 or more with no warning can be
+   confirmed together, up to 50 at a time, each audited and labelled on
+   its own. A second steward approves merges of groups, of records with
+   different national IDs or with an open change request, and releases
+   of requests stopped by matching numbers. Nobody releases their own
+   request or approves their own first decision. Not a match and defer
+   need no second steward. Shortcuts: J / K next and previous,
+   Shift + M merge, Shift + N not a match.
 5. Every decision is audited with the pair id and score.
 
 *Edge cases:* records merged in error are recoverable via change
@@ -437,6 +454,19 @@ workflow → deletion blocked, deprecate instead.
 *Edge cases:* DLQ growth alert leads here; replaying a batch is an
 explicit governed action with an idempotency guarantee, not a button
 that "runs it again".
+
+**Quarantine** (Data Steward): the records the DQ step held, in the same
+queue-and-detail layout as Match detection. Filter by rule (with
+counts), repository, source, status and severity; each record shows the
+failed Great Expectations checks (column, value, expected), the record
+as received, its run (link to Data jobs) and its history. Actions:
+reprocess (passes once the source sent a fix); correct and reprocess
+(a recorded manual correction with a reason, optionally sent to the
+source through the write-back workflow, since a correction made only
+here is overwritten by the next sync); accept as an exception or
+discard (a reason and a second steward, never silent). Reprocess the
+selected records, or everything held by one rule after the rule or its
+reference list was fixed.
 
 ## J11 — Browse the ontology
 
