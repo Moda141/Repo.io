@@ -1,0 +1,98 @@
+{
+	"_comment": "Data products catalog (SAP Business Data Cloud cockpit pattern), sample values only. A data product is one repository's published golden table. In the product the list comes from the repositories API filtered by the caller's domain grants, classification tags from the catalog, quality from Great Expectations results, and consumers from the Trino / Iceberg REST catalog access logs (ADR-0006). Nothing here is editable from the console page.",
+	"channels": [
+		{ "key": "sql", "icon": "sap-icon://database", "endpoint": "iceberg.golden.{table}", "milestone": "M2" },
+		{ "key": "iceberg", "icon": "sap-icon://cloud", "endpoint": "${REPOIO_CATALOG_URL} · golden.{table}", "milestone": "M2" },
+		{ "key": "rest", "icon": "sap-icon://chain-link", "endpoint": "/api/v1/{entity}/golden", "milestone": "M1" },
+		{ "key": "changes", "icon": "sap-icon://journey-change", "endpoint": "changes.{entity}", "milestone": "M3" },
+		{ "key": "mcp", "icon": "sap-icon://ai", "endpoint": "golden.{entity}.lookup", "milestone": "M5" }
+	],
+	"products": {
+		"customer-master": {
+			"entity": "customer", "version": "3.2", "published": "2026-10-02", "refreshed": "2026-11-04 02:06", "cadence": "daily", "classification": "confidential",
+			"purposeEn": "One trusted record per customer across SAP C4C, SAP S/4HANA and file uploads: schools, retailers, teachers, students and call-center accounts, with their contacts, territory and type.",
+			"purposeAr": "سجل واحد موثوق لكل عميل من SAP C4C وSAP S/4HANA والملفات المرفوعة: المدارس والمكتبات والمدرسين والطلاب وحسابات الكول سنتر، بأرقام التواصل والمنطقة ونوع الحساب.",
+			"useEn": ["Sales and collection reports by territory", "Campaign targeting without duplicate contacts", "Customer lookup for AI agents"],
+			"useAr": ["تقارير المبيعات والتحصيل حسب المنطقة", "استهداف الحملات بدون أرقام مكررة", "البحث عن العميل لوكلاء الذكاء الاصطناعي"],
+			"pii": ["mobile_1", "mobile_2", "mobile_3", "phone", "whatsapp", "contact_mobile", "email", "national_id"],
+			"dims": { "completeness": 91.4, "validity": 88.6, "uniqueness": 97.2, "consistency": 82.9, "timeliness": 99.1 },
+			"trend": [82.1, 83.4, 84.0, 85.2, 84.7, 86.1, 86.9, 87.3],
+			"consumers": [
+				{ "name": "Sales performance", "kind": "bi", "tool": "Power BI", "owner": "سارة عادل", "lastRead": "2026-11-04 07:30", "reads": 412 },
+				{ "name": "Customer 360 notebook", "kind": "platform", "tool": "Databricks", "owner": "حسام الدين", "lastRead": "2026-11-04 03:10", "reads": 96 },
+				{ "name": "Sales assistant", "kind": "agent", "tool": "MCP", "owner": "محمد", "lastRead": "2026-11-04 09:02", "reads": 1834 },
+				{ "name": "Collection follow-up", "kind": "app", "tool": "REST", "owner": "طارق عبد الله", "lastRead": "2026-11-03 18:44", "reads": 255 }
+			]
+		},
+		"distribution": {
+			"entity": "partner", "version": "1.0", "published": "2026-09-21", "refreshed": "2026-11-04 02:11", "cadence": "daily", "classification": "internal",
+			"purposeEn": "Distribution partners and wholesalers that resell the group's titles, with their contract territory and credit terms.",
+			"purposeAr": "شركاء التوزيع وتجار الجملة اللي بيعيدوا بيع إصدارات المجموعة، بمنطقة التعاقد وشروط الائتمان.",
+			"useEn": ["Partner sales reports", "Credit limit monitoring"],
+			"useAr": ["تقارير مبيعات الشركاء", "متابعة حدود الائتمان"],
+			"pii": ["phone", "email"],
+			"dims": { "completeness": 94.0, "validity": 92.1, "uniqueness": 99.4, "consistency": 88.0, "timeliness": 98.0 },
+			"trend": [89.0, 89.4, 90.1, 90.2, 90.6, 90.9, 91.0, 91.2],
+			"consumers": [
+				{ "name": "Partner sales", "kind": "bi", "tool": "Power BI", "owner": "سارة عادل", "lastRead": "2026-11-04 08:00", "reads": 71 }
+			]
+		},
+		"schools": {
+			"entity": "school", "version": "1.0", "published": "", "refreshed": "", "cadence": "daily", "classification": "internal",
+			"purposeEn": "School accounts with their stages, subjects and the ministry codes they report under. Not published yet: the model is in draft.",
+			"purposeAr": "حسابات المدارس بالمراحل والمواد وأكواد الوزارة. لسه متنشرش: النموذج مسودة.",
+			"useEn": ["School coverage by governorate"],
+			"useAr": ["تغطية المدارس حسب المحافظة"],
+			"pii": ["phone", "email"],
+			"dims": null, "trend": [], "consumers": []
+		},
+		"catalog": {
+			"entity": "book", "version": "2.1", "published": "2026-08-11", "refreshed": "2026-11-04 01:40", "cadence": "daily", "classification": "public",
+			"purposeEn": "The book catalog: one record per title and edition, keyed by ISBN, with subject, stage, price and availability.",
+			"purposeAr": "كتالوج الكتب: سجل واحد لكل عنوان وطبعة بالـ ISBN، بالمادة والمرحلة والسعر والإتاحة.",
+			"useEn": ["E-commerce product feed", "Price lists for distributors", "Title lookup for AI agents"],
+			"useAr": ["تغذية المتجر الإلكتروني", "قوائم أسعار الموزعين", "البحث عن العناوين لوكلاء الذكاء الاصطناعي"],
+			"pii": [],
+			"dims": { "completeness": 97.8, "validity": 96.0, "uniqueness": 99.9, "consistency": 93.4, "timeliness": 96.5 },
+			"trend": [94.8, 95.1, 95.3, 95.6, 95.8, 96.0, 96.1, 96.2],
+			"consumers": [
+				{ "name": "Online store feed", "kind": "app", "tool": "REST", "owner": "أحمد ناصر", "lastRead": "2026-11-04 09:15", "reads": 2210 },
+				{ "name": "Title availability", "kind": "bi", "tool": "Power BI", "owner": "كريم فوزي", "lastRead": "2026-11-04 07:45", "reads": 38 },
+				{ "name": "Book recommender", "kind": "platform", "tool": "Databricks", "owner": "أحمد ناصر", "lastRead": "2026-11-03 23:30", "reads": 14 }
+			]
+		},
+		"digital": {
+			"entity": "digital_product", "version": "1.0", "published": "", "refreshed": "", "cadence": "weekly", "classification": "public",
+			"purposeEn": "E-books, apps and digital subscriptions. Not published yet: the model is in draft.",
+			"purposeAr": "الكتب الإلكترونية والتطبيقات والاشتراكات الرقمية. لسه متنشرش: النموذج مسودة.",
+			"useEn": ["Digital sales reports"],
+			"useAr": ["تقارير المبيعات الرقمية"],
+			"pii": [],
+			"dims": null, "trend": [], "consumers": []
+		},
+		"vendor-master": {
+			"entity": "vendor", "version": "2.0", "published": "2026-07-30", "refreshed": "2026-11-04 02:20", "cadence": "daily", "classification": "confidential",
+			"purposeEn": "One record per supplier from SAP S/4HANA: printers, paper suppliers and service vendors, with tax number, bank references and payment terms.",
+			"purposeAr": "سجل واحد لكل مورد من SAP S/4HANA: المطابع وموردي الورق ومقدمي الخدمات، بالرقم الضريبي ومراجع البنك وشروط الدفع.",
+			"useEn": ["Spend analysis", "Supplier onboarding checks"],
+			"useAr": ["تحليل المصروفات", "مراجعة تسجيل الموردين"],
+			"pii": ["phone", "email", "bank_ref"],
+			"dims": { "completeness": 90.2, "validity": 91.5, "uniqueness": 96.0, "consistency": 85.1, "timeliness": 97.3 },
+			"trend": [88.2, 88.5, 88.4, 88.9, 89.0, 89.2, 89.3, 89.4],
+			"consumers": [
+				{ "name": "Procurement spend", "kind": "bi", "tool": "Power BI", "owner": "إيمان سعيد", "lastRead": "2026-11-04 06:50", "reads": 54 }
+			]
+		},
+		"authors": {
+			"entity": "author", "version": "1.0", "published": "2025-12-01", "refreshed": "2025-12-01 10:21", "cadence": "none", "classification": "confidential",
+			"purposeEn": "Authors and rights holders. Retired: kept for reading history only, no new refreshes.",
+			"purposeAr": "المؤلفين وأصحاب الحقوق. متقاعد: متاح للقراءة التاريخية بس، من غير تحديثات جديدة.",
+			"useEn": ["Royalty history"],
+			"useAr": ["تاريخ حقوق المؤلفين"],
+			"pii": ["national_id", "phone"],
+			"dims": { "completeness": 84.0, "validity": 80.2, "uniqueness": 95.5, "consistency": 76.0, "timeliness": 40.0 },
+			"trend": [81.0, 81.0, 81.0, 81.0, 81.0, 81.0, 81.0, 81.0],
+			"consumers": []
+		}
+	}
+}

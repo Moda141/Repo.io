@@ -1,0 +1,269 @@
+<mvc:View controllerName="repoio.proto.controller.DataProduct"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- One data product (SAP Business Data Cloud cockpit data product page, Repo.io look): what it holds, its fields, where
+	     it comes from, how good it is and who reads it. Read only. "Connect" opens the repository connection details
+	     (ADR-0006); tokens come from an administrator (J16). -->
+	<uxap:ObjectPageLayout id="op" upperCaseAnchorBar="false" showFooter="false" headerContentPinnable="true" toggleHeaderOnTitleClick="true"
+		subSectionLayout="TitleOnTop" class="repoioGrOp repoioDpOp">
+		<uxap:headerTitle>
+			<uxap:ObjectPageDynamicHeaderTitle>
+				<uxap:breadcrumbs>
+					<Breadcrumbs currentLocationText="{view>/dpo/title}">
+						<Link text="{i18n>nav.dataProducts}" press=".onBack"/>
+						<Link text="{view>/dpo/domainText}" press=".onBackDomain"/>
+					</Breadcrumbs>
+				</uxap:breadcrumbs>
+				<uxap:heading>
+					<HBox alignItems="Baseline" wrap="Wrap" renderType="Bare">
+						<Title text="{view>/dpo/title}" level="H1" wrapping="true" class="sapUiSmallMarginEnd"/>
+						<Text text="{view>/dpo/versionText}" class="repoioGrIdTag"/>
+					</HBox>
+				</uxap:heading>
+				<uxap:expandedContent>
+					<Text text="{view>/dpo/typeLine}" class="repoioUmMuted"/>
+				</uxap:expandedContent>
+				<uxap:snappedHeading>
+					<HBox alignItems="Center" renderType="Bare">
+						<Avatar src="{view>/dpo/icon}" displayShape="Square" displaySize="XS" backgroundColor="{view>/dpo/color}" class="sapUiSmallMarginEnd"/>
+						<Title text="{view>/dpo/title}" level="H1" wrapping="false"/>
+					</HBox>
+				</uxap:snappedHeading>
+				<uxap:snappedContent>
+					<ObjectStatus text="{view>/dpo/statusText}" state="{view>/dpo/statusState}" icon="{view>/dpo/statusIcon}"/>
+				</uxap:snappedContent>
+				<uxap:actions>
+					<Button text="{i18n>dp.connect}" type="Emphasized" icon="sap-icon://connected" enabled="{view>/dpo/published}" press=".onConnect"/>
+					<Button text="{i18n>dp.browse}" type="Transparent" visible="{view>/dpo/hasRecords}" press=".onBrowse"/>
+					<Button icon="sap-icon://chain-link" type="Transparent" tooltip="{i18n>cat.copyLink}" press=".onCopyLink"/>
+				</uxap:actions>
+				<uxap:navigationActions>
+					<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>go.close}" press=".onBack"/>
+				</uxap:navigationActions>
+			</uxap:ObjectPageDynamicHeaderTitle>
+		</uxap:headerTitle>
+
+		<uxap:headerContent>
+			<FlexBox wrap="Wrap" alignItems="Start" class="repoioGoHead">
+				<Avatar src="{view>/dpo/icon}" displayShape="Square" displaySize="L" backgroundColor="{view>/dpo/color}" class="repoioGoAvatar"/>
+				<VBox class="repoioGoFacet" items="{path: 'view>/dpo/facts', templateShareable: false}">
+					<HBox class="repoioGoPair" renderType="Bare">
+						<Label text="{view>label}" showColon="true" class="sapUiTinyMarginEnd"/>
+						<Text text="{view>value}" textDirection="{view>dir}"/>
+					</HBox>
+				</VBox>
+				<VBox class="repoioGoFacet">
+					<Label text="{i18n>dp.owners}"/>
+					<HBox items="{path: 'view>/dpo/owners', templateShareable: false}" renderType="Bare" class="repoioDpOwners">
+						<rc:PersonLink name="{view>name}"/>
+					</HBox>
+					<HBox wrap="Wrap" renderType="Bare" items="{path: 'view>/dpo/chips', templateShareable: false}" class="repoioDpTags">
+						<ObjectStatus text="{view>text}" state="{view>state}" icon="{view>icon}" inverted="{view>inv}" class="repoioDpChip"/>
+					</HBox>
+				</VBox>
+				<VBox class="repoioGoFacet">
+					<Label text="{i18n>dp.records}"/>
+					<ObjectNumber number="{view>/dpo/goldenText}" emphasized="true" class="sapMObjectNumberLarge" textDirection="LTR"/>
+				</VBox>
+				<VBox class="repoioGoFacet">
+					<Label text="{i18n>dp.quality}"/>
+					<ObjectNumber number="{view>/dpo/qualityNum}" unit="{= ${view>/dpo/published} ? '%' : '' }" state="{view>/dpo/qualityState}" emphasized="true"
+						class="sapMObjectNumberLarge" textDirection="LTR"/>
+				</VBox>
+				<VBox class="repoioGoFacet">
+					<Label text="{i18n>domains.col.status}"/>
+					<ObjectStatus text="{view>/dpo/statusText}" state="{view>/dpo/statusState}" icon="{view>/dpo/statusIcon}" class="sapMObjectStatusLarge"/>
+					<Text text="{view>/dpo/updatedText}" class="repoioUmMuted"/>
+				</VBox>
+				<MessageStrip text="{view>/dpo/banner}" type="{view>/dpo/bannerType}" showIcon="true" visible="{= !!${view>/dpo/banner} }" class="repoioGoBanner"/>
+			</FlexBox>
+		</uxap:headerContent>
+
+		<uxap:sections>
+			<!-- Overview -->
+			<uxap:ObjectPageSection id="secOverview" title="{i18n>dp.sec.overview}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>dp.sec.overview}" titleUppercase="false">
+						<FlexBox wrap="Wrap" class="repoioDpOverview" renderType="Bare">
+							<VBox class="repoioDpAbout" renderType="Bare">
+								<Title text="{i18n>dp.about}" level="H4" class="repoioGoSubTitle"/>
+								<Text text="{view>/dpo/desc}" class="repoioGoValue"/>
+								<Title text="{i18n>dp.useCases}" level="H4" class="repoioGoSubTitle sapUiMediumMarginTop"/>
+								<VBox items="{path: 'view>/dpo/uses', templateShareable: false}" renderType="Bare" class="repoioDpUses">
+									<HBox alignItems="Center" renderType="Bare">
+										<core:Icon src="sap-icon://accept" class="repoioDpUseIco" decorative="true"/>
+										<Text text="{view>text}"/>
+									</HBox>
+								</VBox>
+							</VBox>
+							<VBox class="repoioDpDetails" renderType="Bare">
+								<Title text="{i18n>dp.details}" level="H4" class="repoioGoSubTitle"/>
+								<VBox items="{path: 'view>/dpo/details', templateShareable: false}" renderType="Bare" class="repoioDpKv">
+									<HBox class="repoioDpKvRow" renderType="Bare">
+										<Label text="{view>label}" class="repoioDpKvLbl"/>
+										<Text text="{view>value}" textDirection="{view>dir}" class="{= ${view>mono} ? 'repoioMono' : '' }"/>
+									</HBox>
+								</VBox>
+							</VBox>
+						</FlexBox>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Data model: the fields a consumer gets -->
+			<uxap:ObjectPageSection id="secModel" title="{i18n>dp.sec.model}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>dp.sec.model}" titleUppercase="false">
+						<Table items="{view>/dpo/fields}" class="repoioDenseTable" sticky="ColumnHeaders" growing="true" growingThreshold="12" growingScrollToLoad="false"
+							noDataText="{i18n>dp.noFields}">
+							<headerToolbar>
+								<OverflowToolbar style="Clear">
+									<Title text="{view>/dpo/fieldsTitle}" level="H3" titleStyle="H6"/>
+									<ToolbarSpacer/>
+									<SearchField value="{view>/dpo/fq}" liveChange=".onFieldSearch" placeholder="{i18n>dp.findField}" width="14rem"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="30%"><Text text="{i18n>dp.f.name}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>dp.f.tech}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="7rem"><Text text="{i18n>dp.f.type}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>dp.f.note}"/></Column>
+								<Column width="9rem"><Text text="{i18n>dp.f.tags}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<Text text="{view>name}" class="repoioGrName"/>
+									<Text text="{view>col}" class="repoioMono" textDirection="LTR"/>
+									<Text text="{view>kindText}"/>
+									<Text text="{view>hint}" maxLines="2"/>
+									<HBox wrap="Wrap" renderType="Bare" class="repoioDpTags">
+										<ObjectStatus text="{i18n>dp.pii}" state="Warning" icon="sap-icon://private" inverted="true" visible="{view>pii}" class="repoioDpChip"/>
+										<ObjectStatus text="{i18n>dp.derived}" state="Information" inverted="true" visible="{view>derived}" class="repoioDpChip"/>
+									</HBox>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Sources -->
+			<uxap:ObjectPageSection id="secSources" title="{i18n>dp.sec.sources}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>dp.sec.sources}" titleUppercase="false">
+						<VBox renderType="Bare">
+							<Text text="{i18n>dp.sourcesHint}" class="repoioUmMuted sapUiSmallMarginBottom"/>
+							<Table items="{view>/dpo/sources}" class="repoioDenseTable">
+								<columns>
+									<Column width="4rem" hAlign="Center"><Text text="{i18n>dp.s.priority}"/></Column>
+									<Column width="30%"><Text text="{i18n>dp.s.system}"/></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.connector}"/></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" hAlign="End"><Text text="{i18n>dp.s.tables}"/></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" hAlign="End"><Text text="{i18n>repo.rows}"/></Column>
+									<Column hAlign="End"><Text text="{i18n>dp.quality}"/></Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<ObjectNumber number="{view>priority}" emphasized="true"/>
+										<HBox alignItems="Center" renderType="Bare">
+											<core:Icon src="sap-icon://connected" class="sapUiSmallMarginEnd" decorative="true"/>
+											<Text text="{view>name}" class="repoioGrName"/>
+										</HBox>
+										<Text text="{view>type}"/>
+										<Text text="{view>tables}" textDirection="LTR"/>
+										<Text text="{view>rowsText}" textDirection="LTR"/>
+										<ObjectStatus text="{view>qualityText}" state="{view>qualityState}" textDirection="LTR"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</VBox>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Quality -->
+			<uxap:ObjectPageSection id="secQuality" title="{i18n>dp.sec.quality}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>dp.sec.quality}" titleUppercase="false">
+						<VBox renderType="Bare">
+							<IllustratedMessage visible="{= !${view>/dpo/hasDims} }" illustrationType="sapIllus-NoData" illustrationSize="Spot"
+								title="{i18n>dp.noQuality}" description="{i18n>dp.noQualityHint}"/>
+							<FlexBox wrap="Wrap" visible="{view>/dpo/hasDims}" class="repoioDpQuality" renderType="Bare">
+								<VBox class="repoioDpDims" renderType="Bare" items="{path: 'view>/dpo/dims', templateShareable: false}">
+									<VBox class="repoioDpDim" renderType="Bare">
+										<HBox justifyContent="SpaceBetween" renderType="Bare">
+											<Label text="{view>label}"/>
+											<Text text="{view>text}" textDirection="LTR"/>
+										</HBox>
+										<ProgressIndicator percentValue="{view>value}" showValue="false" state="{view>state}" height="0.5rem"/>
+									</VBox>
+								</VBox>
+								<VBox class="repoioDpTrend" renderType="Bare">
+									<Label text="{i18n>dp.trend}"/>
+									<rc:EChart id="dpTrend" height="10rem" ariaLabel="{i18n>dp.trend}"/>
+								</VBox>
+							</FlexBox>
+							<Text text="{i18n>dp.qualityNote}" visible="{view>/dpo/hasDims}" class="repoioUmMuted sapUiSmallMarginTop"/>
+						</VBox>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Access & consumers -->
+			<uxap:ObjectPageSection id="secAccess" title="{i18n>dp.sec.access}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{i18n>dp.channels}" titleUppercase="false">
+						<VBox renderType="Bare">
+							<MessageStrip text="{i18n>dp.accessRule}" type="Information" showIcon="true" class="sapUiSmallMarginBottom"/>
+							<List items="{view>/dpo/channels}" showSeparators="Inner" class="repoioDpChannels">
+								<CustomListItem>
+									<HBox alignItems="Center" class="repoioDpChannel" renderType="Bare">
+										<core:Icon src="{view>icon}" size="1.25rem" class="repoioDpChIco" decorative="true"/>
+										<VBox renderType="Bare" class="repoioDpChMain">
+											<Text text="{view>name}" class="repoioGrName"/>
+											<Text text="{view>desc}" class="repoioUmMuted"/>
+										</VBox>
+										<Text text="{view>endpoint}" class="repoioMono repoioDpChEp" textDirection="LTR"/>
+										<ObjectStatus text="{view>milestoneText}" state="None" inverted="true" class="repoioDpChip"/>
+									</HBox>
+								</CustomListItem>
+							</List>
+							<HBox justifyContent="End" class="sapUiSmallMarginTop">
+								<Button text="{i18n>dp.connectDetails}" icon="sap-icon://connected" enabled="{view>/dpo/published}" press=".onConnect"/>
+							</HBox>
+						</VBox>
+					</uxap:ObjectPageSubSection>
+					<uxap:ObjectPageSubSection title="{i18n>dp.consumers}" titleUppercase="false">
+						<Table items="{view>/dpo/consumers}" class="repoioDenseTable" noDataText="{i18n>dp.noConsumers}">
+							<headerToolbar>
+								<OverflowToolbar style="Clear">
+									<Title text="{view>/dpo/consumersTitle}" level="H3" titleStyle="H6"/>
+									<ToolbarSpacer/>
+									<Text text="{i18n>dp.consumersHint}" class="repoioUmMuted"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="30%"><Text text="{i18n>dp.c.name}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>dp.c.tool}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>dp.c.owner}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>dp.c.last}"/></Column>
+								<Column hAlign="End"><Text text="{i18n>dp.c.reads}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<HBox alignItems="Center" renderType="Bare">
+										<core:Icon src="{view>icon}" class="sapUiSmallMarginEnd" decorative="true"/>
+										<Text text="{view>name}" class="repoioGrName"/>
+									</HBox>
+									<Text text="{view>toolText}"/>
+									<rc:PersonLink name="{view>owner}"/>
+									<Text text="{view>lastRead}" textDirection="LTR"/>
+									<Text text="{view>readsText}" textDirection="LTR"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+		</uxap:sections>
+	</uxap:ObjectPageLayout>
+</mvc:View>

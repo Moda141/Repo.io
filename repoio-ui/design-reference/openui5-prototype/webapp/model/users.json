@@ -1135,6 +1135,9 @@
 		"domains": [
 			"gr.read"
 		],
+		"dataProducts": [
+			"gr.read"
+		],
 		"goldenRecords": [
 			"gr.read"
 		],

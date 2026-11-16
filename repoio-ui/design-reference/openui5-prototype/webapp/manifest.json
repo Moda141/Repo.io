@@ -115,6 +115,10 @@
 			"stewardship": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/stewardship.json"
+			},
+			"products": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/products.json"
 			}
 		},
 		"resources": {
@@ -279,6 +283,16 @@
 					"target": "quarantine"
 				},
 				{
+					"name": "dataProduct",
+					"pattern": "data-products/{id}",
+					"target": "dataProduct"
+				},
+				{
+					"name": "dataProducts",
+					"pattern": "data-products",
+					"target": "dataProducts"
+				},
+				{
 					"name": "page",
 					"pattern": "page/{key}",
 					"target": "placeholder"
@@ -429,6 +443,16 @@
 					"id": "quarantine",
 					"name": "Quarantine",
 					"level": 2
+				},
+				"dataProducts": {
+					"id": "dataProducts",
+					"name": "DataProducts",
+					"level": 2
+				},
+				"dataProduct": {
+					"id": "dataProduct",
+					"name": "DataProduct",
+					"level": 3
 				}
 			}
 		}
