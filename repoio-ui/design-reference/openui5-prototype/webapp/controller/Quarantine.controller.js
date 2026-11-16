@@ -1,6 +1,7 @@
 sap.ui.define([
 	"repoio/proto/controller/BaseController",
 	"repoio/proto/util/audit",
+	"repoio/proto/util/visualFilter",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/m/Dialog",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/m/CheckBox",
 	"sap/m/Text",
 	"sap/ui/layout/form/SimpleForm"
-], function (BaseController, Audit, MessageToast, MessageBox, Dialog, Button, Label, Input, TextArea, CheckBox, Text, SimpleForm) {
+], function (BaseController, Audit, VF, MessageToast, MessageBox, Dialog, Button, Label, Input, TextArea, CheckBox, Text, SimpleForm) {
 	"use strict";
 
 	var LTR = ["mobile_1", "mobile_2", "whatsapp", "email", "account_type", "state_id", "main_territory_id", "territory_1_id", "national_id", "tax_number", "changed"],
@@ -31,7 +32,7 @@ sap.ui.define([
 	   the console never edits a golden record. */
 	return BaseController.extend("repoio.proto.controller.Quarantine", {
 		onInit: function () {
-			this.viewModel().setProperty("/qa", { layout: "OneColumn", f: { q: "", repo: "", src: [], status: "", severity: "", rules: [] }, it: {}, selCount: 0 });
+			this.viewModel().setProperty("/qa", { layout: "OneColumn", f: { q: "", repo: "", src: [], status: [], severity: "", rules: [] }, filterMode: "visual", it: {}, selCount: 0 });
 			this.router().getRoute("quarantine").attachPatternMatched(this._onMatched, this);
 		},
 		_onMatched: function (oEvent) {
@@ -62,41 +63,45 @@ sap.ui.define([
 		_pending: function (q) { return q.status === "pendingWaive" || q.status === "pendingDiscard"; },
 
 		_refresh: function () {
-			var that = this, vm = this.viewModel(), f = vm.getProperty("/qa/f"), T = this.text.bind(this), q = (f.q || "").trim().toLowerCase(), checked = this._checked || {};
-			var rows = this._q.filter(function (x) {
-				var r = that._rule(x.rule);
-				if (q && [x.id, x.record.name, x.sourceKey, x.record[r.col] || ""].join(" ").toLowerCase().indexOf(q) < 0) { return false; }
-				if (f.repo && x.repo !== f.repo) { return false; }
-				if (f.src.length && f.src.indexOf(x.source) < 0) { return false; }
-				if (f.status === "pending" ? !that._pending(x) : f.status && x.status !== f.status) { return false; }
-				if (f.severity && r.severity !== f.severity) { return false; }
-				if (f.rules.length && f.rules.indexOf(x.rule) < 0) { return false; }
-				return true;
-			}).map(function (x) {
+			var that = this, f = this.viewModel().getProperty("/qa/f"), T = this.text.bind(this), checked = this._checked || {};
+			var rows = this._q.filter(function (x) { return that._match(x); }).map(function (x) {
 				var r = that._rule(x.rule), st = that._status(x);
 				return { id: x.id, name: x.record.name || T("qa.noName"), src: that._srcName(x.source) + " · " + x.sourceKey + " · " + that._repoName(x.repo),
 					ruleText: T("go.dq." + x.rule), more: x.also.length ? T("qa.more", [x.also.length]) : "", col: r.col, value: x.record[r.col] || T("qa.empty"),
 					run: x.run, statusText: T("qa.st." + x.status), statusState: st[0], statusIcon: st[1], held: T("qa.heldAt", [x.held]),
 					highlight: r.severity === "error" ? "Error" : "Warning", checked: !!checked[x.id], navigated: x.id === that._openId };
 			});
+			this._header(rows, f, T);
+		},
+		_statusKey: function (x) { return this._pending(x) ? "pending" : x.status; },
+		/* skip: the dimension a visual filter card counts, so each card shows the other filters applied (ALP behaviour). */
+		_match: function (x, skip) {
+			var f = this.viewModel().getProperty("/qa/f"), q = (f.q || "").trim().toLowerCase(), r = this._rule(x.rule);
+			if (q && [x.id, x.record.name, x.sourceKey, x.record[r.col] || ""].join(" ").toLowerCase().indexOf(q) < 0) { return false; }
+			if (f.repo && x.repo !== f.repo) { return false; }
+			if (skip !== "src" && f.src.length && f.src.indexOf(x.source) < 0) { return false; }
+			if (skip !== "status" && f.status.length && f.status.indexOf(this._statusKey(x)) < 0) { return false; }
+			if (f.severity && r.severity !== f.severity) { return false; }
+			if (skip !== "rules" && f.rules.length && f.rules.indexOf(x.rule) < 0) { return false; }
+			return true;
+		},
+		/* The list title, value lists, summary and visual filter cards. */
+		_header: function (rows, f, T) {
+			var that = this, vm = this.viewModel();
 			vm.setProperty("/qa/rows", rows);
 			vm.setProperty("/qa/listTitle", T("qa.list", [rows.length]));
-			var counts = {};
-			this._q.forEach(function (x) { counts[x.rule] = (counts[x.rule] || 0) + 1; });
-			vm.setProperty("/qa/ruleTags", this._cfg.rules.filter(function (r) { return counts[r.key]; }).map(function (r) {
-				return { key: r.key, text: T("go.dq." + r.key) + " (" + counts[r.key] + ")", on: f.rules.indexOf(r.key) > -1, severity: r.severity };
-			}));
 			var repos = {}, srcs = {};
 			this._q.forEach(function (x) { repos[x.repo] = 1; srcs[x.source] = 1; });
 			vm.setProperty("/qa/repos", [{ key: "", text: T("gr.st.all") }].concat(Object.keys(repos).map(function (k) { return { key: k, text: that._repoName(k) }; })));
 			vm.setProperty("/qa/srcs", Object.keys(srcs).map(function (k) { return { key: k, text: that._srcName(k) }; }));
 			var oldest = this._q.map(function (x) { return x.held; }).sort()[0] || "";
-			vm.setProperty("/qa/kpis", [
-				{ label: T("qa.k.held"), value: String(this._q.filter(function (x) { return x.status === "held"; }).length), state: "Error", hint: T("qa.k.heldHint") },
-				{ label: T("qa.k.ready"), value: String(this._q.filter(function (x) { return x.status === "ready"; }).length), state: "Information", hint: T("qa.k.readyHint") },
-				{ label: T("qa.k.second"), value: String(this._q.filter(this._pending).length), state: "Warning", hint: T("md.k.secondHint") },
-				{ label: T("qa.k.oldest"), value: oldest.slice(5, 10), state: "None", hint: T("qa.k.today", [this._done]) }
-			]);
+			vm.setProperty("/qa/summary", T("qa.summary", [this._q.filter(function (x) { return x.status === "held"; }).length, this._q.filter(function (x) { return x.status === "ready"; }).length,
+				this._q.filter(this._pending).length, oldest.slice(0, 10), this._done]));
+			var n = f.src.length + f.status.length + f.rules.length + (f.repo ? 1 : 0) + (f.severity ? 1 : 0);
+			vm.setProperty("/qa/active", n);
+			vm.setProperty("/qa/clearText", T("md.clear", [n]));
+			vm.setProperty("/qa/ruleList", this._cfg.rules.map(function (r) { return { key: r.key, text: T("go.dq." + r.key) }; }));
+			this._charts();
 			var one = f.rules.length === 1 ? f.rules[0] : "";
 			vm.setProperty("/qa/byRuleText", one ? T("qa.a.byRule", [T("go.dq." + one), this._q.filter(function (x) { return x.rule === one && !that._pending(x); }).length]) : "");
 			this._selState();
@@ -107,10 +112,30 @@ sap.ui.define([
 			this.viewModel().setProperty("/qa/batchText", this.text("qa.a.reprocessN", [n]));
 		},
 		onFilter: function () { this._refresh(); },
-		onRuleTag: function (oEvent) {
-			var vm = this.viewModel(), k = oEvent.getSource().getBindingContext("view").getProperty("key"), rules = vm.getProperty("/qa/f/rules").slice(), i = rules.indexOf(k);
-			if (i > -1) { rules.splice(i, 1); } else { rules.push(k); }
-			vm.setProperty("/qa/f/rules", rules);
+		/* Visual filter cards: held by rule, by status, by source system. */
+		_charts: function () {
+			var that = this, f = this.viewModel().getProperty("/qa/f"), C = this.colors, T = this.text.bind(this),
+				cnt = function (dim, keyOf) { var m = {}; that._q.filter(function (x) { return that._match(x, dim); }).forEach(function (x) { var k = keyOf(x); m[k] = (m[k] || 0) + 1; }); return m; },
+				rules = cnt("rules", function (x) { return x.rule; }), st = cnt("status", function (x) { return that._statusKey(x); }), src = cnt("src", function (x) { return x.source; });
+			this.byId("vfQaRule").setOption(VF.hbar(this, this._cfg.rules.map(function (r) {
+				return { key: r.key, name: T("go.dq." + r.key), value: rules[r.key] || 0, color: r.severity === "error" ? C.neg : C.crit };
+			}).filter(function (x) { return x.value || f.rules.indexOf(x.key) > -1; }).sort(function (a, b) { return b.value - a.value; }).slice(0, 5), f.rules, { labelWidth: 150, empty: T("qa.none") }), true);
+			this.byId("vfQaStatus").setOption(VF.donut(this, [["held", C.neg], ["ready", C.info], ["pending", C.crit]].map(function (s2) {
+				return { key: s2[0], name: T("qa.st." + s2[0]), value: st[s2[0]] || 0, color: s2[1] };
+			}).filter(function (x) { return x.value || f.status.indexOf(x.key) > -1; }), f.status));
+			this.byId("vfQaSrc").setOption(VF.hbar(this, Object.keys(src).sort(function (a, b) { return src[b] - src[a]; }).map(function (k) {
+				return { key: k, name: that._srcName(k), value: src[k], color: C.brand };
+			}), f.src, { labelWidth: 110, empty: T("qa.none") }), true);
+		},
+		onVfSelect: function (oEvent) {
+			var d = oEvent.getParameter("data"), dim = oEvent.getSource().data("dim"), vm = this.viewModel();
+			if (!d || !d.key) { return; }
+			vm.setProperty("/qa/f/" + dim, VF.toggle(vm.getProperty("/qa/f/" + dim), d.key));
+			this._refresh();
+		},
+		onClear: function () {
+			var vm = this.viewModel();
+			vm.setProperty("/qa/f", { q: vm.getProperty("/qa/f/q"), repo: "", src: [], status: [], severity: "", rules: [] });
 			this._refresh();
 		},
 		onSelectRows: function (oEvent) {

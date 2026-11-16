@@ -1,5 +1,5 @@
 <mvc:View controllerName="repoio.proto.controller.Quarantine"
-	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core">
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
 	<!-- J10: Quarantine. Records the data quality step (Great Expectations) held on the dead-letter path: never dropped,
 	     never blocking the stream. A steward reprocesses them, corrects and reprocesses (recorded, optionally written back
 	     to the source), or asks for an exception or a discard, which a second steward approves. -->
@@ -9,8 +9,16 @@
 				<f:title>
 					<f:DynamicPageTitle>
 						<f:heading><Title text="{i18n>nav.quarantine}" level="H1"/></f:heading>
-						<f:expandedContent><Text text="{i18n>qa.subtitle}"/></f:expandedContent>
+						<f:expandedContent><Text text="{view>/qa/summary}"/></f:expandedContent>
+						<f:snappedContent><Text text="{view>/qa/summary}"/></f:snappedContent>
 						<f:actions>
+							<Button text="{view>/qa/clearText}" type="Transparent" visible="{= ${view>/qa/active} > 0 }" press=".onClear"/>
+							<SegmentedButton selectedKey="{view>/qa/filterMode}">
+								<items>
+									<SegmentedButtonItem key="compact" icon="sap-icon://filter-fields" tooltip="{i18n>rp.compact}"/>
+									<SegmentedButtonItem key="visual" icon="sap-icon://filter-analytics" tooltip="{i18n>rp.visual}"/>
+								</items>
+							</SegmentedButton>
 							<Button text="{i18n>qa.a.runs}" icon="sap-icon://process" type="Transparent" press=".onRuns"/>
 						</f:actions>
 					</f:DynamicPageTitle>
@@ -18,27 +26,40 @@
 				<f:header>
 					<f:DynamicPageHeader pinnable="true">
 						<VBox renderType="Bare">
-							<FlexBox wrap="Wrap" class="repoioMdKpis" items="{view>/qa/kpis}">
-								<VBox class="repoioMdKpi" renderType="Bare">
-									<Label text="{view>label}"/>
-									<ObjectNumber number="{view>value}" state="{view>state}" emphasized="true" class="sapMObjectNumberLarge" textDirection="LTR"/>
-									<Text text="{view>hint}" class="repoioUmMuted"/>
+							<HBox class="repoioAlpVisual" visible="{= ${view>/qa/filterMode} === 'visual' }" renderType="Bare">
+								<VBox class="repoioAlpVf" renderType="Bare">
+									<Title text="{i18n>qa.vf.rule}" level="H4" titleStyle="H6" wrapping="false"/>
+									<rc:EChart id="vfQaRule" height="7.5rem" select=".onVfSelect">
+										<rc:customData><core:CustomData key="dim" value="rules"/></rc:customData>
+									</rc:EChart>
 								</VBox>
-							</FlexBox>
-							<Label text="{i18n>qa.byRule}" class="repoioQaRuleLbl"/>
-							<FlexBox wrap="Wrap" items="{view>/qa/ruleTags}" class="repoioQaRules">
-								<ToggleButton text="{view>text}" pressed="{view>on}" press=".onRuleTag" type="{= ${view>severity} === 'warning' ? 'Default' : 'Default' }" class="repoioQaRuleBtn"/>
-							</FlexBox>
-							<FlexBox wrap="Wrap" alignItems="End" class="repoioGrFilters repoioMdFilters">
-								<VBox class="repoioGrFilter">
-									<Label text=""/>
-									<SearchField value="{view>/qa/f/q}" liveChange=".onFilter" placeholder="{i18n>qa.search}" width="100%"/>
+								<VBox class="repoioAlpVf" renderType="Bare">
+									<Title text="{i18n>qa.vf.status}" level="H4" titleStyle="H6" wrapping="false"/>
+									<rc:EChart id="vfQaStatus" height="7.5rem" select=".onVfSelect">
+										<rc:customData><core:CustomData key="dim" value="status"/></rc:customData>
+									</rc:EChart>
 								</VBox>
+								<VBox class="repoioAlpVf" renderType="Bare">
+									<Title text="{i18n>qa.vf.src}" level="H4" titleStyle="H6" wrapping="false"/>
+									<rc:EChart id="vfQaSrc" height="7.5rem" select=".onVfSelect">
+										<rc:customData><core:CustomData key="dim" value="src"/></rc:customData>
+									</rc:EChart>
+								</VBox>
+							</HBox>
+							<FlexBox wrap="Wrap" alignItems="End" class="repoioGrFilters repoioMdFilters" visible="{= ${view>/qa/filterMode} === 'compact' }">
 								<VBox class="repoioGrFilter">
-									<Label text="{i18n>gr.f.repo}" labelFor="qaRepo"/>
-									<Select id="qaRepo" selectedKey="{view>/qa/f/repo}" items="{view>/qa/repos}" width="100%" change=".onFilter">
+									<Label text="{i18n>qa.byRule}" labelFor="qaRules"/>
+									<MultiComboBox id="qaRules" selectedKeys="{view>/qa/f/rules}" items="{view>/qa/ruleList}" width="100%" selectionFinish=".onFilter">
 										<core:Item key="{view>key}" text="{view>text}"/>
-									</Select>
+									</MultiComboBox>
+								</VBox>
+								<VBox class="repoioGrFilter">
+									<Label text="{i18n>qa.f.status}" labelFor="qaSt"/>
+									<MultiComboBox id="qaSt" selectedKeys="{view>/qa/f/status}" width="100%" selectionFinish=".onFilter">
+										<core:Item key="held" text="{i18n>qa.st.held}"/>
+										<core:Item key="ready" text="{i18n>qa.st.ready}"/>
+										<core:Item key="pending" text="{i18n>qa.st.pending}"/>
+									</MultiComboBox>
 								</VBox>
 								<VBox class="repoioGrFilter">
 									<Label text="{i18n>gr.f.src}" labelFor="qaSrc"/>
@@ -47,12 +68,9 @@
 									</MultiComboBox>
 								</VBox>
 								<VBox class="repoioGrFilter">
-									<Label text="{i18n>qa.f.status}" labelFor="qaSt"/>
-									<Select id="qaSt" selectedKey="{view>/qa/f/status}" width="100%" change=".onFilter">
-										<core:Item key="" text="{i18n>gr.st.all}"/>
-										<core:Item key="held" text="{i18n>qa.st.held}"/>
-										<core:Item key="ready" text="{i18n>qa.st.ready}"/>
-										<core:Item key="pending" text="{i18n>qa.st.pending}"/>
+									<Label text="{i18n>gr.f.repo}" labelFor="qaRepo"/>
+									<Select id="qaRepo" selectedKey="{view>/qa/f/repo}" items="{view>/qa/repos}" width="100%" change=".onFilter">
+										<core:Item key="{view>key}" text="{view>text}"/>
 									</Select>
 								</VBox>
 								<VBox class="repoioGrFilter">
@@ -74,6 +92,9 @@
 							<OverflowToolbar style="Clear">
 								<Title text="{view>/qa/listTitle}" level="H2"/>
 								<ToolbarSpacer/>
+								<SearchField value="{view>/qa/f/q}" liveChange=".onFilter" placeholder="{i18n>qa.search}" width="14rem">
+									<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" minWidth="9rem"/></layoutData>
+								</SearchField>
 								<Button text="{view>/qa/byRuleText}" type="Transparent" visible="{= !!${view>/qa/byRuleText} }" press=".onReprocessRule"/>
 								<Button text="{view>/qa/batchText}" type="Emphasized" enabled="{= ${view>/qa/selCount} > 0 }" press=".onReprocessSelected"/>
 							</OverflowToolbar>

@@ -1,6 +1,7 @@
 sap.ui.define([
 	"repoio/proto/controller/BaseController",
 	"repoio/proto/util/audit",
+	"repoio/proto/util/visualFilter",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/m/Dialog",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/Item",
 	"sap/ui/layout/form/SimpleForm"
-], function (BaseController, Audit, MessageToast, MessageBox, Dialog, Button, Label, Select, TextArea, Text, Item, SimpleForm) {
+], function (BaseController, Audit, VF, MessageToast, MessageBox, Dialog, Button, Label, Select, TextArea, Text, Item, SimpleForm) {
 	"use strict";
 
 	var FIELDS = ["name", "mobile_1", "mobile_2", "whatsapp", "email", "account_type", "state_id", "main_territory_id", "territory_1_id", "final_subject",
@@ -27,7 +28,7 @@ sap.ui.define([
 	   The console sends decisions to the match review API; it never merges records itself. */
 	return BaseController.extend("repoio.proto.controller.MatchDetection", {
 		onInit: function () {
-			this.viewModel().setProperty("/md", { tab: "pairs", layout: "OneColumn", f: { q: "", seg: [], band: "", assigned: "", overdue: false }, onlyDiff: false,
+			this.viewModel().setProperty("/md", { tab: "pairs", layout: "OneColumn", f: { q: "", seg: [], bands: [], age: [], assigned: "" }, filterMode: "visual", onlyDiff: false,
 				count: {}, it: {}, selCount: 0 });
 			this.router().getRoute("matches").attachPatternMatched(this._onMatched, this);
 			this._key = this._onKey.bind(this);
@@ -116,16 +117,19 @@ sap.ui.define([
 			var that = this;
 			this.viewModel().setProperty("/md/segs", ((this._model() || {}).segments || []).map(function (s) { return { key: s.key, text: that._t(s) }; }));
 		},
-		_match: function (it, tab) {
+		_ageKey: function (it) { var a = it.age || 0; return a <= 1 ? "new" : a <= this._cfg.slaDays ? "near" : "over"; },
+		_active: function () { var f = this.viewModel().getProperty("/md/f"); return f.seg.length + f.bands.length + f.age.length + (f.assigned ? 1 : 0); },
+		/* skip: the dimension a visual filter card counts, so each card shows the other filters applied (ALP behaviour). */
+		_match: function (it, tab, skip) {
 			var f = this.viewModel().getProperty("/md/f"), q = (f.q || "").trim().toLowerCase(), me = this._me();
 			if (q && [it.id, it.ref || "", it.requester || ""].concat((it.records || []).map(function (r) { return r.name + " " + r.id + " " + r.mobile_1; })).join(" ")
 				.toLowerCase().indexOf(q) < 0 && (it.names || "").toLowerCase().indexOf(q) < 0) { return false; }
 			if (tab === "decided") { return true; }
-			if (f.seg.length && f.seg.indexOf(it.segment) < 0) { return false; }
-			if (f.band && this._band(it) !== f.band) { return false; }
+			if (skip !== "seg" && f.seg.length && f.seg.indexOf(it.segment) < 0) { return false; }
+			if (skip !== "bands" && f.bands.length && f.bands.indexOf(this._band(it)) < 0) { return false; }
+			if (skip !== "age" && f.age.length && f.age.indexOf(this._ageKey(it)) < 0) { return false; }
 			if (f.assigned === "me" && it.assigned !== me) { return false; }
 			if (f.assigned === "none" && it.assigned) { return false; }
-			if (f.overdue && it.age <= this._cfg.slaDays) { return false; }
 			return true;
 		},
 		_refresh: function () {
@@ -168,13 +172,12 @@ sap.ui.define([
 			vm.setProperty("/md/col4", T("md.col4." + tab));
 			vm.setProperty("/md/col5", T("md.col5." + tab));
 			var open = q.pairs.filter(function (i) { return i.state === "open"; }).concat(q.requests), today = q.decided.filter(function (d) { return d.at.indexOf("2026-11-16") === 0; }).length,
-				oldest = Math.max.apply(null, open.map(function (i) { return i.age || 0; }).concat([0])), tr = this._cfg.training;
-			vm.setProperty("/md/kpis", [
-				{ label: T("md.k.queue"), value: String(open.length), state: "None", hint: T("md.k.queueHint", [q.pairs.filter(function (i) { return i.state === "open" && that._eligible(i); }).length]) },
-				{ label: T("md.k.oldest"), value: T("md.days", [oldest]), state: oldest > sla ? "Error" : "None", hint: T("md.k.sla", [sla]) },
-				{ label: T("md.k.second"), value: String(q.second.length), state: q.second.length ? "Warning" : "None", hint: T("md.k.secondHint") },
-				{ label: T("md.k.today"), value: String(today), state: "Success", hint: T("md.k.todayHint") }
-			]);
+				oldest = Math.max.apply(null, open.map(function (i) { return i.age || 0; }).concat([0])), tr = this._cfg.training,
+				batch = q.pairs.filter(function (i) { return i.state === "open" && that._eligible(i); }).length;
+			vm.setProperty("/md/summary", T("md.summary", [open.length, batch, q.second.length, today, oldest, sla]));
+			vm.setProperty("/md/active", this._active());
+			vm.setProperty("/md/clearText", T("md.clear", [this._active()]));
+			this._charts(src, tab);
 			vm.setProperty("/md/trainText", T("md.train", [tr.since]));
 			this._batchState();
 		},
@@ -194,6 +197,34 @@ sap.ui.define([
 			this._refresh();
 		},
 		onFilter: function () { this._refresh(); },
+		/* The three visual filter cards: queue by customer type, by probability band, by waiting time against the SLA. */
+		_charts: function (src, tab) {
+			var that = this, f = this.viewModel().getProperty("/md/f"), C = this.colors, T = this.text.bind(this), vm = this.viewModel(),
+				cnt = function (dim, keyOf) { var m = {}; src.filter(function (i) { return that._match(i, tab, dim); }).forEach(function (i) { var k = keyOf(i); if (k) { m[k] = (m[k] || 0) + 1; } }); return m; },
+				segs = cnt("seg", function (i) { return i.segment; }), bands = cnt("bands", function (i) { return i.prob !== undefined ? that._band(i) : ""; }),
+				ages = tab === "decided" ? {} : cnt("age", function (i) { return that._ageKey(i); }), segPal = ["#5899da", "#7fa7d4", "#2f6497", "#9cc0e5", "#4b7ab0"];
+			vm.setProperty("/md/vf", { seg: T("md.vf.seg"), band: T("md.vf.band"), age: T("md.vf.age", [this._cfg.slaDays]) });
+			this.byId("vfMdSeg").setOption(VF.hbar(this, ((this._model() || {}).segments || []).map(function (s, i) {
+				return { key: s.key, name: that._t(s), value: segs[s.key] || 0, color: segPal[i % segPal.length] };
+			}).filter(function (x) { return x.value || f.seg.indexOf(x.key) > -1; }), f.seg, { labelWidth: 110, empty: T("md.vf.empty") }));
+			this.byId("vfMdBand").setOption(VF.donut(this, [["hi", C.pos], ["mid", C.info], ["lo", C.crit]].map(function (b) {
+				return { key: b[0], name: T("md.bandShort." + b[0]), value: bands[b[0]] || 0, color: b[1] };
+			}).filter(function (x) { return x.value || f.bands.indexOf(x.key) > -1; }), f.bands));
+			this.byId("vfMdAge").setOption(VF.hbar(this, [["new", C.info], ["near", C.crit], ["over", C.neg]].map(function (b) {
+				return { key: b[0], name: T("md.age." + b[0]), value: ages[b[0]] || 0, color: b[1] };
+			}), f.age, { labelWidth: 110, empty: T("md.vf.empty") }), true);
+		},
+		onVfSelect: function (oEvent) {
+			var d = oEvent.getParameter("data"), dim = oEvent.getSource().data("dim"), vm = this.viewModel();
+			if (!d || !d.key) { return; }
+			vm.setProperty("/md/f/" + dim, VF.toggle(vm.getProperty("/md/f/" + dim), d.key));
+			this._refresh();
+		},
+		onClear: function () {
+			var vm = this.viewModel(), q = vm.getProperty("/md/f/q");
+			vm.setProperty("/md/f", { q: q, seg: [], bands: [], age: [], assigned: "" });
+			this._refresh();
+		},
 		onSelectRows: function (oEvent) {
 			var that = this;
 			this._checked = this._checked || {};

@@ -10,8 +10,16 @@
 				<f:title>
 					<f:DynamicPageTitle>
 						<f:heading><Title text="{i18n>nav.matchDetection}" level="H1"/></f:heading>
-						<f:expandedContent><Text text="{i18n>md.subtitle}"/></f:expandedContent>
+						<f:expandedContent><Text text="{view>/md/summary}"/></f:expandedContent>
+						<f:snappedContent><Text text="{view>/md/summary}"/></f:snappedContent>
 						<f:actions>
+							<Button text="{view>/md/clearText}" type="Transparent" visible="{= ${view>/md/active} > 0 }" press=".onClear"/>
+							<SegmentedButton selectedKey="{view>/md/filterMode}">
+								<items>
+									<SegmentedButtonItem key="compact" icon="sap-icon://filter-fields" tooltip="{i18n>rp.compact}"/>
+									<SegmentedButtonItem key="visual" icon="sap-icon://filter-analytics" tooltip="{i18n>rp.visual}"/>
+								</items>
+							</SegmentedButton>
 							<Button text="{view>/md/trainText}" icon="sap-icon://learning-assistant" type="Transparent" press=".onModels"/>
 						</f:actions>
 					</f:DynamicPageTitle>
@@ -19,18 +27,27 @@
 				<f:header>
 					<f:DynamicPageHeader pinnable="true">
 						<VBox renderType="Bare">
-							<FlexBox wrap="Wrap" class="repoioMdKpis" items="{view>/md/kpis}">
-								<VBox class="repoioMdKpi" renderType="Bare">
-									<Label text="{view>label}"/>
-									<ObjectNumber number="{view>value}" state="{view>state}" emphasized="true" class="sapMObjectNumberLarge" textDirection="LTR"/>
-									<Text text="{view>hint}" class="repoioUmMuted"/>
+							<HBox class="repoioAlpVisual" visible="{= ${view>/md/filterMode} === 'visual' }" renderType="Bare">
+								<VBox class="repoioAlpVf" renderType="Bare">
+									<Title text="{view>/md/vf/seg}" level="H4" titleStyle="H6" wrapping="false"/>
+									<rc:EChart id="vfMdSeg" height="7.5rem" select=".onVfSelect">
+										<rc:customData><core:CustomData key="dim" value="seg"/></rc:customData>
+									</rc:EChart>
 								</VBox>
-							</FlexBox>
-							<FlexBox wrap="Wrap" alignItems="End" class="repoioGrFilters repoioMdFilters">
-								<VBox class="repoioGrFilter">
-									<Label text=""/>
-									<SearchField value="{view>/md/f/q}" liveChange=".onFilter" placeholder="{i18n>md.search}" width="100%"/>
+								<VBox class="repoioAlpVf" renderType="Bare">
+									<Title text="{view>/md/vf/band}" level="H4" titleStyle="H6" wrapping="false"/>
+									<rc:EChart id="vfMdBand" height="7.5rem" select=".onVfSelect">
+										<rc:customData><core:CustomData key="dim" value="bands"/></rc:customData>
+									</rc:EChart>
 								</VBox>
+								<VBox class="repoioAlpVf" renderType="Bare">
+									<Title text="{view>/md/vf/age}" level="H4" titleStyle="H6" wrapping="false"/>
+									<rc:EChart id="vfMdAge" height="7.5rem" select=".onVfSelect">
+										<rc:customData><core:CustomData key="dim" value="age"/></rc:customData>
+									</rc:EChart>
+								</VBox>
+							</HBox>
+							<FlexBox wrap="Wrap" alignItems="End" class="repoioGrFilters repoioMdFilters" visible="{= ${view>/md/filterMode} === 'compact' }">
 								<VBox class="repoioGrFilter">
 									<Label text="{i18n>gr.f.seg}" labelFor="mdSeg"/>
 									<MultiComboBox id="mdSeg" selectedKeys="{view>/md/f/seg}" items="{view>/md/segs}" width="100%" selectionFinish=".onFilter">
@@ -39,12 +56,19 @@
 								</VBox>
 								<VBox class="repoioGrFilter">
 									<Label text="{i18n>md.f.band}" labelFor="mdBand"/>
-									<Select id="mdBand" selectedKey="{view>/md/f/band}" width="100%" change=".onFilter">
-										<core:Item key="" text="{i18n>gr.st.all}"/>
+									<MultiComboBox id="mdBand" selectedKeys="{view>/md/f/bands}" width="100%" selectionFinish=".onFilter">
 										<core:Item key="hi" text="{i18n>md.band.hi}"/>
 										<core:Item key="mid" text="{i18n>md.band.mid}"/>
 										<core:Item key="lo" text="{i18n>md.band.lo}"/>
-									</Select>
+									</MultiComboBox>
+								</VBox>
+								<VBox class="repoioGrFilter">
+									<Label text="{i18n>md.f.age}" labelFor="mdAge"/>
+									<MultiComboBox id="mdAge" selectedKeys="{view>/md/f/age}" width="100%" selectionFinish=".onFilter">
+										<core:Item key="new" text="{i18n>md.age.new}"/>
+										<core:Item key="near" text="{i18n>md.age.near}"/>
+										<core:Item key="over" text="{i18n>md.age.over}"/>
+									</MultiComboBox>
 								</VBox>
 								<VBox class="repoioGrFilter">
 									<Label text="{i18n>md.f.assigned}" labelFor="mdAs"/>
@@ -53,10 +77,6 @@
 										<core:Item key="me" text="{i18n>md.as.me}"/>
 										<core:Item key="none" text="{i18n>md.as.none}"/>
 									</Select>
-								</VBox>
-								<VBox class="repoioGrFilter">
-									<Label text="{i18n>md.f.overdue}"/>
-									<Switch state="{view>/md/f/overdue}" change=".onFilter" customTextOn=" " customTextOff=" "/>
 								</VBox>
 							</FlexBox>
 						</VBox>
@@ -78,6 +98,9 @@
 								<OverflowToolbar style="Clear">
 									<Title text="{view>/md/listTitle}" level="H2"/>
 									<ToolbarSpacer/>
+									<SearchField value="{view>/md/f/q}" liveChange=".onFilter" placeholder="{i18n>md.search}" width="14rem">
+										<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" minWidth="9rem"/></layoutData>
+									</SearchField>
 									<Button text="{i18n>md.a.selectEligible}" type="Transparent" visible="{= ${view>/md/tab} === 'pairs' }" press=".onSelectEligible"/>
 									<Button text="{view>/md/batchText}" type="Emphasized" visible="{= ${view>/md/tab} === 'pairs' }" enabled="{view>/md/batchOk}"
 										tooltip="{view>/md/batchWhy}" press=".onBatch"/>
