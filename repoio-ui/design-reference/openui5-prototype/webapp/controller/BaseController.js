@@ -24,6 +24,7 @@ sap.ui.define([
 			else if (sKey === "workflowsList") { this.router().navTo("workflows"); }
 			else if (sKey === "apiManagement") { this.router().navTo("apiManagement"); }
 			else if (sKey === "modelsRules") { this.router().navTo("models"); }
+			else if (sKey === "goldenRecords") { this.router().navTo("goldenRecords"); }
 			else { this.router().navTo("page", { key: sKey }); }
 		},
 		onNavKey: function (oEvent) {

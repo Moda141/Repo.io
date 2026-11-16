@@ -1,0 +1,156 @@
+<mvc:View controllerName="repoio.proto.controller.GoldenRecords"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- J2: golden records list (SAP Fiori List Report, like Product Master): variant, filter bar with Adapt Filters and Go,
+	     then the records table. Read only: a golden record changes only through a change request (J3). -->
+	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="true" headerPinned="false" class="repoioEdge repoioGrList">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>
+					<MenuButton text="{view>/gr/variantText}" type="Transparent" class="repoioGrVariant">
+						<menu>
+							<Menu items="{view>/gr/variants}" itemSelected=".onVariant">
+								<MenuItem text="{view>text}" key="{view>key}" icon="{= ${view>current} ? 'sap-icon://accept' : '' }"/>
+							</Menu>
+						</menu>
+					</MenuButton>
+				</f:heading>
+				<f:expandedContent>
+					<Text text="{view>/gr/sampleNote}" class="repoioUmMuted"/>
+				</f:expandedContent>
+				<f:snappedContent>
+					<Text text="{view>/gr/filterSummary}" class="repoioUmMuted"/>
+				</f:snappedContent>
+				<f:actions>
+					<Button icon="sap-icon://action" type="Transparent" tooltip="{i18n>gr.share}" press=".onShare"/>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader pinnable="true">
+				<VBox renderType="Bare" class="repoioGrFilterBar">
+					<FlexBox wrap="Wrap" alignItems="End" class="repoioGrFilters">
+						<VBox class="repoioGrFilter">
+							<Label text="{i18n>gr.f.repo}" labelFor="grRepo"/>
+							<Select id="grRepo" selectedKey="{view>/gr/repo}" items="{view>/gr/repos}" width="100%" change=".onRepo">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</Select>
+						</VBox>
+						<VBox class="repoioGrFilter">
+							<Label text="" />
+							<SearchField value="{view>/gr/f/q}" placeholder="{i18n>common.search}" search=".onGo" width="100%"/>
+						</VBox>
+						<VBox class="repoioGrFilter" visible="{view>/gr/show/status}">
+							<Label text="{i18n>gr.f.status}" labelFor="grStatus"/>
+							<Select id="grStatus" selectedKey="{view>/gr/f/status}" width="100%" change=".onFilterChange">
+								<core:Item key="" text="{i18n>gr.st.all}"/>
+								<core:Item key="unchanged" text="{i18n>gr.st.unchanged}"/>
+								<core:Item key="openCr" text="{i18n>gr.st.openCr}"/>
+								<core:Item key="review" text="{i18n>gr.st.review}"/>
+							</Select>
+						</VBox>
+						<VBox class="repoioGrFilter" visible="{view>/gr/show/id}">
+							<Label text="{i18n>gr.f.id}" labelFor="grId"/>
+							<Input id="grId" value="{view>/gr/f/id}" showValueHelp="true" valueHelpRequest=".onValueHelp" textDirection="LTR" submit=".onGo" liveChange=".onFilterChange"/>
+						</VBox>
+						<VBox class="repoioGrFilter" visible="{view>/gr/show/name}">
+							<Label text="{i18n>gr.f.name}" labelFor="grName"/>
+							<Input id="grName" value="{view>/gr/f/name}" submit=".onGo" liveChange=".onFilterChange"/>
+						</VBox>
+						<VBox class="repoioGrFilter" visible="{view>/gr/show/mobile}">
+							<Label text="{i18n>gr.f.mobile}" labelFor="grMobile"/>
+							<Input id="grMobile" value="{view>/gr/f/mobile}" textDirection="LTR" submit=".onGo" liveChange=".onFilterChange"/>
+						</VBox>
+						<VBox class="repoioGrFilter" visible="{view>/gr/show/gov}">
+							<Label text="{i18n>gr.f.gov}" labelFor="grGov"/>
+							<MultiComboBox id="grGov" selectedKeys="{view>/gr/f/gov}" items="{view>/gr/govs}" width="100%" selectionFinish=".onFilterChange">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+						<VBox class="repoioGrFilter" visible="{view>/gr/show/seg}">
+							<Label text="{i18n>gr.f.seg}" labelFor="grSeg"/>
+							<MultiComboBox id="grSeg" selectedKeys="{view>/gr/f/seg}" items="{view>/gr/segs}" width="100%" selectionFinish=".onFilterChange">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+						<VBox class="repoioGrFilter" visible="{view>/gr/show/src}">
+							<Label text="{i18n>gr.f.src}" labelFor="grSrc"/>
+							<MultiComboBox id="grSrc" selectedKeys="{view>/gr/f/src}" items="{view>/gr/srcs}" width="100%" selectionFinish=".onFilterChange">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+						<VBox class="repoioGrFilter" visible="{view>/gr/show/quality}">
+							<Label text="{i18n>gr.f.quality}" labelFor="grQ"/>
+							<Select id="grQ" selectedKey="{view>/gr/f/quality}" width="100%" change=".onFilterChange">
+								<core:Item key="" text="{i18n>gr.st.all}"/>
+								<core:Item key="low" text="{i18n>gr.q.low}"/>
+								<core:Item key="mid" text="{i18n>gr.q.mid}"/>
+								<core:Item key="high" text="{i18n>gr.q.high}"/>
+							</Select>
+						</VBox>
+						<HBox class="repoioGrFilterBtns" alignItems="Center" renderType="Bare">
+							<Button text="{view>/gr/adaptText}" type="Transparent" press=".onAdapt"/>
+							<Button text="{i18n>gr.go}" type="Emphasized" press=".onGo"/>
+						</HBox>
+					</FlexBox>
+				</VBox>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<VBox renderType="Bare">
+				<MessageStrip text="{view>/gr/staleText}" type="Information" showIcon="true" visible="{view>/gr/stale}" class="repoioGrStrip"/>
+				<Table id="grTable" items="{view>/gr/rows}" mode="SingleSelectLeft" selectionChange=".onSelect" fixedLayout="false" popinLayout="GridSmall"
+					class="repoioDenseTable repoioGrTable" noDataText="{view>/gr/noData}" sticky="ColumnHeaders,HeaderToolbar">
+					<headerToolbar>
+						<OverflowToolbar style="Clear">
+							<Title text="{view>/gr/countText}" level="H2"/>
+							<ToolbarSpacer/>
+							<Button text="{i18n>gr.a.create}" type="Transparent" press=".onCreate"/>
+							<Button text="{i18n>gr.a.open}" type="Transparent" enabled="{= !!${view>/gr/sel} }" press=".onOpenSelected"/>
+							<Button text="{i18n>gr.a.copy}" type="Transparent" enabled="{= !!${view>/gr/sel} }" press=".onCopy"/>
+							<Button text="{i18n>gr.a.lineage}" type="Transparent" enabled="{= !!${view>/gr/sel} }" press=".onLineage"/>
+							<Button icon="sap-icon://action-settings" type="Transparent" tooltip="{i18n>gr.columns}" press=".onColumns"/>
+							<Button icon="sap-icon://excel-attachment" type="Transparent" tooltip="{i18n>gr.export}" press=".onExport"/>
+						</OverflowToolbar>
+					</headerToolbar>
+					<columns>
+						<Column width="4.5rem" visible="{view>/gr/cols/image}"><Text text="{i18n>gr.c.image}"/></Column>
+						<Column><Text text="{i18n>gr.c.name}"/></Column>
+						<Column visible="{view>/gr/cols/seg}" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>gr.c.seg}"/></Column>
+						<Column visible="{view>/gr/cols/mobile}" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>gr.c.mobile}"/></Column>
+						<Column visible="{view>/gr/cols/gov}" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>gr.c.gov}"/></Column>
+						<Column visible="{view>/gr/cols/src}" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>gr.c.src}"/></Column>
+						<Column visible="{view>/gr/cols/quality}" hAlign="End" width="7rem" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>gr.c.quality}"/></Column>
+						<Column visible="{view>/gr/cols/status}" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>gr.c.status}"/></Column>
+						<Column visible="{view>/gr/cols/changed}" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>gr.c.changed}"/></Column>
+					</columns>
+					<items>
+						<ColumnListItem type="Navigation" press=".onOpen" selected="{view>selected}">
+							<Avatar src="{view>icon}" displayShape="Square" displaySize="S" backgroundColor="{view>color}" class="repoioGrAvatar"/>
+							<VBox renderType="Bare">
+								<Text text="{view>name}" class="repoioGrName" wrapping="false"/>
+								<Text text="{view>id}" class="repoioMono repoioUmMuted" textDirection="LTR" wrapping="false"/>
+							</VBox>
+							<VBox renderType="Bare">
+								<Text text="{view>segText}" wrapping="false"/>
+								<Text text="{view>acctText}" class="repoioUmMuted" wrapping="false"/>
+							</VBox>
+							<Text text="{view>mobile}" class="repoioMono" textDirection="LTR" wrapping="false"/>
+							<VBox renderType="Bare">
+								<Text text="{view>stateName}" wrapping="false"/>
+								<Text text="{view>territory}" class="repoioUmMuted repoioMono" textDirection="LTR" wrapping="false"/>
+							</VBox>
+							<Text text="{view>srcText}"/>
+							<ObjectNumber number="{view>qualityText}" unit="%" state="{view>qualityState}" textDirection="LTR"/>
+							<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+							<VBox renderType="Bare">
+								<Text text="{view>changed}" textDirection="LTR" wrapping="false"/>
+								<Text text="{view>changedBy}" class="repoioUmMuted" wrapping="false"/>
+							</VBox>
+						</ColumnListItem>
+					</items>
+				</Table>
+				<rc:Pager total="{view>/gr/count}" page="{view>/gr/page}" pageSize="{view>/gr/size}" change=".onPage"/>
+			</VBox>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

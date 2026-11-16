@@ -1114,3 +1114,108 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 	position: sticky; top: 0; align-self: flex-start; z-index: 1;
 	height: var(--repoioScrollH, auto) !important; overflow-y: auto; box-sizing: border-box;
 }
+
+/* ---------- Column lineage (control/ColumnLineage.js) ---------- */
+.repoioLin { position: relative; overflow: hidden; background-color: #fafafb; background-image: radial-gradient(#d5d7da 1px, transparent 1px); background-size: 16px 16px;
+	border: 1px solid #e5e5e5; border-radius: 0.25rem; font-family: var(--sapFontFamily, "72", Arial, sans-serif); color: #32363a; user-select: none; }
+.repoioLinViewport { position: absolute; inset: 0; cursor: grab; outline: none; }
+.repoioLinViewport.repoioLinDrag { cursor: grabbing; }
+.repoioLinStage { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+.repoioLinEdges { position: absolute; top: 0; left: 0; overflow: visible; pointer-events: none; }
+.repoioLinEdge { fill: none; stroke: #c4c7cc; stroke-width: 1.25; }
+.repoioLinEdgeOn { fill: none; stroke: #5b3fd1; stroke-width: 1.75; }
+.repoioLinArrow { fill: #5b3fd1; }
+.repoioLinIco { font-family: "SAP-icons"; speak: none; font-style: normal; line-height: 1; }
+.repoioLinCard { position: absolute; width: 300px; box-sizing: border-box; background: #fff; border: 1px solid #e1e3e6; border-radius: 0.5rem;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06); cursor: default; }
+.repoioLinCard.repoioLinOnPath { border-color: #c9bff2; }
+.repoioLinHome { box-shadow: 0 0 0 2px #e4ddff, 0 2px 6px rgba(0, 0, 0, 0.08); }
+.repoioLinHomeTag { position: absolute; top: -1.6rem; inset-inline-start: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.375rem;
+	background: #f1edff; color: #4b32b8; border-radius: 0.25rem; font-size: 0.8125rem; }
+.repoioLinHead { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.625rem 0.5rem 0.5rem 0.75rem; }
+[dir="rtl"] .repoioLinHead { padding: 0.625rem 0.75rem 0.5rem 0.5rem; }
+.repoioLinSys { font-size: 1rem; color: #0a6ed1; padding-top: 0.125rem; }
+.repoioLinHeadTxt { flex: 1; min-width: 0; }
+.repoioLinPath { font-size: 0.75rem; color: #6a6d70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.repoioLinSep { margin: 0 0.3rem; color: #c4c7cc; }
+.repoioLinChev { color: #a9abae; }
+.repoioLinName { font-size: 0.9375rem; color: #1d2d3e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.125rem; }
+.repoioLinDq { font-size: 0.875rem; padding-top: 0.125rem; }
+.repoioLinDq-ok { color: #107e3e; }
+.repoioLinDq-warn { color: #e9730c; }
+.repoioLinBtn { border: none; background: transparent; color: #6a6d70; border-radius: 0.25rem; min-width: 1.75rem; height: 1.75rem; cursor: pointer; font-size: 0.875rem; }
+.repoioLinBtn:hover:not([disabled]) { background: #eef0f2; color: #0a6ed1; }
+.repoioLinBtn[disabled] { opacity: 0.35; cursor: default; }
+.repoioLinColsBar { display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.5rem 0.75rem; border: none; border-top: 1px solid #eef0f2; background: transparent;
+	font: inherit; font-size: 0.8125rem; color: #32363a; cursor: pointer; text-align: start; }
+.repoioLinColsBar:hover { background: #f7f8f9; }
+.repoioLinCount { background: #eef0f2; border-radius: 0.625rem; padding: 0 0.45rem; font-size: 0.75rem; color: #556b82; }
+.repoioLinGrow { flex: 1; }
+.repoioLinFind { display: flex; align-items: center; gap: 0.375rem; margin: 0 0.625rem 0.375rem; padding: 0 0.5rem; border: 1px solid #d9dbde; border-radius: 0.375rem; color: #8a8d90; }
+.repoioLinFind input { flex: 1; border: none; outline: none; height: 1.875rem; font: inherit; font-size: 0.8125rem; background: transparent; color: #32363a; min-width: 0; }
+.repoioLinFind:focus-within { border-color: #0a6ed1; }
+.repoioLinCols { padding: 0 0.625rem 0.5rem; display: flex; flex-direction: column; gap: 0.25rem; }
+.repoioLinCol { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.5rem; border: 1px solid #eef0f2; border-radius: 0.375rem; font-size: 0.8125rem;
+	cursor: pointer; background: #fff; }
+.repoioLinCol:hover { border-color: #c9bff2; background: #faf9ff; }
+.repoioLinCol:focus-visible { outline: 2px solid #0a6ed1; outline-offset: 1px; }
+.repoioLinColOn { background: #f6f3ff; border-color: #ddd5fb; }
+.repoioLinColSel { background: #ebe5ff; border-color: #5b3fd1; }
+.repoioLinKind { width: 1.25rem; text-align: center; color: #8a8d90; font-size: 0.75rem; font-family: "SFMono-Regular", Consolas, monospace; flex: none; }
+.repoioLinColName { flex: 1; min-width: 0; display: flex; flex-direction: column; font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.78rem; overflow-wrap: anywhere; }
+.repoioLinVal { font-family: var(--sapFontFamily, "72", Arial, sans-serif); color: #556b82; font-size: 0.75rem; margin-top: 0.0625rem; }
+.repoioLinColGo { color: #a9abae; font-size: 0.75rem; }
+.repoioLinEmpty { padding: 0.25rem 0.75rem 0.75rem; font-size: 0.8125rem; color: #6a6d70; }
+.repoioLinPager { display: flex; justify-content: center; align-items: center; gap: 0.25rem; padding: 0 0 0.625rem; }
+.repoioLinPg { border: none; background: transparent; min-width: 1.6rem; height: 1.6rem; border-radius: 50%; cursor: pointer; font: inherit; font-size: 0.8125rem; color: #556b82; }
+.repoioLinPgOn { background: #ebe5ff; color: #4b32b8; font-weight: bold; }
+.repoioLinStep { position: absolute; width: 44px; display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+.repoioLinStep .repoioLinIco { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid #f3c5a6;
+	border-radius: 0.5rem; color: #e9730c; font-size: 1.05rem; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
+.repoioLinStepTxt { font-size: 0.6875rem; color: #6a6d70; white-space: nowrap; }
+.repoioLinMore { position: absolute; width: 28px; height: 28px; border-radius: 50%; border: 1px solid #d9dbde; background: #fff; color: #0a6ed1; cursor: pointer; font-size: 0.875rem; }
+.repoioLinMore:hover { background: #eef5fd; }
+.repoioLinTools { position: absolute; top: 0.5rem; inset-inline-end: 0.5rem; display: flex; gap: 0.125rem; background: #fff; border: 1px solid #e1e3e6; border-radius: 0.375rem; padding: 0.125rem; }
+.repoioLinMini { position: absolute; bottom: 0.5rem; inset-inline-end: 0.5rem; width: 190px; height: 110px; background: rgba(255, 255, 255, 0.92); border: 1px solid #e1e3e6;
+	border-radius: 0.25rem; cursor: pointer; }
+.repoioLinMini svg { width: 100%; height: 100%; display: block; }
+.repoioLinMiniNode { fill: #d5d7da; }
+.repoioLinMiniOn { fill: #b9a9f5; }
+.repoioLinMiniHome { fill: #5b3fd1; }
+.repoioLinMiniView { fill: rgba(10, 110, 209, 0.06); stroke: #0a6ed1; stroke-width: 1; }
+
+/* ---------- Golden records list (List Report) ---------- */
+.repoioGrVariant .sapMBtnInner { font-size: 1.25rem; }
+.repoioGrVariant .sapMBtnContent { color: #0a6ed1; }
+.repoioGrFilters { gap: 0.75rem 1rem; }
+.repoioGrFilter { width: 13rem; gap: 0.125rem; }
+.repoioGrFilterBtns { gap: 0.25rem; margin-inline-start: auto; padding-bottom: 0.0625rem; }
+.repoioGrStrip.sapMMsgStrip { margin: 0.5rem 1rem 0; }
+.repoioGrTable { margin-top: 0.5rem; }
+.repoioGrTable .sapMListHdrTBar.sapMTB { padding-inline: 1rem; }
+.repoioGrName { font-weight: bold; color: #32363a; }
+.repoioGrAvatar { margin: 0.25rem 0; }
+
+/* ---------- Golden record (Object Page) ---------- */
+.repoioGrOp .sapUxAPObjectPageHeaderContentItem { min-width: 0; }
+.repoioGoHead { gap: 1.5rem 2.5rem; padding-bottom: 0.5rem; width: 100%; }
+.repoioGoAvatar { flex: none; }
+.repoioGoFacet { gap: 0.5rem; min-width: 12rem; }
+.repoioGoFacetW { min-width: 13rem; }
+.repoioGoPair { align-items: baseline; flex-wrap: wrap; }
+.repoioGoPair .sapMLabel { color: #6a6d70; }
+.repoioGoBanner.sapMMsgStrip { flex: 1 1 100%; }
+.repoioGrIdTag { color: #6a6d70; font-size: 0.875rem; text-transform: uppercase; font-family: "SFMono-Regular", Consolas, monospace; }
+.repoioGoFields { gap: 1.25rem 2rem; }
+.repoioGoField { width: 16.5rem; gap: 0.25rem; }
+.repoioGoValue { font-size: 0.9375rem; color: #32363a; }
+.repoioGoProv.sapMLnk { font-size: 0.75rem; }
+.repoioGoDq { width: 22rem; padding: 0.375rem 0; }
+.repoioGoDqIco { font-size: 1rem; padding-top: 0.125rem; }
+.repoioGoLinBar.sapMTB { padding: 0; margin-bottom: 0.5rem; }
+
+/* ---------- Golden record lineage, full screen ---------- */
+.repoioGlBar { gap: 1rem; }
+.repoioGlHint { padding-bottom: 0.375rem; }
+.repoioGlPage .sapFDynamicPageContent { height: 100%; box-sizing: border-box; padding: 0.5rem 1rem 1rem; }
+.repoioGoSubTitle { margin-bottom: 0.75rem; }

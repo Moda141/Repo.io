@@ -107,6 +107,10 @@
 			"apidocs": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/apidocs.json"
+			},
+			"golden": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/golden.json"
 			}
 		},
 		"resources": {
@@ -246,6 +250,21 @@
 					"target": "models"
 				},
 				{
+					"name": "goldenLineage",
+					"pattern": "golden-records/{repo}/{id}/lineage:?query:",
+					"target": "goldenLineage"
+				},
+				{
+					"name": "goldenRecord",
+					"pattern": "golden-records/{repo}/{id}",
+					"target": "goldenRecord"
+				},
+				{
+					"name": "goldenRecords",
+					"pattern": "golden-records/:repo:",
+					"target": "goldenRecords"
+				},
+				{
 					"name": "page",
 					"pattern": "page/{key}",
 					"target": "placeholder"
@@ -371,6 +390,21 @@
 					"id": "apiReference",
 					"name": "ApiReference",
 					"level": 3
+				},
+				"goldenRecords": {
+					"id": "goldenRecords",
+					"name": "GoldenRecords",
+					"level": 2
+				},
+				"goldenRecord": {
+					"id": "goldenRecord",
+					"name": "GoldenRecord",
+					"level": 3
+				},
+				"goldenLineage": {
+					"id": "goldenLineage",
+					"name": "GoldenLineage",
+					"level": 4
 				}
 			}
 		}

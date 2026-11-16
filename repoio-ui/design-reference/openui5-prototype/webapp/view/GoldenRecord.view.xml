@@ -1,0 +1,343 @@
+<mvc:View controllerName="repoio.proto.controller.GoldenRecord"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
+	<!-- J2: golden record view (SAP Fiori Object Page, like Product Master "Single Article"): header with image and facets,
+	     anchor bar whose sections open their sub-sections, read-only values with where each one came from. A golden record
+	     is never edited inline: "Request a change" starts a change request (J3). -->
+	<uxap:ObjectPageLayout id="op" upperCaseAnchorBar="false" showFooter="false" headerContentPinnable="true" toggleHeaderOnTitleClick="true"
+		subSectionLayout="TitleOnTop" class="repoioGrOp">
+		<uxap:headerTitle>
+			<uxap:ObjectPageDynamicHeaderTitle>
+				<uxap:breadcrumbs>
+					<Breadcrumbs currentLocationText="{view>/go/rec/id}">
+						<Link text="{i18n>nav.goldenRecords}" press=".onBackToList"/>
+						<Link text="{view>/go/repoName}" press=".onBackToList"/>
+					</Breadcrumbs>
+				</uxap:breadcrumbs>
+				<uxap:heading>
+					<HBox alignItems="Baseline" wrap="Wrap" renderType="Bare">
+						<Title text="{view>/go/rec/name}" level="H1" wrapping="true" class="sapUiSmallMarginEnd"/>
+						<Text text="{view>/go/rec/id}" class="repoioGrIdTag" textDirection="LTR"/>
+					</HBox>
+				</uxap:heading>
+				<uxap:snappedHeading>
+					<HBox alignItems="Center" renderType="Bare">
+						<Avatar src="{view>/go/icon}" displayShape="Square" displaySize="XS" backgroundColor="{view>/go/color}" class="sapUiSmallMarginEnd"/>
+						<Title text="{view>/go/rec/name}" level="H1" wrapping="false"/>
+					</HBox>
+				</uxap:snappedHeading>
+				<uxap:snappedContent>
+					<Text text="{view>/go/snapped}" class="repoioUmMuted"/>
+				</uxap:snappedContent>
+				<uxap:actions>
+					<Button text="{i18n>go.request}" type="Emphasized" icon="sap-icon://request" press=".onRequest"/>
+					<Button text="{i18n>go.lineage}" type="Transparent" press=".onLineage"/>
+					<Button icon="sap-icon://action" type="Transparent" tooltip="{i18n>gr.share}" press=".onShare"/>
+				</uxap:actions>
+				<uxap:navigationActions>
+					<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>go.close}" press=".onBackToList"/>
+				</uxap:navigationActions>
+			</uxap:ObjectPageDynamicHeaderTitle>
+		</uxap:headerTitle>
+
+		<uxap:headerContent>
+			<FlexBox wrap="Wrap" alignItems="Start" class="repoioGoHead">
+				<Avatar src="{view>/go/icon}" displayShape="Square" displaySize="XL" backgroundColor="{view>/go/color}" class="repoioGoAvatar"/>
+				<VBox class="repoioGoFacet" items="{path: 'view>/go/facet1', templateShareable: false}">
+					<HBox class="repoioGoPair" renderType="Bare">
+						<Label text="{view>label}" showColon="true" class="sapUiTinyMarginEnd"/>
+						<Text text="{view>value}" textDirection="{view>dir}"/>
+					</HBox>
+				</VBox>
+				<VBox class="repoioGoFacet" items="{path: 'view>/go/facet2', templateShareable: false}">
+					<HBox class="repoioGoPair" renderType="Bare">
+						<Label text="{view>label}" showColon="true" class="sapUiTinyMarginEnd"/>
+						<Text text="{view>value}" textDirection="{view>dir}"/>
+					</HBox>
+				</VBox>
+				<VBox class="repoioGoFacet">
+					<Label text="{i18n>go.quality}"/>
+					<ObjectNumber number="{view>/go/qualityText}" unit="%" state="{view>/go/qualityState}" emphasized="true" class="sapMObjectNumberLarge" textDirection="LTR"/>
+				</VBox>
+				<VBox class="repoioGoFacet repoioGoFacetW">
+					<Label text="{i18n>go.match}"/>
+					<ProgressIndicator percentValue="{view>/go/probPct}" displayValue="{view>/go/probText}" state="Success" width="11rem" height="1rem"/>
+					<Text text="{view>/go/matchNote}" class="repoioUmMuted"/>
+				</VBox>
+				<MessageStrip text="{view>/go/banner}" type="{view>/go/bannerType}" showIcon="true" visible="{= !!${view>/go/banner} }" class="repoioGoBanner">
+					<link><Link text="{view>/go/bannerLink}" press=".onBanner"/></link>
+				</MessageStrip>
+			</FlexBox>
+		</uxap:headerContent>
+
+		<uxap:sections>
+			<!-- General: the golden record values, grouped like the template -->
+			<uxap:ObjectPageSection id="secGeneral" title="{i18n>go.s.general}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection id="ssBasic" title="{i18n>go.ss.basic}" titleUppercase="false">
+						<uxap:blocks>
+							<FlexBox wrap="Wrap" items="{path: 'view>/go/basic', templateShareable: false}" class="repoioGoFields">
+								<VBox class="repoioGoField" renderType="Bare">
+									<Label text="{view>label}"/>
+									<Text text="{view>value}" textDirection="{view>dir}" class="repoioGoValue"/>
+									<Link text="{view>provText}" press=".onProv" visible="{= !!${view>provText} }" class="repoioGoProv"/>
+								</VBox>
+							</FlexBox>
+						</uxap:blocks>
+						<uxap:moreBlocks>
+							<FlexBox wrap="Wrap" items="{path: 'view>/go/basicMore', templateShareable: false}" class="repoioGoFields">
+								<VBox class="repoioGoField" renderType="Bare">
+									<Label text="{view>label}"/>
+									<Text text="{view>value}" textDirection="{view>dir}" class="repoioGoValue"/>
+									<Link text="{view>provText}" press=".onProv" visible="{= !!${view>provText} }" class="repoioGoProv"/>
+								</VBox>
+							</FlexBox>
+						</uxap:moreBlocks>
+					</uxap:ObjectPageSubSection>
+					<uxap:ObjectPageSubSection id="ssContact" title="{i18n>go.ss.contact}" titleUppercase="false">
+						<FlexBox wrap="Wrap" items="{path: 'view>/go/contact', templateShareable: false}" class="repoioGoFields">
+							<VBox class="repoioGoField" renderType="Bare">
+								<Label text="{view>label}"/>
+								<Text text="{view>value}" textDirection="{view>dir}" class="repoioGoValue"/>
+								<Link text="{view>provText}" press=".onProv" visible="{= !!${view>provText} }" class="repoioGoProv"/>
+							</VBox>
+						</FlexBox>
+					</uxap:ObjectPageSubSection>
+					<uxap:ObjectPageSubSection id="ssAddress" title="{i18n>go.ss.address}" titleUppercase="false">
+						<FlexBox wrap="Wrap" items="{path: 'view>/go/address', templateShareable: false}" class="repoioGoFields">
+							<VBox class="repoioGoField" renderType="Bare">
+								<Label text="{view>label}"/>
+								<Text text="{view>value}" textDirection="{view>dir}" class="repoioGoValue"/>
+								<Link text="{view>provText}" press=".onProv" visible="{= !!${view>provText} }" class="repoioGoProv"/>
+							</VBox>
+						</FlexBox>
+					</uxap:ObjectPageSubSection>
+					<uxap:ObjectPageSubSection id="ssType" title="{view>/go/typeTitle}" titleUppercase="false" visible="{= ${view>/go/typeFields}.length > 0 }">
+						<FlexBox wrap="Wrap" items="{path: 'view>/go/typeFields', templateShareable: false}" class="repoioGoFields">
+							<VBox class="repoioGoField" renderType="Bare">
+								<Label text="{view>label}"/>
+								<Text text="{view>value}" textDirection="{view>dir}" class="repoioGoValue"/>
+								<Link text="{view>provText}" press=".onProv" visible="{= !!${view>provText} }" class="repoioGoProv"/>
+							</VBox>
+						</FlexBox>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Sources and match: the source records consolidated into this golden record -->
+			<uxap:ObjectPageSection id="secSources" title="{i18n>go.s.sources}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection id="ssSourceRecs" title="{i18n>go.s.sources}" titleUppercase="false">
+						<Table items="{view>/go/sources}" class="repoioDenseTable" fixedLayout="false" popinLayout="GridSmall">
+							<headerToolbar>
+								<OverflowToolbar style="Clear">
+									<Title text="{view>/go/sourcesTitle}" level="H4"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>go.a.matchDetection}" type="Transparent" press=".onMatchDetection"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>go.c.source}"/></Column>
+								<Column width="10rem"><Text text="{i18n>go.c.key}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>go.c.values}"/></Column>
+								<Column width="11rem"><Text text="{i18n>go.c.prob}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true" width="10rem"><Text text="{i18n>go.c.synced}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<VBox renderType="Bare">
+										<Text text="{view>name}" wrapping="false"/>
+										<Text text="{view>table}" class="repoioJrTech" textDirection="LTR" wrapping="false"/>
+									</VBox>
+									<Text text="{view>key}" class="repoioMono" textDirection="LTR"/>
+									<VBox renderType="Bare">
+										<Text text="{view>vName}"/>
+										<Text text="{view>vPhones}" class="repoioMono repoioUmMuted" textDirection="LTR"/>
+									</VBox>
+									<VBox renderType="Bare">
+										<ProgressIndicator percentValue="{view>pct}" displayValue="{view>probText}" state="{view>probState}" height="0.875rem" width="9rem"/>
+										<Text text="{view>role}" class="repoioUmMuted"/>
+									</VBox>
+									<Text text="{view>synced}" textDirection="LTR"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Survivorship: why each field holds its value -->
+			<uxap:ObjectPageSection id="secSurvive" title="{i18n>go.s.survive}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection id="ssSurvive" title="{i18n>go.s.survive}" titleUppercase="false">
+						<Table items="{view>/go/prov}" class="repoioDenseTable" fixedLayout="false" popinLayout="GridSmall" noDataText="{i18n>go.noMatch}">
+							<headerToolbar>
+								<OverflowToolbar style="Clear">
+									<Title text="{view>/go/provTitle}" level="H4"/>
+									<ToolbarSpacer/>
+									<SearchField width="14rem" value="{view>/go/provQ}" liveChange=".onProvSearch"/>
+									<Button text="{i18n>go.a.rules}" type="Transparent" press=".onRules"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>mr.cmp.field}"/></Column>
+								<Column><Text text="{i18n>go.c.value}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>go.c.winner}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>mr.sv.rule}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true" width="7rem" hAlign="Center"><Text text="{i18n>go.c.candidates}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true" width="8rem"><Text text="{i18n>go.c.version}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem type="Active" press=".onProv">
+									<VBox renderType="Bare">
+										<Text text="{view>label}" wrapping="false"/>
+										<Text text="{view>col}" class="repoioJrTech" textDirection="LTR" wrapping="false"/>
+									</VBox>
+									<HBox alignItems="Center" renderType="Bare">
+										<core:Icon src="sap-icon://locked" visible="{view>locked}" tooltip="{i18n>go.locked}" class="sapUiTinyMarginEnd"/>
+										<Text text="{view>value}" textDirection="{view>dir}"/>
+									</HBox>
+									<Text text="{view>srcText}"/>
+									<Text text="{view>ruleText}"/>
+									<Text text="{view>candidates}"/>
+									<Text text="{view>verText}" textDirection="LTR"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Relationships -->
+			<uxap:ObjectPageSection id="secRel" title="{i18n>go.s.rel}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection id="ssRel" title="{i18n>go.s.rel}" titleUppercase="false">
+						<Table items="{view>/go/rel}" class="repoioDenseTable" fixedLayout="false" noDataText="{i18n>go.noRel}">
+							<headerToolbar>
+								<OverflowToolbar style="Clear">
+									<Title text="{view>/go/relTitle}" level="H4"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>go.a.relBuilder}" type="Transparent" press=".onRelBuilder"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>go.c.relType}"/></Column>
+								<Column><Text text="{i18n>go.c.related}"/></Column>
+								<Column width="9rem" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>go.c.since}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<VBox renderType="Bare">
+										<Text text="{view>typeText}"/>
+										<Text text="{view>type}" class="repoioJrTech" textDirection="LTR"/>
+									</VBox>
+									<VBox renderType="Bare">
+										<Text text="{view>targetName}"/>
+										<Text text="{view>target}" class="repoioMono repoioUmMuted" textDirection="LTR"/>
+									</VBox>
+									<Text text="{view>since}" textDirection="LTR"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- History: field-level changes with provenance, and the open change requests -->
+			<uxap:ObjectPageSection id="secHistory" title="{i18n>go.s.history}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection id="ssChanges" title="{i18n>go.ss.changes}" titleUppercase="false">
+						<Table items="{view>/go/history}" class="repoioDenseTable" fixedLayout="false" popinLayout="GridSmall">
+							<headerToolbar>
+								<OverflowToolbar style="Clear">
+									<Title text="{view>/go/historyTitle}" level="H4"/>
+									<ToolbarSpacer/>
+									<Text text="{i18n>go.changeLog}" class="repoioUmMuted"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="10rem"><Text text="{i18n>go.c.when}"/></Column>
+								<Column><Text text="{i18n>mr.cmp.field}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>go.c.change}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>go.c.why}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true" width="9rem"><Text text="{i18n>go.c.cr}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<Text text="{view>at}" textDirection="LTR"/>
+									<Text text="{view>label}"/>
+									<Text text="{view>change}"/>
+									<Text text="{view>why}"/>
+									<Text text="{view>cr}" class="repoioMono" textDirection="LTR"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+					<uxap:ObjectPageSubSection id="ssRequests" title="{i18n>go.ss.requests}" titleUppercase="false">
+						<Table items="{view>/go/requests}" class="repoioDenseTable" fixedLayout="false" noDataText="{i18n>go.noRequests}">
+							<headerToolbar>
+								<OverflowToolbar style="Clear">
+									<Title text="{view>/go/requestsTitle}" level="H4"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>go.request}" icon="sap-icon://add" type="Transparent" press=".onRequest"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="9rem"><Text text="{i18n>go.c.cr}"/></Column>
+								<Column><Text text="{i18n>go.c.what}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>go.c.by}"/></Column>
+								<Column width="12rem"><Text text="{i18n>go.c.step}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<Text text="{view>id}" class="repoioMono" textDirection="LTR"/>
+									<Text text="{view>whatText}"/>
+									<VBox renderType="Bare">
+										<Text text="{view>by}"/>
+										<Text text="{view>at}" class="repoioUmMuted" textDirection="LTR"/>
+									</VBox>
+									<ObjectStatus text="{view>stepText}" state="Information" icon="sap-icon://pending"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Data quality -->
+			<uxap:ObjectPageSection id="secDq" title="{i18n>go.s.dq}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection id="ssDq" title="{i18n>go.s.dq}" titleUppercase="false">
+						<VBox renderType="Bare">
+						<Title text="{view>/go/dqTitle}" level="H4" class="repoioGoSubTitle"/>
+						<FlexBox wrap="Wrap" items="{path: 'view>/go/dq', templateShareable: false}" class="repoioGoFields">
+							<HBox class="repoioGoDq" alignItems="Start" renderType="Bare">
+								<core:Icon src="{view>icon}" color="{view>color}" class="sapUiTinyMarginEnd repoioGoDqIco"/>
+								<VBox renderType="Bare">
+									<Text text="{view>text}"/>
+									<Text text="{view>desc}" class="repoioUmMuted"/>
+								</VBox>
+							</HBox>
+						</FlexBox>
+						</VBox>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Lineage: where each column comes from and where it goes -->
+			<uxap:ObjectPageSection id="secLineage" title="{i18n>go.s.lineage}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection id="ssLineage" title="{i18n>go.s.lineage}" titleUppercase="false">
+						<VBox renderType="Bare">
+							<OverflowToolbar style="Clear" class="repoioGoLinBar">
+								<Text text="{view>/go/linNote}" class="repoioUmMuted"/>
+								<ToolbarSpacer/>
+								<Button text="{i18n>go.a.fullLineage}" icon="sap-icon://full-screen" type="Transparent" press=".onLineage"/>
+							</OverflowToolbar>
+							<rc:ColumnLineage id="goLineage" height="34rem" select=".onLinSelect" nodePress=".onLinNode"/>
+						</VBox>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+		</uxap:sections>
+	</uxap:ObjectPageLayout>
+</mvc:View>
