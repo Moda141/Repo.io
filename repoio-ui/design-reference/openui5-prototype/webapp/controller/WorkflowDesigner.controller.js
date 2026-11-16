@@ -65,8 +65,8 @@ sap.ui.define([
 		_onMatched: function () {
 			if (this._flow) { return; }
 			var that = this, oData = this.data();
-			var start = function () { that._initModel(); that._loadExample(); };
-			if (oData.dataLoaded) { oData.dataLoaded().then(start); } else { start(); }
+			var start = function () { that._initModel(); that._loadExample(); }, oRules = this.getOwnerComponent().getModel("rules");
+			Promise.all([oData.dataLoaded ? oData.dataLoaded() : null, oRules.dataLoaded()]).then(start);
 		},
 
 		_initModel: function () {
@@ -124,6 +124,14 @@ sap.ui.define([
 		},
 		_sep: function () { return this.lang() === "ar" ? "، " : ", "; },
 		_rule: function (k) { return this._W.rules.filter(function (r) { return r.key === k; })[0]; },
+		/* Match models come from Models & rules (J5); a duplicate check step runs the one chosen here. */
+		_matchModels: function () {
+			// The template step decides the domain; read it from the flow, since /wf/domain is set after the first render.
+			var t = this._flow && this._tpl(this._templateKey()), dom = String((t && t.domain) || this.viewModel().getProperty("/wf/domain") || "").toLowerCase() + "s";
+			return (this.getOwnerComponent().getModel("rules").getProperty("/models") || []).filter(function (m) { return m.domain === dom; });
+		},
+		_matchModel: function (k) { return (this.getOwnerComponent().getModel("rules").getProperty("/models") || []).filter(function (m) { return m.key === k; })[0]; },
+		_matchModelText: function (m) { return m ? (this.lang() === "ar" ? m.ar : m.en) : "—"; },
 		_conn: function (k) { return this.viewModel().getProperty("/wf/connections").filter(function (c) { return c.key === k; })[0]; },
 		_team: function (k) { return TEAMS.filter(function (x) { return x.key === k; })[0]; },
 		_teamText: function (k) { var t = this._team(k); return t ? (this.lang() === "ar" ? t.ar : t.en) : ""; },
@@ -178,7 +186,7 @@ sap.ui.define([
 		_customerFlow: function (withScript) {
 			var T = this.text.bind(this), f = this._base("TPL_CUSTOMER_CREATE", "3"), that = this;
 			var notif = function (k) { return Object.assign({ channels: ["inApp", "email"], recipients: ["requester"] }, that._msg(k)); };
-			var v = f.insert("template_1", "out", "validation", { rule: "match_duplicate", source: "golden", threshold: 0.85, severity: "block", fields: [] }, T("fd.ex.dupCheck"));
+			var v = f.insert("template_1", "out", "validation", { rule: "match_duplicate", model: "teacher", source: "golden", threshold: 0.9, severity: "block", fields: [] }, T("fd.ex.dupCheck"));
 			f.insert(v, "failed", "notification", notif("dup"), T("fd.ex.tellRequester"));
 			var a = f.insert(v, "passed", "approval", { mode: "single", approverType: "team", approverTeam: "customer_stewards", approvers: [], rule: "any",
 				sla: "P3D", escalateTo: "team:governance_board", allowReturn: true, maxReturns: 2, sod: true, delegate: true, groups: [] }, T("fd.ex.stewardReview"));
@@ -332,7 +340,11 @@ sap.ui.define([
 				c.subtitle = r ? r.engine : T("fd.pickRule");
 				if (r) {
 					c.lines = [{ k: T("fd.rule"), v: this.lang() === "ar" ? r.ar : r.en }];
-					if (r.kind === "match") { c.lines.push({ k: T("fd.compareWith"), v: this._sourceText(p.source) }, { k: T("fd.threshold"), v: String(p.threshold) }); }
+					if (r.kind === "match") {
+						var mm = this._matchModel(p.model);
+						c.lines.push({ k: T("fd.matchModel"), v: this._matchModelText(mm) }, { k: T("fd.compareWith"), v: this._sourceText(p.source) },
+							{ k: T("fd.stopsAt"), v: mm ? Number(mm.threshold).toFixed(2) : "—" });
+					}
 					else { c.lines.push({ k: T("fd.onFail"), v: T("fd.sev." + (p.severity || "block")) }); }
 				}
 				break;
@@ -446,6 +458,15 @@ sap.ui.define([
 					sel.ruleKind = r.kind || ""; sel.ruleEngine = r.engine || ""; sel.ruleDesc = r.descEn ? (this.lang() === "ar" ? r.descAr : r.descEn) : "";
 					sel.fixedFields = (r.fields || []).join(", "); sel.sources = this._sources();
 					sel.thresholdPct = Math.round((p.threshold || 0.85) * 100);
+					if (r.kind === "match") {
+						var mdl = this._matchModel(p.model), that2 = this;
+						sel.models = this._matchModels().map(function (m) {
+							return { key: m.key, text: that2._matchModelText(m), info: that2.text("fd.modelInfoShort", [Number(m.threshold).toFixed(2), m.comparisons.filter(function (c) { return c.on; }).length]) };
+						});
+						sel.model = p.model || "";
+						sel.modelInfo = mdl ? this.text("fd.modelInfo", [Number(mdl.threshold).toFixed(2), mdl.comparisons.filter(function (c) { return c.on; }).length,
+							mdl.checks.filter(function (c) { return c.on; }).length]) : this.text("fd.pickModel");
+					}
 				}
 				if (n.type === "writeBack") {
 					var tf = this._targetFields(p), cn = this._conn(p.connection), tpl = this._tpl(this._templateKey()), T = this.text.bind(this);
@@ -580,6 +601,14 @@ sap.ui.define([
 		},
 		_sourceText: function (k) { var s = this._sources().filter(function (x) { return x.key === k; })[0]; return s ? s.text : "—"; },
 		onThreshold: function (e) { this._upd({ threshold: Math.round(e.getParameter("value")) / 100 }); },
+		onMatchModel: function (e) {
+			var m = this._matchModel(e.getSource().getSelectedKey());
+			this._upd({ model: m ? m.key : "", threshold: m ? m.threshold : 0.85 });
+		},
+		onOpenModel: function () {
+			var k = this.viewModel().getProperty("/wf/sel/model");
+			if (k) { this.router().navTo("models", { model: k }); }
+		},
 		onValidationRule: function (e) {
 			var r = this._rule(e.getSource().getSelectedKey());
 			this._upd({ rule: r.key, fields: r.kind === "dq" && !r.fields.length ? this._tplFields().filter(function (f) { return f.req; }).map(function (f) { return f.name; }) : [] });
@@ -859,7 +888,9 @@ sap.ui.define([
 					break;
 				case "validation":
 					var r = that._rule(p.rule);
-					if (!r) { add(n, "fd.v.noRule"); } else if (r.kind === "match" && !p.source) { add(n, "fd.v.noSource"); }
+					if (!r) { add(n, "fd.v.noRule"); } else if (r.kind === "match" && !p.model) { add(n, "fd.v.noModel"); }
+					else if (r.kind === "match" && !that._matchModels().some(function (m) { return m.key === p.model; })) { add(n, "fd.v.modelDomain"); }
+					else if (r.kind === "match" && !p.source) { add(n, "fd.v.noSource"); }
 					else if (r.kind === "dq" && !r.fields.length && !(p.fields || []).length) { add(n, "fd.v.noRuleFields"); }
 					(p.fields || []).forEach(function (x) { if (!fields[x]) { add(n, "fd.v.unknownField", [x]); } });
 					break;
@@ -981,7 +1012,8 @@ sap.ui.define([
 					var r = that._rule(p.rule) || {}, fails = [], score = null;
 					if (r.key === "match_duplicate") {
 						score = sample.matchScore;
-						if (score >= (p.threshold || 0.85)) { fails.push(T("fd.test.dup", [score, sample.matchWith || "—", p.threshold])); }
+						var thr = (that._matchModel(p.model) || {}).threshold || p.threshold || 0.85;
+						if (score >= thr) { fails.push(T("fd.test.dup", [score, sample.matchWith || "—", thr])); }
 					} else if (r.key === "dq_required") {
 						that._tplFields().filter(function (x) { return x.req && !String(rec[x.name] || "").trim(); }).forEach(function (x) { fails.push(T("fd.test.missing", [x.label])); });
 					} else if (r.key === "dq_tax_eg") {

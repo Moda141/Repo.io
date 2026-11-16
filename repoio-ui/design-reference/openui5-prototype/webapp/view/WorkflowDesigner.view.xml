@@ -345,13 +345,17 @@
 									</Select>
 								</VBox>
 								<VBox renderType="Bare" visible="{= ${view>/wf/sel/ruleKind} === 'match' }">
+									<Label text="{i18n>fd.matchModel}" required="true" class="sapUiSmallMarginTop"/>
+									<Select selectedKey="{view>/wf/sel/model}" items="{path: 'view>/wf/sel/models', templateShareable: false}" width="100%" forceSelection="false"
+										showSecondaryValues="true" change=".onMatchModel" enabled="{= !${view>/wf/readOnly} }" valueState="{= ${view>/wf/sel/model} ? 'None' : 'Warning' }">
+										<core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>info}"/>
+									</Select>
+									<Text text="{view>/wf/sel/modelInfo}" class="repoioHint"/>
+									<Link text="{i18n>fd.openModel}" press=".onOpenModel" visible="{= !!${view>/wf/sel/model} }"/>
 									<Label text="{i18n>fd.compareWith}" required="true" class="sapUiSmallMarginTop"/>
 									<Select selectedKey="{view>/wf/sel/source}" items="{view>/wf/sel/sources}" width="100%" change=".onProp" app:prop="source" enabled="{= !${view>/wf/readOnly} }">
 										<core:Item key="{view>key}" text="{view>text}"/>
 									</Select>
-									<Label text="{i18n>fd.threshold}: {view>/wf/sel/thresholdPct}%" class="sapUiSmallMarginTop"/>
-									<Slider value="{path: 'view>/wf/sel/thresholdPct', mode: 'OneWay'}" min="50" max="99" step="1" width="100%" change=".onThreshold"
-										enabled="{= !${view>/wf/readOnly} }"/>
 									<Text text="{i18n>fd.matchHint}" class="repoioHint"/>
 								</VBox>
 								<Text text="{i18n>fd.validationNote}" class="repoioHint sapUiSmallMarginTop"/>

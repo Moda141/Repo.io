@@ -1,121 +1,5 @@
 {
-	"_comment": "Models & rules (J5): match models a steward creates per domain, each with its own match rules and change request duplicate check. In the product these are versioned configuration served by the rules API and run by the services (Splink for matching, the request service for the duplicate check); the console only edits drafts. Sample values only.",
-	"fields": {
-		"name": {
-			"en": "Name",
-			"ar": "الاسم",
-			"col": "name_std",
-			"kind": "text",
-			"hintEn": "Standardised: # removed, ي/ى and أ/ا unified, extra spaces dropped",
-			"hintAr": "بعد التوحيد: حذف #، توحيد ي/ى و أ/ا، حذف المسافات الزائدة"
-		},
-		"firstToken": {
-			"en": "First word of the name",
-			"ar": "أول كلمة في الاسم",
-			"col": "name_first_token",
-			"kind": "text"
-		},
-		"phones": {
-			"en": "All phone numbers",
-			"ar": "كل الأرقام",
-			"col": "phones",
-			"kind": "array",
-			"hintEn": "Mobile 1, mobile 2, mobile 3, phone and WhatsApp as one list, so a number matches whichever field it was typed in",
-			"hintAr": "موبايل 1 و2 و3 والتليفون والواتساب كقائمة واحدة، فالرقم يطابق أيًّا كان الحقل اللي اتكتب فيه"
-		},
-		"contactPhone": {
-			"en": "Contact person mobile",
-			"ar": "موبايل المسئول",
-			"col": "contact_mobile",
-			"kind": "text"
-		},
-		"state": {
-			"en": "Governorate",
-			"ar": "المحافظة",
-			"col": "state_id",
-			"kind": "code"
-		},
-		"mainTerritory": {
-			"en": "Main territory",
-			"ar": "المنطقة الرئيسية",
-			"col": "main_territory_id",
-			"kind": "code"
-		},
-		"territory1": {
-			"en": "Secondary territory 1",
-			"ar": "المنطقة الفرعية 1",
-			"col": "territory_1_id",
-			"kind": "code"
-		},
-		"territory2": {
-			"en": "Secondary territory 2",
-			"ar": "المنطقة الفرعية 2",
-			"col": "territory_2_id",
-			"kind": "code"
-		},
-		"stages": {
-			"en": "Grades taught",
-			"ar": "المراحل",
-			"col": "final_stages",
-			"kind": "array"
-		},
-		"subject": {
-			"en": "Subject",
-			"ar": "المادة",
-			"col": "final_subject",
-			"kind": "code"
-		},
-		"promotionGroup": {
-			"en": "Promotion group",
-			"ar": "مجموعة نوع الدعاية",
-			"col": "promotion_group",
-			"kind": "code",
-			"hintEn": "Lessons and schools · supervision · nurseries",
-			"hintAr": "دروس ومدارس · توجيه · حضانات"
-		},
-		"roleGroup": {
-			"en": "Teacher or supervisor",
-			"ar": "مدرس أو موجّه",
-			"col": "classification_group",
-			"kind": "code"
-		},
-		"parentName": {
-			"en": "Parent name",
-			"ar": "اسم ولي الأمر",
-			"col": "parent_name_std",
-			"kind": "text"
-		},
-		"nationalId": {
-			"en": "National ID",
-			"ar": "الرقم القومي",
-			"col": "national_id",
-			"kind": "text"
-		},
-		"linkedAccount": {
-			"en": "Linked school or charity",
-			"ar": "المدرسة أو الجمعية المرتبطة",
-			"col": "linked_account_id",
-			"kind": "code"
-		},
-		"taxNumber": {
-			"en": "Tax number",
-			"ar": "الرقم الضريبي",
-			"col": "tax_number",
-			"kind": "text"
-		},
-		"email": {
-			"en": "Email",
-			"ar": "البريد الإلكتروني",
-			"col": "email_std",
-			"kind": "text"
-		},
-		"isbn": {
-			"en": "ISBN",
-			"ar": "ISBN",
-			"col": "isbn",
-			"kind": "text"
-		}
-	},
+	"_comment": "Models & rules (J5): match models a steward creates per domain, each with its own match rules and change request duplicate check. In the product these are versioned configuration served by the rules API and run by the services (Splink for matching, the request service for the duplicate check); the console only edits drafts. Sample values only. Fields come from the columns of the model's repository (repoColumns: the staged table, including the columns the standardise step derives).",
 	"methods": {
 		"jw": {
 			"en": "Similarity (Jaro-Winkler)",
@@ -283,8 +167,8 @@
 			"blocking": [
 				{
 					"fields": [
-						"firstToken",
-						"state"
+						"name_first_token",
+						"state_id"
 					]
 				},
 				{
@@ -295,7 +179,7 @@
 			],
 			"comparisons": [
 				{
-					"field": "name",
+					"field": "name_std",
 					"method": "jw",
 					"levels": [
 						0.95,
@@ -311,56 +195,56 @@
 					"on": true
 				},
 				{
-					"field": "state",
+					"field": "state_id",
 					"method": "exact",
 					"weight": 3.2,
 					"on": true
 				},
 				{
-					"field": "mainTerritory",
+					"field": "main_territory_id",
 					"method": "exact",
 					"weight": 2.4,
 					"on": true
 				},
 				{
-					"field": "territory1",
+					"field": "territory_1_id",
 					"method": "exact",
 					"weight": 2.1,
 					"on": true
 				},
 				{
-					"field": "territory2",
+					"field": "territory_2_id",
 					"method": "exact",
 					"weight": 1.8,
 					"on": true
 				},
 				{
-					"field": "stages",
+					"field": "final_stages",
 					"method": "array",
 					"weight": 1.6,
 					"on": true
 				},
 				{
-					"field": "subject",
+					"field": "final_subject",
 					"method": "exact",
 					"weight": 2.0,
 					"on": true
 				},
 				{
-					"field": "promotionGroup",
+					"field": "promotion_group",
 					"method": "exact",
 					"weight": 1.2,
 					"on": true
 				},
 				{
-					"field": "roleGroup",
+					"field": "classification_group",
 					"method": "exact",
 					"weight": 1.4,
 					"on": true
 				}
 			],
 			"exceptions": [],
-			"domain": "Customer",
+			"domain": "customers",
 			"descEn": "Teachers and supervisors from field tasks (C4C customer type 01).",
 			"descAr": "المدرسين والموجّهين من مهام الميدان (نوع عميل C4C ‏01).",
 			"status": "active",
@@ -388,7 +272,8 @@
 					"key": "similarOpenCr",
 					"on": false
 				}
-			]
+			],
+			"repo": "customer-master"
 		},
 		{
 			"key": "retailer",
@@ -406,8 +291,8 @@
 			"blocking": [
 				{
 					"fields": [
-						"firstToken",
-						"state"
+						"name_first_token",
+						"state_id"
 					]
 				},
 				{
@@ -418,7 +303,7 @@
 			],
 			"comparisons": [
 				{
-					"field": "name",
+					"field": "name_std",
 					"method": "jw",
 					"levels": [
 						0.95,
@@ -434,38 +319,38 @@
 					"on": true
 				},
 				{
-					"field": "contactPhone",
+					"field": "contact_mobile",
 					"method": "exact",
 					"weight": 6.5,
 					"on": true
 				},
 				{
-					"field": "state",
+					"field": "state_id",
 					"method": "exact",
 					"weight": 3.0,
 					"on": true
 				},
 				{
-					"field": "mainTerritory",
+					"field": "main_territory_id",
 					"method": "exact",
 					"weight": 2.3,
 					"on": true
 				},
 				{
-					"field": "territory1",
+					"field": "territory_1_id",
 					"method": "exact",
 					"weight": 2.0,
 					"on": true
 				},
 				{
-					"field": "territory2",
+					"field": "territory_2_id",
 					"method": "exact",
 					"weight": 1.7,
 					"on": true
 				}
 			],
 			"exceptions": [],
-			"domain": "Customer",
+			"domain": "customers",
 			"descEn": "Bookstores and their contact person (customer type 02).",
 			"descAr": "المكتبات ومسئولها (نوع عميل 02).",
 			"status": "active",
@@ -493,7 +378,8 @@
 					"key": "similarOpenCr",
 					"on": false
 				}
-			]
+			],
+			"repo": "customer-master"
 		},
 		{
 			"key": "callCenter",
@@ -511,8 +397,8 @@
 			"blocking": [
 				{
 					"fields": [
-						"firstToken",
-						"state"
+						"name_first_token",
+						"state_id"
 					]
 				},
 				{
@@ -523,7 +409,7 @@
 			],
 			"comparisons": [
 				{
-					"field": "name",
+					"field": "name_std",
 					"method": "jw",
 					"levels": [
 						0.95,
@@ -539,32 +425,32 @@
 					"on": true
 				},
 				{
-					"field": "state",
+					"field": "state_id",
 					"method": "exact",
 					"weight": 3.1,
 					"on": true
 				},
 				{
-					"field": "mainTerritory",
+					"field": "main_territory_id",
 					"method": "exact",
 					"weight": 2.2,
 					"on": true
 				},
 				{
-					"field": "territory1",
+					"field": "territory_1_id",
 					"method": "exact",
 					"weight": 2.0,
 					"on": true
 				},
 				{
-					"field": "territory2",
+					"field": "territory_2_id",
 					"method": "exact",
 					"weight": 1.6,
 					"on": true
 				}
 			],
 			"exceptions": [],
-			"domain": "Customer",
+			"domain": "customers",
 			"descEn": "Customers created by the call center (customer type 03).",
 			"descAr": "العملاء اللي بيسجلهم الكول سنتر (نوع عميل 03).",
 			"status": "active",
@@ -592,7 +478,8 @@
 					"key": "similarOpenCr",
 					"on": false
 				}
-			]
+			],
+			"repo": "customer-master"
 		},
 		{
 			"key": "student",
@@ -610,8 +497,8 @@
 			"blocking": [
 				{
 					"fields": [
-						"firstToken",
-						"state"
+						"name_first_token",
+						"state_id"
 					]
 				},
 				{
@@ -622,7 +509,7 @@
 			],
 			"comparisons": [
 				{
-					"field": "name",
+					"field": "name_std",
 					"method": "jw",
 					"levels": [
 						0.96,
@@ -632,7 +519,7 @@
 					"on": true
 				},
 				{
-					"field": "parentName",
+					"field": "parent_name_std",
 					"method": "jw",
 					"levels": [
 						0.95,
@@ -648,25 +535,25 @@
 					"on": true
 				},
 				{
-					"field": "state",
+					"field": "state_id",
 					"method": "exact",
 					"weight": 2.9,
 					"on": true
 				},
 				{
-					"field": "mainTerritory",
+					"field": "main_territory_id",
 					"method": "exact",
 					"weight": 2.1,
 					"on": true
 				},
 				{
-					"field": "territory1",
+					"field": "territory_1_id",
 					"method": "exact",
 					"weight": 1.9,
 					"on": true
 				},
 				{
-					"field": "territory2",
+					"field": "territory_2_id",
 					"method": "exact",
 					"weight": 1.5,
 					"on": true
@@ -678,7 +565,7 @@
 					"on": true
 				}
 			],
-			"domain": "Customer",
+			"domain": "customers",
 			"descEn": "Students registered by a parent (customer type 03-1).",
 			"descAr": "طلاب مسجلين عن طريق ولي الأمر (نوع عميل 03-1).",
 			"status": "active",
@@ -706,7 +593,8 @@
 					"key": "similarOpenCr",
 					"on": false
 				}
-			]
+			],
+			"repo": "customer-master"
 		},
 		{
 			"key": "charityStudent",
@@ -724,8 +612,8 @@
 			"blocking": [
 				{
 					"fields": [
-						"firstToken",
-						"state"
+						"name_first_token",
+						"state_id"
 					]
 				},
 				{
@@ -735,13 +623,13 @@
 				},
 				{
 					"fields": [
-						"nationalId"
+						"national_id"
 					]
 				}
 			],
 			"comparisons": [
 				{
-					"field": "name",
+					"field": "name_std",
 					"method": "jw",
 					"levels": [
 						0.96,
@@ -751,13 +639,13 @@
 					"on": true
 				},
 				{
-					"field": "nationalId",
+					"field": "national_id",
 					"method": "exact",
 					"weight": 14.2,
 					"on": true
 				},
 				{
-					"field": "parentName",
+					"field": "parent_name_std",
 					"method": "jw",
 					"levels": [
 						0.95,
@@ -773,13 +661,13 @@
 					"on": true
 				},
 				{
-					"field": "linkedAccount",
+					"field": "linked_account_id",
 					"method": "exact",
 					"weight": 2.6,
 					"on": true
 				},
 				{
-					"field": "state",
+					"field": "state_id",
 					"method": "exact",
 					"weight": 2.9,
 					"on": true
@@ -791,7 +679,7 @@
 					"on": true
 				}
 			],
-			"domain": "Customer",
+			"domain": "customers",
 			"descEn": "Students sponsored by a charity (customer type 03-2).",
 			"descAr": "طلاب تابعين لجمعية خيرية (نوع عميل 03-2).",
 			"status": "active",
@@ -819,7 +707,8 @@
 					"key": "similarOpenCr",
 					"on": false
 				}
-			]
+			],
+			"repo": "customer-master"
 		}
 	],
 	"checkCatalog": [
@@ -838,71 +727,554 @@
 		{
 			"key": "nationalId",
 			"against": "both",
-			"needs": "nationalId"
+			"needs": "national_id"
 		},
 		{
 			"key": "similarOpenCr",
 			"against": "openCr"
 		}
 	],
-	"domains": [
-		"Customer",
-		"Vendor",
-		"Product",
-		"Author",
-		"Employee",
-		"Store"
-	],
-	"domainFields": {
-		"Customer": [
-			"name",
-			"firstToken",
-			"phones",
-			"contactPhone",
-			"state",
-			"mainTerritory",
-			"territory1",
-			"territory2",
-			"stages",
-			"subject",
-			"promotionGroup",
-			"roleGroup",
-			"parentName",
-			"nationalId",
-			"linkedAccount"
+	"repoColumns": {
+		"customer-master": [
+			{
+				"col": "customer_id",
+				"en": "Customer ID",
+				"ar": "كود العميل",
+				"kind": "text"
+			},
+			{
+				"col": "name",
+				"en": "Name",
+				"ar": "الاسم",
+				"kind": "text"
+			},
+			{
+				"col": "name_std",
+				"en": "Name (standardised)",
+				"ar": "الاسم (بعد التوحيد)",
+				"kind": "text",
+				"derived": true,
+				"hintEn": "Standardised: # removed, ي/ى and أ/ا unified, extra spaces dropped",
+				"hintAr": "بعد التوحيد: حذف #، توحيد ي/ى و أ/ا، حذف المسافات الزائدة"
+			},
+			{
+				"col": "name_first_token",
+				"en": "First word of the name",
+				"ar": "أول كلمة في الاسم",
+				"kind": "text",
+				"derived": true
+			},
+			{
+				"col": "mobile_1",
+				"en": "Mobile 1",
+				"ar": "موبايل 1",
+				"kind": "text"
+			},
+			{
+				"col": "mobile_2",
+				"en": "Mobile 2",
+				"ar": "موبايل 2",
+				"kind": "text"
+			},
+			{
+				"col": "mobile_3",
+				"en": "Mobile 3",
+				"ar": "موبايل 3",
+				"kind": "text"
+			},
+			{
+				"col": "phone",
+				"en": "Phone",
+				"ar": "التليفون",
+				"kind": "text"
+			},
+			{
+				"col": "whatsapp",
+				"en": "WhatsApp",
+				"ar": "واتساب",
+				"kind": "text"
+			},
+			{
+				"col": "contact_mobile",
+				"en": "Contact person mobile",
+				"ar": "موبايل المسئول",
+				"kind": "text"
+			},
+			{
+				"col": "phones",
+				"en": "All phone numbers",
+				"ar": "كل الأرقام",
+				"kind": "array",
+				"derived": true,
+				"hintEn": "Mobile 1, mobile 2, mobile 3, phone and WhatsApp as one list, so a number matches whichever field it was typed in",
+				"hintAr": "موبايل 1 و2 و3 والتليفون والواتساب كقائمة واحدة، فالرقم يطابق أيًّا كان الحقل اللي اتكتب فيه"
+			},
+			{
+				"col": "email",
+				"en": "Email",
+				"ar": "البريد الإلكتروني",
+				"kind": "text"
+			},
+			{
+				"col": "state_id",
+				"en": "Governorate",
+				"ar": "المحافظة",
+				"kind": "code"
+			},
+			{
+				"col": "main_territory_id",
+				"en": "Main territory",
+				"ar": "المنطقة الرئيسية",
+				"kind": "code"
+			},
+			{
+				"col": "territory_1_id",
+				"en": "Secondary territory 1",
+				"ar": "المنطقة الفرعية 1",
+				"kind": "code"
+			},
+			{
+				"col": "territory_2_id",
+				"en": "Secondary territory 2",
+				"ar": "المنطقة الفرعية 2",
+				"kind": "code"
+			},
+			{
+				"col": "sales_district",
+				"en": "Sales district",
+				"ar": "منطقة المبيعات",
+				"kind": "code"
+			},
+			{
+				"col": "account_type",
+				"en": "Account type",
+				"ar": "نوع الحساب",
+				"kind": "code"
+			},
+			{
+				"col": "final_stages",
+				"en": "Grades taught",
+				"ar": "المراحل",
+				"kind": "array"
+			},
+			{
+				"col": "final_subject",
+				"en": "Subject",
+				"ar": "المادة",
+				"kind": "code"
+			},
+			{
+				"col": "promotion_group",
+				"en": "Promotion group",
+				"ar": "مجموعة نوع الدعاية",
+				"kind": "code",
+				"hintEn": "Lessons and schools · supervision · nurseries",
+				"hintAr": "دروس ومدارس · توجيه · حضانات"
+			},
+			{
+				"col": "classification_group",
+				"en": "Teacher or supervisor",
+				"ar": "مدرس أو موجّه",
+				"kind": "code"
+			},
+			{
+				"col": "parent_name",
+				"en": "Parent name",
+				"ar": "اسم ولي الأمر",
+				"kind": "text"
+			},
+			{
+				"col": "parent_name_std",
+				"en": "Parent name (standardised)",
+				"ar": "اسم ولي الأمر (بعد التوحيد)",
+				"kind": "text",
+				"derived": true
+			},
+			{
+				"col": "national_id",
+				"en": "National ID",
+				"ar": "الرقم القومي",
+				"kind": "text"
+			},
+			{
+				"col": "linked_account_id",
+				"en": "Linked school or charity",
+				"ar": "المدرسة أو الجمعية المرتبطة",
+				"kind": "code"
+			},
+			{
+				"col": "wholesaler_id",
+				"en": "Wholesaler",
+				"ar": "تاجر الجملة",
+				"kind": "code"
+			},
+			{
+				"col": "distributor_id",
+				"en": "Distributor",
+				"ar": "الموزع",
+				"kind": "code"
+			}
 		],
-		"Vendor": [
-			"name",
-			"firstToken",
-			"phones",
-			"state",
-			"taxNumber",
-			"email"
+		"distribution": [
+			{
+				"col": "partner_id",
+				"en": "Partner ID",
+				"ar": "كود الشريك",
+				"kind": "text"
+			},
+			{
+				"col": "name",
+				"en": "Name",
+				"ar": "الاسم",
+				"kind": "text"
+			},
+			{
+				"col": "name_std",
+				"en": "Name (standardised)",
+				"ar": "الاسم (بعد التوحيد)",
+				"kind": "text",
+				"derived": true,
+				"hintEn": "Standardised: # removed, ي/ى and أ/ا unified, extra spaces dropped",
+				"hintAr": "بعد التوحيد: حذف #، توحيد ي/ى و أ/ا، حذف المسافات الزائدة"
+			},
+			{
+				"col": "name_first_token",
+				"en": "First word of the name",
+				"ar": "أول كلمة في الاسم",
+				"kind": "text",
+				"derived": true
+			},
+			{
+				"col": "mobile_1",
+				"en": "Mobile 1",
+				"ar": "موبايل 1",
+				"kind": "text"
+			},
+			{
+				"col": "phone",
+				"en": "Phone",
+				"ar": "التليفون",
+				"kind": "text"
+			},
+			{
+				"col": "phones",
+				"en": "All phone numbers",
+				"ar": "كل الأرقام",
+				"kind": "array",
+				"derived": true,
+				"hintEn": "Mobile 1, mobile 2, mobile 3, phone and WhatsApp as one list, so a number matches whichever field it was typed in",
+				"hintAr": "موبايل 1 و2 و3 والتليفون والواتساب كقائمة واحدة، فالرقم يطابق أيًّا كان الحقل اللي اتكتب فيه"
+			},
+			{
+				"col": "tax_number",
+				"en": "Tax number",
+				"ar": "الرقم الضريبي",
+				"kind": "text"
+			},
+			{
+				"col": "state_id",
+				"en": "Governorate",
+				"ar": "المحافظة",
+				"kind": "code"
+			},
+			{
+				"col": "city",
+				"en": "City",
+				"ar": "المدينة",
+				"kind": "code"
+			},
+			{
+				"col": "partner_type",
+				"en": "Partner type",
+				"ar": "نوع الشريك",
+				"kind": "code"
+			}
 		],
-		"Product": [
-			"name",
-			"firstToken",
-			"isbn"
+		"schools": [
+			{
+				"col": "school_id",
+				"en": "School ID",
+				"ar": "كود المدرسة",
+				"kind": "text"
+			},
+			{
+				"col": "name",
+				"en": "Name",
+				"ar": "الاسم",
+				"kind": "text"
+			},
+			{
+				"col": "name_std",
+				"en": "Name (standardised)",
+				"ar": "الاسم (بعد التوحيد)",
+				"kind": "text",
+				"derived": true,
+				"hintEn": "Standardised: # removed, ي/ى and أ/ا unified, extra spaces dropped",
+				"hintAr": "بعد التوحيد: حذف #، توحيد ي/ى و أ/ا، حذف المسافات الزائدة"
+			},
+			{
+				"col": "name_first_token",
+				"en": "First word of the name",
+				"ar": "أول كلمة في الاسم",
+				"kind": "text",
+				"derived": true
+			},
+			{
+				"col": "phone",
+				"en": "Phone",
+				"ar": "التليفون",
+				"kind": "text"
+			},
+			{
+				"col": "phones",
+				"en": "All phone numbers",
+				"ar": "كل الأرقام",
+				"kind": "array",
+				"derived": true,
+				"hintEn": "Mobile 1, mobile 2, mobile 3, phone and WhatsApp as one list, so a number matches whichever field it was typed in",
+				"hintAr": "موبايل 1 و2 و3 والتليفون والواتساب كقائمة واحدة، فالرقم يطابق أيًّا كان الحقل اللي اتكتب فيه"
+			},
+			{
+				"col": "state_id",
+				"en": "Governorate",
+				"ar": "المحافظة",
+				"kind": "code"
+			},
+			{
+				"col": "educational_admin_id",
+				"en": "Educational administration",
+				"ar": "الإدارة التعليمية",
+				"kind": "code"
+			},
+			{
+				"col": "school_type",
+				"en": "School type",
+				"ar": "نوع المدرسة",
+				"kind": "code"
+			}
 		],
-		"Author": [
-			"name",
-			"firstToken",
-			"phones",
-			"email"
+		"catalog": [
+			{
+				"col": "product_id",
+				"en": "Product ID",
+				"ar": "كود المنتج",
+				"kind": "text"
+			},
+			{
+				"col": "title",
+				"en": "Title",
+				"ar": "العنوان",
+				"kind": "text"
+			},
+			{
+				"col": "title_std",
+				"en": "Title (standardised)",
+				"ar": "العنوان (بعد التوحيد)",
+				"kind": "text",
+				"derived": true
+			},
+			{
+				"col": "title_first_token",
+				"en": "First word of the title",
+				"ar": "أول كلمة في العنوان",
+				"kind": "text",
+				"derived": true
+			},
+			{
+				"col": "isbn",
+				"en": "ISBN",
+				"ar": "ISBN",
+				"kind": "text"
+			},
+			{
+				"col": "series_code",
+				"en": "Series",
+				"ar": "السلسلة",
+				"kind": "code"
+			},
+			{
+				"col": "grade",
+				"en": "Grade",
+				"ar": "الصف",
+				"kind": "code"
+			},
+			{
+				"col": "subject",
+				"en": "Subject",
+				"ar": "المادة",
+				"kind": "code"
+			},
+			{
+				"col": "language",
+				"en": "Language",
+				"ar": "اللغة",
+				"kind": "code"
+			},
+			{
+				"col": "author_id",
+				"en": "Author",
+				"ar": "المؤلف",
+				"kind": "code"
+			}
 		],
-		"Employee": [
-			"name",
-			"firstToken",
-			"phones",
-			"email",
-			"nationalId"
+		"digital": [
+			{
+				"col": "product_id",
+				"en": "Product ID",
+				"ar": "كود المنتج",
+				"kind": "text"
+			},
+			{
+				"col": "title",
+				"en": "Title",
+				"ar": "العنوان",
+				"kind": "text"
+			},
+			{
+				"col": "title_std",
+				"en": "Title (standardised)",
+				"ar": "العنوان (بعد التوحيد)",
+				"kind": "text",
+				"derived": true
+			},
+			{
+				"col": "sku",
+				"en": "SKU",
+				"ar": "SKU",
+				"kind": "text"
+			},
+			{
+				"col": "platform",
+				"en": "Platform",
+				"ar": "المنصة",
+				"kind": "code"
+			}
 		],
-		"Store": [
-			"name",
-			"firstToken",
-			"phones",
-			"state",
-			"mainTerritory"
+		"vendor-master": [
+			{
+				"col": "vendor_id",
+				"en": "Vendor ID",
+				"ar": "كود المورد",
+				"kind": "text"
+			},
+			{
+				"col": "name",
+				"en": "Name",
+				"ar": "الاسم",
+				"kind": "text"
+			},
+			{
+				"col": "name_std",
+				"en": "Name (standardised)",
+				"ar": "الاسم (بعد التوحيد)",
+				"kind": "text",
+				"derived": true,
+				"hintEn": "Standardised: # removed, ي/ى and أ/ا unified, extra spaces dropped",
+				"hintAr": "بعد التوحيد: حذف #، توحيد ي/ى و أ/ا، حذف المسافات الزائدة"
+			},
+			{
+				"col": "name_first_token",
+				"en": "First word of the name",
+				"ar": "أول كلمة في الاسم",
+				"kind": "text",
+				"derived": true
+			},
+			{
+				"col": "tax_number",
+				"en": "Tax number",
+				"ar": "الرقم الضريبي",
+				"kind": "text"
+			},
+			{
+				"col": "email",
+				"en": "Email",
+				"ar": "البريد الإلكتروني",
+				"kind": "text"
+			},
+			{
+				"col": "phone",
+				"en": "Phone",
+				"ar": "التليفون",
+				"kind": "text"
+			},
+			{
+				"col": "phones",
+				"en": "All phone numbers",
+				"ar": "كل الأرقام",
+				"kind": "array",
+				"derived": true,
+				"hintEn": "Mobile 1, mobile 2, mobile 3, phone and WhatsApp as one list, so a number matches whichever field it was typed in",
+				"hintAr": "موبايل 1 و2 و3 والتليفون والواتساب كقائمة واحدة، فالرقم يطابق أيًّا كان الحقل اللي اتكتب فيه"
+			},
+			{
+				"col": "city",
+				"en": "City",
+				"ar": "المدينة",
+				"kind": "code"
+			},
+			{
+				"col": "country",
+				"en": "Country",
+				"ar": "الدولة",
+				"kind": "code"
+			}
+		],
+		"authors": [
+			{
+				"col": "author_id",
+				"en": "Author ID",
+				"ar": "كود المؤلف",
+				"kind": "text"
+			},
+			{
+				"col": "name",
+				"en": "Name",
+				"ar": "الاسم",
+				"kind": "text"
+			},
+			{
+				"col": "name_std",
+				"en": "Name (standardised)",
+				"ar": "الاسم (بعد التوحيد)",
+				"kind": "text",
+				"derived": true,
+				"hintEn": "Standardised: # removed, ي/ى and أ/ا unified, extra spaces dropped",
+				"hintAr": "بعد التوحيد: حذف #، توحيد ي/ى و أ/ا، حذف المسافات الزائدة"
+			},
+			{
+				"col": "name_first_token",
+				"en": "First word of the name",
+				"ar": "أول كلمة في الاسم",
+				"kind": "text",
+				"derived": true
+			},
+			{
+				"col": "email",
+				"en": "Email",
+				"ar": "البريد الإلكتروني",
+				"kind": "text"
+			},
+			{
+				"col": "mobile",
+				"en": "Mobile",
+				"ar": "موبايل",
+				"kind": "text"
+			},
+			{
+				"col": "phones",
+				"en": "All phone numbers",
+				"ar": "كل الأرقام",
+				"kind": "array",
+				"derived": true,
+				"hintEn": "Mobile 1, mobile 2, mobile 3, phone and WhatsApp as one list, so a number matches whichever field it was typed in",
+				"hintAr": "موبايل 1 و2 و3 والتليفون والواتساب كقائمة واحدة، فالرقم يطابق أيًّا كان الحقل اللي اتكتب فيه"
+			},
+			{
+				"col": "national_id",
+				"en": "National ID",
+				"ar": "الرقم القومي",
+				"kind": "text"
+			}
 		]
 	}
 }

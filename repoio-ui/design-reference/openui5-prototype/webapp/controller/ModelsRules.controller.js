@@ -13,14 +13,16 @@ sap.ui.define([
 	"sap/m/MultiComboBox",
 	"sap/m/MessageStrip",
 	"sap/ui/core/Item",
+	"sap/ui/core/ListItem",
 	"sap/ui/layout/form/SimpleForm"
 ], function (BaseController, Audit, MessageToast, MessageBox, Dialog, Button, Label, Select, Input, Text, TextArea, MultiComboBox, MessageStrip,
-	Item, SimpleForm) {
+	Item, ListItem, SimpleForm) {
 	"use strict";
 
 	var DEFAULT_LEVELS = { jw: [0.95, 0.9], lev: [1, 2] },
-		DOMAIN_ICON = { Customer: "sap-icon://customer", Vendor: "sap-icon://supplier", Product: "sap-icon://course-book", Author: "sap-icon://user-edit",
-			Employee: "sap-icon://employee", Store: "sap-icon://retail-store" },
+		DOMAIN_ICON = { customers: "sap-icon://customer", vendors: "sap-icon://supplier", products: "sap-icon://course-book", authors: "sap-icon://user-edit",
+			employees: "sap-icon://employee", stores: "sap-icon://retail-store" },
+		FIRST_TOKEN = ["name_first_token", "title_first_token"],
 		DISPLAY = ["cmpCount", "text", "sub", "info", "infoState", "selected", "desc", "meta", "statusText", "statusState", "statusIcon", "canDelete"];
 
 	/* J5: Models & rules. A steward creates match models and defines the rules inside each one. The page edits a working
@@ -33,8 +35,8 @@ sap.ui.define([
 		},
 
 		_onMatched: function (oEvent) {
-			var that = this, sKey = (oEvent.getParameter("arguments") || {}).model, oM = this.getOwnerComponent().getModel("rules");
-			oM.dataLoaded().then(function () {
+			var that = this, sKey = (oEvent.getParameter("arguments") || {}).model, oM = this.getOwnerComponent().getModel("rules"), oD = this.data();
+			Promise.all([oM.dataLoaded(), oD.dataLoaded ? oD.dataLoaded() : null]).then(function () {
 				that._src = oM.getData();
 				if (!that._w) { that._reset(); }
 				var ok = that._w.models.some(function (m) { return m.key === sKey; });
@@ -50,7 +52,19 @@ sap.ui.define([
 		},
 		_ar: function () { return this.lang() === "ar"; },
 		_t: function (o) { return o ? (this._ar() ? o.ar || o.en : o.en || o.ar) : ""; },
-		_field: function (k) { return this._src.fields[k] || { en: k, ar: k, col: k, kind: "text" }; },
+		/* Fields are the columns of the model's repository (its staged table, including the columns the standardise step derives). */
+		_cols: function (m) { return (m && this._src.repoColumns[m.repo]) || []; },
+		_field: function (k, m) {
+			var c = this._cols(m || this._model()).filter(function (x) { return x.col === k; })[0];
+			return c || { en: k, ar: k, col: k, kind: "text" };
+		},
+		_colText: function (c) { return this._t(c) + (c.derived ? " · " + this.text("mr.f.derived") : ""); },
+		_domainText: function (id) {
+			var d = (this.data().getProperty("/domains") || []).filter(function (x) { return x.id === id; })[0];
+			return d ? this.domainName(d) : id;
+		},
+		_repo: function (id) { return (this.data().getProperty("/repos") || {})[id]; },
+		_repoText: function (id) { var r = this._repo(id); return r ? r.name + " · " + r.model : id; },
 		_model: function () { var k = this._sel; return this._w.models.filter(function (m) { return m.key === k; })[0]; },
 
 		_refresh: function () {
@@ -58,7 +72,7 @@ sap.ui.define([
 			vm.setProperty("/mr/models", this._w.models.filter(function (m) {
 				return !q || [m.en, m.ar, m.domain].join(" ").toLowerCase().indexOf(q) > -1;
 			}).map(function (m) {
-				return { key: m.key, text: that._t(m), sub: that.text("mr.dom." + m.domain), icon: m.icon || DOMAIN_ICON[m.domain] || "sap-icon://database",
+				return { key: m.key, text: that._t(m), sub: that._domainText(m.domain) + " · " + (that._repo(m.repo) || { name: m.repo }).name, icon: m.icon || DOMAIN_ICON[m.domain] || "sap-icon://database",
 					info: m.dirty ? that.text("mr.st.changed") : m.pending ? that.text("mr.st.pending") : that.text("mr.st." + m.status, [m.version]),
 					infoState: m.dirty || m.pending ? "Warning" : m.status === "active" ? "Success" : "None", selected: m.key === that._sel };
 			}));
@@ -73,7 +87,7 @@ sap.ui.define([
 			if (!m) { vm.setProperty("/mr/m", null); return; }
 			m.text = this._t(m);
 			m.desc = this._ar() ? m.descAr || m.descEn : m.descEn || m.descAr;
-			m.meta = this.text("mr.meta", [this.text("mr.dom." + m.domain), m.owner, m.changed]);
+			m.meta = this.text("mr.meta", [this._domainText(m.domain), this._repoText(m.repo), m.owner, m.changed]);
 			var next = m.status === "active" ? Number(m.version) + 1 : m.version;
 			m.statusText = m.dirty ? this.text("mr.st.changedLong", [next]) : m.pending ? this.text("mr.st.pendingLong", [next, m.status === "active" ? m.version : "—"])
 				: this.text("mr.st." + m.status + "Long", [m.version]);
@@ -85,7 +99,7 @@ sap.ui.define([
 			m.cmpCount = m.comparisons.length;
 			m.blocking.forEach(function (b) { that._decorateBlk(b); });
 			m.exceptions.forEach(function (e) { e.text = that.text("mr.exc." + e.key); e.desc = that.text("mr.exc." + e.key + ".d"); });
-			var fields = this._src.domainFields[m.domain] || [];
+			var fields = this._cols(m).map(function (c) { return c.col; });
 			m.checks.forEach(function (c) {
 				var cat = that._src.checkCatalog.filter(function (x) { return x.key === c.key; })[0] || {};
 				c.text = that.text("mr.chk." + c.key);
@@ -142,33 +156,52 @@ sap.ui.define([
 		onCreate: function () { this._modelDialog(null); },
 		onEditModel: function () { this._modelDialog(this._model()); },
 		_modelDialog: function (oModel) {
-			var that = this, S = this._src, oSrcSel,
+			var that = this, oSrcSel,
 				oEn = new Input({ width: "100%", value: oModel ? oModel.en : "", placeholder: this.text("mr.f.nameEnPh") }),
 				oAr = new Input({ width: "100%", value: oModel ? oModel.ar : "", placeholder: this.text("mr.f.nameArPh") }),
-				oDomain = new Select({ width: "100%", selectedKey: oModel ? oModel.domain : "Customer", enabled: !oModel,
-					items: S.domains.map(function (d) { return new Item({ key: d, text: that.text("mr.dom." + d) }); }) }),
+				oDomain = new Select({ width: "100%", selectedKey: oModel ? oModel.domain : "customers", enabled: !oModel,
+					items: (this.data().getProperty("/domains") || []).map(function (d) { return new Item({ key: d.id, text: that.domainName(d) }); }) }),
+				oRepo = new Select({ width: "100%", enabled: !oModel, showSecondaryValues: true }),
+				oRepoHint = new Text({ text: "" }).addStyleClass("repoioUmMuted"),
 				oDesc = new TextArea({ width: "100%", rows: 2, value: oModel ? (this._ar() ? oModel.descAr : oModel.descEn) : "" }),
 				content = [
 					new Label({ text: this.text("mr.f.nameEn"), required: true }), oEn,
 					new Label({ text: this.text("mr.f.nameAr"), required: true }), oAr,
 					new Label({ text: this.text("mr.f.domain"), required: true }), oDomain,
+					new Label({ text: this.text("mr.f.repo"), required: true }), oRepo, oRepoHint,
 					new Label({ text: this.text("mr.f.desc") }), oDesc
-				];
-			if (!oModel) {
-				oSrcSel = new Select({ width: "100%" });
-				var fill = function () {
-					var d = oDomain.getSelectedKey();
+				],
+				repos = this.data().getProperty("/repos") || {},
+				fillCopy = function () {
+					if (!oSrcSel) { return; }
+					var r = oRepo.getSelectedKey();
 					oSrcSel.destroyItems();
 					oSrcSel.addItem(new Item({ key: "", text: that.text("mr.f.blank") }));
-					that._w.models.filter(function (m) { return m.domain === d; }).forEach(function (m) {
+					that._w.models.filter(function (m) { return r && m.repo === r; }).forEach(function (m) {
 						oSrcSel.addItem(new Item({ key: m.key, text: that.text("mr.f.copyOf", [that._t(m)]) }));
 					});
 					oSrcSel.setSelectedKey("");
+				},
+				repoHint = function () {
+					var r = oRepo.getSelectedKey();
+					oRepoHint.setText(r ? that.text("mr.f.repoHint", [that._cols({ repo: r }).length]) : that.text("mr.f.noRepo"));
+				},
+				fillRepo = function () {
+					var d = oDomain.getSelectedKey(), ids = Object.keys(repos).filter(function (k) { return repos[k].domainId === d; });
+					oRepo.destroyItems();
+					ids.forEach(function (k) { oRepo.addItem(new ListItem({ key: k, text: repos[k].name, additionalText: repos[k].model })); });
+					oRepo.setSelectedKey(oModel ? oModel.repo : ids[0] || "");
+					oRepo.setValueState(ids.length ? "None" : "Warning").setValueStateText(that.text("mr.f.noRepo"));
+					repoHint();
+					fillCopy();
 				};
-				oDomain.attachChange(fill);
-				fill();
+			if (!oModel) {
+				oSrcSel = new Select({ width: "100%" });
 				content.push(new Label({ text: this.text("mr.f.start") }), oSrcSel, new Text({ text: this.text("mr.f.startHint") }).addStyleClass("repoioUmMuted"));
 			}
+			oDomain.attachChange(fillRepo);
+			oRepo.attachChange(function () { repoHint(); fillCopy(); });
+			fillRepo();
 			var oDlg = new Dialog({
 				title: this.text(oModel ? "mr.editTitle" : "mr.createTitle"), contentWidth: "30rem",
 				content: [new SimpleForm({ editable: true, layout: "ResponsiveGridLayout", labelSpanM: 12, labelSpanL: 12, columnsL: 1, columnsM: 1, content: content })],
@@ -177,6 +210,7 @@ sap.ui.define([
 					[[oEn, en], [oAr, ar]].forEach(function (x) { x[0].setValueState(x[1] ? "None" : "Error").setValueStateText(that.text("mr.v.required")); bad = bad || !x[1]; });
 					var clash = that._w.models.some(function (m) { return m !== oModel && (m.en.toLowerCase() === en.toLowerCase() || m.ar === ar); });
 					if (!bad && clash) { oEn.setValueState("Error").setValueStateText(that.text("mr.v.unique")); bad = true; }
+					if (!oRepo.getSelectedKey()) { oRepo.setValueState("Error").setValueStateText(that.text("mr.f.noRepo")); bad = true; }
 					if (bad) { return; }
 					var desc = oDesc.getValue().trim();
 					if (oModel) {
@@ -184,7 +218,7 @@ sap.ui.define([
 						if (that._ar()) { oModel.descAr = desc; } else { oModel.descEn = desc; }
 						oModel.dirty = true; oModel.pending = false;
 					} else {
-						oModel = that._newModel(en, ar, oDomain.getSelectedKey(), desc, oSrcSel.getSelectedKey());
+						oModel = that._newModel(en, ar, oDomain.getSelectedKey(), oRepo.getSelectedKey(), desc, oSrcSel.getSelectedKey());
 						that._w.models.push(oModel);
 						that._sel = oModel.key;
 						that.viewModel().setProperty("/mr/tab", "match");
@@ -200,17 +234,18 @@ sap.ui.define([
 			this.getView().addDependent(oDlg);
 			oDlg.open();
 		},
-		_newModel: function (en, ar, domain, desc, fromKey) {
+		_newModel: function (en, ar, domain, repo, desc, fromKey) {
 			var src = this._w.models.filter(function (m) { return m.key === fromKey; })[0], base = (en || "model").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "model",
-				key = base, i = 2, keys = this._w.models.map(function (m) { return m.key; }), fields = this._src.domainFields[domain] || [];
+				key = base, i = 2, keys = this._w.models.map(function (m) { return m.key; }),
+				fields = this._cols({ repo: repo }).map(function (c) { return c.col; }), first = FIRST_TOKEN.filter(function (k) { return fields.indexOf(k) > -1; })[0];
 			while (keys.indexOf(key) > -1) { key = base + "-" + i++; }
 			var strip = function (a) { return JSON.parse(JSON.stringify(a, function (k, v) { return DISPLAY.indexOf(k) > -1 || ["fieldText", "col", "hint", "methodText", "splink", "levelsText", "weightText", "sql", "againstText", "available", "unavailable"].indexOf(k) > -1 ? undefined : v; })); };
 			return {
-				key: key, en: en, ar: ar, domain: domain, descEn: this._ar() ? "" : desc, descAr: this._ar() ? desc : "",
+				key: key, en: en, ar: ar, domain: domain, repo: repo, descEn: this._ar() ? "" : desc, descAr: this._ar() ? desc : "",
 				status: "draft", version: "1", changed: this._src.now || "2026-11-16", owner: "محمد", icon: DOMAIN_ICON[domain], dirty: true,
 				threshold: src ? src.threshold : 0.9, templates: [],
 				comparisons: src ? strip(src.comparisons).map(function (c) { c.weight = null; return c; }) : [],
-				blocking: src ? strip(src.blocking) : (fields.indexOf("firstToken") > -1 ? [{ fields: ["firstToken"] }] : []),
+				blocking: src ? strip(src.blocking) : (first ? [{ fields: [first] }] : []),
 				exceptions: src ? strip(src.exceptions) : [],
 				checks: this._src.checkCatalog.map(function (c) {
 					var s = src && src.checks.filter(function (x) { return x.key === c.key; })[0];
@@ -240,12 +275,13 @@ sap.ui.define([
 			this.onEdit();
 		},
 		_cmpDialog: function (oCmp) {
-			var that = this, m = this._model(), F = this._src.fields, M = this._src.methods,
+			var that = this, m = this._model(), M = this._src.methods, F = {},
 				used = m.comparisons.filter(function (c) { return c !== oCmp; }).map(function (c) { return c.field; }),
-				fieldKeys = (this._src.domainFields[m.domain] || []).filter(function (k) { return k !== "firstToken" && used.indexOf(k) < 0; });
+				fieldKeys = this._cols(m).map(function (c) { return c.col; }).filter(function (k) { return FIRST_TOKEN.indexOf(k) < 0 && used.indexOf(k) < 0; });
+			this._cols(m).forEach(function (c) { F[c.col] = c; });
 			if (!fieldKeys.length) { MessageToast.show(this.text("mr.cmp.allUsed")); return; }
-			var oField = new Select({ width: "100%", selectedKey: oCmp ? oCmp.field : fieldKeys[0],
-					items: fieldKeys.map(function (k) { return new Item({ key: k, text: that._t(F[k]) }); }) }),
+			var oField = new Select({ width: "100%", selectedKey: oCmp ? oCmp.field : fieldKeys[0], showSecondaryValues: true,
+					items: fieldKeys.map(function (k) { return new ListItem({ key: k, text: that._colText(F[k]), additionalText: k }); }) }),
 				oMethod = new Select({ width: "100%" }),
 				oLevels = new Input({ width: "100%", textDirection: "LTR" }),
 				oLvLabel = new Label({ text: this.text("mr.cmp.levelsIn") }),
@@ -299,8 +335,9 @@ sap.ui.define([
 
 		/* ---------- blocking rules: which pairs Splink scores at all ---------- */
 		onAddBlk: function () {
-			var that = this, m = this._model(), F = this._src.fields,
-				oFields = new MultiComboBox({ width: "100%", items: (this._src.domainFields[m.domain] || []).map(function (k) { return new Item({ key: k, text: that._t(F[k]) }); }) });
+			var that = this, m = this._model(),
+				oFields = new MultiComboBox({ width: "100%", showSecondaryValues: true,
+					items: this._cols(m).map(function (c) { return new ListItem({ key: c.col, text: that._colText(c), additionalText: c.col }); }) });
 			var oDlg = new Dialog({
 				title: this.text("mr.blk.addTitle", [this._t(m)]), contentWidth: "28rem",
 				content: [new SimpleForm({ editable: true, layout: "ResponsiveGridLayout", labelSpanM: 12, labelSpanL: 12, columnsL: 1, columnsM: 1, content: [

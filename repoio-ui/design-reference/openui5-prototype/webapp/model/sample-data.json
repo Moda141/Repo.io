@@ -3892,8 +3892,8 @@
     "ar": "فحص التكرار (مطابقة)",
     "engine": "Splink",
     "fields": [],
-    "descEn": "Scores the request against the chosen source; candidates above the threshold fail the check",
-    "descAr": "يقارن الطلب بالمصدر المختار؛ أي مرشح فوق الحد يُفشل الفحص"
+    "descEn": "Runs a match model from Models & rules: Splink match rules and the duplicate checks (phone numbers on golden records or in open change requests). A match stops the request.",
+    "descAr": "بيشغّل موديل مطابقة من النماذج والقواعد: قواعد مطابقة Splink وفحوصات التكرار (الأرقام على السجلات الذهبية أو في طلبات التغيير المفتوحة). أي تطابق بيوقف الطلب."
    }
   ],
   "codes": {
