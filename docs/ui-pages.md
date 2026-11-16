@@ -121,8 +121,9 @@
        modules per domain: entity schema authoring (against
        `repoio-spec`), model versions, match rules, survivorship rules.
        Domain management links a model to its domain; this page owns the
-       model itself. Match rules are per customer type (the type is set
-       in the template) and compare several fields with Splink; the
+       model itself. The steward creates match models (one domain each)
+       and defines their rules; a template chooses its model. Match
+       rules compare several fields with Splink; the
        change request duplicate check stops a request on a phone number
        already on a golden record or in another open request, or on a
        similar customer above the threshold. [J5]

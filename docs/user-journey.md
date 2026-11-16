@@ -197,10 +197,13 @@ history (unmerge is a governed change, not an undo button).
 
 **Match rules and the duplicate check (Models & rules).**
 
-1. The Data Steward opens **Models & rules** and picks a customer type
-   (teacher or supervisor, bookstore, call center, student, charity
-   student). The customer type is set in the template, so a change
-   request uses the match rules of its template's customer type.
+1. The Data Steward opens **Models & rules** and creates a match model
+   (a name, one domain, a description; blank or copied from a model of
+   the same domain), then defines its rules inside it. The customer
+   models shipped with the sample (teacher or supervisor, bookstore,
+   call center, student, charity student) come from the current C4C
+   new-customer checks. A template chooses its model, so a change
+   request uses the rules of its template's model.
 2. A match rule is a Splink model over several fields, not the name
    alone: the name with governorate and territories, all phone numbers
    as one list (a number matches whatever field it was typed in), and
@@ -215,8 +218,9 @@ history (unmerge is a governed change, not an undo button).
    national ID is already used. Phone numbers are standardised first
    (+20, 20 and a leading 0 removed). Siblings — same parent name — are
    not duplicates.
-4. Edits are a draft version; the active version keeps running until
-   the draft is approved. A stopped request is released (with a reason,
+4. Edits are a draft version of the model; the active version keeps
+   running until the draft is approved. A model needs at least one
+   comparison and one blocking rule to be submitted. A stopped request is released (with a reason,
    audited) or rejected by a steward in Match detection, never by the
    requester.
 
