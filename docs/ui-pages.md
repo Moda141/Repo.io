@@ -25,6 +25,10 @@
    lineage, relationship links, field-level change history; explicit
    "Request a change" and "Add relationship" entries.
    Golden records are never edited inline. [J2]
+   Prototype: **Golden records management** — a List Report (variant,
+   filter bar, Adapt Filters, Go), the record as an Object Page (anchor
+   bar with sub-sections, provenance on every value) and a column-level
+   lineage page for one customer.
 
 3. **Feeds** — the awareness surface; one page, two tabs:
    **Activity** — an event-driven stream for the domains the user can

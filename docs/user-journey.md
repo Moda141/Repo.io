@@ -128,6 +128,14 @@ the API supports it.
 *Edge cases:* search with no results → suggestions (spellings, filters);
 record under stewardship review → banner showing review state.
 
+*Screens:* the list is a Fiori List Report (variant, filter bar with
+Adapt Filters and Go, records table); the record is a Fiori Object Page
+(header facets, anchor bar with sub-sections, every value linked to its
+winning source and rule); **lineage** is column level — source tables
+(C4C, S/4HANA, files) through ingest, standardise and match to the golden
+table and its consumers (views, change topic, write-back, reports, MCP),
+with this customer's values on the traced columns.
+
 ## J3 — Create a change request from a template
 
 1. User opens **New request** (Dashboard / Inbox) and lands on the
