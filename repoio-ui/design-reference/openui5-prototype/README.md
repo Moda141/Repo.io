@@ -125,6 +125,12 @@ None. No hosts, ports or credentials.
   sap.tnt, sap.f, sap.uxap, sap.ui.layout, sap.ui.table, sap.ui.unified,
   themelib_sap_horizon.
 - `@ui5/cli` 4.0.33 (dev).
+- Noto Sans Arabic 400 / 600 / 700, Arabic subset (SIL OFL 1.1, from `@fontsource/noto-sans-arabic` 5.2.8),
+  vendored in `webapp/thirdparty/fonts/noto-sans-arabic/` with its licence. `css/style.css` adds it to the
+  theme font variables (`--sapFontFamily` and the bold / semibold families) for Arabic characters only, so
+  Latin text stays in SAP 72 and the whole console uses one font stack; IDs and codes use the same font
+  with tabular digits (only code editors use 72Mono). The root size is 15px, one step denser than the
+  browser default.
 - Apache ECharts 5.5.1, vendored in `webapp/thirdparty/` (Apache-2.0, licence
   file alongside).
 - Cytoscape.js 3.30.4, vendored in `webapp/thirdparty/` (MIT, licence file

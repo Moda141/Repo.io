@@ -36,7 +36,12 @@ Horizon (light), the default theme of current SAP Fiori and S/4HANA.
    `--sapGroup_ContentBorderColor`, the semantic colours …) with the old
    values only as fallbacks, so screens follow the theme instead of
    hard-coded Quartz colours.
-4. The published prototype loads the `sap_horizon` theme files
+4. **One font.** Latin text uses the theme font (SAP 72); Arabic
+   characters use Noto Sans Arabic (SIL OFL 1.1, bundled with the app,
+   no font CDN), added to the theme font variables for the Arabic range
+   only. IDs and codes use the same font with tabular digits; only code
+   editors use 72Mono. The console is one step denser (root size 15px).
+5. The published prototype loads the `sap_horizon` theme files
    (`publish/framework-files.txt`), collected from `ui5 serve`.
 
 ## Consequences
