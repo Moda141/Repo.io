@@ -121,14 +121,17 @@
        modules per domain: entity schema authoring (against
        `repoio-spec`), model versions, match rules, survivorship rules.
        Domain management links a model to its domain; this page owns the
-       model itself. The steward creates match models (a domain and one
-       of its repositories; the rules use that repository's columns)
-       and defines their rules; a template chooses its model and a
-       workflow's duplicate check step picks one. Match
-       rules compare several fields with Splink; the
-       change request duplicate check stops a request on a phone number
-       already on a golden record or in another open request, or on a
-       similar customer above the threshold. [J5]
+       model itself. One match model per repository (its rules use
+       that repository's columns), used for consolidation into golden
+       records, the change request check and survivorship. Tabs: Match
+       (shared Splink comparisons, blocking, training and the
+       precision/recall gate), Segments (customer types on
+       `account_type` with their own thresholds), Consolidation
+       (auto-merge / steward review / distinct), Request check (stop or
+       flag the approver; number checks), Survivorship (source
+       priority, rule per column, field groups, DQ gate, steward locks,
+       preview) and Impact test (draft against the active version). A
+       workflow's duplicate check step picks the model. [J5]
 
 5. **Ontology Explorer** — business-concept graph: classes, properties,
    the relationship **type catalog** (including same-entity types:

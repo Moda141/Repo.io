@@ -195,36 +195,64 @@ a role grant question, not a UI shortcut.
 *Edge cases:* records merged in error are recoverable via change
 history (unmerge is a governed change, not an undo button).
 
-**Match rules and the duplicate check (Models & rules).**
+**Match model, consolidation, request check and survivorship (Models & rules).**
 
-1. The Data Steward opens **Models & rules** and creates a match model:
-   a name, the domain, then a repository of that domain, a description;
-   blank or copied from a model on the same repository. The rules use
-   the columns of that repository's model (including the columns the
-   standardise step derives), never free-typed fields. The customer
-   models shipped with the sample (teacher or supervisor, bookstore,
-   call center, student, charity student) come from the current C4C
-   new-customer checks. A template chooses its model, and a workflow's
-   duplicate check step (J7) picks the model it runs.
-2. A match rule is a Splink model over several fields, not the name
-   alone: the name with governorate and territories, all phone numbers
+1. The Data Steward opens **Models & rules**. There is **one match model
+   per repository**: *Create model* takes a name, the domain, then a
+   repository of that domain that has no model yet, and a description.
+   The rules use the columns of that repository's model (including the
+   columns the standardise step derives), never free-typed fields. The
+   one model decides which records are the same entity and is used in
+   three places, so they never disagree: consolidating the repository
+   into golden records, checking change requests, and survivorship.
+2. **Match** (shared): a Splink model over several fields, not the name
+   alone — the name with governorate and territories, all phone numbers
    as one list (a number matches whatever field it was typed in), and
-   the fields of that type (grades and subject, parent name, national
-   ID, linked school or charity). Blocking rules decide which pairs are
-   scored; the steward sets the probability at which a request stops.
-3. **Duplicate check on change requests:** when a request is submitted,
-   it stops ("Stopped: possible duplicate") if any phone number is on a
-   golden record or in another open change request (submitted, in
-   approval or waiting for write-back), if Splink finds a similar
-   customer at or above the threshold, or (charity students) if the
-   national ID is already used. Phone numbers are standardised first
-   (+20, 20 and a leading 0 removed). Siblings — same parent name — are
-   not duplicates.
-4. Edits are a draft version of the model; the active version keeps
-   running until the draft is approved. A model needs at least one
-   comparison and one blocking rule to be submitted. A stopped request is released (with a reason,
-   audited) or rejected by a steward in Match detection, never by the
-   requester.
+   the fields of each customer type (grades and subject, parent name,
+   national ID, linked school or charity). A missing value adds no
+   weight, so a column only counts for the records that have it.
+   Blocking rules decide which pairs are scored. Weights are trained on
+   labelled pairs; a version is approved only when precision and recall
+   on those pairs pass the gate for the whole model and every segment.
+3. **Segments:** customer types (teacher or supervisor, bookstore, call
+   center, student, charity student — from the current C4C new-customer
+   checks) are segments of a code column (`account_type`) inside the
+   model. They share comparisons and training; each can have its own
+   thresholds, whether it matches only its own segment or every
+   segment, and exceptions (siblings: same parent name is not a
+   duplicate). A value belongs to one segment only.
+4. **Consolidation** (repository → golden records, in the M3 pipeline):
+   three bands — auto-merge at or above the upper threshold (can be
+   turned off), steward review in Match detection between the two,
+   distinct below. Steward confirm / reject decisions become labelled
+   pairs for the next training. Unmerge is a governed change request.
+5. **Request check** (change request → golden records, and optionally
+   source records not consolidated yet): the request's account type
+   picks its segment. Similarity at or above the stop threshold stops
+   the request ("Stopped: possible duplicate"); between the flag and
+   stop thresholds it continues with a flag the approver must review.
+   Number checks (phone on a golden record or in another open request,
+   national ID, tax number) are each set to stop or to flag. Phone
+   numbers are standardised first (+20, 20 and a leading 0 removed).
+   A workflow's duplicate check step (J7) picks the model it runs.
+6. **Survivorship:** per column — source priority (ordered list of the
+   repository's sources), most recent, most complete, most frequent, or
+   all values combined (list columns). Field groups (address and
+   territories, phone numbers) survive as one block from one source.
+   Values that failed data quality never win; a steward-locked value
+   wins until a steward unlocks it; a tie-break settles draws. Every
+   field decision writes the source, rule and model version to
+   change_log. A preview shows the result on one golden record.
+7. **Impact test:** the draft next to the active version — sample change
+   requests (stopped / flagged / continues), pairs per consolidation
+   band, and golden records whose values would change. Applying new
+   survivorship to existing golden records is an optional governed
+   backfill job after approval.
+8. Edits are a draft version of the whole model; the active version
+   keeps running until the draft is approved. Submit is blocked when a
+   model has no comparison or blocking rule, or its thresholds overlap.
+   A stopped request is released (with a reason, audited) or rejected
+   by a steward in Match detection, never by the requester.
 
 ## J6 — Author & publish a request template
 
@@ -283,8 +311,8 @@ current entity schema → blocked at save with the schema rule cited.
      *rejected*.
    - **Validation** — a data quality rule (Great Expectations) on the
      template's fields, or a duplicate check (Splink) that runs a match
-     model of the template's domain from Models & rules (its rules and
-     stop threshold) against the chosen source (the domain's golden
+     model of the template's domain from Models & rules (its rules, stop
+     and flag thresholds, segment by account type) against the chosen source (the domain's golden
      records or a source connection); branches *passed* / *failed*.
    - **Script** — choose the language (Python, or read-only SQL) and
      write the code in the step, with the template's field names offered;
