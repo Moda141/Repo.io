@@ -1,7 +1,7 @@
 <title>Repo.io Console</title>
 <style>
 	html, body { height: 100%; }
-	body { margin: 0; background: #f7f7f7; color: #32363a; }
+	body { margin: 0; background: var(--sapBackgroundColor, #f5f6f7); color: var(--sapTextColor, #1d2d3e); }
 	#repoio-root { height: 100%; }
 </style>
 <script>
@@ -16,7 +16,7 @@
 </script>
 <script id="sap-ui-bootstrap"
 	src="resources/sap-ui-custom.js"
-	data-sap-ui-theme="sap_fiori_3"
+	data-sap-ui-theme="sap_horizon"
 	data-sap-ui-libs="sap.m,sap.tnt,sap.f,sap.uxap,sap.ui.layout,sap.ui.table"
 	data-sap-ui-resource-roots='{"repoio.proto": "./"}'
 	data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"

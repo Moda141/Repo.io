@@ -39,7 +39,7 @@
 .sapUiBody .sapMPI .sapMPIBarNegative { background-color: #eda3a3; }
 .sapUiBody .sapMPI .sapMPIBarInformation { background-color: #a9c8ec; }
 .sapUiBody .sapMPI .sapMPIBarNeutral { background-color: #c8ced3; }
-.sapUiBody .sapMPI .sapMPIText { color: #32363a !important; font-weight: normal; }
+.sapUiBody .sapMPI .sapMPIText { color: var(--sapTextColor, #32363a) !important; font-weight: normal; }
 .sapUiBody .sapMPI .sapMPIBarRemaining { background: transparent; }
 
 /* Lineage (LineageGraph control) — Datasphere "Impact and Lineage" style */
@@ -75,7 +75,7 @@
 .repoioPerson { display: inline-flex; align-items: center; vertical-align: middle; }
 
 /* Home hero banner (Datasphere Home): image on top, brief and action below. */
-.repoioHero { background: #fff; border-radius: 0.75rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.06); overflow: hidden; margin-block: 1rem 0.75rem; }
+.repoioHero { background: var(--sapGroup_ContentBackground, #fff); border-radius: 0.75rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.06); overflow: hidden; margin-block: 1rem 0.75rem; }
 .repoioHeroImg img, img.repoioHeroImg { display: block; width: 100%; height: auto; }
 .repoioHeroBody { padding: 1rem 1.25rem 1.25rem; gap: 0.5rem 2rem; }
 .repoioHeroText { max-width: 52rem; }
@@ -87,7 +87,7 @@
 .repoioWelcomeCard { padding: 1.25rem 1.5rem; }
 .repoioStep { margin-bottom: 0.875rem; }
 .repoioStep .repoioStepNo { flex: none; width: 1.75rem; height: 1.75rem; line-height: 1.75rem; border-radius: 50%; text-align: center;
-	background: #eaf2fb; color: #0a6ed1; font-weight: bold; margin-inline-end: 0.75rem; }
+	background: #eaf2fb; color: var(--sapBrandColor, #0a6ed1); font-weight: bold; margin-inline-end: 0.75rem; }
 .repoioRecent .sapMSLIIcon, .repoioRecent .sapMSLIImgIcon { font-size: 1.375rem !important; width: 2rem !important; height: 2rem !important; line-height: 2rem !important; min-width: 2rem !important; }
 
 /* Domains as SAP Datasphere Catalog: dark search header, tabs, asset cards. */
@@ -106,12 +106,12 @@
 .repoioCatHero .repoioCatHeroText { color: #fff; opacity: 0.9; margin: 0.5rem 0 1.25rem; }
 .repoioCatSearch { max-width: 40rem; }
 .repoioCatSearch .repoioCatScope { margin-inline-end: 0; }
-.repoioCatTabs .sapMITH { box-shadow: inset 0 -1px 0 #e5e5e5; }
+.repoioCatTabs .sapMITH { box-shadow: inset 0 -1px 0 var(--sapGroup_ContentBorderColor, #e5e5e5); }
 .repoioCatBar { margin-top: 0.25rem; }
 .repoioCatBody { gap: 1rem; padding-bottom: 1rem; }
 .repoioCatOwner { padding: 0.5rem 1rem 0; }
 .repoioCatCardBody { height: 13rem; overflow: hidden; }
-.repoioCatFacets { background: #fff; border-radius: 0.5rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.06); padding: 0.75rem 0.5rem; flex: none; }
+.repoioCatFacets { background: var(--sapGroup_ContentBackground, #fff); border-radius: 0.5rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.06); padding: 0.75rem 0.5rem; flex: none; }
 .repoioCatFacet { padding: 0.25rem 0.5rem 0.5rem; border-bottom: 1px solid #eee; margin-bottom: 0.5rem; }
 .repoioCatFacet:last-child { border-bottom: none; margin-bottom: 0; }
 
@@ -119,10 +119,10 @@
 .repoioCatCardTop { border-bottom: 1px solid #eee; padding: 0.125rem 0.25rem; }
 .repoioCatCardMain { padding: 0.875rem 1rem 0.25rem; }
 .repoioCatCardMain .repoioCatIcon { margin-inline-end: 0.625rem; margin-top: 0.125rem; flex: none; }
-.repoioCatDesc { padding: 0 1rem; color: #32363a; font-size: 0.8125rem; }
+.repoioCatDesc { padding: 0 1rem; color: var(--sapTextColor, #32363a); font-size: 0.8125rem; }
 .repoioCatCardFoot { margin-top: auto; border-top: 1px solid #eee; padding: 0.125rem 0.25rem 0.125rem 1rem; }
-.repoioCatStar .sapMBtnIcon { color: #6a6d70; }
-.repoioCatStar .sapUiIcon[data-sap-ui-icon-content=""] { color: #e9730c; }
+.repoioCatStar .sapMBtnIcon { color: var(--sapContent_LabelColor, #6a6d70); }
+.repoioCatStar .sapUiIcon[data-sap-ui-icon-content=""] { color: var(--sapCriticalColor, #e9730c); }
 /* Hero: the whole image is shown; brief sits beside it on wide screens, below it on narrow ones. */
 .repoioHero.sapMFlexBox { display: grid; grid-template-columns: minmax(0, 3fr) minmax(16rem, 2fr); align-items: stretch; }
 .repoioHero .repoioHeroBody { padding: 1.5rem 1.75rem; }
@@ -134,37 +134,22 @@
 	.sapTntToolHeader .repoioNavSearch { position: absolute; left: 50%; transform: translateX(-50%); margin: 0; }
 }
 
-/* Shell header (navigation bar): black. */
-.sapUiBody .sapTntToolPage .sapTntToolHeader, .sapUiBody .sapTntToolPageHeader, .sapUiBody .sapTntToolPageHeaderWrapper { background: #0d0d0d !important; border-bottom-color: #000 !important; }
-.sapTntToolHeader .sapMSF:not(.sapMFocus) .sapMSFF { background-color: #1f1f1f; border-color: #5a5a5a; }
-
-/* Side navigation: SAP shell blue (#354a5f, as in Datasphere). */
-.sapUiBody .sapTntToolPage .sapTntToolPageAside, .sapUiBody .sapTntToolPageAsideContent,
-.sapUiBody .sapTntSideNavigation, .sapUiBody .sapTntSideNavigation .sapTntNL, .sapUiBody .sapTntSideNavigationFlexible,
-.sapUiBody .sapTntSideNavigationFixed { background: #354a5f !important; border-color: #2b3d4f !important; box-shadow: none !important; }
-.sapUiBody .sapTntSideNavigation .sapTntNLI, .sapUiBody .sapTntSideNavigation .sapTntNLI a, .sapUiBody .sapTntSideNavigation .sapTntNLIText,
-.sapUiBody .sapTntSideNavigation .sapTntNLIIcon, .sapUiBody .sapTntSideNavigation .sapTntNLIExpandIcon, .sapUiBody .sapTntSideNavigation .sapUiIcon { color: #e3e8ec !important; }
-.sapUiBody .sapTntSideNavigation .sapTntNLI:not(.sapTntNLISelected) { background: transparent !important; }
-.sapUiBody .sapTntSideNavigation .sapTntNLI:not(.sapTntNLISelected):hover { background: #2b3d4f !important; }
-.sapUiBody .sapTntSideNavigation .sapTntNLISelected { background: #4b6278 !important; }
-.sapUiBody .sapTntSideNavigation .sapTntNLISelected .sapTntNLIText, .sapUiBody .sapTntSideNavigation .sapTntNLISelected .sapUiIcon { color: #fff !important; }
-.sapUiBody .sapTntSideNavigation .sapTntNLISelected::after, .sapUiBody .sapTntSideNavigation .sapTntNLISelected .sapTntNLIItem::after { border-color: #fff !important; }
-.sapUiBody .sapTntSideNavigation .sapTntNLGroup, .sapUiBody .sapTntSideNavigation .sapTntNLIGroup, .sapUiBody .sapTntSideNavigation .sapTntNLSeparator { border-color: #4b6278 !important; }
+/* Shell header and side navigation use the Morning Horizon look as shipped (ADR-0010). */
 
 /* Connections (Datasphere): logo in the table, create dialog with filters + type tiles. */
 .repoioConnLogo { margin-inline-end: 0.5rem; object-fit: contain; }
 .repoioConnDialog .sapMDialogSection { padding: 0; }
 .repoioConnWizard .sapMWizardStep { padding: 0; }
 .repoioConnStep1 { height: 100%; }
-.repoioConnFilters { background: #fff; border-inline-end: 1px solid #e5e5e5; flex: none; }
-.repoioConnFiltersHead { padding: 0.25rem 0.75rem; border-bottom: 1px solid #e5e5e5; }
+.repoioConnFilters { background: var(--sapGroup_ContentBackground, #fff); border-inline-end: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); flex: none; }
+.repoioConnFiltersHead { padding: 0.25rem 0.75rem; border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
 .repoioConnFacet.sapMPanel { margin: 0.5rem; border-radius: 0.5rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.05); }
-.repoioConnTypes { padding: 0 1rem; background: #f7f7f7; }
+.repoioConnTypes { padding: 0 1rem; background: var(--sapBackgroundColor, #f7f7f7); }
 .repoioTypeGrid .sapFGLI { border-radius: 0.75rem; }
 .repoioTypeTile { padding: 0.75rem 0.875rem; }
-.repoioTypeGrid .sapFGLI.sapMLIBSelected { box-shadow: 0 0 0 2px #0a6ed1; }
+.repoioTypeGrid .sapFGLI.sapMLIBSelected { box-shadow: 0 0 0 2px var(--sapBrandColor, #0a6ed1); }
 .repoioConnProps { padding: 1rem 1.5rem; }
-.repoioFieldHint.sapMText { font-size: 0.75rem; color: #6a6d70; }
+.repoioFieldHint.sapMText { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioConnWizard .sapMWizardStepTitle { display: none; }
 .repoioConnProps .sapUiForm { max-width: 46rem; }
 .repoioConnFacet .sapMPanelHdr { font-size: 0.875rem; font-weight: bold; }
@@ -173,45 +158,45 @@
 /* Type tiles: fixed Datasphere tile size (no stretching when the filter leaves few types). */
 .repoioTypeGrid .sapUiLayoutCSSGridBoxLayoutContainer { grid-template-columns: repeat(auto-fill, 10.5rem) !important; gap: 1rem !important; padding: 0.25rem 0.125rem 1rem; }
 .repoioTypeGrid.sapMList { background: transparent; }
-.repoioTypeGrid .sapFGLI { width: 10.5rem; height: 10rem; border: none; box-shadow: 0 0 0.125rem rgba(0,0,0,0.12), 0 0.125rem 0.5rem rgba(0,0,0,0.08); background: #fff; }
+.repoioTypeGrid .sapFGLI { width: 10.5rem; height: 10rem; border: none; box-shadow: 0 0 0.125rem rgba(0,0,0,0.12), 0 0.125rem 0.5rem rgba(0,0,0,0.08); background: var(--sapGroup_ContentBackground, #fff); }
 .repoioTypeGrid .sapFGLI:hover { box-shadow: 0 0 0.125rem rgba(0,0,0,0.15), 0 0.375rem 1rem rgba(0,0,0,0.12); }
-.repoioTypeGrid .sapFGLI.sapMLIBSelected { background: #fff; box-shadow: 0 0 0 0.125rem #0a6ed1; }
+.repoioTypeGrid .sapFGLI.sapMLIBSelected { background: var(--sapGroup_ContentBackground, #fff); box-shadow: 0 0 0 0.125rem var(--sapBrandColor, #0a6ed1); }
 .repoioTypeTile .sapMTitle { font-size: 0.875rem; line-height: 1.25rem; }
 .repoioConnTypes .sapMTB { padding-inline: 0; }
 
 /* ---------- Ontology Explorer (SAP Datasphere Graph Builder layout) ---------- */
 .repoioOntoPage .sapMPageEnableScrolling, .repoioOntoPage section { height: 100%; }
-.repoioOnto { display: flex; flex-direction: column; height: 100%; background: #fff; }
-.repoioOntoHeader { flex: none; border-bottom: 1px solid #e5e5e5; background: #fff; padding-inline: 1rem; }
-.repoioOntoHeaderIcon { color: #0a6ed1; font-size: 1.25rem; margin-inline-end: 0.25rem; }
+.repoioOnto { display: flex; flex-direction: column; height: 100%; background: var(--sapGroup_ContentBackground, #fff); }
+.repoioOntoHeader { flex: none; border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); background: var(--sapGroup_ContentBackground, #fff); padding-inline: 1rem; }
+.repoioOntoHeaderIcon { color: var(--sapBrandColor, #0a6ed1); font-size: 1.25rem; margin-inline-end: 0.25rem; }
 .repoioOntoStrip { flex: none; margin: 0.5rem 1rem 0; }
 .repoioOntoBody { flex: 1 1 auto; display: flex; min-height: 0; }
-.repoioOntoSide { flex: 0 0 17rem; display: flex; flex-direction: column; min-height: 0; border-inline-end: 1px solid #e5e5e5; background: #fff; }
+.repoioOntoSide { flex: 0 0 17rem; display: flex; flex-direction: column; min-height: 0; border-inline-end: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); background: var(--sapGroup_ContentBackground, #fff); }
 .repoioOntoSide .sapMITH { padding-inline: 0.5rem; }
 .repoioOntoSearch { flex: none; margin: 0.25rem 0.5rem 0.25rem; width: calc(100% - 1rem) !important; }
 .repoioOntoSideScroll { flex: 1 1 auto; min-height: 0; height: auto !important; }
 .repoioOntoTree .sapMTreeItemBase { font-size: 0.8125rem; }
-.repoioOntoTree .sapMLIBIcon, .repoioOntoTypes .sapMLIBIcon { color: #6a6d70; font-size: 0.875rem; }
-.repoioOntoCanvas { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; min-height: 0; background: #fff; }
+.repoioOntoTree .sapMLIBIcon, .repoioOntoTypes .sapMLIBIcon { color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.875rem; }
+.repoioOntoCanvas { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--sapGroup_ContentBackground, #fff); }
 .repoioOntoGraphBar { flex: none; border-bottom: 1px solid #eeeeee; }
 .repoioOntoGraph { flex: 1 1 auto; min-height: 0; height: auto !important; }
 .repoioGraph { position: relative; width: 100%; outline: none; background:
 	radial-gradient(circle, #e6e9ec 1px, transparent 1px) 0 0 / 1.25rem 1.25rem, #fbfbfb; }
-.repoioGraph:focus-visible { box-shadow: inset 0 0 0 0.125rem #0a6ed1; }
+.repoioGraph:focus-visible { box-shadow: inset 0 0 0 0.125rem var(--sapBrandColor, #0a6ed1); }
 .repoioOntoLegend { flex: none; display: flex; gap: 0.25rem 1rem; padding: 0.375rem 1rem; border-top: 1px solid #eeeeee; font-size: 0.75rem; }
 .repoioLegItem { display: flex; align-items: center; gap: 0.375rem; }
-.repoioLegItem .sapMText { font-size: 0.75rem; color: #6a6d70; }
+.repoioLegItem .sapMText { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioDot { display: inline-block; width: 0.75rem; height: 0.75rem; border-radius: 50%; border: 1px solid; }
 .repoioDotMaster { background: #d6e9f8; border-color: #9cc5ea; }
-.repoioDotAbstract { background: #fff; border: 1px dashed #6a8bad; }
+.repoioDotAbstract { background: var(--sapGroup_ContentBackground, #fff); border: 1px dashed #6a8bad; }
 .repoioDotGov { background: #dfe6ee; border-color: #a9b6c4; }
 .repoioDotAsset { background: #e3efe8; border-color: #a8c8b4; }
 .repoioDotBiz { background: #f3ece0; border-color: #d2bf9c; }
-.repoioDotDraft { background: #fff; border: 1.5px dashed #e9730c; }
+.repoioDotDraft { background: var(--sapGroup_ContentBackground, #fff); border: 1.5px dashed var(--sapCriticalColor, #e9730c); }
 .repoioLine { display: inline-block; width: 1.25rem; height: 0; border-top: 2px solid #7fa7d4; }
 .repoioLineSys { border-top: 2px dotted #8a9aaa; }
 .repoioLineSub { border-top: 2px dashed #c3c9cf; }
-.repoioOntoDetail { flex: 0 0 22rem; display: flex; flex-direction: column; min-height: 0; border-inline-start: 1px solid #d9d9d9; background: #fff;
+.repoioOntoDetail { flex: 0 0 22rem; display: flex; flex-direction: column; min-height: 0; border-inline-start: 1px solid var(--sapList_BorderColor, #d9d9d9); background: var(--sapGroup_ContentBackground, #fff);
 	box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.06); }
 .repoioOntoDetailHead { flex: none; display: flex; gap: 0.5rem; height: 2.5rem; padding-inline: 0.75rem 0.25rem; background: #427cac; }
 .repoioOntoDetailKind.sapMText { color: #fff; font-weight: bold; flex: 1; }
@@ -224,9 +209,9 @@
 .repoioMono textarea { direction: ltr; text-align: left; }
 .repoioTtl textarea { white-space: pre; font-size: 0.75rem; }
 .repoioOntoLinkRow { gap: 0.625rem; padding: 0.375rem 0; }
-.repoioOntoLinkIcon { color: #6a6d70; }
+.repoioOntoLinkIcon { color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioOntoPair { gap: 0.25rem; }
-.repoioHint.sapMText { color: #6a6d70; font-size: 0.75rem; }
+.repoioHint.sapMText { color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.75rem; }
 @media (max-width: 1100px) {
 	.repoioOntoSide { flex-basis: 14rem; }
 	.repoioOntoDetail { flex-basis: 19rem; }
@@ -237,36 +222,36 @@
 }
 /* Calm pressed state for the graph's show/hide toggles (no solid blue blocks). */
 .repoioOntoGraphBar .sapMBtnInner.sapMToggleBtnPressed,
-.repoioOntoGraphBar .sapMBtn:hover > .sapMBtnInner.sapMToggleBtnPressed { background: #e5f0fa !important; border-color: #bcd6f0 !important; color: #0a6ed1 !important; text-shadow: none; }
+.repoioOntoGraphBar .sapMBtn:hover > .sapMBtnInner.sapMToggleBtnPressed { background: #e5f0fa !important; border-color: #bcd6f0 !important; color: var(--sapBrandColor, #0a6ed1) !important; text-shadow: none; }
 .repoioOntoGraphBar .sapMBtnInner.sapMToggleBtnPressed .sapMBtnIcon,
-.repoioOntoGraphBar .sapMBtnInner.sapMToggleBtnPressed .sapMBtnContent { color: #0a6ed1 !important; }
+.repoioOntoGraphBar .sapMBtnInner.sapMToggleBtnPressed .sapMBtnContent { color: var(--sapBrandColor, #0a6ed1) !important; }
 .repoioOntoTree .sapMLIB.sapMTreeItemBase { min-height: 2.25rem; height: 2.25rem; }
 /* Ontology: records mode */
 .repoioOntoCrumbBar { flex: none; display: flex; gap: 0.5rem; padding: 0.375rem 1rem; background: #f5f8fb; border-bottom: 1px solid #e5ecf3; }
-.repoioOntoCrumbText.sapMText { font-weight: bold; color: #32363a; }
+.repoioOntoCrumbText.sapMText { font-weight: bold; color: var(--sapTextColor, #32363a); }
 .repoioOntoCrumbCount { margin-inline-start: auto; }
 .repoioOntoTableScroll { flex: 1 1 auto; min-height: 0; height: auto !important; }
 .repoioSq { display: inline-block; width: 0.875rem; height: 0.625rem; border-radius: 0.1875rem; border: 1px solid; }
 .repoioSqCus { background: #d6e9f8; border-color: #7fa7d4; }
 .repoioSqVen { background: #f3ece0; border-color: #c9b48d; }
 .repoioSqPro { background: #e3efe8; border-color: #93bba2; }
-.repoioLinePending { border-top: 2px dashed #e9730c; }
+.repoioLinePending { border-top: 2px dashed var(--sapCriticalColor, #e9730c); }
 .repoioOntoAttrList .sapMDLI { padding-inline: 0; height: 2rem; }
 .repoioOntoAttrList .sapMDLILabel { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 0.8125rem; }
 /* CSV / Excel import (Datasphere "Import CSV File") */
 .repoioImp .repoioImpOpt { margin-inline-end: 1.5rem; margin-block: 0.25rem; gap: 0.375rem; }
 .repoioImpLbl.sapMLabel { margin-inline-end: 0.25rem; }
-.repoioImpScroll { border: 1px solid #d9d9d9; border-radius: 0.25rem; margin-top: 0.25rem; background: #fff; }
-.repoioImpTable .sapMListTblHeaderCell { vertical-align: top; background: #f7f7f7; padding: 0.375rem 0.375rem; }
+.repoioImpScroll { border: 1px solid var(--sapList_BorderColor, #d9d9d9); border-radius: 0.25rem; margin-top: 0.25rem; background: var(--sapGroup_ContentBackground, #fff); }
+.repoioImpTable .sapMListTblHeaderCell { vertical-align: top; background: var(--sapBackgroundColor, #f7f7f7); padding: 0.375rem 0.375rem; }
 .repoioImpHead { gap: 0.375rem; }
-.repoioImpSrc .sapMInputBaseContentWrapper { background: #f7f7f7 !important; border-color: #e5e5e5 !important; }
-.repoioImpSrc input { color: #6a6d70 !important; }
+.repoioImpSrc .sapMInputBaseContentWrapper { background: var(--sapBackgroundColor, #f7f7f7) !important; border-color: var(--sapGroup_ContentBorderColor, #e5e5e5) !important; }
+.repoioImpSrc input { color: var(--sapContent_LabelColor, #6a6d70) !important; }
 .repoioImpTable .sapMListTblCell { border-inline-end: 1px solid #ededed; }
 .repoioImpTable .sapMText { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ---------- New workflow: Repo.io flow designer (ADR-0002) ---------- */
 .repoioWfSlash.sapMText { color: #8396a8; margin-inline: 0.25rem; }
-.repoioWfTitleLink.sapMLnk { font-size: 1rem; font-weight: bold; color: #32363a; }
+.repoioWfTitleLink.sapMLnk { font-size: 1rem; font-weight: bold; color: var(--sapTextColor, #32363a); }
 .repoioWfCanvas { flex: 1 1 auto; min-width: 0; min-height: 0; }
 .repoioFlow { position: relative; overflow: hidden; height: 100%; outline: none; user-select: none; cursor: grab;
 	background: radial-gradient(circle, #dfe3e8 1px, transparent 1px) 0 0 / 1rem 1rem, #f7f8fa; }
@@ -279,13 +264,13 @@
 .rfPort { position: absolute; transform: translate(-50%, -50%); font: 600 0.6875rem/1.4 "72", Arial, sans-serif; color: #2b7c4f; background: #eef7f1;
 	border: 1px solid #c9e4d3; border-radius: 0.625rem; padding: 0 0.4375rem; white-space: nowrap; pointer-events: none; }
 .rfPort.rfNeg { color: #a33; background: #fbefef; border-color: #efcfcf; }
-.rfPlus { position: absolute; width: 1.375rem; height: 1.375rem; margin: -0.6875rem 0 0 -0.6875rem; border-radius: 50%; border: 1px solid #c3cbd4; background: #fff;
+.rfPlus { position: absolute; width: 1.375rem; height: 1.375rem; margin: -0.6875rem 0 0 -0.6875rem; border-radius: 50%; border: 1px solid #c3cbd4; background: var(--sapGroup_ContentBackground, #fff);
 	color: #556b82; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; font-size: 0.625rem;
 	box-shadow: 0 1px 2px rgba(0,0,0,0.08); transition: transform 0.12s, border-color 0.12s, color 0.12s; }
-.rfPlus:hover, .rfPlus:focus-visible { transform: scale(1.18); border-color: #0a6ed1; color: #0a6ed1; outline: none; }
-.rfNode { position: absolute; box-sizing: border-box; cursor: pointer; font-family: "72", Arial, sans-serif; color: #32363a; }
-.rfNode:focus-visible { outline: 2px solid #0a6ed1; outline-offset: 2px; }
-.rfCard { background: #fff; border: 1px solid #e1e5ea; border-radius: 0.625rem; box-shadow: 0 1px 3px rgba(16,24,40,0.06), 0 1px 2px rgba(16,24,40,0.04);
+.rfPlus:hover, .rfPlus:focus-visible { transform: scale(1.18); border-color: var(--sapBrandColor, #0a6ed1); color: var(--sapBrandColor, #0a6ed1); outline: none; }
+.rfNode { position: absolute; box-sizing: border-box; cursor: pointer; font-family: "72", Arial, sans-serif; color: var(--sapTextColor, #32363a); }
+.rfNode:focus-visible { outline: 2px solid var(--sapBrandColor, #0a6ed1); outline-offset: 2px; }
+.rfCard { background: var(--sapGroup_ContentBackground, #fff); border: 1px solid #e1e5ea; border-radius: 0.625rem; box-shadow: 0 1px 3px rgba(16,24,40,0.06), 0 1px 2px rgba(16,24,40,0.04);
 	overflow: hidden; display: flex; flex-direction: column; transition: box-shadow 0.12s, border-color 0.12s; }
 .rfCard:hover { box-shadow: 0 4px 12px rgba(16,24,40,0.08); }
 .rfNode.rfSel { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.18); }
@@ -295,8 +280,8 @@
 .rfIcon { flex: none; width: 1.75rem; height: 1.75rem; border-radius: 0.4375rem; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; }
 .rfTitles { min-width: 0; flex: 1; }
 .rfTitle { font-weight: bold; font-size: 0.8125rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rfSub { font-size: 0.6875rem; color: #6a6d70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.0625rem; }
-.rfWarn { flex: none; width: 1rem; height: 1rem; border-radius: 50%; background: #bb0000; color: #fff; font: bold 0.6875rem/1rem Arial; text-align: center; }
+.rfSub { font-size: 0.6875rem; color: var(--sapContent_LabelColor, #6a6d70); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.0625rem; }
+.rfWarn { flex: none; width: 1rem; height: 1rem; border-radius: 50%; background: var(--sapNegativeColor, #bb0000); color: #fff; font: bold 0.6875rem/1rem Arial; text-align: center; }
 .rfOk { flex: none; color: #2b7c4f; font-size: 0.75rem; opacity: 0.8; }
 .rfBody { padding: 0 0.75rem 0.625rem; font-size: 0.6875rem; overflow: hidden; flex: 1; }
 .rfLine { display: flex; gap: 0.375rem; line-height: 1.45; }
@@ -309,7 +294,7 @@
 .rfT-begin.rfPill { background: #eaf6ee; border-color: #9fd2b2; color: #1f6b3f; }
 .rfT-end.rfPill { background: #f1f3f5; border-color: #c9d0d7; color: #475e75; }
 .rfT-end.rfO-rejected { background: #fbefef; border-color: #e9b9b9; color: #a33; }
-.rfT-end.rfO-cancelled { background: #f6f6f6; border-color: #d5d5d5; color: #6a6d70; }
+.rfT-end.rfO-cancelled { background: #f6f6f6; border-color: #d5d5d5; color: var(--sapContent_LabelColor, #6a6d70); }
 .rfGlyph { font-size: inherit; line-height: 1; }
 /* node accents (icon tile), calm tints */
 .rfT-template .rfIcon { background: #e8f1fb; color: #2f6aa3; }
@@ -320,7 +305,7 @@
 .rfT-writeBack .rfIcon { background: #fbede4; color: #a5521a; }
 .rfT-condition .rfIcon { background: #eef1f4; color: #475e75; }
 /* zoom bar */
-.rfZoom { position: absolute; inset-inline-start: 0.75rem; bottom: 0.75rem; display: flex; align-items: center; gap: 0.125rem; background: #fff;
+.rfZoom { position: absolute; inset-inline-start: 0.75rem; bottom: 0.75rem; display: flex; align-items: center; gap: 0.125rem; background: var(--sapGroup_ContentBackground, #fff);
 	border: 1px solid #e1e5ea; border-radius: 0.5rem; padding: 0.125rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06); cursor: default; }
 .rfZBtn { width: 1.75rem; height: 1.75rem; border: none; background: transparent; color: #475e75; border-radius: 0.375rem; cursor: pointer; font-size: 0.75rem;
 	display: flex; align-items: center; justify-content: center; }
@@ -345,17 +330,17 @@
 .repoioWfChip.sapMBtn .sapMBtnInner { height: 1.5rem; min-height: 1.5rem; border: 1px solid #d9dee4 !important; border-radius: 0.75rem; padding: 0 0.5rem; background: #f7f8fa; }
 .repoioWfChip.sapMBtn .sapMBtnContent { font-size: 0.75rem; line-height: 1.375rem; font-family: SFMono-Regular, Consolas, monospace; }
 .repoioFlowMenu .sapMLIBIcon { color: #475e75; }
-.repoioCode { border: 1px solid #d9dee4; border-radius: 0.375rem; overflow: hidden; background: #fff; direction: ltr; text-align: left; }
-.repoioCode .cm-editor.cm-focused { outline: 2px solid #0a6ed1; outline-offset: -1px; }
+.repoioCode { border: 1px solid #d9dee4; border-radius: 0.375rem; overflow: hidden; background: var(--sapGroup_ContentBackground, #fff); direction: ltr; text-align: left; }
+.repoioCode .cm-editor.cm-focused { outline: 2px solid var(--sapBrandColor, #0a6ed1); outline-offset: -1px; }
 /* field mapper (Datasphere mapping) */
-.repoioMapper { font-family: "72", Arial, sans-serif; color: #32363a; }
+.repoioMapper { font-family: "72", Arial, sans-serif; color: var(--sapTextColor, #32363a); }
 .fmBar { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
 .fmSegs { display: inline-flex; border: 1px solid #89919a; border-radius: 0.25rem; overflow: hidden; }
-.fmSeg { border: none; background: #fff; padding: 0.375rem 1.25rem; font: 0.875rem "72", Arial, sans-serif; color: #32363a; cursor: pointer; }
+.fmSeg { border: none; background: var(--sapGroup_ContentBackground, #fff); padding: 0.375rem 1.25rem; font: 0.875rem "72", Arial, sans-serif; color: var(--sapTextColor, #32363a); cursor: pointer; }
 .fmSeg + .fmSeg { border-inline-start: 1px solid #89919a; }
 .fmSeg.fmOn { background: #346187; color: #fff; }
-.fmCount { color: #6a6d70; font-size: 0.8125rem; }
-.fmAuto { margin-inline-start: auto; border: 1px solid #0a6ed1; color: #0a6ed1; background: #fff; border-radius: 0.25rem; padding: 0.25rem 0.75rem; cursor: pointer;
+.fmCount { color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.8125rem; }
+.fmAuto { margin-inline-start: auto; border: 1px solid var(--sapBrandColor, #0a6ed1); color: var(--sapBrandColor, #0a6ed1); background: var(--sapGroup_ContentBackground, #fff); border-radius: 0.25rem; padding: 0.25rem 0.75rem; cursor: pointer;
 	font: 0.8125rem "72", Arial, sans-serif; display: inline-flex; gap: 0.375rem; align-items: center; }
 .fmCols { position: relative; display: flex; align-items: flex-start; }
 .fmSvg { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; z-index: 1; }
@@ -364,18 +349,18 @@
 .fmCol { flex: 1 1 0; min-width: 0; }
 .fmGap { flex: 0 0 6rem; align-self: stretch; }
 .fmCol-src { border-inline-end: 0.5rem solid #b3b9bf; border-radius: 0.25rem; padding-inline-end: 0.25rem; }
-.fmColHead { display: flex; align-items: center; gap: 0.5rem; font-weight: bold; margin-bottom: 0.5rem; color: #32363a; }
+.fmColHead { display: flex; align-items: center; gap: 0.5rem; font-weight: bold; margin-bottom: 0.5rem; color: var(--sapTextColor, #32363a); }
 .fmColTitle { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fmCol-tgt .fmColTitle { color: #0a6ed1; }
+.fmCol-tgt .fmColTitle { color: var(--sapBrandColor, #0a6ed1); }
 .fmSearch { position: relative; margin-bottom: 0.5rem; }
 .fmSearch input { width: 100%; box-sizing: border-box; border: 1px solid #89919a; border-radius: 0.25rem; padding: 0.375rem 2rem 0.375rem 0.5rem; font: 0.875rem "72", Arial, sans-serif; }
-.fmSearch .fmGlyph { position: absolute; inset-inline-end: 0.5rem; top: 50%; transform: translateY(-50%); color: #0a6ed1; }
+.fmSearch .fmGlyph { position: absolute; inset-inline-end: 0.5rem; top: 50%; transform: translateY(-50%); color: var(--sapBrandColor, #0a6ed1); }
 [dir=rtl] .fmSearch input { padding: 0.375rem 0.5rem 0.375rem 2rem; }
-.fmItem { display: flex; align-items: center; gap: 0.375rem; border: 1px solid #d9d9d9; background: #f7f7f7; border-radius: 0.125rem; padding: 0.4375rem 0.5rem;
+.fmItem { display: flex; align-items: center; gap: 0.375rem; border: 1px solid var(--sapList_BorderColor, #d9d9d9); background: var(--sapBackgroundColor, #f7f7f7); border-radius: 0.125rem; padding: 0.4375rem 0.5rem;
 	margin-bottom: 0.25rem; font-size: 0.875rem; color: #346187; cursor: pointer; position: relative; z-index: 2; }
 .fmItem:hover, .fmItem:focus-visible { background: #eef4fa; outline: none; border-color: #9cc5ea; }
-.fmItem.fmPick { border-color: #0a6ed1; box-shadow: 0 0 0 2px rgba(10,110,209,0.2); background: #eef4fa; }
-.fmItem.fmOver { border-color: #0a6ed1; background: #e5f0fa; }
+.fmItem.fmPick { border-color: var(--sapBrandColor, #0a6ed1); box-shadow: 0 0 0 2px rgba(10,110,209,0.2); background: #eef4fa; }
+.fmItem.fmOver { border-color: var(--sapBrandColor, #0a6ed1); background: #e5f0fa; }
 .fmItem[draggable=true] { cursor: grab; }
 .fmGrip { color: #8a96a3; font-weight: bold; }
 .fmType { color: #346187; font-size: 0.75rem; font-weight: bold; min-width: 1.5rem; }
@@ -384,8 +369,8 @@
 .fmKey { color: #346187; }
 .fmVm { color: #a96a00; font-size: 0.75rem; }
 .fmUnmap { border: none; background: transparent; color: #8a96a3; cursor: pointer; padding: 0 0.125rem; font-size: 0.6875rem; }
-.fmUnmap:hover { color: #bb0000; }
-.fmHint { margin-top: 0.5rem; color: #6a6d70; font-size: 0.75rem; }
+.fmUnmap:hover { color: var(--sapNegativeColor, #bb0000); }
+.fmHint { margin-top: 0.5rem; color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.75rem; }
 .repoioWfPanel .sapMPanelContent > .sapMLabel, .repoioWfPanel .sapMPanelContent > .sapMText, .repoioWfPanel .sapMPanelContent > .sapMTitle { display: block; }
 /* Write-back selected: wider side panel so the Mapping section fits two columns (like Datasphere's side panel). */
 .repoioWfProps[data-wide="yes"] { flex: 0 0 38rem !important; width: 38rem; max-width: 38rem; }
@@ -394,33 +379,33 @@
 .repoioWfMapPanel .fmItem { font-size: 0.8125rem; padding: 0.375rem 0.4375rem; }
 .repoioWfMapPanel .fmName small { display: none; }
 /* Flow designer overlays: test run, compare, runs; minimap */
-.rfEdge.rfOnPath { stroke: #0a6ed1; stroke-width: 2.5; stroke-dasharray: none; }
-.rfArrow.rfOnPath { fill: #0a6ed1; }
+.rfEdge.rfOnPath { stroke: var(--sapBrandColor, #0a6ed1); stroke-width: 2.5; stroke-dasharray: none; }
+.rfArrow.rfOnPath { fill: var(--sapBrandColor, #0a6ed1); }
 .rfEdge.rfOffPath, .rfArrow.rfOffPath { opacity: 0.25; }
 .rfNode.rfRun-off { opacity: 0.35; }
-.rfNode.rfRun-on { border-color: #0a6ed1; box-shadow: 0 0 0 3px rgba(10,110,209,0.16); }
-.rfNode.rfRun-fail, .rfNode.rfRun-stop { border-color: #e9730c; box-shadow: 0 0 0 3px rgba(233,115,12,0.18); }
+.rfNode.rfRun-on { border-color: var(--sapBrandColor, #0a6ed1); box-shadow: 0 0 0 3px rgba(10,110,209,0.16); }
+.rfNode.rfRun-fail, .rfNode.rfRun-stop { border-color: var(--sapCriticalColor, #e9730c); box-shadow: 0 0 0 3px rgba(233,115,12,0.18); }
 .rfNode.rfDiff-added { border-color: #2b7c4f; box-shadow: 0 0 0 3px rgba(43,124,79,0.18); }
-.rfNode.rfDiff-changed { border-color: #e9730c; box-shadow: 0 0 0 3px rgba(233,115,12,0.16); }
+.rfNode.rfDiff-changed { border-color: var(--sapCriticalColor, #e9730c); box-shadow: 0 0 0 3px rgba(233,115,12,0.16); }
 .rfNode.rfDiff-same { opacity: 0.55; }
 .rfTag { position: absolute; top: -0.625rem; inset-inline-start: 0.625rem; z-index: 1; font: 600 0.625rem/1.5 "72", Arial, sans-serif; padding: 0 0.4375rem;
-	border-radius: 0.5rem; color: #fff; background: #0a6ed1; white-space: nowrap; max-width: 92%; overflow: hidden; text-overflow: ellipsis; }
+	border-radius: 0.5rem; color: #fff; background: var(--sapBrandColor, #0a6ed1); white-space: nowrap; max-width: 92%; overflow: hidden; text-overflow: ellipsis; }
 .rfCard { overflow: visible; }
 .rfCard > .rfBody { overflow: hidden; border-radius: 0 0 0.625rem 0.625rem; }
-.rfTag-ok { background: #2b7c4f; } .rfTag-warn { background: #e9730c; } .rfTag-bad { background: #bb0000; } .rfTag-info { background: #0a6ed1; } .rfTag-muted { background: #8396a8; }
+.rfTag-ok { background: #2b7c4f; } .rfTag-warn { background: var(--sapCriticalColor, #e9730c); } .rfTag-bad { background: var(--sapNegativeColor, #bb0000); } .rfTag-info { background: var(--sapBrandColor, #0a6ed1); } .rfTag-muted { background: #8396a8; }
 .rfStats { position: absolute; bottom: -0.75rem; inset-inline-end: 0.5rem; display: flex; gap: 0.25rem; z-index: 1; }
-.rfStat { font: 600 0.625rem/1.5 "72", Arial, sans-serif; padding: 0 0.375rem; border-radius: 0.5rem; background: #fff; border: 1px solid #c9d0d7; color: #475e75;
+.rfStat { font: 600 0.625rem/1.5 "72", Arial, sans-serif; padding: 0 0.375rem; border-radius: 0.5rem; background: var(--sapGroup_ContentBackground, #fff); border: 1px solid #c9d0d7; color: #475e75;
 	white-space: nowrap; display: inline-flex; gap: 0.1875rem; align-items: center; }
 .rfStat.rfStatBad { border-color: #e9b9b9; color: #a33; background: #fbefef; }
 .rfBadges { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.25rem; }
 .rfBadge { font-size: 0.625rem; padding: 0 0.375rem; border-radius: 0.5rem; background: #eef1f4; color: #475e75; border: 1px solid #dde3e9; white-space: nowrap; }
 .rfMini { position: absolute; bottom: 0.75rem; inset-inline-end: 0.75rem; background: rgba(255,255,255,0.92); border: 1px solid #e1e5ea; border-radius: 0.375rem;
 	box-shadow: 0 1px 3px rgba(0,0,0,0.06); cursor: pointer; padding: 0.25rem; box-sizing: content-box; }
-.rfMiniN { fill: #c9d3dd; } .rfMiniN.rfMiniRun { fill: #0a6ed1; } .rfMiniN.rfMiniBad { fill: #e9a0a0; }
-.rfMiniView { fill: rgba(10,110,209,0.08); stroke: #0a6ed1; stroke-width: 1; }
+.rfMiniN { fill: #c9d3dd; } .rfMiniN.rfMiniRun { fill: var(--sapBrandColor, #0a6ed1); } .rfMiniN.rfMiniBad { fill: #e9a0a0; }
+.rfMiniView { fill: rgba(10,110,209,0.08); stroke: var(--sapBrandColor, #0a6ed1); stroke-width: 1; }
 .fmFx { font: 0.6875rem SFMono-Regular, Consolas, monospace; color: #6d4bb5; background: #f3effc; border: 1px solid #ddd3f5; border-radius: 0.5rem; padding: 0 0.375rem;
 	white-space: nowrap; max-width: 9rem; overflow: hidden; text-overflow: ellipsis; }
-.fmFxBtn { border: 1px solid #c9d0d7; background: #fff; color: #6a6d70; border-radius: 0.25rem; font: italic 600 0.6875rem Georgia, serif; padding: 0 0.3125rem; cursor: pointer; }
+.fmFxBtn { border: 1px solid #c9d0d7; background: var(--sapGroup_ContentBackground, #fff); color: var(--sapContent_LabelColor, #6a6d70); border-radius: 0.25rem; font: italic 600 0.6875rem Georgia, serif; padding: 0 0.3125rem; cursor: pointer; }
 .fmFxBtn:hover, .fmFxBtn.fmFxOn { color: #6d4bb5; border-color: #b9a6ea; }
 /* Flow designer side panel: parallel groups, controls, review banner, test/compare lists */
 .repoioWfGroup { gap: 0.375rem; margin-top: 0.375rem; }
@@ -436,10 +421,10 @@
 .repoioFxPrev { display: block; white-space: pre-wrap; background: #f5f6f7; border-radius: 0.25rem; padding: 0.375rem; }
 .repoioWfMode { margin-inline-end: 0.25rem; }
 /* Ontology: data preview docked under the graph (Datasphere Data Builder style) */
-.repoioOntoPreview { flex: 0 0 38%; min-height: 12rem; display: flex; flex-direction: column; border-top: 1px solid #d9d9d9; background: #fff;
+.repoioOntoPreview { flex: 0 0 38%; min-height: 12rem; display: flex; flex-direction: column; border-top: 1px solid var(--sapList_BorderColor, #d9d9d9); background: var(--sapGroup_ContentBackground, #fff);
 	box-shadow: 0 -2px 4px rgba(0,0,0,0.04); }
-.repoioOntoPreviewHead { flex: none; gap: 0.5rem; padding: 0 0.5rem 0 1rem; height: 2.5rem; border-bottom: 1px solid #e5e5e5; }
-.repoioOntoPreviewTitle { flex: 1 1 auto; color: #0a6ed1; font-size: 0.875rem; padding-bottom: 0.5rem; border-bottom: 2px solid #0a6ed1; margin-top: 0.5rem; max-width: max-content; }
+.repoioOntoPreviewHead { flex: none; gap: 0.5rem; padding: 0 0.5rem 0 1rem; height: 2.5rem; border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
+.repoioOntoPreviewTitle { flex: 1 1 auto; color: var(--sapBrandColor, #0a6ed1); font-size: 0.875rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--sapBrandColor, #0a6ed1); margin-top: 0.5rem; max-width: max-content; }
 .repoioOntoPreviewHead > .sapMBtn { margin-inline-start: auto; }
 .repoioOntoPreview .repoioOntoTableScroll { flex: 1 1 auto; min-height: 0; }
 .repoioLine.repoioLineBundle { border-top: 3px solid #7fa7d4; }
@@ -460,12 +445,12 @@
 }
 /* ---- Ontology explorer: Ontology Studio spirit on Quartz Light ---- */
 .repoioOntoCanvas, .repoioGraph { background: radial-gradient(circle, #dfe3ea 1px, transparent 1px) 0 0 / 1.375rem 1.375rem, #f4f6fa; }
-.repoioOntoGraphBar { background: #fff; }
+.repoioOntoGraphBar { background: var(--sapGroup_ContentBackground, #fff); }
 .repoioOntoStage { flex: 1 1 auto; position: relative; display: flex; flex-direction: column; min-height: 0; }
 .repoioOntoStage .repoioOntoGraph { flex: 1 1 auto; }
 /* Floating control pill at the bottom of the canvas */
 .repoioOntoDock { position: absolute; bottom: 0.875rem; left: 50%; transform: translateX(-50%); z-index: 2; gap: 0.125rem; padding: 0.25rem 0.625rem;
-	background: #fff; border: 1px solid #e3e6ec; border-radius: 0.875rem; box-shadow: 0 4px 14px rgba(17, 24, 39, 0.08); white-space: nowrap; }
+	background: var(--sapGroup_ContentBackground, #fff); border: 1px solid #e3e6ec; border-radius: 0.875rem; box-shadow: 0 4px 14px rgba(17, 24, 39, 0.08); white-space: nowrap; }
 .repoioOntoDockSep { width: 1px; height: 1.25rem; background: #e5e7eb; margin: 0 0.25rem; }
 .repoioOntoDock .repoioOntoDockSeg .sapMSegBBtn { min-width: 2rem; }
 .repoioOntoDock .repoioOntoZoom { padding: 0 0.25rem; }
@@ -487,14 +472,14 @@
 	font-family: "72Mono", "JetBrains Mono", Consolas, monospace; font-size: 0.6875rem; color: #6b7280; }
 .repoioOntoStatus .repoioOntoStatusCheck.sapMLnk { color: #1d9e75; }
 /* Legend keys follow the canvas */
-.repoioOntoLegend { background: #fff; }
-.repoioDot { border-radius: 0.25rem; width: 1rem; height: 0.625rem; background: #fff; border-width: 2px; border-style: solid; }
-.repoioDotMaster { background: #fff; border-color: #e8955a; }
-.repoioDotAbstract { background: #fff; border: 2px dashed #8b83d6; }
-.repoioDotGov { background: #fff; border-color: #8a9aaa; }
-.repoioDotAsset { background: #fff; border-color: #2f9e7a; }
-.repoioDotBiz { background: #fff; border-color: #c99a2e; }
-.repoioDotDraft { background: #fff; border: 2px dashed #e9730c; }
+.repoioOntoLegend { background: var(--sapGroup_ContentBackground, #fff); }
+.repoioDot { border-radius: 0.25rem; width: 1rem; height: 0.625rem; background: var(--sapGroup_ContentBackground, #fff); border-width: 2px; border-style: solid; }
+.repoioDotMaster { background: var(--sapGroup_ContentBackground, #fff); border-color: #e8955a; }
+.repoioDotAbstract { background: var(--sapGroup_ContentBackground, #fff); border: 2px dashed #8b83d6; }
+.repoioDotGov { background: var(--sapGroup_ContentBackground, #fff); border-color: #8a9aaa; }
+.repoioDotAsset { background: var(--sapGroup_ContentBackground, #fff); border-color: #2f9e7a; }
+.repoioDotBiz { background: var(--sapGroup_ContentBackground, #fff); border-color: #c99a2e; }
+.repoioDotDraft { background: var(--sapGroup_ContentBackground, #fff); border: 2px dashed var(--sapCriticalColor, #e9730c); }
 .repoioLine, .repoioLineType { border-top: 2px solid #1d9e75; }
 .repoioLineSys { border-top: 2px dotted #5b8fd6; }
 .repoioLineSub { border-top: 2px dashed #7f77dd; }
@@ -503,7 +488,7 @@
 .repoioSqCus { background: #60a5fa; border-color: #3b82f6; }
 .repoioSqVen { background: #f5a470; border-color: #e8955a; }
 .repoioSqPro { background: #5fc7a0; border-color: #1d9e75; }
-.repoioLine.repoioLinePending { border-top: 2px dashed #e9730c; }
+.repoioLine.repoioLinePending { border-top: 2px dashed var(--sapCriticalColor, #e9730c); }
 
 /* Dense tables: smaller values (Connections, job runs). Headers keep the theme size. */
 .repoioDenseTable .sapMListTblCell .sapMText,
@@ -520,38 +505,38 @@
 .repoioJrFilters .sapMLabel { font-size: 0.75rem; }
 .repoioJrClear { margin-bottom: 0.5rem; }
 .repoioJrOverview { gap: 1rem; padding-bottom: 1rem; }
-.repoioJrPanel { background: #fff; border-radius: 0.5rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.06); padding: 0.75rem 1rem 0.5rem; }
+.repoioJrPanel { background: var(--sapGroup_ContentBackground, #fff); border-radius: 0.5rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.06); padding: 0.75rem 1rem 0.5rem; }
 .repoioJrChartPanel { flex: 2 1 30rem; min-width: 0; }
 .repoioJrTopPanel { flex: 1 1 20rem; min-width: 0; }
 .repoioJrTop.sapMList { margin-top: 0.25rem; }
 .repoioJrTop .sapMListTblHeaderCell { background: transparent; }
-.repoioJrHint.sapMText { font-size: 0.75rem; color: #6a6d70; }
-.repoioJrTech.sapMText { font-size: 0.6875rem !important; color: #6a6d70; font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; direction: ltr; unicode-bidi: isolate; }
-.repoioJrKindIcon { margin-inline-end: 0.375rem; color: #6a6d70; font-size: 0.875rem; }
+.repoioJrHint.sapMText { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); }
+.repoioJrTech.sapMText { font-size: 0.6875rem !important; color: var(--sapContent_LabelColor, #6a6d70); font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; direction: ltr; unicode-bidi: isolate; }
+.repoioJrKindIcon { margin-inline-end: 0.375rem; color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.875rem; }
 .repoioJrOverdue { margin-inline-start: 0.375rem; }
-.repoioJrParams.sapMText { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 0.6875rem !important; color: #6a6d70; direction: ltr; unicode-bidi: isolate; }
+.repoioJrParams.sapMText { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 0.6875rem !important; color: var(--sapContent_LabelColor, #6a6d70); direction: ltr; unicode-bidi: isolate; }
 .repoioJrBucket.sapMBtn .sapMBtnInner { border-radius: 1rem; background: #eaf1fa; border-color: #c9dbf0; }
 
 /* Run details (J10, Datasphere Data Integration Monitor). */
-.repoioJdSplit { background: #f7f7f7; }
-.repoioJdLeft, .repoioJdRight { display: flex; flex-direction: column; height: 100%; background: #fff; }
-.repoioJdRight { background: #f7f7f7; }
-.repoioJdBar.sapMTB { flex: none; background: #fff; border-bottom: 1px solid #e5e5e5; height: 2.75rem; }
+.repoioJdSplit { background: var(--sapBackgroundColor, #f7f7f7); }
+.repoioJdLeft, .repoioJdRight { display: flex; flex-direction: column; height: 100%; background: var(--sapGroup_ContentBackground, #fff); }
+.repoioJdRight { background: var(--sapBackgroundColor, #f7f7f7); }
+.repoioJdBar.sapMTB { flex: none; background: var(--sapGroup_ContentBackground, #fff); border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); height: 2.75rem; }
 .repoioJdLeftScroll, .repoioJdRightScroll { flex: 1 1 0; min-height: 0; height: auto !important; }
 .repoioJdFacts { padding: 0.75rem 1rem; border-bottom: 1px solid #eee; }
-.repoioJdFacts .sapMLabel { font-size: 0.75rem; color: #6a6d70; margin-top: 0.5rem; }
+.repoioJdFacts .sapMLabel { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); margin-top: 0.5rem; }
 .repoioJdFacts .sapMText { font-size: 0.8125rem; }
 .repoioJdFacts > .sapMTitle { margin-bottom: 0.125rem; }
-.repoioJdSub.sapMText { color: #6a6d70; font-size: 0.75rem !important; }
+.repoioJdSub.sapMText { color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.75rem !important; }
 .repoioJdBig .sapMObjStatusText { font-size: 0.9375rem; font-weight: bold; }
 .repoioJdRuns { padding: 0.5rem 0.5rem 1rem; }
-.repoioJdMiniLbl.sapMLabel { font-size: 0.75rem; color: #6a6d70; padding-inline-start: 0.5rem; }
+.repoioJdMiniLbl.sapMLabel { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); padding-inline-start: 0.5rem; }
 .repoioJdRunTable .sapMListTblHeaderCell { background: #fafafa; }
-.repoioJdHead { gap: 0.75rem 2rem; padding: 0.875rem 1.25rem; background: #fff; border-bottom: 1px solid #e5e5e5; }
-.repoioJdFact .sapMLabel { font-size: 0.75rem; color: #6a6d70; }
+.repoioJdHead { gap: 0.75rem 2rem; padding: 0.875rem 1.25rem; background: var(--sapGroup_ContentBackground, #fff); border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
+.repoioJdFact .sapMLabel { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioJdFact .sapMText { font-size: 0.8125rem; }
 .repoioJdStrip.sapMMsgStrip { margin: 0.75rem 1rem 0; }
-.repoioJdSection { margin: 0.75rem 1rem 0; padding: 0.625rem 0.75rem; background: #fff; border-radius: 0.5rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.06); }
+.repoioJdSection { margin: 0.75rem 1rem 0; padding: 0.625rem 0.75rem; background: var(--sapGroup_ContentBackground, #fff); border-radius: 0.5rem; box-shadow: 0 0 0 1px rgba(0,0,0,0.06); }
 .repoioJdTasks { gap: 0.25rem 0; padding-top: 0.5rem; }
 .repoioJdArrow { color: #b4bac0; margin: 0 0.25rem; font-size: 0.75rem; }
 html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
@@ -564,13 +549,13 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioJdTask[data-st="running"] .sapMBtnInner { background: #eef4fb; border-color: #a9c7ea; }
 .repoioJdTask[data-st="running"] .sapMBtnIcon { color: #2f6db5; }
 .repoioJdTask[data-st="pending"] .sapMBtnInner, .repoioJdTask[data-st="skipped"] .sapMBtnInner, .repoioJdTask[data-st="canceled"] .sapMBtnInner { background: #f5f6f7; border-style: dashed; }
-.repoioJdTabs { width: calc(100% - 2rem) !important; margin: 0.75rem 1rem 1rem; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 0 0 1px rgba(0,0,0,0.06); background: #fff; }
-.repoioJdTabs .sapMITBContent { background: #fff; }
+.repoioJdTabs { width: calc(100% - 2rem) !important; margin: 0.75rem 1rem 1rem; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 0 0 1px rgba(0,0,0,0.06); background: var(--sapGroup_ContentBackground, #fff); }
+.repoioJdTabs .sapMITBContent { background: var(--sapGroup_ContentBackground, #fff); }
 .repoioJdMetrics { padding: 0.75rem 1rem 1rem; }
 .repoioJdMetrics .sapMTitle[aria-level="4"], .repoioJdMetrics h4.sapMTitle { font-size: 0.875rem; margin-bottom: 0.25rem; }
-.repoioJdMetrics .sapMLabel { font-size: 0.75rem; color: #6a6d70; }
+.repoioJdMetrics .sapMLabel { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioJdMetrics .sapMText { font-size: 0.8125rem; }
-.repoioJdBox.sapMText { display: inline-block; border: 1px solid #d9d9d9; border-radius: 0.25rem; padding: 0 0.375rem; }
+.repoioJdBox.sapMText { display: inline-block; border: 1px solid var(--sapList_BorderColor, #d9d9d9); border-radius: 0.25rem; padding: 0 0.375rem; }
 .repoioJdDetail.sapMText { font-size: 0.75rem !important; padding: 1rem; display: block; text-align: left; background: #fafafa; }
 
 
@@ -589,102 +574,101 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioDenseTable .sapMListTblCell .sapMObjStatus { white-space: nowrap; }
 .repoioDenseTable .sapMListTblHeaderCell .sapMText { white-space: nowrap; }
 /* Previous / Next pager under long tables. */
-.repoioPagerWrap { background: #fff; border-top: 1px solid #e5e5e5; }
+.repoioPagerWrap { background: var(--sapGroup_ContentBackground, #fff); border-top: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
 .repoioPager.sapMTB { padding-inline: 1rem; height: 2.5rem; }
-.repoioPager .sapMText, .repoioPager .sapMLabel { font-size: 0.8125rem; color: #6a6d70; }
+.repoioPager .sapMText, .repoioPager .sapMLabel { font-size: 0.8125rem; color: var(--sapContent_LabelColor, #6a6d70); }
 
 /* Table pages edge to edge, like Datasphere lists: no side gutters, white to the bottom. */
 .repoioEdge .sapFDynamicPageContent, .repoioEdge .sapFDynamicPageContentFitContainer { padding: 0 !important; }
-.repoioEdge .sapFDynamicPageContentWrapper { background: #fff; }
+.repoioEdge .sapFDynamicPageContentWrapper { background: var(--sapGroup_ContentBackground, #fff); }
 .repoioEdge .sapMListTbl, .repoioEdge .sapMList { border-radius: 0; }
 .repoioEdge .sapMListHdrTBar.sapMTB, .repoioEdge .sapMList > .sapMListHdr .sapMTB { padding-inline: 1rem; }
-.repoioEdge .repoioJrOverview { padding: 1rem 1rem 1rem; background: #f7f7f7; border-bottom: 1px solid #e5e5e5; }
-.repoioEdge .sapFDynamicPageContentFitContainer, .repoioEdge .sapFDynamicPageContent { background: #fff; }
+.repoioEdge .repoioJrOverview { padding: 1rem 1rem 1rem; background: var(--sapBackgroundColor, #f7f7f7); border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
+.repoioEdge .sapFDynamicPageContentFitContainer, .repoioEdge .sapFDynamicPageContent { background: var(--sapGroup_ContentBackground, #fff); }
 .repoioEdge .sapMListTblHeader > th:nth-last-child(2), .repoioEdge .sapMListTblRow > td:nth-last-child(2) { padding-inline-end: 1rem; }
 
 /* Explorer layout (Datasphere Repository Explorer): workflows list, and the Domains filter panel. */
-.repoioExplorer { display: flex; flex-direction: column; height: 100%; background: #fff; }
-.repoioExTop.sapMTB { flex: none; height: 3rem; padding-inline: 1rem; background: #fff; border-bottom: 1px solid #e5e5e5; }
-.repoioExBar.sapMTB { flex: none; height: 2.5rem; padding-inline: 0.5rem; background: #fff; border-bottom: 1px solid #e5e5e5; }
+.repoioExplorer { display: flex; flex-direction: column; height: 100%; background: var(--sapGroup_ContentBackground, #fff); }
+.repoioExTop.sapMTB { flex: none; height: 3rem; padding-inline: 1rem; background: var(--sapGroup_ContentBackground, #fff); border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
+.repoioExBar.sapMTB { flex: none; height: 2.5rem; padding-inline: 0.5rem; background: var(--sapGroup_ContentBackground, #fff); border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
 .repoioExBody { display: flex; flex: 1 1 0; min-height: 0; }
 .repoioExMain { display: flex; flex-direction: column; flex: 1 1 0; min-width: 0; }
 .repoioExScroll { flex: 1 1 0; min-height: 0; height: auto !important; }
-.repoioExScope { flex: none; height: 2.25rem; padding-inline: 0.75rem; background: #f2f4f7; border-bottom: 1px solid #e5e5e5; gap: 0.375rem; }
+.repoioExScope { flex: none; height: 2.25rem; padding-inline: 0.75rem; background: #f2f4f7; border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); gap: 0.375rem; }
 .repoioExScope .sapMText { font-weight: bold; font-size: 0.875rem; }
-.repoioExScopeLbl.sapMLabel { font-weight: bold; color: #32363a; }
-.repoioExScopeIcon { color: #32363a; }
-.repoioExRowIcon { color: #0a6ed1; margin-inline-end: 0.375rem; font-size: 0.875rem; flex: none; }
-.repoioFacetPanel { flex: none; background: #fff; border-inline-end: 1px solid #d9d9d9; height: auto !important; align-self: stretch; }
-.repoioFacetGroup.sapMTitle { display: block; color: #0a6ed1; font-size: 0.875rem; font-weight: normal; padding: 0.625rem 1rem 0.375rem; border-bottom: 1px solid #e5e5e5; }
+.repoioExScopeLbl.sapMLabel { font-weight: bold; color: var(--sapTextColor, #32363a); }
+.repoioExScopeIcon { color: var(--sapTextColor, #32363a); }
+.repoioExRowIcon { color: var(--sapBrandColor, #0a6ed1); margin-inline-end: 0.375rem; font-size: 0.875rem; flex: none; }
+.repoioFacetPanel { flex: none; background: var(--sapGroup_ContentBackground, #fff); border-inline-end: 1px solid var(--sapList_BorderColor, #d9d9d9); height: auto !important; align-self: stretch; }
+.repoioFacetGroup.sapMTitle { display: block; color: var(--sapBrandColor, #0a6ed1); font-size: 0.875rem; font-weight: normal; padding: 0.625rem 1rem 0.375rem; border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
 .repoioFacetHead { padding: 0.75rem 0.5rem 0 1rem; }
 .repoioFacetHead .sapMTitle { font-size: 1.125rem; font-weight: normal; }
 .repoioFacetList .sapMLIB { height: 2rem; min-height: 2rem; padding-inline-start: 0.5rem; background: transparent; }
 .repoioFacetList .sapMLIB.sapMLIBSelected { background: #eaf1fa; }
 .repoioFacetList .sapMSLITitleOnly { font-size: 0.875rem; }
-.repoioFacetList .sapMSLIImg, .repoioFacetList .sapMSLIIcon { color: #6a6d70; font-size: 0.9375rem; }
-.repoioFacetList .sapMLIBCounter { color: #0a6ed1; font-size: 0.875rem; padding-inline-end: 0.5rem; }
+.repoioFacetList .sapMSLIImg, .repoioFacetList .sapMSLIIcon { color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.9375rem; }
+.repoioFacetList .sapMLIBCounter { color: var(--sapBrandColor, #0a6ed1); font-size: 0.875rem; padding-inline-end: 0.5rem; }
 .repoioFacetList .sapMLIBSelectM { margin-inline-end: 0.25rem; }
 /* Domains on the explorer layout: edge to edge; cards keep a gutter, the list does not. */
 .repoioCatalog.repoioEdge .repoioCatTabs .sapMITH { padding-inline: 1rem; }
-.repoioCatalog.repoioEdge .repoioCatBar.sapMTB { padding-inline: 1rem; margin-top: 0; border-bottom: 1px solid #e5e5e5; }
+.repoioCatalog.repoioEdge .repoioCatBar.sapMTB { padding-inline: 1rem; margin-top: 0; border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
 .repoioCatalog.repoioEdge .repoioCatBody { gap: 0; padding-bottom: 0; min-height: calc(100vh - 20rem); }
-.repoioCatBody[data-mode="cards"] .repoioCatResults { padding: 1rem; background: #f7f7f7; }
+.repoioCatBody[data-mode="cards"] .repoioCatResults { padding: 1rem; background: var(--sapBackgroundColor, #f7f7f7); }
 .repoioCatBody[data-mode="list"] .repoioCatResults { padding: 0; }
-.repoioCatBody .repoioFacetPanel { border-inline-end: 1px solid #d9d9d9; }
-.sapUiBody .sapTntSideNavigation .sapTntNLI::before, .sapUiBody .sapTntSideNavigation .sapTntNLI::after { border-color: #4b6278 !important; }
+.repoioCatBody .repoioFacetPanel { border-inline-end: 1px solid var(--sapList_BorderColor, #d9d9d9); }
 
 /* ===== Analytics (J14) ===== */
-.repoioExSub.sapMText { font-size: 0.75rem; color: #6a6d70; }
+.repoioExSub.sapMText { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); }
 /* Analytical list report (Fiori ALP): visual filter cards in the header, chart + table below. */
 .repoioAlp .sapFDynamicPageHeader { background: #f2f4f7; }
 .repoioAlpVariant .sapMBtnInner { font-size: 1.25rem; }
 .repoioAlpVariant.sapMMenuBtn .sapMBtnInner { border: none; background: transparent; }
 .repoioAlpVisual { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
 .repoioAlpVf { min-width: 0; padding: 0.25rem 0.5rem 0; }
-.repoioAlpVf .sapMTitle { font-size: 0.8125rem; color: #32363a; }
+.repoioAlpVf .sapMTitle { font-size: 0.8125rem; color: var(--sapTextColor, #32363a); }
 .repoioAlpVfBtn.sapMBtn { height: 1.5rem; }
 .repoioAlpVfBtn .sapMBtnInner { height: 1.5rem; min-width: 1.5rem; }
 .repoioAlpTokens { gap: 0.25rem; margin-top: 0.5rem; }
 .repoioAlpTokens .sapMToken { margin-inline-end: 0.25rem; }
 @media (max-width: 1023px) { .repoioAlpVisual { grid-template-columns: 1fr; } }
-.repoioAlpContent { background: #fff; }
+.repoioAlpContent { background: var(--sapGroup_ContentBackground, #fff); }
 .repoioAlpNote.sapMMsgStrip { margin: 0.5rem 1rem 0; }
 .repoioAlpBar.sapMTB { padding-inline: 1rem; height: 2.75rem; }
-.repoioAlpTblBar.sapMTB { border-top: 1px solid #e5e5e5; }
+.repoioAlpTblBar.sapMTB { border-top: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
 .repoioAlpContent .repoioChart { padding-inline: 0.5rem; box-sizing: border-box; }
 
 /* Analytics studio (SAC story designer): toolbar, page tabs, grid canvas of tiles, Builder panel. */
-.repoioStudio { display: flex; flex-direction: column; height: 100%; background: #fff; }
-.repoioStTop.sapMTB { flex: none; height: 2.75rem; padding-inline: 0.5rem; border-bottom: 1px solid #e5e5e5; }
-.repoioStPages.sapMITH { flex: none; box-shadow: none; border-bottom: 1px solid #e5e5e5; padding-inline: 0.5rem; }
+.repoioStudio { display: flex; flex-direction: column; height: 100%; background: var(--sapGroup_ContentBackground, #fff); }
+.repoioStTop.sapMTB { flex: none; height: 2.75rem; padding-inline: 0.5rem; border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
+.repoioStPages.sapMITH { flex: none; box-shadow: none; border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); padding-inline: 0.5rem; }
 .repoioStBody { display: flex; flex: 1 1 0; min-height: 0; }
-.repoioStCanvasWrap { flex: 1 1 0; min-width: 0; background-color: #f7f7f7;
+.repoioStCanvasWrap { flex: 1 1 0; min-width: 0; background-color: var(--sapBackgroundColor, #f7f7f7);
 	background-image: radial-gradient(#d5dadd 1px, transparent 1px); background-size: 16px 16px; }
 .repoioStCanvas.sapMFlexBox { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; padding: 0.75rem; align-items: start; }
 @media (max-width: 1400px) { .repoioStCanvas.sapMFlexBox { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 900px) { .repoioStCanvas.sapMFlexBox { grid-template-columns: 1fr; } }
-.repoioStTile { background: #fff; border: 1px solid #e5e5e5; border-radius: 0.25rem; padding: 0.5rem 0.5rem 0.25rem; min-width: 0; cursor: default; }
+.repoioStTile { background: var(--sapGroup_ContentBackground, #fff); border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); border-radius: 0.25rem; padding: 0.5rem 0.5rem 0.25rem; min-width: 0; cursor: default; }
 .repoioStTile:hover { border-color: #bfc8d1; }
-.repoioStTileSel { border-color: #0a6ed1 !important; box-shadow: 0 0 0 1px #0a6ed1; }
+.repoioStTileSel { border-color: var(--sapBrandColor, #0a6ed1) !important; box-shadow: 0 0 0 1px var(--sapBrandColor, #0a6ed1); }
 .repoioStTileHead { padding-inline: 0.25rem; }
 .repoioStTileHead .sapMTitle { font-size: 0.875rem; }
-.repoioStTileSub.sapMText { font-size: 0.75rem; color: #6a6d70; }
+.repoioStTileSub.sapMText { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioStTileMenu.sapMBtn { height: 1.75rem; opacity: 0.55; }
 .repoioStTile:hover .repoioStTileMenu, .repoioStTileSel .repoioStTileMenu { opacity: 1; }
-.repoioStKpiDelta.sapMText { color: #107e3e; font-size: 0.8125rem; }
+.repoioStKpiDelta.sapMText { color: var(--sapPositiveColor, #107e3e); font-size: 0.8125rem; }
 .repoioStEmpty { padding: 5rem 1rem; }
-.repoioStBuilder { flex: none; background: #fff; border-inline-start: 1px solid #e5e5e5; }
-.repoioStBHead { height: 2.5rem; padding-inline: 0.75rem; background: #354a5f; color: #fff; }
-.repoioStBHead .sapMTitle, .repoioStBHead .sapUiIcon { color: #fff; }
+.repoioStBuilder { flex: none; background: var(--sapGroup_ContentBackground, #fff); border-inline-start: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
+.repoioStBHead { height: 2.5rem; padding-inline: 0.75rem; background: var(--sapShell_Background, #eff1f2); color: var(--sapShell_TextColor, #1d2d3e); }
+.repoioStBHead .sapMTitle, .repoioStBHead .sapUiIcon { color: var(--sapShell_TextColor, #1d2d3e); }
 .repoioStBNone { padding: 3rem 1.5rem; }
 .repoioStBForm { display: flex; flex-direction: column; padding: 0.75rem; }
 .repoioStBForm .sapMLabel { font-size: 0.75rem; }
 .repoioStBSource { padding: 0.25rem 0 0.5rem; }
-.repoioStBSec { margin-top: 0.875rem; margin-bottom: 0.375rem; color: #0a6ed1; }
-.repoioStBSec.sapMTitle, .repoioStBSec .sapMTitle { color: #0a6ed1; }
+.repoioStBSec { margin-top: 0.875rem; margin-bottom: 0.375rem; color: var(--sapBrandColor, #0a6ed1); }
+.repoioStBSec.sapMTitle, .repoioStBSec .sapMTitle { color: var(--sapBrandColor, #0a6ed1); }
 .repoioStBTypes { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; }
 .repoioStBType { display: flex; flex-direction: column; align-items: center; }
-.repoioStBTypeTxt.sapMText { font-size: 0.6875rem; color: #6a6d70; margin-top: 0.125rem; }
+.repoioStBTypeTxt.sapMText { font-size: 0.6875rem; color: var(--sapContent_LabelColor, #6a6d70); margin-top: 0.125rem; }
 .repoioStBItem { height: 1.75rem; padding-inline: 0.5rem; background: #f2f4f7; border-inline-start: 3px solid #5899da; border-radius: 0.125rem; }
 .repoioStBDim { border-inline-start-color: #5fae7c; }
 .repoioStBAdd.sapMBtn, .repoioStBAdd.sapMMenuBtn { align-self: flex-start; width: auto !important; margin-top: 0.125rem; }
@@ -695,19 +679,19 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioBcLast .sapMObjStatusText, .repoioBcLast .sapMObjStatusIcon { vertical-align: middle; }
 .repoioExTop.sapMTB { height: 3.75rem; }
 .repoioExHead { display: flex; flex-direction: column; min-width: 0; }
-.repoioExDesc.sapMText { font-size: 0.8125rem; color: #6a6d70; margin-top: 0.125rem; }
+.repoioExDesc.sapMText { font-size: 0.8125rem; color: var(--sapContent_LabelColor, #6a6d70); margin-top: 0.125rem; }
 
 /* ===== Data sync: replication flow editor (Datasphere) ===== */
-.repoioRf { display: flex; flex-direction: column; height: 100%; background: #fff; }
-.repoioRfMain { flex: 1 1 0; min-width: 0; background: #f7f7f7; }
+.repoioRf { display: flex; flex-direction: column; height: 100%; background: var(--sapGroup_ContentBackground, #fff); }
+.repoioRfMain { flex: 1 1 0; min-width: 0; background: var(--sapBackgroundColor, #f7f7f7); }
 .repoioRfEnds { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 0.75rem; align-items: stretch; padding: 1rem 1rem 0.75rem; }
-.repoioRfEnd { background: #fff; border: 1px solid #e5e5e5; border-radius: 0.25rem; padding: 0.625rem 0.75rem; min-width: 0; }
-.repoioRfEndLbl.sapMLabel { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: #6a6d70; }
+.repoioRfEnd { background: var(--sapGroup_ContentBackground, #fff); border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); border-radius: 0.25rem; padding: 0.625rem 0.75rem; min-width: 0; }
+.repoioRfEndLbl.sapMLabel { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioRfEndRow { margin-top: 0.375rem; min-height: 1.75rem; }
 .repoioRfStrong.sapMText { font-weight: bold; }
-.repoioRfArrow { align-self: center; color: #0a6ed1; }
+.repoioRfArrow { align-self: center; color: var(--sapBrandColor, #0a6ed1); }
 .repoioRfLands { background: #f2f4f7; border-radius: 0.125rem; padding-inline: 0.5rem; }
-.repoioRfTable { margin: 0 1rem; width: calc(100% - 2rem) !important; border: 1px solid #e5e5e5; }
+.repoioRfTable { margin: 0 1rem; width: calc(100% - 2rem) !important; border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
 .repoioRfNote.sapMMsgStrip { margin: 0.75rem 1rem 1rem; }
 .repoioPjTabs.sapMITB { height: 100%; }
 .repoioPjTabs .sapMITBContent { padding: 0.75rem 1rem; }
@@ -716,16 +700,16 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioSpLogo { flex: none; object-fit: contain; }
 .repoioSpText { flex: 1 1 auto; min-width: 0; }
 .repoioSpName.sapMText { font-weight: bold; }
-.repoioSpContainer { padding: 0.75rem 1rem 1rem; border-top: 1px solid #e5e5e5; }
+.repoioSpContainer { padding: 0.75rem 1rem 1rem; border-top: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
 /* Replication flow editor v2 (Datasphere steps) */
 .repoioRfMain { display: flex; flex-direction: column; }
 .repoioRfCanvas { flex: 1 1 0; min-height: 0; }
 .repoioRfEnd { padding: 0; }
-.repoioRfEndHead { height: 2.25rem; padding-inline: 0.75rem; border-bottom: 1px solid #e5e5e5; background: #f7f7f7; }
+.repoioRfEndHead { height: 2.25rem; padding-inline: 0.75rem; border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); background: var(--sapBackgroundColor, #f7f7f7); }
 .repoioRfEndBody { padding: 0.5rem 0.75rem 0.625rem; }
 .repoioRfStepBtn.sapMBtn { align-self: flex-start; margin-top: 0.25rem; }
 .repoioRfFirstSec { margin-top: 0.25rem !important; }
-.repoioRfTabs.sapMITB { flex: none; height: 15rem; border-top: 1px solid #d9d9d9; background: #fff; }
+.repoioRfTabs.sapMITB { flex: none; height: 15rem; border-top: 1px solid var(--sapList_BorderColor, #d9d9d9); background: var(--sapGroup_ContentBackground, #fff); }
 .repoioRfTab { padding: 0.75rem 1rem; }
 .repoioRfEndBtn.sapMBtn { margin-inline-start: auto; }
 .repoioPjHead.sapMTB { padding-inline: 1rem; gap: 0.5rem; }
@@ -733,7 +717,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioPjTabs .sapMITBContainerContent { height: 100%; }
 .repoioPjBody { padding: 0.75rem 1rem; height: 100%; box-sizing: border-box; overflow: auto; }
 .repoioPjFilter { display: flex; gap: 1rem; padding: 0 !important; }
-.repoioPjCols { flex: none; width: 17rem; display: flex; flex-direction: column; border-inline-end: 1px solid #e5e5e5; padding: 0.75rem 0.5rem; overflow: auto; }
+.repoioPjCols { flex: none; width: 17rem; display: flex; flex-direction: column; border-inline-end: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); padding: 0.75rem 0.5rem; overflow: auto; }
 .repoioPjColList .sapMLIB { min-height: 2.25rem; }
 .repoioPjExpr { flex: 1 1 auto; min-width: 0; padding-block: 0.75rem; padding-inline-end: 1rem; overflow: auto; }
 .repoioRfPrj { height: auto !important; padding-block: 0.25rem; }
@@ -743,42 +727,42 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioPjColLbl { margin-inline-start: auto; max-width: 6.5rem; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; }
 .repoioPjCol .repoioMono { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 /* Replication flow editor v3 */
-.repoioRf { background: #f7f7f7; }
-.repoioRfHeader { flex: none; background: #fff; border-bottom: 1px solid #e5e5e5; padding: 0.25rem 1rem 0.5rem; }
+.repoioRf { background: var(--sapBackgroundColor, #f7f7f7); }
+.repoioRfHeader { flex: none; background: var(--sapGroup_ContentBackground, #fff); border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); padding: 0.25rem 1rem 0.5rem; }
 .repoioRfCrumbs { gap: 0.25rem; margin-inline-start: -0.5rem; }
 .repoioRfSep.sapMText { color: #89919a; }
 .repoioRfTitleBar.sapMTB { height: 2.5rem; padding: 0; }
-.repoioRfTitleIcon { color: #0a6ed1; }
+.repoioRfTitleIcon { color: var(--sapBrandColor, #0a6ed1); }
 .repoioRfFacts { display: flex; gap: 2.5rem; padding-top: 0.25rem; }
-.repoioRfFact .sapMLabel { font-size: 0.75rem; color: #6a6d70; }
+.repoioRfFact .sapMLabel { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioRfSplit { flex: 1 1 0; min-height: 0; }
-.repoioRfCanvas { background: #f7f7f7; }
+.repoioRfCanvas { background: var(--sapBackgroundColor, #f7f7f7); }
 .repoioRfEnds { display: grid; grid-template-columns: minmax(0, 1fr) 7rem minmax(0, 1fr); gap: 0; padding: 1rem 1rem 0.75rem; }
-.repoioRfTile { background: #fff; border: 1px solid #e5e5e5; border-radius: 0.5rem; padding: 0.625rem 0.875rem 0.75rem; min-width: 0; border-top: 3px solid #0a6ed1; }
+.repoioRfTile { background: var(--sapGroup_ContentBackground, #fff); border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); border-radius: 0.5rem; padding: 0.625rem 0.875rem 0.75rem; min-width: 0; border-top: 3px solid var(--sapBrandColor, #0a6ed1); }
 .repoioRfTileTgt { border-top-color: #188918; }
 .repoioRfTileHead { min-height: 1.75rem; }
-.repoioRfTileLbl.sapMLabel { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6a6d70; }
+.repoioRfTileLbl.sapMLabel { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioRfTileMain { gap: 0.625rem; margin-top: 0.25rem; }
 .repoioRfTileText { min-width: 0; }
 .repoioRfTileSub { margin-top: 0.5rem; padding: 0.25rem 0.5rem; background: #f5f6f7; border-radius: 0.25rem; min-height: 2rem; }
-.repoioRfBadge { width: 2.25rem; height: 2.25rem; line-height: 2.25rem; border-radius: 50%; background: #e5f0fa; color: #0a6ed1; flex: none; text-align: center; }
+.repoioRfBadge { width: 2.25rem; height: 2.25rem; line-height: 2.25rem; border-radius: 50%; background: #e5f0fa; color: var(--sapBrandColor, #0a6ed1); flex: none; text-align: center; }
 .repoioRfBadgeTgt { background: #e7f4e7; color: #188918; }
 .repoioRfLink { padding-inline: 0.5rem; }
 .repoioRfLink .sapMText { white-space: pre-line; margin-top: 0.25rem; }
-.repoioRfTable { margin: 0 1rem 1rem; width: calc(100% - 2rem) !important; border: 1px solid #e5e5e5; border-radius: 0.5rem; overflow: hidden; }
+.repoioRfTable { margin: 0 1rem 1rem; width: calc(100% - 2rem) !important; border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); border-radius: 0.5rem; overflow: hidden; }
 .repoioRfProps { border-inline-start: none; }
 .repoioRfStepBtn.sapMBtn { margin-top: 0.75rem; }
 
 /* ===== Replication flow editor v4: SAP Datasphere layout ===== */
-.repoioDsRf { display: flex; flex-direction: column; height: 100%; background: #fff; }
+.repoioDsRf { display: flex; flex-direction: column; height: 100%; background: var(--sapGroup_ContentBackground, #fff); }
 .repoioDsTb { flex: none; display: flex; gap: 0.25rem; padding: 0.25rem 0.75rem 0.25rem 0.25rem; background: #eff4f9; border-bottom: 1px solid #d9e1ea; }
 .repoioDsBack.sapMBtn { margin-top: 0.75rem; }
 .repoioDsTbGrp { display: flex; flex-direction: column; padding-inline: 0.5rem; border-inline-end: 1px solid #d9e1ea; }
-.repoioDsTbLbl.sapMText { font-size: 0.75rem; color: #6a6d70; padding-inline-start: 0.25rem; }
+.repoioDsTbLbl.sapMText { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); padding-inline-start: 0.25rem; }
 .repoioDsTbRight { margin-inline-start: auto; display: flex; gap: 0.75rem; align-self: center; }
-.repoioDsTbTitle.sapMText { color: #32363a; font-weight: bold; max-width: 26rem; overflow: hidden; text-overflow: ellipsis; }
+.repoioDsTbTitle.sapMText { color: var(--sapTextColor, #32363a); font-weight: bold; max-width: 26rem; overflow: hidden; text-overflow: ellipsis; }
 .repoioDsBody { display: flex; flex: 1 1 0; min-height: 0; }
-.repoioDsCanvas { flex: 1 1 0; min-width: 0; background: #fff; }
+.repoioDsCanvas { flex: 1 1 0; min-width: 0; background: var(--sapGroup_ContentBackground, #fff); }
 .repoioDsGrid { display: grid; grid-template-columns: 31% 38% 31%; }
 .repoioDsHead { background: #eff4f9; border-bottom: 1px solid #d9e1ea; }
 .repoioDsCell { min-width: 0; padding: 0.25rem 0.75rem; border-inline-end: 1px solid #d9e1ea; }
@@ -786,50 +770,50 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioDsHeadRow { justify-content: space-between; min-height: 2.25rem; }
 .repoioDsHeadTxt.sapMText, .repoioDsHeadTxt.sapMLnk { font-size: 0.875rem; overflow: hidden; text-overflow: ellipsis; }
 .repoioDsMuted.sapMText { color: #89919a; font-style: italic; }
-.repoioDsHeadIcon { color: #6a6d70; margin-inline-end: 0.75rem; }
+.repoioDsHeadIcon { color: var(--sapContent_LabelColor, #6a6d70); margin-inline-end: 0.75rem; }
 .repoioDsMidHead { justify-content: center; padding-bottom: 0; }
 .repoioDsTabs.sapMSegB { margin-bottom: 0.25rem; }
 .repoioDsTable .sapMListTblHeader { background: #eff4f9; }
 .repoioDsTable .sapMListTblHeaderCell { border-inline-end: 1px solid #d9e1ea; }
-.repoioDsTable .sapMListTblCell { border-inline-end: 1px solid #e5e5e5; vertical-align: middle; }
+.repoioDsTable .sapMListTblCell { border-inline-end: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); vertical-align: middle; }
 .repoioDsTable .sapMLIB { height: 2.75rem; }
 .repoioDsColHead { gap: 0.25rem; width: 100%; }
 .repoioDsColHead .repoioDsSearch { margin-inline-start: auto; }
 .repoioDsObj { gap: 0.375rem; min-width: 0; width: 100%; }
 .repoioDsObjIcon { color: #556b82; flex: none; }
 .repoioDsObjTxt.sapMText { overflow: hidden; text-overflow: ellipsis; }
-.repoioDsNew.sapMText { font-style: italic; color: #6a6d70; }
-.repoioDsRowAct { margin-inline-start: auto; color: #0a6ed1; }
+.repoioDsNew.sapMText { font-style: italic; color: var(--sapContent_LabelColor, #6a6d70); }
+.repoioDsRowAct { margin-inline-start: auto; color: var(--sapBrandColor, #0a6ed1); }
 .repoioDsMore.sapMBtn { margin-inline-start: auto; }
 .repoioDsRowAct + .repoioDsMore.sapMBtn { margin-inline-start: 0; }
-.repoioDsChip { border: 1px solid #bfc8d1; border-radius: 0.25rem; padding-inline-start: 0.5rem; gap: 0.25rem; background: #fff; height: 2rem; }
+.repoioDsChip { border: 1px solid #bfc8d1; border-radius: 0.25rem; padding-inline-start: 0.5rem; gap: 0.25rem; background: var(--sapGroup_ContentBackground, #fff); height: 2rem; }
 .repoioDsChipName.sapMText { max-width: 8rem; overflow: hidden; text-overflow: ellipsis; margin-inline-end: 0.5rem; }
 .repoioDsChipNum.sapMText { font-size: 0.8125rem; }
 .repoioDsChipIcon { color: #556b82; }
-.repoioDsProps { flex: none; border-inline-start: 1px solid #d9e1ea; background: #fff; }
+.repoioDsProps { flex: none; border-inline-start: 1px solid #d9e1ea; background: var(--sapGroup_ContentBackground, #fff); }
 .repoioDsPropsHead { height: 2.5rem; padding-inline: 0.75rem; background: #3c6ea4; color: #fff; }
 .repoioDsPropsHead .sapMText, .repoioDsPropsHead .sapUiIcon { color: #fff; }
 .repoioDsPropsTitle { height: 3rem; padding-inline: 0.75rem; background: #eff4f9; border-bottom: 1px solid #d9e1ea; }
-.repoioDsPropsTitle .sapMText { color: #0a6ed1; font-size: 0.9375rem; }
+.repoioDsPropsTitle .sapMText { color: var(--sapBrandColor, #0a6ed1); font-size: 0.9375rem; }
 .repoioDsPanel .sapMPanelContent { padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; }
 .repoioDsPanel .sapMPanelHdr, .repoioDsPanel .sapMPanelWrappingDiv { font-size: 1rem; }
 .repoioDsObj, .repoioDsColHead { display: flex !important; }
 .repoioDsTabs.sapMITH { box-shadow: none; background: transparent; padding: 0; }
 .repoioDsMidHead { align-items: flex-end !important; }
 .repoioAoSplit { display: flex; height: 100%; }
-.repoioAoTree { flex: none; width: 16rem; border-inline-end: 1px solid #e5e5e5; padding: 0.5rem; background: #f7f7f7; }
+.repoioAoTree { flex: none; width: 16rem; border-inline-end: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); padding: 0.5rem; background: var(--sapBackgroundColor, #f7f7f7); }
 .repoioAoTreeList { margin-top: 0.5rem; background: transparent; }
 .repoioAoObjs { flex: 1 1 auto; min-width: 0; overflow: auto; }
 .repoioAoCount.sapMText { display: block; text-align: end; padding: 0.375rem 0.75rem; }
 .repoioPjBody { display: flex; flex-direction: column; }
 .repoioPjSrcLine.sapMText { font-size: 0.8125rem; margin-bottom: 0.5rem; }
-.repoioPjFilter { flex: 1 1 auto; min-height: 0; border: 1px solid #e5e5e5; }
+.repoioPjFilter { flex: 1 1 auto; min-height: 0; border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
 .repoioPjColList .sapMLIBSelected { background: #346187 !important; }
 .repoioPjColList .sapMLIBSelected .sapMText, .repoioPjColList .sapMLIBSelected .sapUiIcon { color: #fff !important; }
 .repoioPjType.sapMText { width: 1.75rem; flex: none; font-size: 0.6875rem; color: #346187; font-weight: bold; }
-.repoioPjKey { margin-inline-start: 0.25rem; font-size: 0.75rem; color: #6a6d70; }
+.repoioPjKey { margin-inline-start: 0.25rem; font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioPjExpr { padding-inline-start: 1rem; }
-.repoioPjAdd { border: 1px solid #e5e5e5; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem; }
+.repoioPjAdd { border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); padding: 0.5rem 0.75rem; margin-bottom: 0.5rem; }
 .repoioPjAddRow { gap: 0.5rem; margin-top: 0.25rem; }
 .repoioPjAddBtn.sapMBtn { align-self: flex-end; margin-top: 0.5rem; }
 .repoioPjExprRow { width: 100%; gap: 0.25rem; }
@@ -837,17 +821,17 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 /* Folders (ADR-0005): domain / repository / kind tree, like the Airflow Folders panel. */
 .repoioFolderTree .sapMTreeItemBase { height: 2rem; min-height: 2rem; }
 .repoioFolderTree .sapMSLITitleOnly { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: "72Mono", "72", monospace; font-size: 0.8125rem; direction: ltr; unicode-bidi: isolate; }
-.repoioFolderTree .sapMLIBCounter { font-size: 0.75rem; color: #6a6d70; }
-.repoioFolderTree .sapMSLIIcon { color: #6a6d70; font-size: 0.875rem; }
-.repoioFolderTree .sapMLIBSelected .sapMSLIIcon { color: #0a6ed1; }
+.repoioFolderTree .sapMLIBCounter { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); }
+.repoioFolderTree .sapMSLIIcon { color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.875rem; }
+.repoioFolderTree .sapMLIBSelected .sapMSLIIcon { color: var(--sapBrandColor, #0a6ed1); }
 /* Tree items render their text in .sapMLIBContent: keep one line with an ellipsis (full name in the tooltip). */
 .repoioFolderTree .sapMLIBContent { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.repoioFolderTree .sapMSTIIcon { color: #6a6d70; margin-inline-end: 0.375rem; }
+.repoioFolderTree .sapMSTIIcon { color: var(--sapContent_LabelColor, #6a6d70); margin-inline-end: 0.375rem; }
 /* The selected folder must read at a glance: tinted row, accent bar on the start edge, bold blue text. */
-.repoioFolderTree .sapMLIB.sapMLIBSelected { background: #dceafa; box-shadow: inset 3px 0 0 #0a6ed1; }
-[dir="rtl"] .repoioFolderTree .sapMLIB.sapMLIBSelected { box-shadow: inset -3px 0 0 #0a6ed1; }
-.repoioFolderTree .sapMLIBSelected .sapMLIBContent { color: #0a6ed1; font-weight: 600; }
-.repoioFolderTree .sapMLIBSelected .sapMSTIIcon, .repoioFolderTree .sapMLIBSelected .sapMLIBCounter { color: #0a6ed1; }
+.repoioFolderTree .sapMLIB.sapMLIBSelected { background: #dceafa; box-shadow: inset 3px 0 0 var(--sapBrandColor, #0a6ed1); }
+[dir="rtl"] .repoioFolderTree .sapMLIB.sapMLIBSelected { box-shadow: inset -3px 0 0 var(--sapBrandColor, #0a6ed1); }
+.repoioFolderTree .sapMLIBSelected .sapMLIBContent { color: var(--sapBrandColor, #0a6ed1); font-weight: 600; }
+.repoioFolderTree .sapMLIBSelected .sapMSTIIcon, .repoioFolderTree .sapMLIBSelected .sapMLIBCounter { color: var(--sapBrandColor, #0a6ed1); }
 .repoioFolderTree .sapMLIB:not(.sapMLIBSelected):hover { background: #f2f6fb; }
 .repoioFolderCrumbs { margin-inline-start: 0.5rem; direction: ltr; }
 .repoioFolderCrumbs .sapMLnk, .repoioFolderCrumbs .sapMBreadcrumbsCurrentLocation { font-family: "72Mono", "72", monospace; font-size: 0.8125rem; }
@@ -855,24 +839,24 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioJrBody { display: flex; align-items: stretch; gap: 1rem; }
 .repoioJrFoldHead { padding-inline-end: 0.25rem; }
 .repoioJrFoldHead .repoioFacetGroup { flex: 1; }
-.repoioJrFolders { flex: none; background: #fff; border: 1px solid #e5e5e5; border-radius: 0.25rem; padding-bottom: 0.5rem; }
+.repoioJrFolders { flex: none; background: var(--sapGroup_ContentBackground, #fff); border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); border-radius: 0.25rem; padding-bottom: 0.5rem; }
 .repoioJrMain { flex: 1 1 auto; min-width: 0; }
 /* Job runs on the analytical list layout: the folders panel runs the full height beside the chart and table. */
 .repoioAlp.repoioJrPage .repoioJrBody { gap: 0; min-height: calc(100vh - 22rem); }
-.repoioAlp.repoioJrPage .repoioJrFolders { border: none; border-inline-end: 1px solid #e5e5e5; border-radius: 0; padding-bottom: 0; }
+.repoioAlp.repoioJrPage .repoioJrFolders { border: none; border-inline-end: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); border-radius: 0; padding-bottom: 0; }
 .repoioAlp.repoioJrPage .repoioAlpBar .repoioJrHint { margin-inline-start: 0.5rem; }
 .repoioAlp.repoioJrPage .repoioAlpTokens { min-height: 2rem; }
 
 /* API management (J16) */
 /* Tables run edge to edge on white, like Connections, Data sync and Job runs. */
 .repoioApiTabs > .sapMITH { padding: 0 1rem; }
-.repoioApiTabs .sapMITBContainerContent { padding: 0; background: #fff; border-bottom: 0; }
-.repoioApiTabs .sapMITBContent { background: #fff; }
+.repoioApiTabs .sapMITBContainerContent { padding: 0; background: var(--sapGroup_ContentBackground, #fff); border-bottom: 0; }
+.repoioApiTabs .sapMITBContent { background: var(--sapGroup_ContentBackground, #fff); }
 .repoioApiStrip { margin: 0.5rem 1rem; width: auto; }
 .repoioApiStrip.sapMMsgStrip { min-height: 0; padding-top: 0.375rem; padding-bottom: 0.375rem; }
 .repoioApiPage .repoioDenseTable .sapMListTblCell { padding-top: 0.25rem; padding-bottom: 0.25rem; }
-.repoioApiSecond { margin-top: 1.5rem; border-top: 1px solid #e5e5e5; }
-.repoioApiPage .repoioApiChartPanel { margin: 0; border-radius: 0; box-shadow: none; background: #f7f7f7; border-bottom: 1px solid #e5e5e5; padding: 1rem; }
+.repoioApiSecond { margin-top: 1.5rem; border-top: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); }
+.repoioApiPage .repoioApiChartPanel { margin: 0; border-radius: 0; box-shadow: none; background: var(--sapBackgroundColor, #f7f7f7); border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); padding: 1rem; }
 .repoioApiSub.sapMText { font-size: 0.75rem; color: var(--sapContent_LabelColor); }
 .repoioApiOwnerName { margin-inline-start: 0.375rem; }
 .repoioApiAppIcon { color: var(--sapContent_IconColor); font-size: 1rem; }
@@ -889,23 +873,23 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioApiCallDlg .sapMDialogSection { padding: 0; }
 
 /* API reference (J16) */
-.repoioRefSide { display: flex; flex-direction: column; border-inline-end: 1px solid #e5e5e5; background: #fff; min-height: 0; }
+.repoioRefSide { display: flex; flex-direction: column; border-inline-end: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); background: var(--sapGroup_ContentBackground, #fff); min-height: 0; }
 .repoioRefSearch { margin: 0.5rem 0.75rem; width: auto !important; }
 .repoioRefList { flex: 1 1 0; min-height: 0; height: auto !important; }
 
-.repoioRef .repoioExMain { background: #fff; }
-.repoioRefHead { gap: 0.5rem; padding: 0.625rem 1rem; border-bottom: 1px solid #e5e5e5; flex: none; }
-.repoioRefHeadIcon { color: #0a6ed1; font-size: 1.125rem; }
-.repoioRefVer.sapMText { color: #6a6d70; font-size: 0.8125rem; border: 1px solid #d9d9d9; border-radius: 0.75rem; padding: 0 0.5rem; }
+.repoioRef .repoioExMain { background: var(--sapGroup_ContentBackground, #fff); }
+.repoioRefHead { gap: 0.5rem; padding: 0.625rem 1rem; border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); flex: none; }
+.repoioRefHeadIcon { color: var(--sapBrandColor, #0a6ed1); font-size: 1.125rem; }
+.repoioRefVer.sapMText { color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.8125rem; border: 1px solid var(--sapList_BorderColor, #d9d9d9); border-radius: 0.75rem; padding: 0 0.5rem; }
 .repoioRefGrow { flex: 1 1 auto; }
-.repoioRefBase { max-width: 22rem; color: #6a6d70; }
+.repoioRefBase { max-width: 22rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioRefStrip { margin: 0.5rem 1rem 0; flex: none; }
 .repoioRefScroll { padding: 0 1rem 1rem; }
 /* Swagger UI blended into Quartz Light */
 .repoioSwagger .swagger-ui, .repoioSwagger .swagger-ui .info .title, .repoioSwagger .swagger-ui .opblock-tag,
 .repoioSwagger .swagger-ui .opblock .opblock-summary-description, .repoioSwagger .swagger-ui .model-title { font-family: "72", "72full", Arial, Helvetica, sans-serif; }
 .repoioSwagger .swagger-ui .info { margin: 1rem 0; }
-.repoioSwagger .swagger-ui .info .title { font-size: 1.375rem; color: #32363a; }
+.repoioSwagger .swagger-ui .info .title { font-size: 1.375rem; color: var(--sapTextColor, #32363a); }
 .repoioSwagger .swagger-ui .info .title small { display: none; }
 .repoioSwagger .swagger-ui .scheme-container { box-shadow: none; padding: 0.5rem 0; background: transparent; }
 .repoioSwagger .swagger-ui .wrapper { padding: 0; max-width: none; }
@@ -946,29 +930,29 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .rfT-begin.rfCard .rfHead { padding-top: 0.875rem; }
 .repoioTrigHint.sapMText { margin: -0.25rem 0 0.25rem; margin-inline-start: 2rem; font-size: 0.75rem; }
 /* Connection details (J9) */
-.repoioConnDlgIcon { font-size: 1.125rem; color: #0a6ed1; margin-inline-end: 0.5rem; }
+.repoioConnDlgIcon { font-size: 1.125rem; color: var(--sapBrandColor, #0a6ed1); margin-inline-end: 0.5rem; }
 .repoioConnDlg .sapMBarLeft { gap: 0.5rem; }
 .repoioConnTabs .sapMITBContainerContent { padding: 0; }
 .repoioConnStrip { margin: 0.75rem 1rem 0.5rem; width: auto; }
 .repoioConnForm { padding: 0.25rem 0.5rem; }
-.repoioConnLock { color: #6a6d70; margin-inline-end: 0.375rem; }
+.repoioConnLock { color: var(--sapContent_LabelColor, #6a6d70); margin-inline-end: 0.375rem; }
 /* Streams (J10) */
 .repoioStAlert { margin: 0.75rem 1rem 0; width: auto; }
 .repoioStKpis { gap: 0.75rem; padding: 0.75rem 1rem 0; }
 .repoioStKpi { flex: 1 1 12rem; min-width: 12rem; padding: 0.625rem 1rem; }
-.repoioStKpiLbl.sapMText { font-size: 0.75rem; color: #6a6d70; }
+.repoioStKpiLbl.sapMText { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioStKpiVal .sapMObjectNumberText { font-size: 1.25rem; white-space: nowrap; }
-.repoioStKpiHint.sapMText { font-size: 0.6875rem; color: #6a6d70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.repoioStKpiHint.sapMText { font-size: 0.6875rem; color: var(--sapContent_LabelColor, #6a6d70); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .repoioStChart { margin: 0.75rem 1rem; }
-.repoioStSub.sapMText { font-size: 0.6875rem; color: #6a6d70; }
+.repoioStSub.sapMText { font-size: 0.6875rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioStStages { flex-wrap: nowrap; }
 .repoioStArrow { font-size: 0.5rem; color: #a0a7ae; margin: 0 0.125rem; }
-.repoioStStage.sapMText { font-size: 0.6875rem; line-height: 1.125rem; padding: 0 0.375rem; border-radius: 0.5625rem; border: 1px solid #c9d2db; background: #fff; color: #32363a; }
+.repoioStStage.sapMText { font-size: 0.6875rem; line-height: 1.125rem; padding: 0 0.375rem; border-radius: 0.5625rem; border: 1px solid #c9d2db; background: var(--sapGroup_ContentBackground, #fff); color: var(--sapTextColor, #32363a); }
 .repoioStStage[data-st="ok"] { border-color: #a6d8b6; background: #eef8f1; color: #256f3a; }
 .repoioStStage[data-st="warn"] { border-color: #f0c78b; background: #fff6e8; color: #8a5300; }
 .repoioStStage[data-st="error"] { border-color: #f2a5a5; background: #fdeeee; color: #a51d1d; }
 .repoioStStage[data-st="idle"] { color: #8a9199; border-style: dashed; }
-.repoioStDlqHot.sapMLnk { color: #bb0000; font-weight: bold; }
+.repoioStDlqHot.sapMLnk { color: var(--sapNegativeColor, #bb0000); font-weight: bold; }
 .repoioStFlow.sapMText { margin-inline-start: 0.75rem; }
 .repoioStStages { margin-top: 0.25rem; }
 .repoioStArrow { transform: scaleX(var(--repoio-dir, 1)); }
@@ -976,17 +960,17 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 /* Repository connection details */
 .repoioRcStrip { margin: 0.75rem 1rem 0; width: auto; }
 .repoioRcTabs .sapMITBContainerContent { display: none; }
-.repoioRcIntro.sapMText { display: block; margin: 0.75rem 1rem 0.25rem; color: #6a6d70; font-size: 0.8125rem; }
+.repoioRcIntro.sapMText { display: block; margin: 0.75rem 1rem 0.25rem; color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.8125rem; }
 .repoioRcFields { margin: 0 0.5rem; }
 .repoioRcRow { width: 100%; box-sizing: border-box; gap: 0.75rem; min-height: 2.25rem; padding-inline-end: 0.75rem; }
-.repoioRcLbl.sapMLabel { flex: 0 0 9rem; color: #6a6d70; }
+.repoioRcLbl.sapMLabel { flex: 0 0 9rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioRcVal.sapMText { flex: 1 1 auto; min-width: 0; text-align: start; }
 [dir="rtl"] .repoioRcVal.sapMText { text-align: right; }
 .repoioRcCodeHead { margin: 0.75rem 1rem 0.25rem; }
 .repoioRcLblStrong.sapMText { font-weight: bold; font-size: 0.8125rem; }
 .repoioRcCode.sapMText { display: block; margin: 0 1rem; padding: 0.75rem; background: #1e2833; color: #e6edf3; border-radius: 0.375rem; font-size: 0.75rem; line-height: 1.5; overflow-x: auto; white-space: pre; }
-.repoioRcToken { margin: 0.75rem 1rem 0.5rem; gap: 0.375rem; color: #6a6d70; }
-.repoioRcKey { color: #6a6d70; }
+.repoioRcToken { margin: 0.75rem 1rem 0.5rem; gap: 0.375rem; color: var(--sapContent_LabelColor, #6a6d70); }
+.repoioRcKey { color: var(--sapContent_LabelColor, #6a6d70); }
 
 /* Person card (PersonLink): compact, fixed width, values ellipsized with full text in the tooltip */
 .repoioPersonCard .repoioPcBody { padding: 0.75rem 0.875rem 0.625rem; }
@@ -999,10 +983,10 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 
 /* ---------- User management & Roles (J17, ADR-0009) ---------- */
 .repoioUmBody { display: flex; align-items: stretch; min-height: 100%; }
-.repoioUmTree { flex: none; width: 16.5rem; background: #fff; border-inline-end: 1px solid #e5e5e5; padding-bottom: 0.5rem; }
+.repoioUmTree { flex: none; width: 16.5rem; background: var(--sapGroup_ContentBackground, #fff); border-inline-end: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); padding-bottom: 0.5rem; }
 .repoioUmTree .sapMTreeItemBase .sapMSLITitleOnly { font-size: 0.8125rem; }
 .repoioUmMain { flex: 1 1 auto; min-width: 0; }
-.repoioUmUnit { background: #fff; border-bottom: 1px solid #e5e5e5; padding: 0.75rem 1rem 0.625rem; }
+.repoioUmUnit { background: var(--sapGroup_ContentBackground, #fff); border-bottom: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); padding: 0.75rem 1rem 0.625rem; }
 .repoioUmUnitHead { gap: 0.625rem; margin-bottom: 0.375rem; }
 .repoioUmUnitIcon { font-size: 1.25rem; color: var(--sapContent_IconColor, #0854a0); width: 2rem; }
 .repoioUmMuted { color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.8125rem; }
@@ -1010,7 +994,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioUmRolesHead { gap: 0.5rem; }
 .repoioUmChips { gap: 0.375rem; margin-top: 0.25rem; }
 .repoioUmChip { gap: 0.25rem; border: 1px solid #c7d7ea; background: #f2f7fc; border-radius: 1rem; padding-inline: 0.625rem 0.125rem; height: 1.75rem; }
-.repoioUmChip[data-inh="yes"] { background: #f7f7f7; border-style: dashed; border-color: #cfcfcf; padding-inline-end: 0.625rem; }
+.repoioUmChip[data-inh="yes"] { background: var(--sapBackgroundColor, #f7f7f7); border-style: dashed; border-color: #cfcfcf; padding-inline-end: 0.625rem; }
 .repoioUmChipIcon { font-size: 0.8125rem; color: var(--sapContent_IconColor, #0854a0); }
 .repoioUmChipFrom { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioUmChipX.sapMBtn { height: 1.5rem; min-width: 1.5rem; padding: 0; }
@@ -1023,7 +1007,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioUmBuItem { gap: 0.625rem; width: 100%; padding: 0.375rem 0.5rem; }
 .repoioUmBuItem .repoioUmName { flex: 1 1 auto; }
 .repoioUmBuLink { flex: none; }
-.repoioUmUserHead { padding: 1rem 1rem 0.5rem; background: #fff; }
+.repoioUmUserHead { padding: 1rem 1rem 0.5rem; background: var(--sapGroup_ContentBackground, #fff); }
 .repoioUmUserWho { margin-inline-start: 0.75rem; flex: 1 1 auto; min-width: 0; }
 .repoioUmUserLink { flex: none; }
 .repoioUmUserTabs > .sapMITH { padding: 0 1rem; }
@@ -1044,29 +1028,29 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioUmProg.sapMPI { margin: 0; }
 .repoioUmTeamFrom { gap: 0.5rem; }
 .repoioUmRsCards { gap: 0.75rem; align-items: center; }
-.repoioUmRsCard { flex: 1 1 0; border: 1px solid #e5e5e5; border-radius: 0.5rem; padding: 0.75rem; gap: 0.125rem; display: flex; flex-direction: column; }
+.repoioUmRsCard { flex: 1 1 0; border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); border-radius: 0.5rem; padding: 0.75rem; gap: 0.125rem; display: flex; flex-direction: column; }
 .repoioUmRsKeep { border-color: #a9d5b5; background: #f5faf6; }
 .repoioUmRsArrow { font-size: 1.25rem; color: var(--sapContent_IconColor, #0854a0); }
 [dir="rtl"] .repoioUmRsArrow { transform: scaleX(-1); }
 
 /* ---------- System configuration, Announcements, Audit log ---------- */
 .repoioScNav { width: 14rem; padding-top: 0.5rem; }
-.repoioScMain { background: #fff; }
+.repoioScMain { background: var(--sapGroup_ContentBackground, #fff); }
 .repoioScSec { padding: 1rem 1.25rem 2rem; max-width: 52rem; }
 .repoioScSecWide { max-width: none; }
 .repoioScForm .sapUiFormCLTitle, .repoioScForm .sapUiFormTitle { margin-top: 0.5rem; }
 .repoioScStrip { margin-top: 0.75rem; }
 .repoioAnAud { gap: 0.5rem; flex-wrap: wrap; }
 .repoioAnPreview { max-width: 46rem; }
-.repoioAuBefore { color: #bb0000; text-decoration: line-through; text-decoration-color: rgba(187, 0, 0, 0.4); }
-.repoioAuAfter { color: #107e3e; }
+.repoioAuBefore { color: var(--sapNegativeColor, #bb0000); text-decoration: line-through; text-decoration-color: rgba(187, 0, 0, 0.4); }
+.repoioAuAfter { color: var(--sapPositiveColor, #107e3e); }
 .repoioScVar { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); margin-top: 0.125rem; }
 .repoioBcMail { margin: 0.375rem 1rem; width: auto; flex: none; }
 .repoioPvList .repoioPvOff .sapMSLITitleOnly, .repoioPvList .repoioPvOff .sapMSLIIcon { opacity: 0.5; }
 
 /* Models & rules (J5): match rules per customer type and the change request duplicate check. */
 .repoioMrTabs .sapMITBContent { padding: 0; }
-.repoioMrMain { background: #fff; min-width: 0; }
+.repoioMrMain { background: var(--sapGroup_ContentBackground, #fff); min-width: 0; }
 .repoioMrSec { padding: 1rem 1.25rem 0.5rem; gap: 0.25rem; }
 .repoioMrSec > .sapMTitle { margin-bottom: 0.25rem; }
 .repoioMrTpls { margin-top: 0.5rem; gap: 0.25rem; }
@@ -1078,21 +1062,21 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioMrExc { padding: 0.375rem 0; }
 .repoioMrStrip.sapMMsgStrip { margin: 1rem 1.25rem 0; }
 .repoioMrNotes { gap: 1rem; padding: 1rem 1.25rem 1.5rem; }
-.repoioMrNote { flex: 1 1 18rem; background: #f7f7f7; border: 1px solid #e5e5e5; border-radius: 0.25rem; padding: 0.75rem 1rem; gap: 0.25rem; }
+.repoioMrNote { flex: 1 1 18rem; background: var(--sapBackgroundColor, #f7f7f7); border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); border-radius: 0.25rem; padding: 0.75rem 1rem; gap: 0.25rem; }
 .repoioMrNote .sapMTitle { margin-bottom: 0.25rem; }
 .repoioMrCode textarea { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 0.75rem; direction: ltr; text-align: left; }
 .repoioMrPage .repoioUmBody { min-height: calc(100vh - 12rem); }
 /* Models & rules: the three bands (distinct / review / auto-merge; continue / flag / stop) as a picture of the thresholds */
 .repoioMrUses { margin-top: 0.5rem; gap: 0.25rem; }
 .repoioMrBands { max-width: 40rem; margin: 0.25rem 0 0.75rem; }
-.repoioMrBandRow { display: flex; height: 1.75rem; border-radius: 0.25rem; overflow: hidden; border: 1px solid #d9d9d9; }
+.repoioMrBandRow { display: flex; height: 1.75rem; border-radius: 0.25rem; overflow: hidden; border: 1px solid var(--sapList_BorderColor, #d9d9d9); }
 .repoioMrBand { display: flex; align-items: center; justify-content: center; min-width: 0; overflow: hidden; font-size: 0.75rem; white-space: nowrap; flex-grow: 0; flex-shrink: 0; }
 .repoioMrBand > span { overflow: hidden; text-overflow: ellipsis; padding: 0 0.375rem; }
-.repoioMrBandLo { background: #f2f2f2; color: #32363a; }
+.repoioMrBandLo { background: #f2f2f2; color: var(--sapTextColor, #32363a); }
 .repoioMrBandMid { background: #fef0db; color: #8d4b00; }
-.repoioMrBandHi { background: #f1fdf6; color: #107e3e; border-inline-start: 1px solid #c8e6d3; }
-.repoioMrPage .repoioMrBandHi.repoioMrBandStop, .repoioMrReq .repoioMrBandHi { background: #fdf3f3; color: #bb0000; }
-.repoioMrBandAxis { position: relative; height: 1rem; font-size: 0.75rem; color: #6a6d70; margin-top: 0.125rem; font-family: "SFMono-Regular", Consolas, monospace; }
+.repoioMrBandHi { background: #f1fdf6; color: var(--sapPositiveColor, #107e3e); border-inline-start: 1px solid #c8e6d3; }
+.repoioMrPage .repoioMrBandHi.repoioMrBandStop, .repoioMrReq .repoioMrBandHi { background: #fdf3f3; color: var(--sapNegativeColor, #bb0000); }
+.repoioMrBandAxis { position: relative; height: 1rem; font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); margin-top: 0.125rem; font-family: "SFMono-Regular", Consolas, monospace; }
 .repoioMrBandAxis > span { position: absolute; top: 0; transform: translateX(-50%); }
 .repoioMrBandAxis > span:first-child { transform: none; }
 .repoioMrBandAxis > span:last-child { transform: translateX(-100%); }
@@ -1117,7 +1101,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 
 /* ---------- Column lineage (control/ColumnLineage.js) ---------- */
 .repoioLin { position: relative; overflow: hidden; background-color: #fafafb; background-image: radial-gradient(#d5d7da 1px, transparent 1px); background-size: 16px 16px;
-	border: 1px solid #e5e5e5; border-radius: 0.25rem; font-family: var(--sapFontFamily, "72", Arial, sans-serif); color: #32363a; user-select: none; }
+	border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); border-radius: 0.25rem; font-family: var(--sapFontFamily, "72", Arial, sans-serif); color: var(--sapTextColor, #32363a); user-select: none; }
 .repoioLinViewport { position: absolute; inset: 0; cursor: grab; outline: none; }
 .repoioLinViewport.repoioLinDrag { cursor: grabbing; }
 .repoioLinStage { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
@@ -1126,7 +1110,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioLinEdgeOn { fill: none; stroke: #5b3fd1; stroke-width: 1.75; }
 .repoioLinArrow { fill: #5b3fd1; }
 .repoioLinIco { font-family: "SAP-icons"; speak: none; font-style: normal; line-height: 1; }
-.repoioLinCard { position: absolute; width: 300px; box-sizing: border-box; background: #fff; border: 1px solid #e1e3e6; border-radius: 0.5rem;
+.repoioLinCard { position: absolute; width: 300px; box-sizing: border-box; background: var(--sapGroup_ContentBackground, #fff); border: 1px solid #e1e3e6; border-radius: 0.5rem;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06); cursor: default; }
 .repoioLinCard.repoioLinOnPath { border-color: #c9bff2; }
 .repoioLinHome { box-shadow: 0 0 0 2px #e4ddff, 0 2px 6px rgba(0, 0, 0, 0.08); }
@@ -1134,66 +1118,66 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 	background: #f1edff; color: #4b32b8; border-radius: 0.25rem; font-size: 0.8125rem; }
 .repoioLinHead { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.625rem 0.5rem 0.5rem 0.75rem; }
 [dir="rtl"] .repoioLinHead { padding: 0.625rem 0.75rem 0.5rem 0.5rem; }
-.repoioLinSys { font-size: 1rem; color: #0a6ed1; padding-top: 0.125rem; }
+.repoioLinSys { font-size: 1rem; color: var(--sapBrandColor, #0a6ed1); padding-top: 0.125rem; }
 .repoioLinHeadTxt { flex: 1; min-width: 0; }
-.repoioLinPath { font-size: 0.75rem; color: #6a6d70; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.repoioLinPath { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .repoioLinSep { margin: 0 0.3rem; color: #c4c7cc; }
 .repoioLinChev { color: #a9abae; }
 .repoioLinName { font-size: 0.9375rem; color: #1d2d3e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.125rem; }
 .repoioLinDq { font-size: 0.875rem; padding-top: 0.125rem; }
-.repoioLinDq-ok { color: #107e3e; }
-.repoioLinDq-warn { color: #e9730c; }
-.repoioLinBtn { border: none; background: transparent; color: #6a6d70; border-radius: 0.25rem; min-width: 1.75rem; height: 1.75rem; cursor: pointer; font-size: 0.875rem; }
-.repoioLinBtn:hover:not([disabled]) { background: #eef0f2; color: #0a6ed1; }
+.repoioLinDq-ok { color: var(--sapPositiveColor, #107e3e); }
+.repoioLinDq-warn { color: var(--sapCriticalColor, #e9730c); }
+.repoioLinBtn { border: none; background: transparent; color: var(--sapContent_LabelColor, #6a6d70); border-radius: 0.25rem; min-width: 1.75rem; height: 1.75rem; cursor: pointer; font-size: 0.875rem; }
+.repoioLinBtn:hover:not([disabled]) { background: #eef0f2; color: var(--sapBrandColor, #0a6ed1); }
 .repoioLinBtn[disabled] { opacity: 0.35; cursor: default; }
 .repoioLinColsBar { display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.5rem 0.75rem; border: none; border-top: 1px solid #eef0f2; background: transparent;
-	font: inherit; font-size: 0.8125rem; color: #32363a; cursor: pointer; text-align: start; }
+	font: inherit; font-size: 0.8125rem; color: var(--sapTextColor, #32363a); cursor: pointer; text-align: start; }
 .repoioLinColsBar:hover { background: #f7f8f9; }
 .repoioLinCount { background: #eef0f2; border-radius: 0.625rem; padding: 0 0.45rem; font-size: 0.75rem; color: #556b82; }
 .repoioLinGrow { flex: 1; }
 .repoioLinFind { display: flex; align-items: center; gap: 0.375rem; margin: 0 0.625rem 0.375rem; padding: 0 0.5rem; border: 1px solid #d9dbde; border-radius: 0.375rem; color: #8a8d90; }
-.repoioLinFind input { flex: 1; border: none; outline: none; height: 1.875rem; font: inherit; font-size: 0.8125rem; background: transparent; color: #32363a; min-width: 0; }
-.repoioLinFind:focus-within { border-color: #0a6ed1; }
+.repoioLinFind input { flex: 1; border: none; outline: none; height: 1.875rem; font: inherit; font-size: 0.8125rem; background: transparent; color: var(--sapTextColor, #32363a); min-width: 0; }
+.repoioLinFind:focus-within { border-color: var(--sapBrandColor, #0a6ed1); }
 .repoioLinCols { padding: 0 0.625rem 0.5rem; display: flex; flex-direction: column; gap: 0.25rem; }
 .repoioLinCol { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.5rem; border: 1px solid #eef0f2; border-radius: 0.375rem; font-size: 0.8125rem;
-	cursor: pointer; background: #fff; }
+	cursor: pointer; background: var(--sapGroup_ContentBackground, #fff); }
 .repoioLinCol:hover { border-color: #c9bff2; background: #faf9ff; }
-.repoioLinCol:focus-visible { outline: 2px solid #0a6ed1; outline-offset: 1px; }
+.repoioLinCol:focus-visible { outline: 2px solid var(--sapBrandColor, #0a6ed1); outline-offset: 1px; }
 .repoioLinColOn { background: #f6f3ff; border-color: #ddd5fb; }
 .repoioLinColSel { background: #ebe5ff; border-color: #5b3fd1; }
 .repoioLinKind { width: 1.25rem; text-align: center; color: #8a8d90; font-size: 0.75rem; font-family: "SFMono-Regular", Consolas, monospace; flex: none; }
 .repoioLinColName { flex: 1; min-width: 0; display: flex; flex-direction: column; font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.78rem; overflow-wrap: anywhere; }
 .repoioLinVal { font-family: var(--sapFontFamily, "72", Arial, sans-serif); color: #556b82; font-size: 0.75rem; margin-top: 0.0625rem; }
 .repoioLinColGo { color: #a9abae; font-size: 0.75rem; }
-.repoioLinEmpty { padding: 0.25rem 0.75rem 0.75rem; font-size: 0.8125rem; color: #6a6d70; }
+.repoioLinEmpty { padding: 0.25rem 0.75rem 0.75rem; font-size: 0.8125rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioLinPager { display: flex; justify-content: center; align-items: center; gap: 0.25rem; padding: 0 0 0.625rem; }
 .repoioLinPg { border: none; background: transparent; min-width: 1.6rem; height: 1.6rem; border-radius: 50%; cursor: pointer; font: inherit; font-size: 0.8125rem; color: #556b82; }
 .repoioLinPgOn { background: #ebe5ff; color: #4b32b8; font-weight: bold; }
 .repoioLinStep { position: absolute; width: 44px; display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
-.repoioLinStep .repoioLinIco { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid #f3c5a6;
-	border-radius: 0.5rem; color: #e9730c; font-size: 1.05rem; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
-.repoioLinStepTxt { font-size: 0.6875rem; color: #6a6d70; white-space: nowrap; }
-.repoioLinMore { position: absolute; width: 28px; height: 28px; border-radius: 50%; border: 1px solid #d9dbde; background: #fff; color: #0a6ed1; cursor: pointer; font-size: 0.875rem; }
+.repoioLinStep .repoioLinIco { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--sapGroup_ContentBackground, #fff); border: 1px solid #f3c5a6;
+	border-radius: 0.5rem; color: var(--sapCriticalColor, #e9730c); font-size: 1.05rem; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
+.repoioLinStepTxt { font-size: 0.6875rem; color: var(--sapContent_LabelColor, #6a6d70); white-space: nowrap; }
+.repoioLinMore { position: absolute; width: 28px; height: 28px; border-radius: 50%; border: 1px solid #d9dbde; background: var(--sapGroup_ContentBackground, #fff); color: var(--sapBrandColor, #0a6ed1); cursor: pointer; font-size: 0.875rem; }
 .repoioLinMore:hover { background: #eef5fd; }
-.repoioLinTools { position: absolute; top: 0.5rem; inset-inline-end: 0.5rem; display: flex; gap: 0.125rem; background: #fff; border: 1px solid #e1e3e6; border-radius: 0.375rem; padding: 0.125rem; }
+.repoioLinTools { position: absolute; top: 0.5rem; inset-inline-end: 0.5rem; display: flex; gap: 0.125rem; background: var(--sapGroup_ContentBackground, #fff); border: 1px solid #e1e3e6; border-radius: 0.375rem; padding: 0.125rem; }
 .repoioLinMini { position: absolute; bottom: 0.5rem; inset-inline-end: 0.5rem; width: 190px; height: 110px; background: rgba(255, 255, 255, 0.92); border: 1px solid #e1e3e6;
 	border-radius: 0.25rem; cursor: pointer; }
 .repoioLinMini svg { width: 100%; height: 100%; display: block; }
 .repoioLinMiniNode { fill: #d5d7da; }
 .repoioLinMiniOn { fill: #b9a9f5; }
 .repoioLinMiniHome { fill: #5b3fd1; }
-.repoioLinMiniView { fill: rgba(10, 110, 209, 0.06); stroke: #0a6ed1; stroke-width: 1; }
+.repoioLinMiniView { fill: rgba(10, 110, 209, 0.06); stroke: var(--sapBrandColor, #0a6ed1); stroke-width: 1; }
 
 /* ---------- Golden records list (List Report) ---------- */
 .repoioGrVariant .sapMBtnInner { font-size: 1.25rem; }
-.repoioGrVariant .sapMBtnContent { color: #0a6ed1; }
+.repoioGrVariant .sapMBtnContent { color: var(--sapBrandColor, #0a6ed1); }
 .repoioGrFilters { gap: 0.75rem 1rem; }
 .repoioGrFilter { width: 13rem; gap: 0.125rem; }
 .repoioGrFilterBtns { gap: 0.25rem; margin-inline-start: auto; padding-bottom: 0.0625rem; }
 .repoioGrStrip.sapMMsgStrip { margin: 0.5rem 1rem 0; }
 .repoioGrTable { margin-top: 0.5rem; }
 .repoioGrTable .sapMListHdrTBar.sapMTB { padding-inline: 1rem; }
-.repoioGrName { font-weight: bold; color: #32363a; }
+.repoioGrName { font-weight: bold; color: var(--sapTextColor, #32363a); }
 .repoioGrAvatar { margin: 0.25rem 0; }
 
 /* ---------- Golden record (Object Page) ---------- */
@@ -1203,12 +1187,12 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioGoFacet { gap: 0.5rem; min-width: 12rem; }
 .repoioGoFacetW { min-width: 13rem; }
 .repoioGoPair { align-items: baseline; flex-wrap: wrap; }
-.repoioGoPair .sapMLabel { color: #6a6d70; }
+.repoioGoPair .sapMLabel { color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioGoBanner.sapMMsgStrip { flex: 1 1 100%; }
-.repoioGrIdTag { color: #6a6d70; font-size: 0.875rem; text-transform: uppercase; font-family: "SFMono-Regular", Consolas, monospace; }
+.repoioGrIdTag { color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.875rem; text-transform: uppercase; font-family: "SFMono-Regular", Consolas, monospace; }
 .repoioGoFields { gap: 1.25rem 2rem; }
 .repoioGoField { width: 16.5rem; gap: 0.25rem; }
-.repoioGoValue { font-size: 0.9375rem; color: #32363a; }
+.repoioGoValue { font-size: 0.9375rem; color: var(--sapTextColor, #32363a); }
 .repoioGoProv.sapMLnk { font-size: 0.75rem; }
 .repoioGoDq { width: 22rem; padding: 0.375rem 0; }
 .repoioGoDqIco { font-size: 1rem; padding-top: 0.125rem; }

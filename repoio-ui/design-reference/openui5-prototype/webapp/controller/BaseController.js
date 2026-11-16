@@ -47,7 +47,7 @@ sap.ui.define([
 			return null;
 		},
 
-		/* Shared ECharts palette from Quartz Light semantic colors. */
+		/* Shared ECharts palette (soft SAP semantic tints; they read on Morning Horizon). */
 		colors: { brand: "#5899da", pos: "#5fae7c", crit: "#e3a256", neg: "#df7a7a", info: "#89b4e3", neutral: "#b4bac0", grid: "#eeeeee", text: "#32363a", label: "#6a6d70" }
 	});
 });

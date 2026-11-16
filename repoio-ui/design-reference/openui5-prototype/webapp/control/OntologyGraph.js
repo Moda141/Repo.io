@@ -21,7 +21,7 @@ sap.ui.define([
 	var MIN_READABLE = 0.7, MAX_FIT = 1.15;
 
 	/*
-	 * "Studio" look (reference: Ontology Studio), on the Quartz Light theme: a light canvas, concepts as white
+	 * "Studio" look (reference: Ontology Studio), on the console theme (Morning Horizon): a light canvas, concepts as white
 	 * label-sized cards with a coloured border per category, records as small filled circles, relationship
 	 * types in teal, is-a in dashed violet, one blue for selection.
 	 */

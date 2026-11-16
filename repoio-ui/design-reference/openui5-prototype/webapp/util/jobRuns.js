@@ -24,7 +24,7 @@ sap.ui.define([
 		skipped: ["None", "sap-icon://media-forward"], canceled: ["None", "sap-icon://cancel"]
 	};
 	var KIND_ICON = { ingest: "sap-icon://download-from-cloud", push: "sap-icon://upload-to-cloud", stream: "sap-icon://process", dq: "sap-icon://quality-issue", hk: "sap-icon://wrench" };
-	// Soft Quartz tints, the same family as BaseController.colors.
+	// Soft semantic tints, the same family as BaseController.colors.
 	var COLOR = { succeeded: "#5fae7c", succeededWithFailures: "#e3a256", failed: "#df7a7a", timedOut: "#df7a7a", running: "#89b4e3", queued: "#b4bac0", skipped: "#d5dadd", canceled: "#b4bac0" };
 
 	function parse(s) { return s ? new Date(s.replace(" ", "T")) : null; }

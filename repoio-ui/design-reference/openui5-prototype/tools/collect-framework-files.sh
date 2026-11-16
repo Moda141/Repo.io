@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Copies the compiled OpenUI5 theme, font, CLDR and message-bundle files the prototype needs
 # into dist/. `ui5 build self-contained` bundles the JavaScript only; these files are taken
-# from a running `ui5 serve` (which compiles the sap_fiori_3 LESS sources on request).
+# from a running `ui5 serve` (which compiles the sap_horizon LESS sources on request).
 # Usage: npm start (or: npx ui5 serve --port 8095) in another shell, then
 #        tools/collect-framework-files.sh [http://localhost:8095]
 set -euo pipefail
