@@ -242,7 +242,7 @@
 				},
 				{
 					"name": "models",
-					"pattern": "stewardship/models/:tab:",
+					"pattern": "stewardship/models/:model:",
 					"target": "models"
 				},
 				{
