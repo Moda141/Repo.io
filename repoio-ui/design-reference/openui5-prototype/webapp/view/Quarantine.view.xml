@@ -9,8 +9,8 @@
 				<f:title>
 					<f:DynamicPageTitle>
 						<f:heading><Title text="{i18n>nav.quarantine}" level="H1"/></f:heading>
-						<f:expandedContent><Text text="{view>/qa/summary}"/></f:expandedContent>
-						<f:snappedContent><Text text="{view>/qa/summary}"/></f:snappedContent>
+						<f:expandedContent><Text text="{view>/qa/summary}" visible="{= ${view>/qa/layout} === 'OneColumn' }"/></f:expandedContent>
+						<f:snappedContent><Text text="{view>/qa/summary}" visible="{= ${view>/qa/layout} === 'OneColumn' }"/></f:snappedContent>
 						<f:actions>
 							<Button text="{view>/qa/clearText}" type="Transparent" visible="{= ${view>/qa/active} > 0 }" press=".onClear"/>
 							<SegmentedButton selectedKey="{view>/qa/filterMode}">
@@ -26,7 +26,7 @@
 				<f:header>
 					<f:DynamicPageHeader pinnable="true">
 						<VBox renderType="Bare">
-							<HBox class="repoioAlpVisual" visible="{= ${view>/qa/filterMode} === 'visual' }" renderType="Bare">
+							<HBox class="repoioAlpVisual" visible="{= ${view>/qa/filterMode} === 'visual' &amp;&amp; ${view>/qa/layout} === 'OneColumn' }" renderType="Bare">
 								<VBox class="repoioAlpVf" renderType="Bare">
 									<Title text="{i18n>qa.vf.rule}" level="H4" titleStyle="H6" wrapping="false"/>
 									<rc:EChart id="vfQaRule" height="7.5rem" select=".onVfSelect">
@@ -46,7 +46,7 @@
 									</rc:EChart>
 								</VBox>
 							</HBox>
-							<FlexBox wrap="Wrap" alignItems="End" class="repoioGrFilters repoioMdFilters" visible="{= ${view>/qa/filterMode} === 'compact' }">
+							<FlexBox wrap="Wrap" alignItems="End" class="repoioGrFilters repoioMdFilters" visible="{= ${view>/qa/filterMode} === 'compact' || ${view>/qa/layout} !== 'OneColumn' }">
 								<VBox class="repoioGrFilter">
 									<Label text="{i18n>qa.byRule}" labelFor="qaRules"/>
 									<MultiComboBox id="qaRules" selectedKeys="{view>/qa/f/rules}" items="{view>/qa/ruleList}" width="100%" selectionFinish=".onFilter">
@@ -90,7 +90,7 @@
 						class="repoioDenseTable repoioMdTable" noDataText="{i18n>qa.none}" sticky="ColumnHeaders,HeaderToolbar">
 						<headerToolbar>
 							<OverflowToolbar style="Clear">
-								<Title text="{view>/qa/listTitle}" level="H2"/>
+								<Title text="{view>/qa/listTitle}" level="H2" visible="{= ${view>/qa/layout} === 'OneColumn' }"/>
 								<ToolbarSpacer/>
 								<SearchField value="{view>/qa/f/q}" liveChange=".onFilter" placeholder="{i18n>qa.search}" width="14rem">
 									<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" minWidth="9rem"/></layoutData>
@@ -101,16 +101,17 @@
 						</headerToolbar>
 						<columns>
 							<Column><Text text="{i18n>qa.c.record}"/></Column>
-							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>qa.c.rule}"/></Column>
-							<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>qa.c.value}"/></Column>
-							<Column minScreenWidth="Desktop" demandPopin="true" width="8rem"><Text text="{i18n>qa.c.run}"/></Column>
-							<Column width="11rem"><Text text="{i18n>qa.c.status}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true" visible="{= ${view>/qa/layout} === 'OneColumn' }"><Text text="{i18n>qa.c.rule}"/></Column>
+							<Column minScreenWidth="Tablet" demandPopin="true" visible="{= ${view>/qa/layout} === 'OneColumn' }"><Text text="{i18n>qa.c.value}"/></Column>
+							<Column minScreenWidth="Desktop" demandPopin="true" width="8rem" visible="{= ${view>/qa/layout} === 'OneColumn' }"><Text text="{i18n>qa.c.run}"/></Column>
+							<Column width="8rem"><Text text="{i18n>qa.c.status}"/></Column>
 						</columns>
 						<items>
 							<ColumnListItem type="Navigation" press=".onOpen" selected="{view>checked}" highlight="{view>highlight}" navigated="{view>navigated}">
 								<VBox renderType="Bare">
 									<Text text="{view>name}" class="repoioGrName"/>
-									<Text text="{view>src}" class="repoioUmMuted"/>
+									<Text text="{view>src}" class="repoioUmMuted" visible="{= ${view>/qa/layout} === 'OneColumn' }"/>
+									<Text text="{view>short}" class="repoioUmMuted" visible="{= ${view>/qa/layout} !== 'OneColumn' }"/>
 								</VBox>
 								<VBox renderType="Bare">
 									<Text text="{view>ruleText}"/>
@@ -122,8 +123,8 @@
 								</VBox>
 								<Link text="{view>run}" press=".onRun"/>
 								<VBox renderType="Bare">
-									<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
-									<Text text="{view>held}" class="repoioUmMuted" textDirection="LTR"/>
+									<ObjectStatus text="{view>statusShort}" tooltip="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+									<Text text="{view>held}" class="repoioUmMuted" textDirection="LTR" visible="{= ${view>/qa/layout} === 'OneColumn' }"/>
 								</VBox>
 							</ColumnListItem>
 						</items>
@@ -244,7 +245,9 @@
 				</f:content>
 				<f:footer>
 					<OverflowToolbar>
-						<Text text="{view>/qa/it/footNote}" class="repoioUmMuted"/>
+						<Text text="{view>/qa/it/footNote}" class="repoioUmMuted" wrapping="false" visible="{= ${view>/qa/layout} === 'MidColumnFullScreen' }">
+							<layoutData><OverflowToolbarLayoutData shrinkable="true" priority="Low"/></layoutData>
+						</Text>
 						<ToolbarSpacer/>
 						<Button text="{i18n>qa.a.discard}" press=".onDiscard" visible="{= ${view>/qa/it/actions} === 'held' }"/>
 						<Button text="{i18n>qa.a.waive}" press=".onWaive" visible="{= ${view>/qa/it/actions} === 'held' }"/>

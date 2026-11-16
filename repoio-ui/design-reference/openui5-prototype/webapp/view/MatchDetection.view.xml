@@ -10,8 +10,8 @@
 				<f:title>
 					<f:DynamicPageTitle>
 						<f:heading><Title text="{i18n>nav.matchDetection}" level="H1"/></f:heading>
-						<f:expandedContent><Text text="{view>/md/summary}"/></f:expandedContent>
-						<f:snappedContent><Text text="{view>/md/summary}"/></f:snappedContent>
+						<f:expandedContent><Text text="{view>/md/summary}" visible="{= ${view>/md/layout} === 'OneColumn' }"/></f:expandedContent>
+						<f:snappedContent><Text text="{view>/md/summary}" visible="{= ${view>/md/layout} === 'OneColumn' }"/></f:snappedContent>
 						<f:actions>
 							<Button text="{view>/md/clearText}" type="Transparent" visible="{= ${view>/md/active} > 0 }" press=".onClear"/>
 							<SegmentedButton selectedKey="{view>/md/filterMode}">
@@ -27,7 +27,7 @@
 				<f:header>
 					<f:DynamicPageHeader pinnable="true">
 						<VBox renderType="Bare">
-							<HBox class="repoioAlpVisual" visible="{= ${view>/md/filterMode} === 'visual' }" renderType="Bare">
+							<HBox class="repoioAlpVisual" visible="{= ${view>/md/filterMode} === 'visual' &amp;&amp; ${view>/md/layout} === 'OneColumn' }" renderType="Bare">
 								<VBox class="repoioAlpVf" renderType="Bare">
 									<Title text="{view>/md/vf/seg}" level="H4" titleStyle="H6" wrapping="false"/>
 									<rc:EChart id="vfMdSeg" height="7.5rem" select=".onVfSelect">
@@ -47,7 +47,7 @@
 									</rc:EChart>
 								</VBox>
 							</HBox>
-							<FlexBox wrap="Wrap" alignItems="End" class="repoioGrFilters repoioMdFilters" visible="{= ${view>/md/filterMode} === 'compact' }">
+							<FlexBox wrap="Wrap" alignItems="End" class="repoioGrFilters repoioMdFilters" visible="{= ${view>/md/filterMode} === 'compact' || ${view>/md/layout} !== 'OneColumn' }">
 								<VBox class="repoioGrFilter">
 									<Label text="{i18n>gr.f.seg}" labelFor="mdSeg"/>
 									<MultiComboBox id="mdSeg" selectedKeys="{view>/md/f/seg}" items="{view>/md/segs}" width="100%" selectionFinish=".onFilter">
@@ -96,7 +96,7 @@
 							fixedLayout="false" popinLayout="GridSmall" class="repoioDenseTable repoioMdTable" noDataText="{view>/md/noData}" sticky="ColumnHeaders,HeaderToolbar">
 							<headerToolbar>
 								<OverflowToolbar style="Clear">
-									<Title text="{view>/md/listTitle}" level="H2"/>
+									<Title text="{view>/md/listTitle}" level="H2" visible="{= ${view>/md/layout} === 'OneColumn' }"/>
 									<ToolbarSpacer/>
 									<SearchField value="{view>/md/f/q}" liveChange=".onFilter" placeholder="{i18n>md.search}" width="14rem">
 										<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" minWidth="9rem"/></layoutData>
@@ -109,16 +109,17 @@
 							</headerToolbar>
 							<columns>
 								<Column><Text text="{i18n>md.c.records}"/></Column>
-								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{view>/md/col2}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" visible="{= ${view>/md/layout} === 'OneColumn' }"><Text text="{view>/md/col2}"/></Column>
 								<Column hAlign="End" width="7rem"><Text text="{i18n>md.c.prob}"/></Column>
-								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{view>/md/col4}"/></Column>
-								<Column minScreenWidth="Tablet" demandPopin="true" width="10rem"><Text text="{view>/md/col5}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true" visible="{= ${view>/md/layout} === 'OneColumn' }"><Text text="{view>/md/col4}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="10rem" visible="{= ${view>/md/layout} === 'OneColumn' }"><Text text="{view>/md/col5}"/></Column>
 							</columns>
 							<items>
 								<ColumnListItem type="Navigation" press=".onOpen" selected="{view>checked}" highlight="{view>highlight}" navigated="{view>navigated}">
 									<VBox renderType="Bare">
 										<Text text="{view>title}" class="repoioGrName"/>
-										<Text text="{view>sub}" class="repoioUmMuted repoioMono" textDirection="LTR"/>
+										<Text text="{view>sub}" class="repoioUmMuted repoioMono" textDirection="LTR" visible="{= ${view>/md/layout} === 'OneColumn' }"/>
+										<Text text="{view>short}" class="repoioUmMuted" visible="{= ${view>/md/layout} !== 'OneColumn' }"/>
 									</VBox>
 									<VBox renderType="Bare">
 										<Text text="{view>c2}"/>
@@ -284,7 +285,9 @@
 				</f:content>
 				<f:footer>
 					<OverflowToolbar>
-						<Text text="{view>/md/it/footNote}" class="repoioUmMuted"/>
+						<Text text="{view>/md/it/footNote}" class="repoioUmMuted" wrapping="false" visible="{= ${view>/md/layout} === 'MidColumnFullScreen' }">
+							<layoutData><OverflowToolbarLayoutData shrinkable="true" priority="Low"/></layoutData>
+						</Text>
 						<ToolbarSpacer/>
 						<Button text="{i18n>md.a.defer}" press=".onDefer" visible="{= ${view>/md/it/actions} === 'pair' }"/>
 						<Button text="{i18n>md.a.distinct}" press=".onDistinct" visible="{= ${view>/md/it/actions} === 'pair' }"/>

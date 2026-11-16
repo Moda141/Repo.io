@@ -164,6 +164,7 @@ sap.ui.define([
 				}
 				return r;
 			});
+			rows.forEach(function (r) { r.short = [r.c2, r.c5].filter(Boolean).join(" · "); });
 			vm.setProperty("/md/rows", rows);
 			vm.setProperty("/md/count", { pairs: q.pairs.filter(function (i) { return i.state === "open"; }).length, requests: q.requests.length, second: q.second.length, decided: q.decided.length });
 			vm.setProperty("/md/listTitle", T("md.list." + tab, [rows.length]));
