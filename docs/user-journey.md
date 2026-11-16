@@ -197,13 +197,15 @@ history (unmerge is a governed change, not an undo button).
 
 **Match rules and the duplicate check (Models & rules).**
 
-1. The Data Steward opens **Models & rules** and creates a match model
-   (a name, one domain, a description; blank or copied from a model of
-   the same domain), then defines its rules inside it. The customer
+1. The Data Steward opens **Models & rules** and creates a match model:
+   a name, the domain, then a repository of that domain, a description;
+   blank or copied from a model on the same repository. The rules use
+   the columns of that repository's model (including the columns the
+   standardise step derives), never free-typed fields. The customer
    models shipped with the sample (teacher or supervisor, bookstore,
    call center, student, charity student) come from the current C4C
-   new-customer checks. A template chooses its model, so a change
-   request uses the rules of its template's model.
+   new-customer checks. A template chooses its model, and a workflow's
+   duplicate check step (J7) picks the model it runs.
 2. A match rule is a Splink model over several fields, not the name
    alone: the name with governorate and territories, all phone numbers
    as one list (a number matches whatever field it was typed in), and
@@ -280,9 +282,10 @@ current entity schema → blocked at save with the schema rule cited.
      approver's delegate gets the task). Branches *approved* /
      *rejected*.
    - **Validation** — a data quality rule (Great Expectations) on the
-     template's fields, or a duplicate check (Splink) against the chosen
-     source (the domain's golden records or a source connection) with a
-     threshold; branches *passed* / *failed*.
+     template's fields, or a duplicate check (Splink) that runs a match
+     model of the template's domain from Models & rules (its rules and
+     stop threshold) against the chosen source (the domain's golden
+     records or a source connection); branches *passed* / *failed*.
    - **Script** — choose the language (Python, or read-only SQL) and
      write the code in the step, with the template's field names offered;
      runs in the isolated workers as the requester (M8).
