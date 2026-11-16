@@ -1,3 +1,29 @@
+/* ===== Typography (one font for the whole console) =====
+   Latin text uses SAP 72 (the theme font); Arabic characters use Noto Sans Arabic (SIL OFL 1.1, vendored in
+   thirdparty/fonts), limited to the Arabic Unicode range, so both scripts share one family stack. The weight-specific
+   families keep bold and semibold Arabic text bold. The root size is one step smaller than the browser default, so the
+   whole console (text, controls, spacing, all in rem) is denser. */
+@font-face { font-family: "Repoio Arabic"; font-style: normal; font-weight: 400; font-display: swap; src: url("../thirdparty/fonts/noto-sans-arabic/noto-sans-arabic-arabic-400-normal.woff2") format("woff2"); unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1; }
+@font-face { font-family: "Repoio Arabic"; font-style: normal; font-weight: 600; font-display: swap; src: url("../thirdparty/fonts/noto-sans-arabic/noto-sans-arabic-arabic-600-normal.woff2") format("woff2"); unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1; }
+@font-face { font-family: "Repoio Arabic"; font-style: normal; font-weight: 700; font-display: swap; src: url("../thirdparty/fonts/noto-sans-arabic/noto-sans-arabic-arabic-700-normal.woff2") format("woff2"); unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1; }
+@font-face { font-family: "Repoio Arabic Semibold"; font-style: normal; font-weight: normal; font-display: swap; src: url("../thirdparty/fonts/noto-sans-arabic/noto-sans-arabic-arabic-600-normal.woff2") format("woff2"); unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1; }
+@font-face { font-family: "Repoio Arabic Semibold"; font-style: normal; font-weight: bold; font-display: swap; src: url("../thirdparty/fonts/noto-sans-arabic/noto-sans-arabic-arabic-700-normal.woff2") format("woff2"); unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1; }
+@font-face { font-family: "Repoio Arabic Bold"; font-style: normal; font-weight: normal; font-display: swap; src: url("../thirdparty/fonts/noto-sans-arabic/noto-sans-arabic-arabic-700-normal.woff2") format("woff2"); unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1; }
+@font-face { font-family: "Repoio Arabic Bold"; font-style: normal; font-weight: bold; font-display: swap; src: url("../thirdparty/fonts/noto-sans-arabic/noto-sans-arabic-arabic-700-normal.woff2") format("woff2"); unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1; }
+html { font-size: 15px; }
+html:root, html:root .sapUiBody {
+	--sapFontFamily: "72", "72full", "Repoio Arabic", Arial, Helvetica, sans-serif;
+	--sapFontLightFamily: "72-Light", "72-Lightfull", "72", "72full", "Repoio Arabic", Arial, Helvetica, sans-serif;
+	--sapFontSemiboldFamily: "72-Semibold", "72-Semiboldfull", "Repoio Arabic Semibold", var(--sapFontFamily);
+	--sapFontSemiboldDuplexFamily: "72-SemiboldDuplex", "72-SemiboldDuplexfull", "Repoio Arabic Semibold", var(--sapFontFamily);
+	--sapFontBoldFamily: "72-Bold", "72-Boldfull", "Repoio Arabic Bold", var(--sapFontFamily);
+	--sapFontHeaderFamily: "72-Bold", "72-Boldfull", "Repoio Arabic Bold", var(--sapFontFamily);
+	--sapFontBlackFamily: "72Black", "72Blackfull", "Repoio Arabic Bold", var(--sapFontFamily);
+	--repoioCodeFamily: "72Mono", "72Monofull", Consolas, monospace;
+}
+/* IDs, codes and numbers in the UI use the same font with tabular digits, not a separate monospace font. */
+.repoioMono, .repoioMono .sapMText, .repoioJrTech.sapMText, .repoioJrParams.sapMText, .repoioMonoLink.sapMLnk { font-variant-numeric: tabular-nums; }
+
 /* Repo.io prototype — only small layout helpers; colors and type come from sap_fiori_3. */
 .repoioLogo { cursor: pointer; }
 .repoioProtoBadge { font-size: 0.75rem; color: var(--sapCriticalTextColor); }
@@ -205,7 +231,7 @@
 .repoioOntoDetail .sapMLabel { margin-top: 0.25rem; }
 .repoioOntoCrumb { font-size: 0.8125rem; }
 .repoioOntoUri { gap: 0.25rem; }
-.repoioMono, .repoioMono textarea, .repoioMono .sapMText { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace !important; font-size: 0.8125rem; }
+.repoioMono, .repoioMono textarea, .repoioMono .sapMText { font-family: var(--sapFontFamily) !important; font-size: 0.8125rem; }
 .repoioMono textarea { direction: ltr; text-align: left; }
 .repoioTtl textarea { white-space: pre; font-size: 0.75rem; }
 .repoioOntoLinkRow { gap: 0.625rem; padding: 0.375rem 0; }
@@ -237,7 +263,7 @@
 .repoioSqPro { background: #e3efe8; border-color: #93bba2; }
 .repoioLinePending { border-top: 2px dashed var(--sapCriticalColor, #e9730c); }
 .repoioOntoAttrList .sapMDLI { padding-inline: 0; height: 2rem; }
-.repoioOntoAttrList .sapMDLILabel { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 0.8125rem; }
+.repoioOntoAttrList .sapMDLILabel { font-family: var(--sapFontFamily); font-size: 0.8125rem; }
 /* CSV / Excel import (Datasphere "Import CSV File") */
 .repoioImp .repoioImpOpt { margin-inline-end: 1.5rem; margin-block: 0.25rem; gap: 0.375rem; }
 .repoioImpLbl.sapMLabel { margin-inline-end: 0.25rem; }
@@ -261,14 +287,14 @@
 .rfEdge { fill: none; stroke: #b9c2cc; stroke-width: 1.5; }
 .rfEdge.rfNeg { stroke: #d8a7a7; stroke-dasharray: 5 4; }
 .rfArrow { fill: #b9c2cc; } .rfArrow.rfNeg { fill: #d8a7a7; }
-.rfPort { position: absolute; transform: translate(-50%, -50%); font: 600 0.6875rem/1.4 "72", Arial, sans-serif; color: #2b7c4f; background: #eef7f1;
+.rfPort { position: absolute; transform: translate(-50%, -50%); font: 600 0.6875rem/1.4 var(--sapFontFamily); color: #2b7c4f; background: #eef7f1;
 	border: 1px solid #c9e4d3; border-radius: 0.625rem; padding: 0 0.4375rem; white-space: nowrap; pointer-events: none; }
 .rfPort.rfNeg { color: #a33; background: #fbefef; border-color: #efcfcf; }
 .rfPlus { position: absolute; width: 1.375rem; height: 1.375rem; margin: -0.6875rem 0 0 -0.6875rem; border-radius: 50%; border: 1px solid #c3cbd4; background: var(--sapGroup_ContentBackground, #fff);
 	color: #556b82; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; font-size: 0.625rem;
 	box-shadow: 0 1px 2px rgba(0,0,0,0.08); transition: transform 0.12s, border-color 0.12s, color 0.12s; }
 .rfPlus:hover, .rfPlus:focus-visible { transform: scale(1.18); border-color: var(--sapBrandColor, #0a6ed1); color: var(--sapBrandColor, #0a6ed1); outline: none; }
-.rfNode { position: absolute; box-sizing: border-box; cursor: pointer; font-family: "72", Arial, sans-serif; color: var(--sapTextColor, #32363a); }
+.rfNode { position: absolute; box-sizing: border-box; cursor: pointer; font-family: var(--sapFontFamily); color: var(--sapTextColor, #32363a); }
 .rfNode:focus-visible { outline: 2px solid var(--sapBrandColor, #0a6ed1); outline-offset: 2px; }
 .rfCard { background: var(--sapGroup_ContentBackground, #fff); border: 1px solid #e1e5ea; border-radius: 0.625rem; box-shadow: 0 1px 3px rgba(16,24,40,0.06), 0 1px 2px rgba(16,24,40,0.04);
 	overflow: hidden; display: flex; flex-direction: column; transition: box-shadow 0.12s, border-color 0.12s; }
@@ -286,7 +312,7 @@
 .rfBody { padding: 0 0.75rem 0.625rem; font-size: 0.6875rem; overflow: hidden; flex: 1; }
 .rfLine { display: flex; gap: 0.375rem; line-height: 1.45; }
 .rfK { color: #8a96a3; flex: none; } .rfV { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rfCode { margin: 0.25rem 0 0; padding: 0.375rem 0.5rem; background: #f6f7f9; border: 1px solid #eceff2; border-radius: 0.375rem; font: 0.6875rem/1.45 SFMono-Regular, Consolas, monospace;
+.rfCode { margin: 0.25rem 0 0; padding: 0.375rem 0.5rem; background: #f6f7f9; border: 1px solid #eceff2; border-radius: 0.375rem; font: 0.6875rem/1.45 var(--sapFontFamily);
 	color: #3b4a5a; white-space: pre; overflow: hidden; text-align: left; }
 .rfNote { margin-top: 0.25rem; padding: 0.25rem 0.5rem; background: #fff8ec; border: 1px solid #f3e1bf; border-radius: 0.375rem; color: #7a5a1c;
 	white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -310,7 +336,7 @@
 .rfZBtn { width: 1.75rem; height: 1.75rem; border: none; background: transparent; color: #475e75; border-radius: 0.375rem; cursor: pointer; font-size: 0.75rem;
 	display: flex; align-items: center; justify-content: center; }
 .rfZBtn:hover, .rfZBtn:focus-visible { background: #eef1f4; outline: none; }
-.rfZPct { min-width: 2.75rem; text-align: center; font: 0.75rem "72", Arial, sans-serif; color: #475e75; }
+.rfZPct { min-width: 2.75rem; text-align: center; font: 0.75rem var(--sapFontFamily); color: #475e75; }
 .rfZSep { width: 1px; height: 1rem; background: #e1e5ea; margin-inline: 0.125rem; }
 .rfRO .rfCard, .rfRO .rfPill { cursor: default; }
 /* properties panel */
@@ -328,20 +354,20 @@
 .repoioWfMembers { gap: 0.25rem; margin: 0.375rem 0 0.25rem; }
 .repoioWfChips { gap: 0.25rem; margin-top: 0.25rem; }
 .repoioWfChip.sapMBtn .sapMBtnInner { height: 1.5rem; min-height: 1.5rem; border: 1px solid #d9dee4 !important; border-radius: 0.75rem; padding: 0 0.5rem; background: #f7f8fa; }
-.repoioWfChip.sapMBtn .sapMBtnContent { font-size: 0.75rem; line-height: 1.375rem; font-family: SFMono-Regular, Consolas, monospace; }
+.repoioWfChip.sapMBtn .sapMBtnContent { font-size: 0.75rem; line-height: 1.375rem; font-family: var(--sapFontFamily); }
 .repoioFlowMenu .sapMLIBIcon { color: #475e75; }
 .repoioCode { border: 1px solid #d9dee4; border-radius: 0.375rem; overflow: hidden; background: var(--sapGroup_ContentBackground, #fff); direction: ltr; text-align: left; }
 .repoioCode .cm-editor.cm-focused { outline: 2px solid var(--sapBrandColor, #0a6ed1); outline-offset: -1px; }
 /* field mapper (Datasphere mapping) */
-.repoioMapper { font-family: "72", Arial, sans-serif; color: var(--sapTextColor, #32363a); }
+.repoioMapper { font-family: var(--sapFontFamily); color: var(--sapTextColor, #32363a); }
 .fmBar { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
 .fmSegs { display: inline-flex; border: 1px solid #89919a; border-radius: 0.25rem; overflow: hidden; }
-.fmSeg { border: none; background: var(--sapGroup_ContentBackground, #fff); padding: 0.375rem 1.25rem; font: 0.875rem "72", Arial, sans-serif; color: var(--sapTextColor, #32363a); cursor: pointer; }
+.fmSeg { border: none; background: var(--sapGroup_ContentBackground, #fff); padding: 0.375rem 1.25rem; font: 0.875rem var(--sapFontFamily); color: var(--sapTextColor, #32363a); cursor: pointer; }
 .fmSeg + .fmSeg { border-inline-start: 1px solid #89919a; }
 .fmSeg.fmOn { background: #346187; color: #fff; }
 .fmCount { color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.8125rem; }
 .fmAuto { margin-inline-start: auto; border: 1px solid var(--sapBrandColor, #0a6ed1); color: var(--sapBrandColor, #0a6ed1); background: var(--sapGroup_ContentBackground, #fff); border-radius: 0.25rem; padding: 0.25rem 0.75rem; cursor: pointer;
-	font: 0.8125rem "72", Arial, sans-serif; display: inline-flex; gap: 0.375rem; align-items: center; }
+	font: 0.8125rem var(--sapFontFamily); display: inline-flex; gap: 0.375rem; align-items: center; }
 .fmCols { position: relative; display: flex; align-items: flex-start; }
 .fmSvg { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; z-index: 1; }
 .fmLine { fill: none; stroke: #9aa3ad; stroke-width: 2; }
@@ -353,7 +379,7 @@
 .fmColTitle { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fmCol-tgt .fmColTitle { color: var(--sapBrandColor, #0a6ed1); }
 .fmSearch { position: relative; margin-bottom: 0.5rem; }
-.fmSearch input { width: 100%; box-sizing: border-box; border: 1px solid #89919a; border-radius: 0.25rem; padding: 0.375rem 2rem 0.375rem 0.5rem; font: 0.875rem "72", Arial, sans-serif; }
+.fmSearch input { width: 100%; box-sizing: border-box; border: 1px solid #89919a; border-radius: 0.25rem; padding: 0.375rem 2rem 0.375rem 0.5rem; font: 0.875rem var(--sapFontFamily); }
 .fmSearch .fmGlyph { position: absolute; inset-inline-end: 0.5rem; top: 50%; transform: translateY(-50%); color: var(--sapBrandColor, #0a6ed1); }
 [dir=rtl] .fmSearch input { padding: 0.375rem 0.5rem 0.375rem 2rem; }
 .fmItem { display: flex; align-items: center; gap: 0.375rem; border: 1px solid var(--sapList_BorderColor, #d9d9d9); background: var(--sapBackgroundColor, #f7f7f7); border-radius: 0.125rem; padding: 0.4375rem 0.5rem;
@@ -365,7 +391,7 @@
 .fmGrip { color: #8a96a3; font-weight: bold; }
 .fmType { color: #346187; font-size: 0.75rem; font-weight: bold; min-width: 1.5rem; }
 .fmName { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fmName small { margin-inline-start: 0.375rem; color: #8a96a3; font-size: 0.6875rem; font-family: SFMono-Regular, Consolas, monospace; }
+.fmName small { margin-inline-start: 0.375rem; color: #8a96a3; font-size: 0.6875rem; font-family: var(--sapFontFamily); }
 .fmKey { color: #346187; }
 .fmVm { color: #a96a00; font-size: 0.75rem; }
 .fmUnmap { border: none; background: transparent; color: #8a96a3; cursor: pointer; padding: 0 0.125rem; font-size: 0.6875rem; }
@@ -388,13 +414,13 @@
 .rfNode.rfDiff-added { border-color: #2b7c4f; box-shadow: 0 0 0 3px rgba(43,124,79,0.18); }
 .rfNode.rfDiff-changed { border-color: var(--sapCriticalColor, #e9730c); box-shadow: 0 0 0 3px rgba(233,115,12,0.16); }
 .rfNode.rfDiff-same { opacity: 0.55; }
-.rfTag { position: absolute; top: -0.625rem; inset-inline-start: 0.625rem; z-index: 1; font: 600 0.625rem/1.5 "72", Arial, sans-serif; padding: 0 0.4375rem;
+.rfTag { position: absolute; top: -0.625rem; inset-inline-start: 0.625rem; z-index: 1; font: 600 0.625rem/1.5 var(--sapFontFamily); padding: 0 0.4375rem;
 	border-radius: 0.5rem; color: #fff; background: var(--sapBrandColor, #0a6ed1); white-space: nowrap; max-width: 92%; overflow: hidden; text-overflow: ellipsis; }
 .rfCard { overflow: visible; }
 .rfCard > .rfBody { overflow: hidden; border-radius: 0 0 0.625rem 0.625rem; }
 .rfTag-ok { background: #2b7c4f; } .rfTag-warn { background: var(--sapCriticalColor, #e9730c); } .rfTag-bad { background: var(--sapNegativeColor, #bb0000); } .rfTag-info { background: var(--sapBrandColor, #0a6ed1); } .rfTag-muted { background: #8396a8; }
 .rfStats { position: absolute; bottom: -0.75rem; inset-inline-end: 0.5rem; display: flex; gap: 0.25rem; z-index: 1; }
-.rfStat { font: 600 0.625rem/1.5 "72", Arial, sans-serif; padding: 0 0.375rem; border-radius: 0.5rem; background: var(--sapGroup_ContentBackground, #fff); border: 1px solid #c9d0d7; color: #475e75;
+.rfStat { font: 600 0.625rem/1.5 var(--sapFontFamily); padding: 0 0.375rem; border-radius: 0.5rem; background: var(--sapGroup_ContentBackground, #fff); border: 1px solid #c9d0d7; color: #475e75;
 	white-space: nowrap; display: inline-flex; gap: 0.1875rem; align-items: center; }
 .rfStat.rfStatBad { border-color: #e9b9b9; color: #a33; background: #fbefef; }
 .rfBadges { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.25rem; }
@@ -403,7 +429,7 @@
 	box-shadow: 0 1px 3px rgba(0,0,0,0.06); cursor: pointer; padding: 0.25rem; box-sizing: content-box; }
 .rfMiniN { fill: #c9d3dd; } .rfMiniN.rfMiniRun { fill: var(--sapBrandColor, #0a6ed1); } .rfMiniN.rfMiniBad { fill: #e9a0a0; }
 .rfMiniView { fill: rgba(10,110,209,0.08); stroke: var(--sapBrandColor, #0a6ed1); stroke-width: 1; }
-.fmFx { font: 0.6875rem SFMono-Regular, Consolas, monospace; color: #6d4bb5; background: #f3effc; border: 1px solid #ddd3f5; border-radius: 0.5rem; padding: 0 0.375rem;
+.fmFx { font: 0.6875rem var(--sapFontFamily); color: #6d4bb5; background: #f3effc; border: 1px solid #ddd3f5; border-radius: 0.5rem; padding: 0 0.375rem;
 	white-space: nowrap; max-width: 9rem; overflow: hidden; text-overflow: ellipsis; }
 .fmFxBtn { border: 1px solid #c9d0d7; background: var(--sapGroup_ContentBackground, #fff); color: var(--sapContent_LabelColor, #6a6d70); border-radius: 0.25rem; font: italic 600 0.6875rem Georgia, serif; padding: 0 0.3125rem; cursor: pointer; }
 .fmFxBtn:hover, .fmFxBtn.fmFxOn { color: #6d4bb5; border-color: #b9a6ea; }
@@ -454,7 +480,7 @@
 .repoioOntoDockSep { width: 1px; height: 1.25rem; background: #e5e7eb; margin: 0 0.25rem; }
 .repoioOntoDock .repoioOntoDockSeg .sapMSegBBtn { min-width: 2rem; }
 .repoioOntoDock .repoioOntoZoom { padding: 0 0.25rem; }
-.repoioOntoZoomPct.sapMText { font-family: "72Mono", "JetBrains Mono", Consolas, monospace; font-size: 0.75rem; color: #6b7280; min-width: 2.5rem; text-align: end; }
+.repoioOntoZoomPct.sapMText { font-family: var(--sapFontFamily); font-size: 0.75rem; color: #6b7280; min-width: 2.5rem; text-align: end; }
 /* Record-count pills on concept cards */
 .repoioGraphBadges { position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
 .repoioGraphBadge { position: absolute; transform: translate(-55%, -55%); min-width: 1.125rem; height: 1.125rem; padding: 0 0.3rem; box-sizing: border-box;
@@ -469,7 +495,7 @@
 .repoioOntoStatus { flex: none; height: 1.75rem; padding: 0 1rem; gap: 1rem; border-top: 1px solid #e5e7eb; background: #fafbfc; justify-content: space-between; }
 .repoioOntoStatusEnd { gap: 1rem; }
 .repoioOntoStatus .repoioOntoStatusText.sapMText, .repoioOntoStatus .repoioOntoStatusCheck.sapMLnk {
-	font-family: "72Mono", "JetBrains Mono", Consolas, monospace; font-size: 0.6875rem; color: #6b7280; }
+	font-family: var(--sapFontFamily); font-size: 0.6875rem; color: #6b7280; }
 .repoioOntoStatus .repoioOntoStatusCheck.sapMLnk { color: #1d9e75; }
 /* Legend keys follow the canvas */
 .repoioOntoLegend { background: var(--sapGroup_ContentBackground, #fff); }
@@ -498,7 +524,7 @@
 .repoioDenseTable .sapMListTblCell .sapMObjStatusIcon .sapUiIcon { font-size: 0.8125rem; }
 .repoioDenseTable .sapMListTblCell .repoioMono.sapMText,
 .repoioDenseTable .sapMListTblCell .repoioMono .sapMText { font-size: 0.75rem; }
-.repoioMonoLink.sapMLnk { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 0.75rem; direction: ltr; unicode-bidi: isolate; }
+.repoioMonoLink.sapMLnk { font-family: var(--sapFontFamily); font-size: 0.75rem; direction: ltr; unicode-bidi: isolate; }
 
 /* Job runs list (J10, Databricks "Runs" tab). */
 .repoioJrFilters { gap: 0.5rem 1rem; }
@@ -511,10 +537,10 @@
 .repoioJrTop.sapMList { margin-top: 0.25rem; }
 .repoioJrTop .sapMListTblHeaderCell { background: transparent; }
 .repoioJrHint.sapMText { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); }
-.repoioJrTech.sapMText { font-size: 0.6875rem !important; color: var(--sapContent_LabelColor, #6a6d70); font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; direction: ltr; unicode-bidi: isolate; }
+.repoioJrTech.sapMText { font-size: 0.6875rem !important; color: var(--sapContent_LabelColor, #6a6d70); font-family: var(--sapFontFamily); direction: ltr; unicode-bidi: isolate; }
 .repoioJrKindIcon { margin-inline-end: 0.375rem; color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.875rem; }
 .repoioJrOverdue { margin-inline-start: 0.375rem; }
-.repoioJrParams.sapMText { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 0.6875rem !important; color: var(--sapContent_LabelColor, #6a6d70); direction: ltr; unicode-bidi: isolate; }
+.repoioJrParams.sapMText { font-family: var(--sapFontFamily); font-size: 0.6875rem !important; color: var(--sapContent_LabelColor, #6a6d70); direction: ltr; unicode-bidi: isolate; }
 .repoioJrBucket.sapMBtn .sapMBtnInner { border-radius: 1rem; background: #eaf1fa; border-color: #c9dbf0; }
 
 /* Run details (J10, Datasphere Data Integration Monitor). */
@@ -540,7 +566,7 @@
 .repoioJdTasks { gap: 0.25rem 0; padding-top: 0.5rem; }
 .repoioJdArrow { color: #b4bac0; margin: 0 0.25rem; font-size: 0.75rem; }
 html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
-.repoioJdTask.sapMBtn .sapMBtnInner { border-radius: 1rem; font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 0.75rem; height: 1.75rem; }
+.repoioJdTask.sapMBtn .sapMBtnInner { border-radius: 1rem; font-family: var(--sapFontFamily); font-size: 0.75rem; height: 1.75rem; }
 .repoioJdTask.sapMBtn .sapMBtnInner .sapMBtnContent bdi { direction: ltr; unicode-bidi: isolate; }
 .repoioJdTask[data-st="succeeded"] .sapMBtnInner { background: #f1f8f3; border-color: #a8d5b6; }
 .repoioJdTask[data-st="succeeded"] .sapMBtnIcon { color: #3c8d57; }
@@ -820,7 +846,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 
 /* Folders (ADR-0005): domain / repository / kind tree, like the Airflow Folders panel. */
 .repoioFolderTree .sapMTreeItemBase { height: 2rem; min-height: 2rem; }
-.repoioFolderTree .sapMSLITitleOnly { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: "72Mono", "72", monospace; font-size: 0.8125rem; direction: ltr; unicode-bidi: isolate; }
+.repoioFolderTree .sapMSLITitleOnly { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--sapFontFamily); font-size: 0.8125rem; direction: ltr; unicode-bidi: isolate; }
 .repoioFolderTree .sapMLIBCounter { font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioFolderTree .sapMSLIIcon { color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.875rem; }
 .repoioFolderTree .sapMLIBSelected .sapMSLIIcon { color: var(--sapBrandColor, #0a6ed1); }
@@ -834,7 +860,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioFolderTree .sapMLIBSelected .sapMSTIIcon, .repoioFolderTree .sapMLIBSelected .sapMLIBCounter { color: var(--sapBrandColor, #0a6ed1); }
 .repoioFolderTree .sapMLIB:not(.sapMLIBSelected):hover { background: #f2f6fb; }
 .repoioFolderCrumbs { margin-inline-start: 0.5rem; direction: ltr; }
-.repoioFolderCrumbs .sapMLnk, .repoioFolderCrumbs .sapMBreadcrumbsCurrentLocation { font-family: "72Mono", "72", monospace; font-size: 0.8125rem; }
+.repoioFolderCrumbs .sapMLnk, .repoioFolderCrumbs .sapMBreadcrumbsCurrentLocation { font-family: var(--sapFontFamily); font-size: 0.8125rem; }
 .repoioFolderCrumbIcon { margin-inline-start: 1rem; }
 .repoioJrBody { display: flex; align-items: stretch; gap: 1rem; }
 .repoioJrFoldHead { padding-inline-end: 0.25rem; }
@@ -887,7 +913,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioRefScroll { padding: 0 1rem 1rem; }
 /* Swagger UI blended into Quartz Light */
 .repoioSwagger .swagger-ui, .repoioSwagger .swagger-ui .info .title, .repoioSwagger .swagger-ui .opblock-tag,
-.repoioSwagger .swagger-ui .opblock .opblock-summary-description, .repoioSwagger .swagger-ui .model-title { font-family: "72", "72full", Arial, Helvetica, sans-serif; }
+.repoioSwagger .swagger-ui .opblock .opblock-summary-description, .repoioSwagger .swagger-ui .model-title { font-family: var(--sapFontFamily); }
 .repoioSwagger .swagger-ui .info { margin: 1rem 0; }
 .repoioSwagger .swagger-ui .info .title { font-size: 1.375rem; color: var(--sapTextColor, #32363a); }
 .repoioSwagger .swagger-ui .info .title small { display: none; }
@@ -925,7 +951,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .rfT-begin.rfCard .rfLine .rfV { color: #1d2d3e; }
 .rfT-begin.rfCard.rfSel { border-color: #6366f1; border-inline-start-color: #2f9e5b; }
 .rfEyebrow { position: absolute; top: -0.6875rem; inset-inline-start: 0.625rem; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0 0.5rem;
-	height: 1.25rem; border-radius: 0.625rem; background: #2f9e5b; color: #fff; font: bold 0.625rem/1.25rem "72", Arial, sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }
+	height: 1.25rem; border-radius: 0.625rem; background: #2f9e5b; color: #fff; font: bold 0.625rem/1.25rem var(--sapFontFamily); letter-spacing: 0.04em; text-transform: uppercase; }
 .rfEyebrow .rfGlyph { font-size: 0.5625rem; }
 .rfT-begin.rfCard .rfHead { padding-top: 0.875rem; }
 .repoioTrigHint.sapMText { margin: -0.25rem 0 0.25rem; margin-inline-start: 2rem; font-size: 0.75rem; }
@@ -1064,7 +1090,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioMrNotes { gap: 1rem; padding: 1rem 1.25rem 1.5rem; }
 .repoioMrNote { flex: 1 1 18rem; background: var(--sapBackgroundColor, #f7f7f7); border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); border-radius: 0.25rem; padding: 0.75rem 1rem; gap: 0.25rem; }
 .repoioMrNote .sapMTitle { margin-bottom: 0.25rem; }
-.repoioMrCode textarea { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 0.75rem; direction: ltr; text-align: left; }
+.repoioMrCode textarea { font-family: var(--repoioCodeFamily); font-size: 0.75rem; direction: ltr; text-align: left; }
 .repoioMrPage .repoioUmBody { min-height: calc(100vh - 12rem); }
 /* Models & rules: the three bands (distinct / review / auto-merge; continue / flag / stop) as a picture of the thresholds */
 .repoioMrUses { margin-top: 0.5rem; gap: 0.25rem; }
@@ -1076,7 +1102,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioMrBandMid { background: #fef0db; color: #8d4b00; }
 .repoioMrBandHi { background: #f1fdf6; color: var(--sapPositiveColor, #107e3e); border-inline-start: 1px solid #c8e6d3; }
 .repoioMrPage .repoioMrBandHi.repoioMrBandStop, .repoioMrReq .repoioMrBandHi { background: #fdf3f3; color: var(--sapNegativeColor, #bb0000); }
-.repoioMrBandAxis { position: relative; height: 1rem; font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); margin-top: 0.125rem; font-family: "SFMono-Regular", Consolas, monospace; }
+.repoioMrBandAxis { position: relative; height: 1rem; font-size: 0.75rem; color: var(--sapContent_LabelColor, #6a6d70); margin-top: 0.125rem; font-family: var(--sapFontFamily); }
 .repoioMrBandAxis > span { position: absolute; top: 0; transform: translateX(-50%); }
 .repoioMrBandAxis > span:first-child { transform: none; }
 .repoioMrBandAxis > span:last-child { transform: translateX(-100%); }
@@ -1101,7 +1127,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 
 /* ---------- Column lineage (control/ColumnLineage.js) ---------- */
 .repoioLin { position: relative; overflow: hidden; background-color: #fafafb; background-image: radial-gradient(#d5d7da 1px, transparent 1px); background-size: 16px 16px;
-	border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); border-radius: 0.25rem; font-family: var(--sapFontFamily, "72", Arial, sans-serif); color: var(--sapTextColor, #32363a); user-select: none; }
+	border: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); border-radius: 0.25rem; font-family: var(--sapFontFamily, var(--sapFontFamily)); color: var(--sapTextColor, #32363a); user-select: none; }
 .repoioLinViewport { position: absolute; inset: 0; cursor: grab; outline: none; }
 .repoioLinViewport.repoioLinDrag { cursor: grabbing; }
 .repoioLinStage { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
@@ -1145,9 +1171,9 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioLinCol:focus-visible { outline: 2px solid var(--sapBrandColor, #0a6ed1); outline-offset: 1px; }
 .repoioLinColOn { background: #f6f3ff; border-color: #ddd5fb; }
 .repoioLinColSel { background: #ebe5ff; border-color: #5b3fd1; }
-.repoioLinKind { width: 1.25rem; text-align: center; color: #8a8d90; font-size: 0.75rem; font-family: "SFMono-Regular", Consolas, monospace; flex: none; }
-.repoioLinColName { flex: 1; min-width: 0; display: flex; flex-direction: column; font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.78rem; overflow-wrap: anywhere; }
-.repoioLinVal { font-family: var(--sapFontFamily, "72", Arial, sans-serif); color: #556b82; font-size: 0.75rem; margin-top: 0.0625rem; }
+.repoioLinKind { width: 1.25rem; text-align: center; color: #8a8d90; font-size: 0.75rem; font-family: var(--sapFontFamily); flex: none; }
+.repoioLinColName { flex: 1; min-width: 0; display: flex; flex-direction: column; font-family: var(--sapFontFamily); font-size: 0.78rem; overflow-wrap: anywhere; }
+.repoioLinVal { font-family: var(--sapFontFamily, var(--sapFontFamily)); color: #556b82; font-size: 0.75rem; margin-top: 0.0625rem; }
 .repoioLinColGo { color: #a9abae; font-size: 0.75rem; }
 .repoioLinEmpty { padding: 0.25rem 0.75rem 0.75rem; font-size: 0.8125rem; color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioLinPager { display: flex; justify-content: center; align-items: center; gap: 0.25rem; padding: 0 0 0.625rem; }
@@ -1189,7 +1215,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioGoPair { align-items: baseline; flex-wrap: wrap; }
 .repoioGoPair .sapMLabel { color: var(--sapContent_LabelColor, #6a6d70); }
 .repoioGoBanner.sapMMsgStrip { flex: 1 1 100%; }
-.repoioGrIdTag { color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.875rem; text-transform: uppercase; font-family: "SFMono-Regular", Consolas, monospace; }
+.repoioGrIdTag { color: var(--sapContent_LabelColor, #6a6d70); font-size: 0.875rem; text-transform: uppercase; font-family: var(--sapFontFamily); }
 .repoioGoFields { gap: 1.25rem 2rem; }
 .repoioGoField { width: 16.5rem; gap: 0.25rem; }
 .repoioGoValue { font-size: 0.9375rem; color: var(--sapTextColor, #32363a); }

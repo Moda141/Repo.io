@@ -87,7 +87,7 @@ sap.ui.define([
 						that.fireChange({ value: s });
 					}
 				}),
-				CM.EditorView.theme({ "&": { height: "100%", fontSize: "12.5px" }, ".cm-scroller": { fontFamily: "SFMono-Regular, Consolas, 'Liberation Mono', monospace" } })
+				CM.EditorView.theme({ "&": { height: "100%", fontSize: "12.5px" }, ".cm-scroller": { fontFamily: "'72Mono', '72Monofull', Consolas, monospace" } })
 			];
 		},
 

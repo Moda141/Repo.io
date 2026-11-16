@@ -255,7 +255,7 @@ sap.ui.define([
 				animation: false, grid: { left: rtl ? 8 : 150, right: rtl ? 150 : 8, top: 4, bottom: 4 },
 				xAxis: { type: "value", inverse: rtl, show: false },
 				yAxis: { type: "category", inverse: true, position: rtl ? "right" : "left", data: ek,
-					axisLabel: { width: 142, overflow: "truncate", fontSize: 10, color: c.label, fontFamily: "72Mono, Consolas, monospace" },
+					axisLabel: { width: 142, overflow: "truncate", fontSize: 10, color: c.label },
 					axisTick: { show: false }, axisLine: { lineStyle: { color: "#6a6d70" } } },
 				tooltip: { trigger: "item", formatter: function (p) { return p.name + "<br/>" + that.text("jr.top.tip", [p.value, last[p.name] ? R.date(last[p.name], lang) : "—"]); } },
 				graphic: ek.length ? [] : [{ type: "text", left: "center", top: "middle", style: { text: this.text("jr.top.none"), fill: c.label, fontSize: 12 } }],

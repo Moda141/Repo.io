@@ -17,7 +17,7 @@ sap.ui.define([
 	var cytoscapeLib = window.cytoscape;
 	// Hierarchical layout (dagre), registered once with Cytoscape.
 	if (cytoscapeLib && window.cytoscapeDagre && !cytoscapeLib.__repoioDagre) { cytoscapeLib.use(window.cytoscapeDagre); cytoscapeLib.__repoioDagre = true; }
-	var FONT = "Arial, Helvetica, sans-serif";
+	var FONT = "\"72\", \"72full\", \"Repoio Arabic\", Arial, Helvetica, sans-serif"; // the console font stack (css/style.css)
 	var MIN_READABLE = 0.7, MAX_FIT = 1.15;
 
 	/*
