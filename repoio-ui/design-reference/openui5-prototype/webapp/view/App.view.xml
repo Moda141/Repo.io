@@ -24,8 +24,15 @@
 				<Button icon="sap-icon://inbox" text="4" type="Transparent" tooltip="{i18n>shell.inbox}"
 					ariaLabel="{i18n>shell.inbox}" press=".onInbox"/>
 				<Button icon="sap-icon://bell" type="Transparent" tooltip="{i18n>shell.notifications}" ariaLabel="{i18n>shell.notifications}" press=".onNotifications"/>
-				<Button text="{i18n>shell.language}" type="Transparent" press=".onSwitchLanguage"/>
-				<Avatar initials="MM" displaySize="XS" tooltip="{i18n>shell.user}" ariaLabel="{i18n>shell.user}"/>
+				<MenuButton text="{i18n>shell.languageBtn}" icon="sap-icon://world" type="Transparent" tooltip="{i18n>shell.languageTip}">
+					<menu>
+						<Menu id="langMenu" itemSelected=".onLanguage">
+							<MenuItem key="en" text="English"/>
+							<MenuItem key="ar" text="العربية"/>
+						</Menu>
+					</menu>
+				</MenuButton>
+				<Avatar id="userAvatar" initials="MM" displaySize="XS" tooltip="{i18n>shell.user}" ariaLabel="{i18n>shell.user}" press=".onUser" class="repoioUserAvatar"/>
 			</tnt:ToolHeader>
 		</tnt:header>
 		<tnt:sideContent>

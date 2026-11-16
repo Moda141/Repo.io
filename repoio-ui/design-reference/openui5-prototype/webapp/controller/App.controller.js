@@ -1,13 +1,27 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/tnt/NavigationListItem",
-	"sap/tnt/NavigationListGroup"
-], function (Controller, NavigationListItem, NavigationListGroup) {
+	"sap/tnt/NavigationListGroup",
+	"sap/m/ResponsivePopover",
+	"sap/m/VBox",
+	"sap/m/HBox",
+	"sap/m/Avatar",
+	"sap/m/Title",
+	"sap/m/Text",
+	"sap/m/Label",
+	"sap/m/ObjectStatus",
+	"sap/m/List",
+	"sap/m/StandardListItem",
+	"sap/m/MessageToast"
+], function (Controller, NavigationListItem, NavigationListGroup, ResponsivePopover, VBox, HBox, Avatar, Title, Text, Label, ObjectStatus, List,
+	StandardListItem, MessageToast) {
 	"use strict";
 
 	return Controller.extend("repoio.proto.controller.App", {
 		onInit: function () {
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
+			var sLang = this._lang();
+			this.byId("langMenu").getItems().forEach(function (it) { it.setIcon(it.getKey() === sLang ? "sap-icon://accept" : ""); });
 			// Collapse the side navigation on narrow screens (phones and small windows).
 			var oToolPage = this.byId("toolPage"), bDone = false;
 			oToolPage.addEventDelegate({ onAfterRendering: function () {
@@ -121,6 +135,7 @@ sap.ui.define([
 		},
 
 		_onRouteMatched: function (oEvent) {
+			this.getOwnerComponent().getModel("view").setProperty("/shell/lang", this._lang());
 			var sRoute = oEvent.getParameter("name"),
 				sKey = sRoute === "page" ? oEvent.getParameter("arguments").key :
 					sRoute === "home" ? "home" : sRoute === "connections" ? "connections" :
@@ -162,10 +177,53 @@ sap.ui.define([
 			this.getOwnerComponent().getRouter().navTo("page", { key: "feeds" });
 		},
 
-		onSwitchLanguage: function () {
-			var sNext = sap.ui.getCore().getConfiguration().getLanguage().indexOf("ar") === 0 ? "en" : "ar";
+		_lang: function () { return sap.ui.getCore().getConfiguration().getLanguage().indexOf("ar") === 0 ? "ar" : "en"; },
+
+		/* Language menu: English (LTR) or Arabic (RTL); the page reloads in the chosen direction. */
+		onLanguage: function (oEvent) {
+			var sNext = oEvent.getParameter("item").getKey();
+			if (sNext === this._lang()) { return; }
 			try { localStorage.setItem("repoio-lang", sNext); } catch (e) { /* storage blocked */ }
 			window.location.reload();
+		},
+
+		/* User card: who is signed in, their team and roles (from the synced user directory, ADR-0009), shortcuts to their
+		   own work, and sign-out through Entra ID. */
+		onUser: function (oEvent) {
+			var that = this, oSrc = oEvent.getSource(), oU = this.getOwnerComponent().getModel("users"), oB = this.getOwnerComponent().bundle,
+				T = function (k, a) { return oB.getText(k, a); }, ar = this._lang() === "ar",
+				nav = function (key, args) { oPop.close(); if (key === "users") { that.getOwnerComponent().getRouter().navTo("users", args); } else { that.getOwnerComponent().getRouter().navTo("page", { key: key }); } };
+			if (this._userPop) { this._userPop.openBy(oSrc); return; }
+			var oPop = this._userPop = new ResponsivePopover({ showHeader: false, placement: "Bottom", contentWidth: "20rem", content: [] }).addStyleClass("repoioUserCard");
+			this.getView().addDependent(oPop);
+			oU.dataLoaded().then(function () {
+				var d = oU.getData(), e = d.employees.filter(function (x) { return x.id === "E-1001"; })[0] || {}, u = d.users.filter(function (x) { return x.employee === e.id; })[0] || { direct: [] },
+					team = null, dept = null,
+					walk = function (n, parent) { (n.units || []).forEach(function (c) { if (c.id === e.team) { team = c; dept = parent; } walk(c, c); }); };
+				walk(d.org, d.org);
+				var t = function (o) { return o ? (ar ? o.ar || o.en : o.en || o.ar) : ""; },
+					roles = u.direct.map(function (k) { var r = d.roles.filter(function (x) { return x.id === k; })[0]; return t(r) || k; });
+				oPop.addContent(new VBox({ renderType: "Bare", items: [
+					new HBox({ alignItems: "Center", renderType: "Bare", items: [
+						new Avatar({ initials: "MM", displaySize: "M" }).addStyleClass("sapUiSmallMarginEnd"),
+						new VBox({ renderType: "Bare", items: [new Title({ text: e.name, level: "H3" }), new Text({ text: ar ? e.title_ar : e.title_en })] })
+					] }).addStyleClass("repoioUserHead"),
+					new VBox({ renderType: "Bare", items: [
+						new Label({ text: T("shell.uc.team") }), new Text({ text: [t(team), t(dept)].filter(Boolean).join(" · ") }),
+						new Label({ text: T("shell.uc.email") }).addStyleClass("sapUiTinyMarginTop"), new Text({ text: e.email, textDirection: "LTR" }),
+						new Label({ text: T("shell.uc.roles") }).addStyleClass("sapUiTinyMarginTop"),
+						new HBox({ wrap: "Wrap", renderType: "Bare", items: roles.map(function (r) { return new ObjectStatus({ text: r, state: "Information", inverted: true }).addStyleClass("repoioUserRole"); }) }),
+						new Text({ text: T("shell.uc.signIn", [(u.lastSignIn || "").replace("T", " ").slice(0, 16)]) }).addStyleClass("repoioUmMuted sapUiTinyMarginTop")
+					] }).addStyleClass("repoioUserBody"),
+					new List({ showSeparators: "Inner", items: [
+						new StandardListItem({ title: T("nav.myRequests"), icon: "sap-icon://request", type: "Active", press: function () { nav("myRequests"); } }),
+						new StandardListItem({ title: T("nav.awaitingApproval"), icon: "sap-icon://inbox", type: "Active", press: function () { nav("awaitingApproval"); } }),
+						new StandardListItem({ title: T("shell.uc.profile"), icon: "sap-icon://person-placeholder", type: "Active", press: function () { nav("users", { user: e.id }); } }),
+						new StandardListItem({ title: T("shell.uc.signOut"), icon: "sap-icon://log", type: "Active", press: function () { oPop.close(); MessageToast.show(T("shell.uc.signOutT")); } })
+					] }).addStyleClass("repoioUserList")
+				] }));
+				oPop.openBy(oSrc);
+			});
 		}
 	});
 });
