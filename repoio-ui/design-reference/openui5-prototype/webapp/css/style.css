@@ -857,6 +857,11 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioJrFoldHead .repoioFacetGroup { flex: 1; }
 .repoioJrFolders { flex: none; background: #fff; border: 1px solid #e5e5e5; border-radius: 0.25rem; padding-bottom: 0.5rem; }
 .repoioJrMain { flex: 1 1 auto; min-width: 0; }
+/* Job runs on the analytical list layout: the folders panel runs the full height beside the chart and table. */
+.repoioAlp.repoioJrPage .repoioJrBody { gap: 0; min-height: calc(100vh - 22rem); }
+.repoioAlp.repoioJrPage .repoioJrFolders { border: none; border-inline-end: 1px solid #e5e5e5; border-radius: 0; padding-bottom: 0; }
+.repoioAlp.repoioJrPage .repoioAlpBar .repoioJrHint { margin-inline-start: 0.5rem; }
+.repoioAlp.repoioJrPage .repoioAlpTokens { min-height: 2rem; }
 
 /* API management (J16) */
 /* Tables run edge to edge on white, like Connections, Data sync and Job runs. */

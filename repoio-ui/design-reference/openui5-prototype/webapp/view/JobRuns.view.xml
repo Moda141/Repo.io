@@ -1,11 +1,23 @@
 <mvc:View controllerName="repoio.proto.controller.JobRuns"
 	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
-	<!-- J10: job runs list, laid out like the Databricks "Runs" tab (filters, finished-runs chart,
-	     top error types, runs table with column chooser). Run details open the monitor page. -->
-	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="true" class="repoioJrPage repoioEdge">
+	<!-- J10: job runs on the analytical list layout (same as the J14 reports): variants, visual or compact
+	     filters in the header, a main chart with "view by", and the runs table. The folders panel (ADR-0005)
+	     sits beside the chart and table. Run details open the monitor page. -->
+	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="true" class="repoioAlp repoioJrPage repoioEdge">
 		<f:title>
 			<f:DynamicPageTitle>
-				<f:heading><Title text="{i18n>jr.title}" level="H1"/></f:heading>
+				<f:heading>
+					<HBox alignItems="Center">
+						<Title text="{i18n>jr.title}" level="H1" wrapping="false"/>
+						<MenuButton text="{view>/jr/variantText}" type="Transparent" class="repoioAlpVariant">
+							<menu>
+								<Menu items="{view>/jr/variants}" itemSelected=".onVariant">
+									<MenuItem text="{view>text}" key="{view>key}" icon="{= ${view>current} ? 'sap-icon://accept' : '' }"/>
+								</Menu>
+							</menu>
+						</MenuButton>
+					</HBox>
+				</f:heading>
 				<f:expandedContent><Text text="{i18n>jr.subtitle}"/></f:expandedContent>
 				<f:actions>
 					<SegmentedButton selectedKey="runs" selectionChange=".onSwitch">
@@ -14,60 +26,117 @@
 							<SegmentedButtonItem key="streams" text="{i18n>st.seg.streams}" icon="sap-icon://process"/>
 						</items>
 					</SegmentedButton>
+					<Button text="{i18n>rp.adapt}" type="Transparent" press=".onAdapt"/>
+					<SegmentedButton selectedKey="{view>/jr/filterMode}">
+						<items>
+							<SegmentedButtonItem key="compact" icon="sap-icon://filter-fields" tooltip="{i18n>rp.compact}"/>
+							<SegmentedButtonItem key="visual" icon="sap-icon://filter-analytics" tooltip="{i18n>rp.visual}"/>
+						</items>
+					</SegmentedButton>
 					<Button icon="sap-icon://refresh" type="Transparent" tooltip="{i18n>jr.a.refresh}" press=".onRefresh"/>
 				</f:actions>
 			</f:DynamicPageTitle>
 		</f:title>
 		<f:header>
 			<f:DynamicPageHeader pinnable="false">
-				<FlexBox wrap="Wrap" alignItems="End" class="repoioJrFilters">
-					<VBox>
-						<Label text="{i18n>jr.f.name}" labelFor="jrName"/>
-						<SearchField id="jrName" width="14rem" value="{view>/jr/f/name}" liveChange=".onFilter" search=".onFilter"/>
-					</VBox>
-					<VBox>
-						<Label text="{i18n>jr.col.type}"/>
-						<Select selectedKey="{view>/jr/f/kind}" change=".onFilter" width="11rem">
-							<core:Item key="all" text="{i18n>jr.kind.all}"/>
-							<core:Item key="ingest" text="{i18n>jr.kind.ingest}"/>
-							<core:Item key="stream" text="{i18n>jr.kind.stream}"/>
-							<core:Item key="dq" text="{i18n>jr.kind.dq}"/>
-							<core:Item key="hk" text="{i18n>jr.kind.hk}"/>
-						</Select>
-					</VBox>
-					<VBox>
-						<Label text="{i18n>jr.f.runAs}"/>
-						<Select selectedKey="{view>/jr/f/runAs}" change=".onFilter" width="8rem">
-							<core:Item key="all" text="{i18n>jr.f.everyone}"/>
-							<core:Item key="me" text="{i18n>jr.f.me}"/>
-						</Select>
-					</VBox>
-					<VBox>
-						<Label text="{i18n>jr.f.time}"/>
-						<Select selectedKey="{view>/jr/f/range}" change=".onRange" width="9.5rem">
-							<core:Item key="24" text="{i18n>jr.f.h24}"/>
-							<core:Item key="48" text="{i18n>jr.f.h48}"/>
-							<core:Item key="168" text="{i18n>jr.f.d7}"/>
-						</Select>
-					</VBox>
-					<VBox>
-						<Label text="{i18n>jr.f.status}"/>
-						<MultiComboBox selectedKeys="{view>/jr/f/status}" selectionFinish=".onFilter" width="12rem" items="{view>/jr/statuses}">
-							<core:Item key="{view>key}" text="{view>text}"/>
-						</MultiComboBox>
-					</VBox>
-					<VBox>
-						<Label text="{i18n>jr.f.runId}"/>
-						<Input value="{view>/jr/f/runId}" liveChange=".onFilter" width="7rem" placeholder="R-5669"/>
-					</VBox>
-					<VBox>
-						<Label text="{i18n>jr.f.error}"/>
-						<Select selectedKey="{view>/jr/f/error}" change=".onFilter" width="13rem" items="{view>/jr/errorCodes}">
-							<core:Item key="{view>key}" text="{view>text}"/>
-						</Select>
-					</VBox>
-					<Link text="{i18n>jr.f.clear}" press=".onClearFilters" class="repoioJrClear"/>
-				</FlexBox>
+				<VBox renderType="Bare">
+					<HBox class="repoioAlpVisual" visible="{= ${view>/jr/filterMode} === 'visual' }" renderType="Bare">
+						<VBox class="repoioAlpVf" renderType="Bare">
+							<HBox justifyContent="SpaceBetween" alignItems="Center">
+								<Title text="{view>/jr/vf/kind}" level="H4" titleStyle="H6" wrapping="false"/>
+								<Button icon="sap-icon://value-help" type="Transparent" tooltip="{i18n>rp.vfPick}" press=".onVfPick" class="repoioAlpVfBtn">
+									<customData><core:CustomData key="dim" value="kind"/></customData>
+								</Button>
+							</HBox>
+							<rc:EChart id="vfKind" height="7.5rem" select=".onVfSelect">
+								<rc:customData><core:CustomData key="dim" value="kind"/></rc:customData>
+							</rc:EChart>
+						</VBox>
+						<VBox class="repoioAlpVf" renderType="Bare">
+							<HBox justifyContent="SpaceBetween" alignItems="Center">
+								<Title text="{view>/jr/vf/status}" level="H4" titleStyle="H6" wrapping="false"/>
+								<Button icon="sap-icon://value-help" type="Transparent" tooltip="{i18n>rp.vfPick}" press=".onVfPick" class="repoioAlpVfBtn">
+									<customData><core:CustomData key="dim" value="status"/></customData>
+								</Button>
+							</HBox>
+							<rc:EChart id="vfStatus" height="7.5rem" select=".onVfSelect">
+								<rc:customData><core:CustomData key="dim" value="status"/></rc:customData>
+							</rc:EChart>
+						</VBox>
+						<VBox class="repoioAlpVf" renderType="Bare">
+							<HBox justifyContent="SpaceBetween" alignItems="Center">
+								<Title text="{view>/jr/vf/error}" level="H4" titleStyle="H6" wrapping="false"/>
+								<Button icon="sap-icon://value-help" type="Transparent" tooltip="{i18n>rp.vfPick}" press=".onVfPick" class="repoioAlpVfBtn">
+									<customData><core:CustomData key="dim" value="error"/></customData>
+								</Button>
+							</HBox>
+							<rc:EChart id="vfError" height="7.5rem" select=".onVfSelect">
+								<rc:customData><core:CustomData key="dim" value="error"/></rc:customData>
+							</rc:EChart>
+						</VBox>
+					</HBox>
+					<FlexBox wrap="Wrap" alignItems="End" class="repoioJrFilters" visible="{= ${view>/jr/filterMode} === 'compact' }">
+						<VBox>
+							<Label text="{i18n>jr.f.name}" labelFor="jrName"/>
+							<SearchField id="jrName" width="14rem" value="{view>/jr/f/name}" liveChange=".onFilter" search=".onFilter"/>
+						</VBox>
+						<VBox>
+							<Label text="{i18n>jr.col.type}"/>
+							<MultiComboBox selectedKeys="{view>/jr/f/kind}" selectionFinish=".onFilter" width="12rem" items="{path: 'view>/jr/dimItems/kind', templateShareable: false}">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+						<VBox>
+							<Label text="{i18n>jr.f.runAs}"/>
+							<Select selectedKey="{view>/jr/f/runAs}" change=".onFilter" width="8rem">
+								<core:Item key="all" text="{i18n>jr.f.everyone}"/>
+								<core:Item key="me" text="{i18n>jr.f.me}"/>
+							</Select>
+						</VBox>
+						<VBox>
+							<Label text="{i18n>jr.f.time}"/>
+							<Select selectedKey="{view>/jr/f/range}" change=".onRange" width="9.5rem">
+								<core:Item key="24" text="{i18n>jr.f.h24}"/>
+								<core:Item key="48" text="{i18n>jr.f.h48}"/>
+								<core:Item key="168" text="{i18n>jr.f.d7}"/>
+							</Select>
+						</VBox>
+						<VBox>
+							<Label text="{i18n>jr.f.status}"/>
+							<MultiComboBox selectedKeys="{view>/jr/f/status}" selectionFinish=".onFilter" width="12rem" items="{path: 'view>/jr/dimItems/status', templateShareable: false}">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+						<VBox>
+							<Label text="{i18n>jr.f.runId}"/>
+							<Input value="{view>/jr/f/runId}" liveChange=".onFilter" width="7rem" placeholder="R-5669"/>
+						</VBox>
+						<VBox>
+							<Label text="{i18n>jr.f.error}"/>
+							<MultiComboBox selectedKeys="{view>/jr/f/error}" selectionFinish=".onFilter" width="13rem" items="{path: 'view>/jr/dimItems/error', templateShareable: false}">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+					</FlexBox>
+					<!-- Time range stays one click away in visual mode; active filters show as tokens in both modes. -->
+					<HBox alignItems="Center" wrap="Wrap" class="repoioAlpTokens">
+						<HBox alignItems="Center" visible="{= ${view>/jr/filterMode} === 'visual' }" class="sapUiSmallMarginEnd">
+							<Label text="{i18n>jr.f.time}" class="sapUiTinyMarginEnd"/>
+							<Select selectedKey="{view>/jr/f/range}" change=".onRange" width="9.5rem">
+								<core:Item key="24" text="{i18n>jr.f.h24}"/>
+								<core:Item key="48" text="{i18n>jr.f.h48}"/>
+								<core:Item key="168" text="{i18n>jr.f.d7}"/>
+							</Select>
+						</HBox>
+						<HBox alignItems="Center" visible="{= ${view>/jr/tokens}.length > 0 }">
+							<Label text="{i18n>rp.filteredBy}" class="sapUiTinyMarginEnd"/>
+							<HBox items="{view>/jr/tokens}" wrap="Wrap" renderType="Bare">
+								<Token text="{view>text}" delete=".onTokenDelete"/>
+							</HBox>
+						</HBox>
+						<Link text="{i18n>jr.f.clear}" press=".onClearFilters" class="sapUiSmallMarginBegin"/>
+					</HBox>
+				</VBox>
 			</f:DynamicPageHeader>
 		</f:header>
 		<f:content>
@@ -83,85 +152,90 @@
 					<StandardTreeItem title="{view>text}" icon="{view>icon}" counter="{view>count}" selected="{view>selected}" tooltip="{view>tip}"/>
 				</Tree>
 			</VBox>
-			<VBox renderType="Bare" class="repoioJrMain">
-				<FlexBox wrap="Wrap" class="repoioJrOverview">
-					<VBox class="repoioJrPanel repoioJrChartPanel">
-						<HBox alignItems="Center" justifyContent="SpaceBetween">
-							<Title text="{i18n>jr.chart.title}" level="H3"/>
-							<Text text="{i18n>jr.chart.hint}" class="repoioJrHint"/>
-						</HBox>
-						<rc:EChart id="jrChart" height="10.5rem" ariaLabel="{i18n>jr.chart.title}" select=".onChartSelect"/>
-					</VBox>
-					<VBox class="repoioJrPanel repoioJrTopPanel">
-						<Title text="{i18n>jr.top.title}" level="H3"/>
-						<Table items="{view>/jr/top}" noDataText="{i18n>jr.top.none}" class="repoioDenseTable repoioJrTop">
-							<columns>
-								<Column><Text text="{i18n>jr.col.error}"/></Column>
-								<Column hAlign="End" width="3.5rem"><Text text="{i18n>jr.top.count}"/></Column>
-								<Column width="10.5rem"><Text text="{i18n>jr.top.last}"/></Column>
-							</columns>
-							<items>
-								<ColumnListItem type="Active" press=".onTopPress">
-									<Link text="{view>code}" press=".onTopPress" class="repoioMonoLink"/>
-									<Text text="{view>count}"/>
-									<Text text="{view>last}" wrapping="false"/>
-								</ColumnListItem>
-							</items>
-						</Table>
-					</VBox>
-				</FlexBox>
-				<Table id="jrTable" items="{view>/jr/rows}" class="repoioDenseTable repoioJrTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar"
-					noDataText="{i18n>jr.noData}">
-					<headerToolbar>
-						<OverflowToolbar>
-							<Button text="{i18n>fld.title}" icon="sap-icon://open-folder" tooltip="{i18n>fld.show}" visible="{= !${view>/jr/showFolders} }" press=".onToggleFolders"/>
-							<Title text="{path: 'view>/jr/count', formatter: '.listTitle'}" level="H2"/>
-							<Breadcrumbs links="{view>/jr/crumbs/links}" currentLocationText="{view>/jr/crumbs/current}" visible="{= !!${view>/jr/f/folder} }"
-								separatorStyle="Slash" class="repoioFolderCrumbs">
-								<Link text="{view>text}" press=".onCrumb"/>
-							</Breadcrumbs>
-							<Button text="{view>/jr/bucketText}" icon="sap-icon://decline" iconFirst="false" visible="{= !!${view>/jr/bucket} }" press=".onClearBucket" class="repoioJrBucket"/>
-							<ToolbarSpacer/>
-							<Button icon="sap-icon://table-column" type="Transparent" tooltip="{i18n>jr.columns}" press=".onColumns"/>
-						</OverflowToolbar>
-					</headerToolbar>
-					<columns>
-						<Column width="10rem"><Text text="{i18n>jr.col.start}"/></Column>
-						<Column><Text text="{i18n>jr.col.job}"/></Column>
-						<Column visible="{view>/jr/cols/type}" minScreenWidth="Tablet" demandPopin="true" width="7.5rem"><Text text="{i18n>jr.col.type}"/></Column>
-						<Column visible="{view>/jr/cols/runAs}" minScreenWidth="Tablet" demandPopin="true" hAlign="Center" width="4.5rem"><Text text="{i18n>jr.col.runAs}"/></Column>
-						<Column visible="{view>/jr/cols/launched}" minScreenWidth="Desktop" demandPopin="true" width="6.5rem"><Text text="{i18n>jr.col.launched}"/></Column>
-						<Column visible="{view>/jr/cols/duration}" width="5.75rem"><Text text="{i18n>jr.col.duration}"/></Column>
-						<Column width="11.5rem"><Text text="{i18n>jr.col.status}"/></Column>
-						<Column visible="{view>/jr/cols/error}" minScreenWidth="Tablet" demandPopin="true" width="10.5rem"><Text text="{i18n>jr.col.error}"/></Column>
-						<Column visible="{view>/jr/cols/params}" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>jr.col.params}"/></Column>
-						<Column hAlign="End" width="4.5rem"><Text text="{i18n>jr.col.actions}" class="sapUiInvisibleText"/></Column>
-					</columns>
-					<items>
-						<ColumnListItem type="Active" press=".onOpenRun" highlight="{view>highlight}">
-							<Link text="{view>startText}" press=".onOpenRun" wrapping="false"/>
-							<Link text="{view>title}" tooltip="{view>job}" press=".onOpenRun" wrapping="false"/>
-							<HBox alignItems="Center">
-								<core:Icon src="{view>kindIcon}" class="repoioJrKindIcon" decorative="true"/>
-								<Text text="{view>kindText}"/>
-							</HBox>
-							<rc:PersonLink name="{view>runAs}"/>
-							<Text text="{view>launchedText}"/>
-							<HBox alignItems="Center">
-								<Text text="{view>durText}" wrapping="false"/>
-								<core:Icon src="sap-icon://alert" color="Critical" visible="{view>overdue}" tooltip="{view>overdueText}" class="repoioJrOverdue"/>
-							</HBox>
-							<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
-							<Text text="{view>error}" class="repoioMono" wrapping="false"/>
-							<Text text="{view>paramText}" class="repoioJrParams" maxLines="2" tooltip="{view>paramText}"/>
-							<HBox justifyContent="End" alignItems="Center">
-								<Button icon="sap-icon://stop" type="Transparent" visible="{view>active}" tooltip="{i18n>jr.a.stop}" press=".onStop"/>
-								<Button icon="sap-icon://overflow" type="Transparent" tooltip="{i18n>jr.col.actions}" press=".onRowMenu"/>
-							</HBox>
-						</ColumnListItem>
-					</items>
-				</Table>
-				<rc:Pager total="{view>/jr/count}" page="{view>/jr/page}" pageSize="{view>/jr/size}" change=".onPage"/>
+			<VBox renderType="Bare" class="repoioJrMain repoioAlpContent">
+				<OverflowToolbar class="repoioAlpBar" style="Clear">
+					<Button text="{i18n>fld.title}" icon="sap-icon://open-folder" tooltip="{i18n>fld.show}" visible="{= !${view>/jr/showFolders} }" press=".onToggleFolders"/>
+					<Title text="{view>/jr/chartTitle}" level="H3" titleStyle="H5" visible="{= ${view>/jr/mode} !== 'table' }"/>
+					<Text text="{i18n>jr.chart.hint}" class="repoioJrHint" visible="{= ${view>/jr/mode} !== 'table' &amp;&amp; ${view>/jr/viewBy} === 'time' }">
+						<layoutData><OverflowToolbarLayoutData priority="Low"/></layoutData>
+					</Text>
+					<ToolbarSpacer/>
+					<Label text="{i18n>rp.viewBy}" visible="{= ${view>/jr/mode} !== 'table' }"/>
+					<Select selectedKey="{view>/jr/viewBy}" change=".onViewBy" width="10rem" items="{view>/jr/dims}" visible="{= ${view>/jr/mode} !== 'table' }">
+						<core:Item key="{view>key}" text="{view>text}"/>
+					</Select>
+					<SegmentedButton selectedKey="{view>/jr/chartType}" selectionChange=".onChartType" visible="{= ${view>/jr/mode} !== 'table' }">
+						<items>
+							<SegmentedButtonItem key="column" icon="sap-icon://vertical-bar-chart" tooltip="{i18n>st.ct.column}"/>
+							<SegmentedButtonItem key="bar" icon="sap-icon://horizontal-bar-chart" tooltip="{i18n>st.ct.bar}" enabled="{= ${view>/jr/viewBy} !== 'time' }"/>
+							<SegmentedButtonItem key="donut" icon="sap-icon://donut-chart" tooltip="{i18n>st.ct.donut}" enabled="{= ${view>/jr/viewBy} !== 'time' }"/>
+						</items>
+					</SegmentedButton>
+					<ToolbarSeparator visible="{= ${view>/jr/mode} !== 'table' }"/>
+					<SegmentedButton selectedKey="{view>/jr/mode}" selectionChange=".onMode">
+						<items>
+							<SegmentedButtonItem key="chart" icon="sap-icon://business-objects-experience" tooltip="{i18n>rp.mode.chart}"/>
+							<SegmentedButtonItem key="hybrid" icon="sap-icon://chart-table-view" tooltip="{i18n>rp.mode.hybrid}"/>
+							<SegmentedButtonItem key="table" icon="sap-icon://table-view" tooltip="{i18n>rp.mode.table}"/>
+						</items>
+					</SegmentedButton>
+				</OverflowToolbar>
+				<rc:EChart id="jrChart" height="{= ${view>/jr/mode} === 'chart' ? '26rem' : '13rem' }" visible="{= ${view>/jr/mode} !== 'table' }"
+					ariaLabel="{view>/jr/chartTitle}" select=".onChartSelect"/>
+
+				<VBox renderType="Bare" visible="{= ${view>/jr/mode} !== 'chart' }">
+					<OverflowToolbar class="repoioAlpBar repoioAlpTblBar" style="Clear">
+						<Title text="{path: 'view>/jr/count', formatter: '.listTitle'}" level="H3" titleStyle="H5"/>
+						<Breadcrumbs links="{view>/jr/crumbs/links}" currentLocationText="{view>/jr/crumbs/current}" visible="{= !!${view>/jr/f/folder} }"
+							separatorStyle="Slash" class="repoioFolderCrumbs">
+							<Link text="{view>text}" press=".onCrumb"/>
+						</Breadcrumbs>
+						<Button text="{view>/jr/bucketText}" icon="sap-icon://decline" iconFirst="false" visible="{= !!${view>/jr/bucket} }" press=".onClearBucket" class="repoioJrBucket"/>
+						<ToolbarSpacer/>
+						<SearchField width="14rem" value="{view>/jr/f/name}" placeholder="{i18n>jr.f.name}" liveChange=".onFilter" search=".onFilter" visible="{= ${view>/jr/filterMode} === 'visual' }"/>
+						<Button icon="sap-icon://table-column" type="Transparent" tooltip="{i18n>jr.columns}" press=".onColumns"/>
+						<Button icon="sap-icon://excel-attachment" type="Transparent" tooltip="{i18n>rp.exportXlsx}" press=".onExport"/>
+					</OverflowToolbar>
+					<Table id="jrTable" items="{view>/jr/rows}" class="repoioDenseTable repoioJrTable" popinLayout="GridSmall" sticky="ColumnHeaders"
+						noDataText="{i18n>jr.noData}">
+						<columns>
+							<Column width="10rem"><Text text="{i18n>jr.col.start}"/></Column>
+							<Column><Text text="{i18n>jr.col.job}"/></Column>
+							<Column visible="{view>/jr/cols/type}" minScreenWidth="Tablet" demandPopin="true" width="7.5rem"><Text text="{i18n>jr.col.type}"/></Column>
+							<Column visible="{view>/jr/cols/runAs}" minScreenWidth="Tablet" demandPopin="true" hAlign="Center" width="4.5rem"><Text text="{i18n>jr.col.runAs}"/></Column>
+							<Column visible="{view>/jr/cols/launched}" minScreenWidth="Desktop" demandPopin="true" width="6.5rem"><Text text="{i18n>jr.col.launched}"/></Column>
+							<Column visible="{view>/jr/cols/duration}" width="5.75rem"><Text text="{i18n>jr.col.duration}"/></Column>
+							<Column width="11.5rem"><Text text="{i18n>jr.col.status}"/></Column>
+							<Column visible="{view>/jr/cols/error}" minScreenWidth="Tablet" demandPopin="true" width="10.5rem"><Text text="{i18n>jr.col.error}"/></Column>
+							<Column visible="{view>/jr/cols/params}" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>jr.col.params}"/></Column>
+							<Column hAlign="End" width="4.5rem"><Text text="{i18n>jr.col.actions}" class="sapUiInvisibleText"/></Column>
+						</columns>
+						<items>
+							<ColumnListItem type="Active" press=".onOpenRun" highlight="{view>highlight}">
+								<Link text="{view>startText}" press=".onOpenRun" wrapping="false"/>
+								<Link text="{view>title}" tooltip="{view>job}" press=".onOpenRun" wrapping="false"/>
+								<HBox alignItems="Center">
+									<core:Icon src="{view>kindIcon}" class="repoioJrKindIcon" decorative="true"/>
+									<Text text="{view>kindText}"/>
+								</HBox>
+								<rc:PersonLink name="{view>runAs}"/>
+								<Text text="{view>launchedText}"/>
+								<HBox alignItems="Center">
+									<Text text="{view>durText}" wrapping="false"/>
+									<core:Icon src="sap-icon://alert" color="Critical" visible="{view>overdue}" tooltip="{view>overdueText}" class="repoioJrOverdue"/>
+								</HBox>
+								<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+								<Text text="{view>error}" class="repoioMono" wrapping="false"/>
+								<Text text="{view>paramText}" class="repoioJrParams" maxLines="2" tooltip="{view>paramText}"/>
+								<HBox justifyContent="End" alignItems="Center">
+									<Button icon="sap-icon://stop" type="Transparent" visible="{view>active}" tooltip="{i18n>jr.a.stop}" press=".onStop"/>
+									<Button icon="sap-icon://overflow" type="Transparent" tooltip="{i18n>jr.col.actions}" press=".onRowMenu"/>
+								</HBox>
+							</ColumnListItem>
+						</items>
+					</Table>
+					<rc:Pager total="{view>/jr/count}" page="{view>/jr/page}" pageSize="{view>/jr/size}" change=".onPage"/>
+				</VBox>
 			</VBox>
 			</HBox>
 		</f:content>
