@@ -85,7 +85,6 @@ detection** · Connections hub = **Connections**.
 | J16 | Manage API access (tokens, webhooks, MCP) | Admin, Data Engineer, Consumer | M5 (identity, tokens, MCP), M4 (UI) |
 | J17 | Manage users, org units & roles | Admin | M5 (Entra ID, directory sync, RBAC), M4 (UI) |
 | J18 | Configure the platform & read the audit log | Admin, Auditor | M5 (settings, audit API), M4 (UI) |
-| J19 | Find a data product & connect to it | Consumer, Data Engineer, Data Analyst | M4 (UI); M2 (SQL / catalog read path), M5 (grants, tokens) |
 
 A journey is "available" only when its milestone's acceptance criteria
 in `docs/milestone-plan.md` pass — never before.
@@ -879,34 +878,3 @@ log). **Pages:** Administration → System configuration, Audit log.
    lists the console pages the permissions open (from the server's page
    → permission map). It is a preview; the API enforces access.
 
-## J19 — Find a data product & connect to it
-
-*Pattern: the SAP Business Data Cloud cockpit catalog, in the Repo.io
-look (Morning Horizon, Repo.io logo and domain colours). A data product
-is one repository's published golden table; nothing here is a new data
-store or a new authority.*
-
-1. A Data Engineer or Analyst opens **Business operation → Data
-   products**. The header shows published products, golden records,
-   average quality and active consumers for the domains they can see —
-   the list is filtered server-side by role→domain grants.
-2. They search or filter by domain, status (published / draft /
-   retired), source system and classification; each card shows version,
-   golden record count, quality, sources, classification and PII tags.
-3. Opening a card shows the **data product page**: what it holds and its
-   typical uses; the golden table, model, version, refresh and change
-   topic; the fields (PII and derived fields marked); the sources in
-   survivorship priority; quality by dimension from Great Expectations
-   with its trend; the ways to read it, each with the milestone it lands
-   with; and who read it in the last 7 days (from the SQL and catalog
-   access logs).
-4. **Connect** opens the repository's Connection details (ADR-0006):
-   JDBC, ODBC, Python, Databricks and Snowflake values and snippets with
-   deployment placeholders. Reads run as the token owner; a token comes
-   only from an administrator (J16).
-5. **Browse records** opens Golden records management for that
-   repository (J2) when the user may see records.
-
-*Edge cases:* a draft product has nothing to connect to (banner, Connect
-disabled); a retired product stays readable but is no longer refreshed;
-no quality results yet → an empty state, never a made-up score.

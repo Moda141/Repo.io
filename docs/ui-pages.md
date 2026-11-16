@@ -66,19 +66,6 @@
      Snowflake values and snippets to read its golden tables (ADR-0006,
      J16 step 7). Prototype:
      `repoio-ui/design-reference/prototypes/02-domains.html`.
-   - **Data products** — the consumer-facing catalog (SAP Business Data
-     Cloud cockpit pattern, Repo.io look): one card per repository's
-     published golden table with version, golden record count, quality,
-     sources, classification and PII tags, status (published / draft /
-     retired); search, facets with counts (domain, status, source system,
-     classification), sort, cards or list. The data product page shows
-     what it holds, its fields (PII and derived marked), its sources in
-     survivorship priority, Great Expectations quality by dimension, the
-     ways to read it (SQL, Iceberg REST catalog, REST / GraphQL, change
-     topic, MCP — each with its milestone) and its consumers from the
-     access logs. Read only: *Connect* opens the repository's Connection
-     details (ADR-0006); tokens come from an administrator (J16). The
-     list is filtered server-side by role→domain grants. [J19]
    - **Golden Records management** — steward working area over the records
      themselves: browse per domain, inspect, review states, history.
      Shares the record-detail component with Explore. [J2, J5]
@@ -364,7 +351,6 @@
 | 17 | Feeds vs Notification tray | Both "events" | The tray holds personal, actionable events addressed to the user (approve this, your request was rejected); the feed is a browsable stream of platform activity — broadcast, not addressed. Both exist |
 | 18 | Feeds vs Audit log | Both "what happened" | The feed is a human-readable, permission-filtered awareness stream; the audit log is the forensic record of every state change (who, what, when, which version) — the feed never replaces it and derives from it |
 | 19 | Announcements vs Broadcasts | Both "push to people" | Announcements = console messages to users (maintenance, policy, releases) rendered on Feeds and Home; Broadcasts = scheduled delivery of report artifacts to stakeholders — different payload, different channel |
-| 21 | Data products vs Domain management vs Golden Records management | Three views of one repository | Data products = the consumer view (what the data is, how good it is, how to read it); Domain management = the owner view (domains, repositories, sources, models); Golden Records management = the steward view over individual records. One repository, one Connection details dialog shared by the first two; none of them edits golden data |
 | 20 | Announcements authoring vs Feeds / Home read views | One artifact, many surfaces | Authoring lives in Administration → Announcements (RBAC action); the Feeds → Announcements tab and the Home strip are read-only views of the same published announcements |
 
 ### Journey coverage — all 13 journeys have a home
