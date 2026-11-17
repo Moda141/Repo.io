@@ -295,7 +295,7 @@
 									<t:template><HBox alignItems="Center" renderType="Bare">
 																			<core:Icon src="sap-icon://table-view" class="sapUiTinyMarginEnd" decorative="true"/>
 																			<VBox renderType="Bare">
-																				<Text text="{view>name}" class="repoioGrName"/>
+																				<Link text="{view>name}" press=".onTable"/>
 																				<Text text="{view>path}" class="repoioMono repoioUmMuted" textDirection="LTR"/>
 																			</VBox>
 																		</HBox></t:template>

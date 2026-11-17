@@ -1497,3 +1497,24 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioHintLine .sapMText { color: var(--sapContent_LabelColor, #556b82); font-size: 0.8125rem; }
 /* Side navigation group titles keep the Horizon label colour but read as headers, not as disabled items */
 .sapTntNL .sapTntNLGroup .sapTntNLGroupText { font-weight: bold; color: var(--sapTextColor, #1d2d3e); font-size: 0.8125rem; }
+
+/* ===== Domain overview (Fiori Overview Page) ===== */
+.repoioDo .sapFDynamicPageContent { background: var(--sapBackgroundColor, #f5f6f7); }
+.repoioDoIcon { font-size: 1.25rem; color: var(--sapContent_IconColor, #0064d9); margin-inline-end: 0.5rem; }
+.repoioDoVariant { margin-inline-start: 0.5rem; }
+.repoioDoClear { margin-bottom: 0.125rem; }
+.repoioDoGrid { padding-block: 0.5rem 1rem; }
+.repoioDoCard { height: 100%; }
+.repoioDoBody { padding: 0 1rem 0.75rem; }
+.repoioDoBy { margin-bottom: 0.5rem; }
+.repoioDoChartTitle.sapMLabel { font-size: 0.75rem; color: var(--sapContent_LabelColor, #556b82); margin-bottom: 0.25rem; }
+.repoioDoList .sapMLIB { padding-inline: 1rem; }
+.repoioDoItem { padding-block: 0.5rem; width: 100%; gap: 0.125rem; }
+.repoioDoLinkIcon { font-size: 1.125rem; color: var(--sapContent_IconColor, #0064d9); margin-inline-end: 0.75rem; flex: none; }
+.repoioDoGrid { display: flex; gap: 1rem; padding: 0.75rem 0 1rem; }
+.repoioDoGrid > .repoioDoCard { width: calc((100% - 3rem) / 4) !important; min-width: 16rem; height: auto; flex: 0 0 auto; }
+.repoioDoBody > .repoioChart { width: 100% !important; align-self: stretch; }
+@media (max-width: 1280px) { .repoioDoGrid > .repoioDoCard { width: calc((100% - 2rem) / 3) !important; } }
+@media (max-width: 960px) { .repoioDoGrid > .repoioDoCard { width: calc((100% - 1rem) / 2) !important; } }
+@media (max-width: 600px) { .repoioDoGrid > .repoioDoCard { width: 100% !important; } }
+.repoioDoCard .sapFCardContent > .repoioDoBody, .repoioDoCard .sapFCardContent > .repoioDoList { width: 100%; box-sizing: border-box; flex: 1 1 auto; }

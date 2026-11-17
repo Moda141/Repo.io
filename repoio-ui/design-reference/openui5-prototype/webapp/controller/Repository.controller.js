@@ -189,7 +189,10 @@ sap.ui.define([
 		onOpenModel: function () { this.router().navTo("models", { model: this._model ? this._model.key : undefined }); },
 		onRequestModel: function () { MessageToast.show(this.text("repo.requestChangeToast")); },
 		onToCatalog: function () { this.router().navTo("domains"); },
-		onToDomain: function () { this.router().navTo("domains", { item: this.viewModel().getProperty("/rp/domainText") }); },
+		onToDomain: function () {
+			var r = this.data().getProperty("/repos/" + this._id);
+			if (r) { this.router().navTo("domain", { domain: r.domainId }); } else { this.router().navTo("domains"); }
+		},
 		onCopyLink: function () {
 			var that = this, done = function () { MessageToast.show(that.text("cat.linkCopied")); };
 			try { navigator.clipboard.writeText(window.location.href).then(done, done); } catch (err) { done(); }

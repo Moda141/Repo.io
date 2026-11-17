@@ -157,6 +157,7 @@ sap.ui.define([
 		/* Repositories and tables open their own pages; domains and sources show a quick view. */
 		onOpen: function (e) {
 			var o = this._ctx(e), that = this, oBox = new VBox().addStyleClass("sapUiSmallMargin"), k = o.id.split(":")[1];
+			if (o.type === "domain") { this.router().navTo("domain", { domain: k }); return; }
 			if (o.type === "repository") { this.router().navTo("repository", { repo: k }); return; }
 			if (o.type === "table") { var t = k.split("."); this.router().navTo("table", { source: t[0], schema: t[1], table: t[2] }); return; }
 			oBox.addItem(new ObjectStatus({ text: o.typeText + " · " + o.statusText, state: o.state }).addStyleClass("sapUiTinyMarginBottom"));

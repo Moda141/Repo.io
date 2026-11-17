@@ -148,6 +148,11 @@
 					"target": "home"
 				},
 				{
+					"name": "domain",
+					"pattern": "domains/domain/{domain}",
+					"target": "domain"
+				},
+				{
 					"name": "repository",
 					"pattern": "domains/repository/{repo}",
 					"target": "repository"
@@ -442,6 +447,11 @@
 				"quarantine": {
 					"id": "quarantine",
 					"name": "Quarantine",
+					"level": 2
+				},
+				"domain": {
+					"id": "domain",
+					"name": "DomainOverview",
 					"level": 2
 				},
 				"repository": {
