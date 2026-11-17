@@ -141,12 +141,15 @@
 								<Text text="{view>territory}" class="repoioUmMuted repoioMono" textDirection="LTR" wrapping="false"/>
 							</VBox>
 							<Text text="{view>srcText}"/>
-							<ObjectNumber number="{view>qualityText}" unit="%" state="{view>qualityState}" textDirection="LTR"/>
+							<GenericTag text="{i18n>tag.dq}" status="{view>qualityState}" design="StatusIconHidden" class="repoioKpiTag"><value><ObjectNumber number="{view>qualityText}" unit="%" state="{view>qualityState}" emphasized="false"/></value></GenericTag>
 							<HBox alignItems="Center" renderType="Bare" class="repoioRtCell">
 								<RatingIndicator value="{view>stars}" maxValue="5" displayOnly="true" iconSize="0.875rem" tooltip="{view>ratingTip}"/>
 								<Button icon="sap-icon://slim-arrow-down" type="Transparent" tooltip="{i18n>rt.why}" press=".onRating" class="repoioRtBtn"/>
 							</HBox>
-							<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+							<HBox renderType="Bare">
+								<GenericTag text="{view>statusText}" status="{view>statusState}" design="Full" visible="{= ${view>statusState} === 'Warning' }" class="repoioSitTag"/>
+								<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}" visible="{= ${view>statusState} !== 'Warning' }"/>
+							</HBox>
 							<VBox renderType="Bare">
 								<Text text="{view>changed}" textDirection="LTR" wrapping="false"/>
 								<Text text="{view>changedBy}" class="repoioUmMuted" wrapping="false"/>

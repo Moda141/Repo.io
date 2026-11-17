@@ -34,7 +34,7 @@ sap.ui.define([
 			this._X = X;
 			this._cols = X.columns.map(function (c) {
 				return { key: c.key, label: ar ? c.ar : c.en, name: c.name, type: c.type, notNull: c.notNull, pii: c.pii,
-					termText: c.term ? (ar ? c.termAr : c.termEn) : "", nullText: c.nullPct.toFixed(1) + "%",
+					termText: c.term ? (ar ? c.termAr : c.termEn) : "", nullText: c.nullPct.toFixed(1) + "%", nullNum: c.nullPct.toFixed(1),
 					nullState: c.nullPct >= 20 ? "Error" : c.nullPct >= 5 ? "Warning" : "Success",
 					usedText: c.usedIn.length ? c.usedIn.map(function (u) { return u.repo; }).join(", ") : T("src.notUsed") };
 			});
@@ -60,7 +60,7 @@ sap.ui.define([
 				tab: this.viewModel().getProperty("/tb/tab") || "general", cq: "", tf: "all",
 				name: tbl.name, schema: tbl.schema, sourceName: S.name, sourceId: a.source,
 				storageText: T("tb.storage." + X.storage), storageIcon: X.storage === "file" ? "sap-icon://document" : "sap-icon://cloud",
-				qualityText: this.fmt.pct(score), qualityState: tbl.qualityState,
+				qualityText: this.fmt.pct(score), qNum: score.toFixed(1), qualityState: tbl.qualityState,
 				general: [
 					g("dsp.businessName", tbl.name), g("dsp.technicalName", a.table.toUpperCase(), { dir: "LTR", mono: true }),
 					g("tb.source", S.name + " · " + S.type), g("src.schemaName", tbl.schema, { dir: "LTR", mono: true }),
@@ -85,7 +85,7 @@ sap.ui.define([
 				dims: X.dims.map(function (d) {
 					var st = d.value >= target ? "Success" : d.value >= 80 ? "Warning" : "Error",
 						col = { Success: "--sapPositiveElementColor", Warning: "--sapCriticalElementColor", Error: "--sapNegativeElementColor" }[st];
-					return { label: T("tb.dim." + d.key), weightText: T("tb.weight", [d.weight]), value: d.value, text: d.value.toFixed(1) + "%", state: st,
+					return { label: T("tb.dim." + d.key), weightText: T("tb.weight", [d.weight]), value: d.value, text: d.value.toFixed(1) + "%", num: d.value.toFixed(1), state: st,
 						bar: "<div class=\"repoioBar\" role=\"presentation\"><span style=\"width:" + d.value + "%;background:var(" + col + ")\"></span><i style=\"inset-inline-start:" + target + "%\"></i></div>" };
 				}),
 				tests: tests, testsTitle: T("tb.testsN", [tests.length]),

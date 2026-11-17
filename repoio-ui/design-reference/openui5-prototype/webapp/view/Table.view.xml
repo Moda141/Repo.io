@@ -29,7 +29,7 @@
 			</VBox>
 			<HBox class="repoioDsTbRight" alignItems="Center" renderType="Bare">
 				<ObjectStatus text="{view>/tb/storageText}" icon="{view>/tb/storageIcon}" class="sapUiSmallMarginEnd"/>
-				<ObjectStatus text="{view>/tb/qualityText}" state="{view>/tb/qualityState}" icon="sap-icon://quality-issue" inverted="true"/>
+				<GenericTag text="{i18n>domains.col.quality}" status="{view>/tb/qualityState}" design="StatusIconHidden" class="repoioKpiTag"><value><ObjectNumber number="{view>/tb/qNum}" unit="%" state="{view>/tb/qualityState}" emphasized="false"/></value></GenericTag>
 			</HBox>
 		</HBox>
 
@@ -88,14 +88,14 @@
 										<VBox renderType="Bare">
 											<HBox alignItems="Center" renderType="Bare">
 												<Text text="{view>label}" class="repoioGrName"/>
-												<ObjectStatus text="{i18n>tb.pii}" state="Warning" icon="sap-icon://private" inverted="true" visible="{view>pii}" class="repoioTbChip"/>
+												<GenericTag text="{i18n>tb.pii}" status="Warning" design="Full" visible="{view>pii}" class="repoioSitTag"/>
 											</HBox>
 											<Text text="{view>name}" class="repoioMono repoioUmMuted" textDirection="LTR"/>
 										</VBox>
 										<Text text="{view>type}" class="repoioMono" textDirection="LTR"/>
 										<Text text="{= ${view>notNull} ? ${i18n>common.yes} : ${i18n>common.no} }"/>
 										<Text text="{= ${view>termText} || ${i18n>tbl.notLinked} }" class="{= ${view>termText} ? '' : 'repoioUmMuted' }"/>
-										<ObjectStatus text="{view>nullText}" state="{view>nullState}" textDirection="LTR"/>
+										<GenericTag text="{i18n>tag.empty}" status="{view>nullState}" design="StatusIconHidden" class="repoioKpiTag"><value><ObjectNumber number="{view>nullNum}" unit="%" state="{view>nullState}" emphasized="false"/></value></GenericTag>
 										<Text text="{view>usedText}"/>
 									</ColumnListItem>
 								</items>
@@ -182,7 +182,7 @@
 										<Text text="{view>weightText}" class="repoioUmMuted"/>
 									</VBox>
 									<core:HTML content="{view>bar}"/>
-									<ObjectStatus text="{view>text}" state="{view>state}" textDirection="LTR" class="repoioTbDimVal"/>
+									<GenericTag text="{i18n>tag.score}" status="{view>state}" design="StatusIconHidden" class="repoioKpiTag repoioTbDimVal"><value><ObjectNumber number="{view>num}" unit="%" state="{view>state}" emphasized="false"/></value></GenericTag>
 								</HBox>
 							</VBox>
 						</VBox>
@@ -214,7 +214,7 @@
 									<ColumnListItem>
 										<Text text="{view>rule}" class="repoioGrName"/>
 										<Text text="{view>column}" class="repoioMono" textDirection="LTR"/>
-										<ObjectStatus text="{view>resultText}" state="{view>state}" icon="{view>icon}"/>
+										<GenericTag text="{view>resultText}" status="{view>state}" design="Full" class="repoioSitTag"/>
 										<Text text="{view>failedText}" textDirection="LTR"/>
 										<Text text="{view>pctText}" textDirection="LTR"/>
 										<Text text="{view>date}" textDirection="LTR"/>

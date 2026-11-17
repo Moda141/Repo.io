@@ -80,7 +80,7 @@ sap.ui.define([
 					srcText: g.sources.map(function (s) { return s.name; }).join(" · "), rating: g.rating, stateKey: g.stateKey,
 					stateText: T(GOLDEN[g.stateKey] || "golden.pos"), state: g.state, lastMerge: g.lastMerge };
 			})).map(function (g) {
-				return Object.assign(g, { avatar: g.image || "sap-icon://customer", qualityText: g.quality.toFixed(2) + "%",
+				return Object.assign(g, { avatar: g.image || "sap-icon://customer", qualityText: g.quality.toFixed(2) + "%", qNum: g.quality.toFixed(1),
 					qualityState: g.quality >= 90 ? "Success" : g.quality >= 80 ? "Warning" : "Error", probText: (g.prob * 100).toFixed(1) + "%",
 					stars: g.rating ? g.rating.stars : 0, ratingTip: g.rating ? T("rt.tip", [g.rating.stars, g.rating.score]) : "",
 					stateIcon: STATE_ICON[g.state] || "", open: !!goldenIds[g.id], attn: g.stateKey !== "pos" || (g.rating && g.rating.stars < 3) });
@@ -104,12 +104,12 @@ sap.ui.define([
 				(sources[sid].tables || []).forEach(function (t) {
 					if (t.usedIn.some(function (u) { return u.id === r.id; })) {
 						tables.push({ source: sid, schema: t.schema, table: t.id, name: t.name, path: sid + " / " + t.schema + " / " + t.id, sourceName: sources[sid].name,
-							rowsText: n(t.rows), cols: String(t.cols), qualityText: that.fmt.pct(t.quality), qualityState: t.qualityState, profiled: t.profiled });
+							rowsText: n(t.rows), cols: String(t.cols), qualityText: that.fmt.pct(t.quality), qNum: t.quality.toFixed(1), qualityState: t.qualityState, profiled: t.profiled });
 					}
 				});
 			});
 
-			var tags = r.tags.map(function (t) { return { text: t, state: t === "PII" ? "Warning" : "None", icon: t === "PII" ? "sap-icon://private" : "" }; });
+			var tags = r.tags.map(function (t) { return { text: t, state: t === "PII" ? "Warning" : t === "Tier 1" ? "Information" : "None", icon: "" }; });
 			this.viewModel().setProperty("/rp", {
 				name: r.name, sub: T("rp.sub", [r.code]), icon: d ? d.icon : "sap-icon://badge", domainText: this.domainName(d), model: r.model,
 				owners: r.owners, tags: tags, deployed: deployed,
@@ -148,7 +148,7 @@ sap.ui.define([
 				goldenFooter: T("repo.goldenFooter", [gr.length, n(r.golden)]),
 				sources: r.sourceRows.slice().sort(function (a, b) { return a.priority - b.priority; }).map(function (s) {
 					return { name: s.name, host: s.host, type: s.type, priority: String(s.priority), tables: String(s.tables), rowsText: n(s.rows),
-						qualityText: that.fmt.pct(s.quality), qualityState: s.qualityState, contribText: T("rp.contrib", [s.contributes, s.goldenCount]),
+						qualityText: that.fmt.pct(s.quality), qNum: s.quality.toFixed(1), qualityState: s.qualityState, contribText: T("rp.contrib", [s.contributes, s.goldenCount]),
 						sync: s.sync, stateText: T("rp.sync." + s.state), state: s.state === "None" ? "None" : s.state, stateIcon: STATE_ICON[s.state] || "" };
 				}),
 				tables: tables

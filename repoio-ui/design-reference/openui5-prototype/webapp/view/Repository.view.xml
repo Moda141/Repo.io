@@ -22,7 +22,7 @@
 						<Title text="{view>/rp/name}" level="H1" wrapping="false"/>
 					</HBox>
 				</uxap:snappedHeading>
-				<uxap:snappedContent><ObjectStatus text="{view>/rp/healthText}" state="{view>/rp/healthState}" icon="{view>/rp/healthIcon}"/></uxap:snappedContent>
+				<uxap:snappedContent><GenericTag text="{view>/rp/healthText}" status="{view>/rp/healthState}" design="Full" class="repoioSitTag"/></uxap:snappedContent>
 				<uxap:actions>
 					<Button text="{i18n>rc.open}" type="Transparent" press=".onConnect" enabled="{view>/rp/deployed}"/>
 					<Button text="{i18n>rp.openGolden}" type="Transparent" visible="{view>/rp/hasGoldenList}" press=".onOpenGolden"/>
@@ -47,7 +47,7 @@
 						<HBox items="{path: 'view>/rp/owners', templateShareable: false}" renderType="Bare" class="repoioRpOwners"><rc:PersonLink name="{view>name}"/></HBox>
 					</HBox>
 					<HBox wrap="Wrap" renderType="Bare" items="{path: 'view>/rp/tags', templateShareable: false}" class="repoioTbChips">
-						<ObjectStatus text="{view>text}" state="{view>state}" icon="{view>icon}" inverted="true" class="repoioTbChip"/>
+						<GenericTag text="{view>text}" status="{view>state}" design="{= ${view>state} === 'None' ? 'StatusIconHidden' : 'Full' }" class="repoioSitTag"/>
 					</HBox>
 				</VBox>
 				<!-- Big figures, like "Request priority / Request status" -->
@@ -189,14 +189,17 @@
 												<Text text="{view>id} · {view>sub}" class="repoioUmMuted" wrapping="false"/>
 											</VBox>
 										</HBox>
-										<ObjectStatus text="{view>qualityText}" state="{view>qualityState}" inverted="true" class="repoioBtpBadge" textDirection="LTR"/>
+										<GenericTag text="{i18n>tag.dq}" status="{view>qualityState}" design="StatusIconHidden" class="repoioKpiTag"><value><ObjectNumber number="{view>qNum}" unit="%" state="{view>qualityState}" emphasized="false"/></value></GenericTag>
 										<Text text="{view>probText}" textDirection="LTR"/>
 										<Text text="{view>srcText}"/>
 										<HBox alignItems="Center" renderType="Bare" class="repoioRtCell">
 											<RatingIndicator value="{view>stars}" maxValue="5" displayOnly="true" iconSize="0.875rem" tooltip="{view>ratingTip}"/>
 											<Button icon="sap-icon://slim-arrow-down" type="Transparent" tooltip="{i18n>rt.why}" press=".onRating" class="repoioRtBtn"/>
 										</HBox>
-										<ObjectStatus text="{view>stateText}" state="{view>state}" icon="{view>stateIcon}"/>
+										<HBox renderType="Bare">
+											<GenericTag text="{view>stateText}" status="{view>state}" design="Full" visible="{= ${view>state} === 'Warning' || ${view>state} === 'Error' }" class="repoioSitTag"/>
+											<ObjectStatus text="{view>stateText}" state="{view>state}" icon="{view>stateIcon}" visible="{= ${view>state} !== 'Warning' &amp;&amp; ${view>state} !== 'Error' }"/>
+										</HBox>
 										<HBox justifyContent="End" renderType="Bare" class="repoioRpActs">
 											<Button text="{i18n>rp.a.open}" press=".onGolden" enabled="{view>open}"/>
 											<Button text="{i18n>rp.a.request}" press=".onRequestRecord"/>
@@ -238,7 +241,7 @@
 									<ObjectNumber number="{view>priority}" emphasized="true"/>
 									<Text text="{view>tables}" textDirection="LTR"/>
 									<Text text="{view>rowsText}" textDirection="LTR"/>
-									<ObjectStatus text="{view>qualityText}" state="{view>qualityState}" inverted="true" class="repoioBtpBadge" textDirection="LTR"/>
+									<GenericTag text="{i18n>tag.dq}" status="{view>qualityState}" design="StatusIconHidden" class="repoioKpiTag"><value><ObjectNumber number="{view>qNum}" unit="%" state="{view>qualityState}" emphasized="false"/></value></GenericTag>
 									<Text text="{view>contribText}"/>
 									<Text text="{view>sync}" textDirection="LTR"/>
 									<ObjectStatus text="{view>stateText}" state="{view>state}" icon="{view>stateIcon}"/>
@@ -274,7 +277,7 @@
 									<Text text="{view>sourceName}"/>
 									<Text text="{view>rowsText}" textDirection="LTR"/>
 									<Text text="{view>cols}" textDirection="LTR"/>
-									<ObjectStatus text="{view>qualityText}" state="{view>qualityState}" inverted="true" class="repoioBtpBadge" textDirection="LTR"/>
+									<GenericTag text="{i18n>tag.dq}" status="{view>qualityState}" design="StatusIconHidden" class="repoioKpiTag"><value><ObjectNumber number="{view>qNum}" unit="%" state="{view>qualityState}" emphasized="false"/></value></GenericTag>
 									<Text text="{view>profiled}" textDirection="LTR"/>
 								</ColumnListItem>
 							</items>

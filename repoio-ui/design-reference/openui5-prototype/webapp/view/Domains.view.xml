@@ -97,7 +97,7 @@
 												<Label text="{view>moreOwners}" visible="{= !!${view>moreOwners} }" class="sapUiTinyMarginBegin"/>
 											</HBox>
 											<HBox justifyContent="SpaceBetween" alignItems="Center" class="repoioCatCardFoot" renderType="Bare">
-												<ObjectStatus text="{view>statusText}" state="{view>state}" icon="{view>statusIcon}"/>
+												<GenericTag text="{view>statusText}" status="{view>state}" design="Full" class="repoioSitTag"/>
 												<HBox alignItems="Center" renderType="Bare">
 													<Button icon="sap-icon://chain-link" type="Transparent" tooltip="{i18n>cat.copyLink}" press=".onCopyLink"/>
 													<Button icon="{= ${view>fav} ? 'sap-icon://favorite' : 'sap-icon://unfavorite' }" type="Transparent"
@@ -130,7 +130,7 @@
 									<Text text="{view>typeText}"/>
 									<Text text="{view>context}"/>
 									<rc:PersonLink name="{view>owner}"/>
-									<ObjectStatus text="{view>statusText}" state="{view>state}"/>
+									<GenericTag text="{view>statusText}" status="{view>state}" design="Full" class="repoioSitTag"/>
 									<Text text="{view>updated}" wrapping="false"/>
 									<HBox justifyContent="End">
 										<Button icon="sap-icon://chain-link" type="Transparent" tooltip="{i18n>cat.copyLink}" press=".onCopyLink"/>
