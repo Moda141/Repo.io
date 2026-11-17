@@ -41,7 +41,9 @@
 
 		<uxap:headerContent>
 			<FlexBox wrap="Wrap" alignItems="Start" class="repoioGoHead">
-				<Avatar src="{view>/go/icon}" displayShape="Square" displaySize="XL" backgroundColor="{view>/go/color}" class="repoioGoAvatar"/>
+				<Avatar src="{view>/go/icon}" displayShape="Square" displaySize="XL" backgroundColor="{view>/go/color}" class="repoioGoAvatar"
+					badgeIcon="sap-icon://camera" badgeTooltip="{= ${view>/go/hasImage} ? ${i18n>img.change} : ${i18n>img.add} }" press=".onImage"
+					tooltip="{= ${view>/go/hasImage} ? ${i18n>img.change} : ${i18n>img.add} }"/>
 				<VBox class="repoioGoFacet" items="{path: 'view>/go/facet1', templateShareable: false}">
 					<HBox class="repoioGoPair" renderType="Bare">
 						<Label text="{view>label}" showColon="true" class="sapUiTinyMarginEnd"/>
@@ -63,6 +65,8 @@
 					<ProgressIndicator percentValue="{view>/go/probPct}" displayValue="{view>/go/probText}" state="Success" width="11rem" height="1rem"/>
 					<Text text="{view>/go/matchNote}" class="repoioUmMuted"/>
 				</VBox>
+				<MessageStrip text="{view>/go/imgBanner}" type="Information" showIcon="true" customIcon="sap-icon://picture" visible="{= !!${view>/go/imgBanner} }"
+					class="repoioGoBanner"/>
 				<MessageStrip text="{view>/go/banner}" type="{view>/go/bannerType}" showIcon="true" visible="{= !!${view>/go/banner} }" class="repoioGoBanner">
 					<link><Link text="{view>/go/bannerLink}" press=".onBanner"/></link>
 				</MessageStrip>

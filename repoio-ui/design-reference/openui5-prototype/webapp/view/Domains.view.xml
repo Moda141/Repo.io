@@ -83,26 +83,26 @@
 								<f:Card class="repoioCatCard">
 									<f:layoutData><f:GridContainerItemLayoutData columns="4" rows="1"/></f:layoutData>
 									<f:content>
-										<VBox width="100%" class="repoioCatCardBody">
-											<HBox justifyContent="End" class="repoioCatCardTop">
-												<Button icon="sap-icon://chain-link" type="Transparent" tooltip="{i18n>cat.copyLink}" press=".onCopyLink"/>
-											</HBox>
-											<HBox alignItems="Start" class="repoioCatCardMain">
+										<VBox width="100%" class="repoioCatCardBody" renderType="Bare">
+											<HBox alignItems="Start" class="repoioCatCardMain" renderType="Bare">
 												<core:Icon src="{view>icon}" size="1.25rem" color="Default" class="repoioCatIcon"/>
-												<VBox>
-													<Link text="{view>title}" press=".onOpen" wrapping="true"/>
-													<Label text="{view>typeText} | {view>context}" wrapping="true"/>
+												<VBox class="repoioCatHead" renderType="Bare">
+													<Link text="{view>title}" press=".onOpen" wrapping="false" tooltip="{view>title}"/>
+													<Label text="{view>typeText} · {view>context}" wrapping="false" tooltip="{view>typeText} · {view>context}"/>
 												</VBox>
 											</HBox>
 											<Text text="{view>desc}" maxLines="2" class="repoioCatDesc"/>
-											<HBox visible="{= !!${view>owner} }" alignItems="Center" class="repoioCatOwner">
+											<HBox visible="{= !!${view>owner} }" alignItems="Center" class="repoioCatOwner" renderType="Bare">
 												<rc:PersonLink name="{view>owner}"/>
 												<Label text="{view>moreOwners}" visible="{= !!${view>moreOwners} }" class="sapUiTinyMarginBegin"/>
 											</HBox>
-											<HBox justifyContent="SpaceBetween" alignItems="Center" class="repoioCatCardFoot">
-												<ObjectStatus text="{view>statusText}" state="{view>state}"/>
-												<Button icon="{= ${view>fav} ? 'sap-icon://favorite' : 'sap-icon://unfavorite' }" type="Transparent"
-													tooltip="{= ${view>fav} ? ${i18n>cat.unfav} : ${i18n>cat.fav} }" press=".onFav" class="repoioCatStar"/>
+											<HBox justifyContent="SpaceBetween" alignItems="Center" class="repoioCatCardFoot" renderType="Bare">
+												<ObjectStatus text="{view>statusText}" state="{view>state}" icon="{view>statusIcon}"/>
+												<HBox alignItems="Center" renderType="Bare">
+													<Button icon="sap-icon://chain-link" type="Transparent" tooltip="{i18n>cat.copyLink}" press=".onCopyLink"/>
+													<Button icon="{= ${view>fav} ? 'sap-icon://favorite' : 'sap-icon://unfavorite' }" type="Transparent"
+														tooltip="{= ${view>fav} ? ${i18n>cat.unfav} : ${i18n>cat.fav} }" press=".onFav" class="repoioCatStar"/>
+												</HBox>
 											</HBox>
 										</VBox>
 									</f:content>

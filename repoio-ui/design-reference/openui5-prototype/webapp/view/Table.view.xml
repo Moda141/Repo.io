@@ -1,0 +1,281 @@
+<mvc:View controllerName="repoio.proto.controller.Table"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control" height="100%">
+	<!-- Source table, laid out like the SAP Datasphere Data Builder table editor (Repo.io look): grouped toolbar, title,
+	     tabs (General, Columns, Associations, Business purpose, Data quality, Dependent objects) and a data preview
+	     docked at the bottom (Data / Errors). Read only: the source system owns the table; descriptions and terms are
+	     changed through a request, quality checks run as a Great Expectations job. -->
+	<VBox height="100%" renderType="Bare" class="repoioTb">
+		<HBox class="repoioDsTb" alignItems="Start" renderType="Bare">
+			<Button icon="sap-icon://nav-back" type="Transparent" tooltip="{i18n>common.back}" press=".onBack" class="repoioDsBack"/>
+			<VBox class="repoioDsTbGrp" renderType="Bare">
+				<Text text="{i18n>ds.tb.general}" class="repoioDsTbLbl"/>
+				<HBox>
+					<Button icon="sap-icon://chain-link" type="Transparent" tooltip="{i18n>cat.copyLink}" press=".onCopyLink"/>
+					<Button icon="sap-icon://excel-attachment" type="Transparent" tooltip="{i18n>tb.exportCols}" press=".onExport"/>
+				</HBox>
+			</VBox>
+			<VBox class="repoioDsTbGrp" renderType="Bare">
+				<Text text="{i18n>tb.tb.view}" class="repoioDsTbLbl"/>
+				<HBox>
+					<ToggleButton icon="sap-icon://table-view" type="Transparent" tooltip="{i18n>tb.preview}" pressed="{view>/tb/preview}"/>
+				</HBox>
+			</VBox>
+			<VBox class="repoioDsTbGrp" renderType="Bare">
+				<Text text="{i18n>ds.tb.tools}" class="repoioDsTbLbl"/>
+				<HBox>
+					<Button icon="sap-icon://quality-issue" type="Transparent" tooltip="{i18n>tbl.runDq}" press=".onRunDq"/>
+					<Button icon="sap-icon://request" type="Transparent" tooltip="{i18n>tb.requestChange}" press=".onRequest"/>
+				</HBox>
+			</VBox>
+			<HBox class="repoioDsTbRight" alignItems="Center" renderType="Bare">
+				<ObjectStatus text="{view>/tb/storageText}" icon="{view>/tb/storageIcon}" class="sapUiSmallMarginEnd"/>
+				<ObjectStatus text="{view>/tb/qualityText}" state="{view>/tb/qualityState}" icon="sap-icon://quality-issue" inverted="true"/>
+			</HBox>
+		</HBox>
+
+		<ScrollContainer vertical="true" horizontal="false" height="100%" class="repoioTbMain">
+			<VBox renderType="Bare" class="repoioTbHead">
+				<Breadcrumbs currentLocationText="{view>/tb/name}" class="repoioTbCrumbs">
+					<Link text="{i18n>nav.domains}" press=".onToCatalog"/>
+					<Link text="{view>/tb/sourceName}" press=".onToSource"/>
+					<Link text="{view>/tb/schema}" press=".onToSource"/>
+				</Breadcrumbs>
+				<HBox alignItems="Center" renderType="Bare">
+					<core:Icon src="sap-icon://table-view" size="1.25rem" class="repoioTbIco" decorative="true"/>
+					<Title text="{view>/tb/name}" level="H1" titleStyle="H3" wrapping="true"/>
+				</HBox>
+			</VBox>
+			<IconTabBar id="tbTabs" selectedKey="{view>/tb/tab}" expandable="false" headerBackgroundDesign="Solid" backgroundDesign="Transparent"
+				applyContentPadding="false" class="repoioTbTabs">
+				<items>
+					<!-- General -->
+					<IconTabFilter key="general" text="{i18n>tb.tab.general}">
+						<VBox class="repoioTbCard" renderType="Bare">
+							<FlexBox wrap="Wrap" class="repoioTbFields" renderType="Bare" items="{path: 'view>/tb/general', templateShareable: false}">
+								<VBox class="repoioTbField" renderType="Bare">
+									<Label text="{view>label}"/>
+									<Text text="{view>value}" textDirection="{view>dir}" visible="{= ${view>type} === 'text' }" class="{= ${view>mono} ? 'repoioMono' : '' }"/>
+									<Switch state="{view>on}" enabled="false" visible="{= ${view>type} === 'switch' }" customTextOn=" " customTextOff=" "/>
+									<rc:PersonLink name="{view>value}" visible="{= ${view>type} === 'person' }"/>
+								</VBox>
+							</FlexBox>
+						</VBox>
+					</IconTabFilter>
+
+					<!-- Columns -->
+					<IconTabFilter key="columns" text="{view>/tb/colsTab}">
+						<VBox class="repoioTbCard" renderType="Bare">
+							<Table items="{view>/tb/columns}" class="repoioDenseTable" sticky="ColumnHeaders" noDataText="{i18n>lin.noColumns}">
+								<headerToolbar>
+									<OverflowToolbar style="Clear">
+										<Title text="{view>/tb/colsTab}" level="H2" titleStyle="H5"/>
+										<ToolbarSpacer/>
+										<SearchField value="{view>/tb/cq}" liveChange=".onColSearch" placeholder="{i18n>lin.find}" width="14rem"/>
+									</OverflowToolbar>
+								</headerToolbar>
+								<columns>
+									<Column width="2.5rem" hAlign="Center"><Text text="" tooltip="{i18n>tb.key}"/></Column>
+									<Column width="24%"><Text text="{i18n>tb.c.name}"/></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tb.c.type}"/></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tb.c.notNull}"/></Column>
+									<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>tbl.term}"/></Column>
+									<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tbl.empty}"/></Column>
+									<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>src.usedIn}"/></Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<core:Icon src="sap-icon://key" visible="{view>key}" tooltip="{i18n>tb.key}" class="repoioTbKey"/>
+										<VBox renderType="Bare">
+											<HBox alignItems="Center" renderType="Bare">
+												<Text text="{view>label}" class="repoioGrName"/>
+												<ObjectStatus text="{i18n>tb.pii}" state="Warning" icon="sap-icon://private" inverted="true" visible="{view>pii}" class="repoioTbChip"/>
+											</HBox>
+											<Text text="{view>name}" class="repoioMono repoioUmMuted" textDirection="LTR"/>
+										</VBox>
+										<Text text="{view>type}" class="repoioMono" textDirection="LTR"/>
+										<Text text="{= ${view>notNull} ? ${i18n>common.yes} : ${i18n>common.no} }"/>
+										<Text text="{= ${view>termText} || ${i18n>tbl.notLinked} }" class="{= ${view>termText} ? '' : 'repoioUmMuted' }"/>
+										<ObjectStatus text="{view>nullText}" state="{view>nullState}" textDirection="LTR"/>
+										<Text text="{view>usedText}"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</VBox>
+					</IconTabFilter>
+
+					<!-- Associations -->
+					<IconTabFilter key="assoc" text="{view>/tb/assocTab}">
+						<VBox class="repoioTbCard" renderType="Bare">
+							<Table items="{view>/tb/associations}" class="repoioDenseTable" noDataText="{i18n>tb.noAssoc}">
+								<columns>
+									<Column width="24%"><Text text="{i18n>tb.a.name}"/></Column>
+									<Column><Text text="{i18n>tb.a.target}"/></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tb.a.on}"/></Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<Text text="{view>name}" class="repoioMono" textDirection="LTR"/>
+										<HBox alignItems="Center" renderType="Bare">
+											<core:Icon src="sap-icon://table-view" class="sapUiTinyMarginEnd" decorative="true"/>
+											<Link text="{view>targetName}" press=".onAssoc"/>
+										</HBox>
+										<Text text="{view>on}" class="repoioMono" textDirection="LTR"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</VBox>
+					</IconTabFilter>
+
+					<!-- Business purpose -->
+					<IconTabFilter key="purpose" text="{i18n>tb.tab.purpose}">
+						<VBox class="repoioTbCard" renderType="Bare">
+							<Label text="{i18n>tbl.sec.desc}"/>
+							<Text text="{view>/tb/desc}" class="repoioTbDesc"/>
+							<Text text="{view>/tb/descUpdated}" class="repoioUmMuted sapUiSmallMarginBottom"/>
+							<FlexBox wrap="Wrap" class="repoioTbFields" renderType="Bare">
+								<VBox class="repoioTbField" renderType="Bare">
+									<Label text="{i18n>tbl.terms}"/>
+									<HBox wrap="Wrap" renderType="Bare" class="repoioTbChips" items="{path: 'view>/tb/terms', templateShareable: false}">
+										<ObjectStatus text="{view>text}" state="Information" icon="sap-icon://course-book" inverted="true" class="repoioTbChip"/>
+									</HBox>
+									<Text text="{i18n>tbl.notLinked}" visible="{= ${view>/tb/terms}.length === 0 }" class="repoioUmMuted"/>
+								</VBox>
+								<VBox class="repoioTbField" renderType="Bare">
+									<Label text="{i18n>tbl.sensitivity}"/>
+									<ObjectStatus text="{view>/tb/sensText}" state="{view>/tb/sensState}" icon="sap-icon://shield"/>
+								</VBox>
+								<VBox class="repoioTbField" renderType="Bare">
+									<Label text="{i18n>tbl.retention}"/>
+									<Text text="{view>/tb/retention}"/>
+								</VBox>
+								<VBox class="repoioTbField" renderType="Bare">
+									<Label text="{i18n>domain.owner}"/>
+									<rc:PersonLink name="{view>/tb/owner}"/>
+								</VBox>
+								<VBox class="repoioTbField" renderType="Bare">
+									<Label text="{i18n>tbl.steward}"/>
+									<rc:PersonLink name="{view>/tb/steward}"/>
+								</VBox>
+							</FlexBox>
+							<MessageStrip text="{i18n>tb.purposeNote}" type="Information" showIcon="true" class="sapUiSmallMarginTop"/>
+						</VBox>
+					</IconTabFilter>
+
+					<!-- Data quality -->
+					<IconTabFilter key="dq" text="{i18n>tbl.sec.dq}">
+						<VBox class="repoioTbCard" renderType="Bare">
+							<FlexBox wrap="Wrap" class="repoioTbKpis" renderType="Bare" items="{path: 'view>/tb/kpis', templateShareable: false}">
+								<VBox class="repoioTbKpi" renderType="Bare">
+									<Label text="{view>label}"/>
+									<ObjectNumber number="{view>value}" unit="{view>unit}" state="{view>state}" emphasized="true" class="sapMObjectNumberLarge" textDirection="LTR"/>
+								</VBox>
+							</FlexBox>
+							<rc:EChart id="tbTrend" height="9rem" ariaLabel="{i18n>tbl.trend}"/>
+							<Text text="{i18n>tbl.formula}" class="repoioUmMuted sapUiSmallMarginBottom"/>
+						</VBox>
+						<VBox class="repoioTbCard" renderType="Bare">
+							<Title text="{i18n>tbl.dims}" level="H3" titleStyle="H5" class="sapUiSmallMarginBottom"/>
+							<VBox renderType="Bare" items="{path: 'view>/tb/dims', templateShareable: false}" class="repoioTbDims">
+								<HBox alignItems="Center" class="repoioTbDim" renderType="Bare">
+									<VBox class="repoioTbDimName" renderType="Bare">
+										<Text text="{view>label}" class="repoioGrName"/>
+										<Text text="{view>weightText}" class="repoioUmMuted"/>
+									</VBox>
+									<core:HTML content="{view>bar}"/>
+									<ObjectStatus text="{view>text}" state="{view>state}" textDirection="LTR" class="repoioTbDimVal"/>
+								</HBox>
+							</VBox>
+						</VBox>
+						<VBox class="repoioTbCard" renderType="Bare">
+							<Table items="{view>/tb/tests}" class="repoioDenseTable" noDataText="{i18n>tbl.noTests}">
+								<headerToolbar>
+									<OverflowToolbar style="Clear">
+										<Title text="{view>/tb/testsTitle}" level="H3" titleStyle="H5"/>
+										<ToolbarSpacer/>
+										<SegmentedButton selectedKey="{view>/tb/tf}" selectionChange=".onTestFilter">
+											<items>
+												<SegmentedButtonItem key="all" text="{view>/tb/tc/all}"/>
+												<SegmentedButtonItem key="fail" text="{view>/tb/tc/fail}"/>
+												<SegmentedButtonItem key="warn" text="{view>/tb/tc/warn}"/>
+												<SegmentedButtonItem key="pass" text="{view>/tb/tc/pass}"/>
+											</items>
+										</SegmentedButton>
+									</OverflowToolbar>
+								</headerToolbar>
+								<columns>
+									<Column width="34%"><Text text="{i18n>tbl.rule}"/></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tbl.column}"/></Column>
+									<Column><Text text="{i18n>tb.result}"/></Column>
+									<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tbl.failedRows}"/></Column>
+									<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tbl.failedPct}"/></Column>
+									<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>tbl.lastRun}"/></Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<Text text="{view>rule}" class="repoioGrName"/>
+										<Text text="{view>column}" class="repoioMono" textDirection="LTR"/>
+										<ObjectStatus text="{view>resultText}" state="{view>state}" icon="{view>icon}"/>
+										<Text text="{view>failedText}" textDirection="LTR"/>
+										<Text text="{view>pctText}" textDirection="LTR"/>
+										<Text text="{view>date}" textDirection="LTR"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</VBox>
+					</IconTabFilter>
+
+					<!-- Dependent objects -->
+					<IconTabFilter key="deps" text="{view>/tb/depsTab}">
+						<VBox class="repoioTbCard" renderType="Bare">
+							<Table items="{view>/tb/deps}" class="repoioDenseTable" noDataText="{i18n>tb.noDeps}">
+								<columns>
+									<Column width="26%"><Text text="{i18n>repo.repository}"/></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>domains.col.domain}"/></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.model}"/></Column>
+									<Column><Text text="{i18n>tb.d.cols}"/></Column>
+									<Column><Text text="{i18n>domains.col.status}"/></Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<HBox alignItems="Center" renderType="Bare">
+											<core:Icon src="sap-icon://badge" class="sapUiTinyMarginEnd" decorative="true"/>
+											<Link text="{view>name}" press=".onDep"/>
+										</HBox>
+										<Text text="{view>domain}"/>
+										<Text text="{view>model}"/>
+										<Text text="{view>colsText}" class="repoioMono" textDirection="LTR"/>
+										<ObjectStatus text="{view>statusText}" state="{view>state}"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</VBox>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</ScrollContainer>
+
+		<!-- Data preview docked at the bottom -->
+		<VBox visible="{view>/tb/preview}" renderType="Bare" class="repoioTbPrev">
+			<customData><core:CustomData key="max" value="{= ${view>/tb/max} ? 'on' : 'off' }" writeToDom="true"/></customData>
+			<HBox alignItems="Center" class="repoioTbPrevBar" renderType="Bare">
+				<IconTabHeader selectedKey="{view>/tb/pv}" mode="Inline" backgroundDesign="Transparent" class="repoioTbPrevTabs">
+					<items>
+						<IconTabFilter key="data" text="{view>/tb/dataTab}"/>
+						<IconTabFilter key="errors" text="{view>/tb/errTab}"/>
+					</items>
+				</IconTabHeader>
+				<HBox class="repoioTbPrevActs" renderType="Bare">
+					<Text text="{i18n>tbl.sampleNote}" class="repoioUmMuted sapUiSmallMarginEnd"/>
+					<Button icon="{= ${view>/tb/max} ? 'sap-icon://exit-full-screen' : 'sap-icon://full-screen' }" type="Transparent"
+						tooltip="{= ${view>/tb/max} ? ${i18n>tb.restore} : ${i18n>tb.maximize} }" press=".onMax"/>
+					<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>go.close}" press=".onClosePreview"/>
+				</HBox>
+			</HBox>
+			<ScrollContainer vertical="true" horizontal="true" height="100%" class="repoioTbPrevBody">
+				<Table id="tbData" class="repoioDenseTable repoioTbGrid" sticky="ColumnHeaders" fixedLayout="false" visible="{= ${view>/tb/pv} === 'data' }"/>
+				<Table id="tbErrors" class="repoioDenseTable repoioTbGrid" sticky="ColumnHeaders" fixedLayout="false" visible="{= ${view>/tb/pv} === 'errors' }"
+					noDataText="{i18n>tb.noErrors}"/>
+			</ScrollContainer>
+		</VBox>
+	</VBox>
+</mvc:View>

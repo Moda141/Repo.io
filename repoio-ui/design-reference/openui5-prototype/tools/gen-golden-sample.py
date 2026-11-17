@@ -220,6 +220,12 @@ for c in ["master_id", "name", "mobile_1", "account_type"]:
 srcmap = {"c4c_customer": "c4c", "c4c_address": "c4c", "s4_customer": "s4", "csv_teachers": "csv"}
 for nd in lineage["nodes"]:
     if nd["key"] in srcmap: nd["source"] = srcmap[nd["key"]]
+# image_url: an approved image for some bookshop records (local sample pictures; in the product a stored copy in the media store)
+ri = 0
+for r in rows:
+    if r["segment"] == "retailer":
+        r["image"] = "img/records/store-%d.svg" % (ri % 4 + 1)
+        ri += 1
 data = {"_comment": "Golden records (J2) and column lineage, sample values only. In the product the list and the record come from the golden records API (Iceberg golden_customer through Trino), provenance from change_log, and lineage from the catalog (OpenLineage events).",
         "repos": {"customer-master": {"total": 951247, "rows": rows, "details": details, "lineage": lineage}},
         "editingStatus": ["unchanged", "openCr", "review"],

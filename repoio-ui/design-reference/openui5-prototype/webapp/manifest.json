@@ -115,6 +115,10 @@
 			"stewardship": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/stewardship.json"
+			},
+			"tables": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/tables.json"
 			}
 		},
 		"resources": {
@@ -142,6 +146,16 @@
 					"name": "home",
 					"pattern": "",
 					"target": "home"
+				},
+				{
+					"name": "repository",
+					"pattern": "domains/repository/{repo}",
+					"target": "repository"
+				},
+				{
+					"name": "table",
+					"pattern": "domains/table/{source}/{schema}/{table}",
+					"target": "table"
 				},
 				{
 					"name": "domains",
@@ -429,6 +443,16 @@
 					"id": "quarantine",
 					"name": "Quarantine",
 					"level": 2
+				},
+				"repository": {
+					"id": "repository",
+					"name": "Repository",
+					"level": 2
+				},
+				"table": {
+					"id": "table",
+					"name": "Table",
+					"level": 3
 				}
 			}
 		}

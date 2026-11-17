@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/m/VBox",
-	"sap/m/Text"
-], function (BaseController, Lin, MessageToast, Popover, List, StandardListItem, VBox, Text) {
+	"sap/m/Text",
+	"repoio/proto/util/imageRequest"
+], function (BaseController, Lin, MessageToast, Popover, List, StandardListItem, VBox, Text, ImageRequest) {
 	"use strict";
 
 	var SEG_ICON = { teacher: "sap-icon://education", retailer: "sap-icon://retail-store", callCenter: "sap-icon://call", student: "sap-icon://family-care",
@@ -80,7 +81,8 @@ sap.ui.define([
 			var g = function (keys, keepEmpty) { return keys.filter(function (k) { return keepEmpty || P[k]; }).map(field); };
 			var st = { unchanged: null, openCr: ["Information", "go.banner.openCr"], review: ["Warning", "go.banner.review"] }[rec.status];
 			vm.setProperty("/go", {
-				rec: rec, repoName: repo ? repo.name : this._repo, icon: SEG_ICON[rec.segment] || "sap-icon://customer", color: SEG_COLOR[rec.segment] || "Accent6",
+				rec: rec, repoName: repo ? repo.name : this._repo, icon: rec.image || SEG_ICON[rec.segment] || "sap-icon://customer", color: SEG_COLOR[rec.segment] || "Accent6",
+				segIcon: SEG_ICON[rec.segment] || "sap-icon://customer", hasImage: !!rec.image, imgBanner: this._imgBanner(rec.id),
 				snapped: (seg ? this._t(seg) : "") + " · " + this.text("gov." + rec.state) + " · " + rec.mobile,
 				facet1: [{ label: this.text("go.f.segment"), value: seg ? this._t(seg) : "—" }, { label: this.text("go.f.account"), value: rec.accountType, dir: "LTR" },
 					{ label: this.text("go.f.gov"), value: this.text("gov." + rec.state) + " · " + rec.territory }],
@@ -162,6 +164,19 @@ sap.ui.define([
 		onLinSelect: function () { /* the control keeps the selection; nothing else depends on it here */ },
 		onLinNode: function (oEvent) { MessageToast.show(this.text("go.t.node", [oEvent.getParameter("node")])); },
 		onRequest: function () { MessageToast.show(this.text("go.t.request", [this._id])); },
+		/* Record image: a change request on image_url (util/imageRequest.js); the record changes only after approval. */
+		_imgBanner: function (id) {
+			var p = ImageRequest.pending(id);
+			return p ? this.text(p.action === "remove" ? "img.banner.remove" : "img.banner.set", [p.cr, p.at]) : "";
+		},
+		onImage: function () {
+			var that = this, go = this.viewModel().getProperty("/go");
+			ImageRequest.open({ ctrl: this, id: go.rec.id, name: go.rec.name, current: go.rec.image || "", icon: go.segIcon,
+				onDone: function (r) {
+					that.viewModel().setProperty("/go/imgBanner", that._imgBanner(go.rec.id));
+					MessageToast.show(that.text("img.t.sent", [r.cr]));
+				} });
+		},
 		onBanner: function () {
 			if (this._rec.status === "review") { this.onMatchDetection(); } else { MessageToast.show(this.text("go.t.openRequest", [this._d.requests[0].id])); }
 		},
