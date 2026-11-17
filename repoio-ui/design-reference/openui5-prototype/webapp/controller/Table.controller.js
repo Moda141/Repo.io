@@ -16,12 +16,14 @@ sap.ui.define([
 	/* Source table (SAP Datasphere Data Builder table editor pattern). Read only; sample values from model/tables.json. */
 	return BaseController.extend("repoio.proto.controller.Table", {
 		onInit: function () {
-			this.viewModel().setProperty("/tb", { tab: "general", preview: true, pv: "data", max: false, tf: "all", cq: "" });
+			this.viewModel().setProperty("/tb", { tab: "general", preview: false, pv: "data", max: false, tf: "all", cq: "" });
 			this.router().getRoute("table").attachPatternMatched(this._onMatched, this);
 		},
 		_onMatched: function (oEvent) {
 			var that = this, C = this.getOwnerComponent();
 			this._a = oEvent.getParameter("arguments");
+			// The data preview stays closed until the user opens it (Data preview button in the header)
+			this.viewModel().setProperty("/tb/preview", false);
 			Promise.all([this.data().dataLoaded(), C.getModel("tables").dataLoaded()]).then(function () { that._show(); });
 		},
 
