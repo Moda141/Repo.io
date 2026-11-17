@@ -67,7 +67,7 @@ sap.ui.define([
 			vm.setProperty("/ds/crumbs", Fld.crumbs(fk));
 			vm.setProperty("/ds/facets", [
 				facet("conn", conns),
-				facet("status", Object.keys(S.STATUS).map(function (k) { return [k, that.text("ds.st." + k), S.STATUS[k][1]]; }))
+				facet("status", ["draft", "deployed", "changed", "running"].map(function (k) { return [k, that.text("ds.st." + k), S.STATUS[k][1]]; }))
 			]);
 			this.byId("dsTable").removeSelections(true);
 			this.onSelect();
