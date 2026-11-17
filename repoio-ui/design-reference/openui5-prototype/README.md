@@ -68,6 +68,18 @@ Every table on the repository and table pages is a grid table (`sap.ui.table`: b
 - **Situation tags** (status icon and text) appear only for exceptions: failed and warning check results, dependent repositories that need attention, catalog card statuses. A passed check or a healthy status is a plain status text.
 - **Classifications** (PII, sensitivity, glossary terms) are neutral markers or tokens, not situation tags, because they describe the column rather than a problem.
 
+**Semantic colors** (SAP Fiori) come from one module, `webapp/util/semantic.js`; pages never pick a color for a status themselves.
+
+| Semantic | ValueState | Means | Examples |
+|---|---|---|---|
+| Positive | Success | Good result or healthy normal state | published, deployed, live, succeeded, passed, stream running |
+| Critical | Warning | The person looking at it should act | golden record needs review, key expiring, partial run, undeployed changes, gate needs review |
+| Negative | Error | Failed or blocked | failed run or check, held in quarantine, gate stopped, access denied |
+| Information | Information | In progress or waiting on someone else | running, scheduled, in review (approval queue), open change request |
+| Neutral | None | No judgement | draft, unchanged, retired, expired, revoked on purpose |
+
+Rules: management by exception (a normal record stays neutral); categories with no good or bad meaning (HTTP method, object type, PII, tier) never use a semantic color, they use neutral chips or indication colors that avoid red, orange and green; color is never the only carrier (text and icon always); ratings use `sapContent_RatedColor`, not Critical. Quality scores use one scale on every page (≥ 90 Positive, ≥ 75 Critical, below Negative); the thresholds belong to the data quality rule set and come from the API with the score, the prototype keeps a copy in `semantic.js`.
+
 ## Entry points
 
 | Entry point | What it is |
