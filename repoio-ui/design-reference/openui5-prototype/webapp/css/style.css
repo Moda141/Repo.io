@@ -1538,25 +1538,5 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 /* Equal columns that fill the width (min 17rem each), so no empty strip is left beside the last card */
 .repoioDo .repoioDoGrid { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); align-items: start; gap: 0.75rem; }
 .repoioDo .repoioDoGrid > .repoioDoCard { width: auto !important; min-width: 0; }
-/* Catalog cards: compact status tag in the footer (smaller than the default GenericTag) */
-.repoioCatCardFoot .repoioSitTag.sapMGenericTag, .repoioCatalog .repoioDenseTable .repoioSitTag.sapMGenericTag { height: 1.25rem; padding-inline: 0.25rem 0.375rem; border-radius: 0.25rem; }
-.repoioCatCardFoot .repoioSitTag .sapMGenericTagText, .repoioCatalog .repoioDenseTable .repoioSitTag .sapMGenericTagText { font-size: 0.6875rem; line-height: 1.25rem; }
-.repoioCatCardFoot .repoioSitTag .sapMGenericTagIcon, .repoioCatalog .repoioDenseTable .repoioSitTag .sapMGenericTagIcon { font-size: 0.625rem; margin-inline-end: 0.25rem; }
-.repoioCatCardFoot .repoioSitTag .sapMGenericTagStatus, .repoioCatalog .repoioDenseTable .repoioSitTag .sapMGenericTagStatus { width: 0.1875rem; }
-.repoioCatalog .repoioSitTag.sapMGenericTag { height: 1.0625rem !important; padding-inline: 0.125rem 0.3125rem !important; border-radius: 0.1875rem !important; }
-.repoioCatalog .repoioSitTag.sapMGenericTag .sapMGenericTagText { font-size: 0.625rem !important; line-height: 1.0625rem !important; }
-.repoioCatalog .repoioSitTag.sapMGenericTag .sapMGenericTagStatusIcon, .repoioCatalog .repoioSitTag.sapMGenericTag .sapUiIcon { font-size: 0.5625rem !important; margin-inline: 0.125rem 0.1875rem !important; }
-.repoioCatalog .repoioSitTag.sapMGenericTag::before { width: 0.125rem !important; }
-.repoioCatalog .repoioSitTag.sapMGenericTag .sapMGenericTagIcon { width: auto !important; min-width: 0 !important; padding: 0 !important; }
-/* Catalog status tag: text back to the normal tag size; only the box is tight around it */
-.repoioCatalog .repoioSitTag.sapMGenericTag { height: auto !important; padding-block: 0 !important; padding-inline: 0.1875rem 0.25rem !important; border-radius: 0.1875rem !important; }
-.repoioCatalog .repoioSitTag.sapMGenericTag .sapMGenericTagWrap { padding: 0 !important; gap: 0; }
-.repoioCatalog .repoioSitTag.sapMGenericTag .sapMGenericTagText { font-size: 0.75rem !important; line-height: 1rem !important; }
-.repoioCatalog .repoioSitTag.sapMGenericTag .sapMGenericTagStatusIcon, .repoioCatalog .repoioSitTag.sapMGenericTag .sapUiIcon { font-size: 0.6875rem !important; margin-inline: 0.125rem 0.1875rem !important; }
-.repoioCatalog .repoioSitTag.sapMGenericTag, .repoioCatalog .repoioSitTag.sapMGenericTag .sapMGenericTagWrap { height: 1.125rem !important; min-height: 0 !important; line-height: 1.125rem !important; display: inline-flex; align-items: center; }
-.repoioCatalog .repoioSitTag.sapMGenericTag .sapMGenericTagText { line-height: 1.125rem !important; }
-.repoioCatalog .repoioSitTag.sapMGenericTag { padding-inline: 0.4375rem 0.3125rem !important; }
-/* The coloured segment is the icon's own background: keep it a narrow block at the tag edge */
-.repoioCatalog .repoioSitTag.sapMGenericTag { padding-inline: 0 0.3125rem !important; overflow: hidden; }
-.repoioCatalog .repoioSitTag.sapMGenericTag .sapMGenericTagIcon { width: 1.125rem !important; height: 1.125rem !important; line-height: 1.125rem !important;
-	text-align: center; margin-inline: 0 0.25rem !important; padding: 0 !important; font-size: 0.6875rem !important; }
+/* Catalog cards: the status tag keeps its own Horizon design and proportions, scaled down as a whole */
+.repoioCatalog .repoioSitTag.sapMGenericTag { zoom: 0.85; }
