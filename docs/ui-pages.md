@@ -70,6 +70,14 @@
      queue and quarantine — each with a "By …" switch and a chart — a
      repositories card whose names open the repository page, a link card
      to the domain's work pages and a donut of source records by system).
+     *Create domain* is a request, not a create: domains are a closed
+     list in the contract (repoio-spec), so the request goes to platform
+     administrators and the domain appears after approval with its entity
+     schema in a new contract version. The domain overview has *Create
+     repository* (a draft; next come data sources, the match model, then
+     publishing), and the repository page has *Add data source* (a
+     connection from the Connections hub plus the objects to read; it
+     becomes a draft replication flow in Data sync).
      A repository opens its own page (S/4HANA object
      page with tabs: general information, attributes with matching role
      and survivorship rule, golden records with their rating, data
