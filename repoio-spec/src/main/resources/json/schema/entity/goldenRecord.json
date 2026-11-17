@@ -12,6 +12,8 @@
     "children":{"type":"array","items":{"$ref":"../type/reference.json"}},
     "status":{"type":"string","enum":["Draft","Active","Pending approval","Deactivated"]},
     "qualityScore":{"type":"number"},
+    "rating":{"$ref":"../type/recordRating.json"},
+    "image":{"$ref":"../type/recordImage.json"},
     "attributes":{"type":"array","items":{"type":"object"}},
     "classifications":{"type":"array","items":{"$ref":"../type/reference.json"}}
   }

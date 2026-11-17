@@ -1,0 +1,28 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://repoio.io/schemas/type/recordRating.json",
+  "title":"RecordRating",
+  "description":"Trust rating of a golden record, computed by the pipeline after survivorship from the Great Expectations results, the match probability, the contributing sources, the last change and open requests or reviews. Read only: clients show it and its factors, they never compute or set it.",
+  "type":"object",
+  "required":["stars","score","factors","ruleVersion","computedAt"],
+  "properties":{
+    "stars":{"type":"number","minimum":0,"maximum":5,"multipleOf":0.5},
+    "score":{"type":"integer","minimum":0,"maximum":100},
+    "factors":{
+      "type":"array",
+      "items":{
+        "type":"object",
+        "required":["key","met"],
+        "properties":{
+          "key":{"type":"string","enum":["quality","agreement","sources","fresh","clear"]},
+          "met":{"type":"boolean"},
+          "weight":{"type":"integer","minimum":0,"maximum":100}
+        },
+        "additionalProperties":false
+      }
+    },
+    "ruleVersion":{"type":"string"},
+    "computedAt":{"type":"string","format":"date-time"}
+  },
+  "additionalProperties":false
+}
