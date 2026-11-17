@@ -118,9 +118,14 @@ sap.ui.define([
 			var oIll = new IllustratedMessage({ illustrationType: "sapIllus-SuccessHighFive", illustrationSize: "Dialog", visible: id === "platform" });
 			var oDlg = new Dialog({ showHeader: false, contentWidth: "26rem", draggable: false, escapeHandler: function (p) { p.resolve(); finish(); },
 				content: [oIll], ariaLabelledBy: [oTitle] }).addStyleClass("repoioTourDlg");
-			// Closing the card any other way (click outside, Escape) ends the tour; moving between steps does not.
-			var moving = false;
-			oPop.attachAfterClose(function () { if (!moving) { finish(); } });
+			// Only Skip, the last button and Escape end the tour. Any other close (a click on the dimmed page, a step
+			// change while the card is still animating) reopens the card at the current step.
+			var onPop = false;
+			oPop.attachAfterClose(function () {
+				setTimeout(function () { if (that._on && onPop && !oPop.isOpen()) { oPop.openBy(spot); } }, 0);
+			});
+			oPop.attachAfterOpen(function () { layer(); });
+			oDlg.attachAfterOpen(function () { layer(); });
 			app.getView().addDependent(oPop);
 			app.getView().addDependent(oDlg);
 
@@ -159,7 +164,7 @@ sap.ui.define([
 				}
 				var r = target ? rectOf(target) : null;
 				place(r);
-				moving = true;
+				onPop = !!r;
 				if (!r) {
 					// Centred card: welcome and done
 					if (oPop.isOpen()) { oPop.close(); }
@@ -172,11 +177,11 @@ sap.ui.define([
 				} else {
 					if (oDlg.isOpen()) { oDlg.close(); }
 					if (content.getParent() !== oPop) { oPop.removeAllContent(); oPop.addContent(content); }
-					if (oPop.isOpen()) { oPop.close(); }
-					oPop.openBy(spot);
+					// The card moves by closing; the afterClose handler reopens it beside the new spot
+					if (oPop.isOpen()) { oPop.close(); } else { oPop.openBy(spot); }
 				}
 				layer();
-				setTimeout(function () { layer(); moving = false; oNext.focus(); }, 400);
+				setTimeout(function () { layer(); if (that._on) { oNext.focus(); } }, 400);
 			}
 			// UI5 gives every popup a rising z-index; the mask and the ring sit just under the open card
 			function layer() {
@@ -186,6 +191,7 @@ sap.ui.define([
 			function finish() {
 				if (!that._on) { return; }
 				that._on = false;
+				onPop = false;
 				try { localStorage.setItem(KEY + id, "done"); } catch (e) { /* private mode: the tour may show again */ }
 				document.removeEventListener("keydown", onKey, true);
 				window.removeEventListener("resize", onResize);
