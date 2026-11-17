@@ -1460,3 +1460,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioKpiTag .sapMObjectNumberUnit { padding-inline-start: 0.125rem; }
 .repoioGrid .sapUiTableCell .sapMVBox { justify-content: center; gap: 0.0625rem; }
 .repoioGrid .sapUiTableCell .sapMVBox > .sapMText, .repoioGrid .sapUiTableCell .sapMVBox > .sapMLnk { line-height: 1.125rem; }
+
+/* Table page: classification markers (PII, glossary terms) stay neutral, smaller than situation tags */
+.repoioClassTag .sapMObjStatusText, .repoioClassTag .sapMObjStatusIcon { font-size: .8125rem; }
+.repoioTermTok { margin-inline-end: .25rem; }

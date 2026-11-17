@@ -84,7 +84,7 @@
 										<t:template><VBox renderType="Bare">
 																					<HBox alignItems="Center" renderType="Bare">
 																						<Text text="{view>label}" class="repoioGrName"/>
-																						<GenericTag text="{i18n>tb.pii}" status="Warning" design="Full" visible="{view>pii}" class="repoioSitTag"/>
+																						<ObjectStatus text="{i18n>tb.pii}" icon="sap-icon://private" state="Information" visible="{view>pii}" class="repoioClassTag"/>
 																					</HBox>
 																					<Text text="{view>name}" class="repoioMono repoioUmMuted" textDirection="LTR"/>
 																				</VBox></t:template>
@@ -103,7 +103,10 @@
 									</t:Column>
 									<t:Column minWidth="120" hAlign="End">
 										<t:label><Label text="{i18n>tbl.empty}"/></t:label>
-										<t:template><GenericTag text="{i18n>tag.empty}" status="{view>nullState}" design="StatusIconHidden" class="repoioKpiTag"><value><ObjectNumber number="{view>nullNum}" unit="%" state="{view>nullState}" emphasized="false"/></value></GenericTag></t:template>
+										<t:template><HBox renderType="Bare" justifyContent="End">
+											<GenericTag text="{i18n>tag.empty}" status="{view>nullState}" design="StatusIconHidden" visible="{view>nullKpi}" class="repoioKpiTag"><value><ObjectNumber number="{view>nullNum}" unit="%" state="{view>nullState}" emphasized="false"/></value></GenericTag>
+											<Text text="{view>nullText}" visible="{= !${view>nullKpi} }" textDirection="LTR"/>
+										</HBox></t:template>
 									</t:Column>
 									<t:Column minWidth="120">
 										<t:label><Label text="{i18n>src.usedIn}"/></t:label>
@@ -150,7 +153,7 @@
 								<VBox class="repoioTbField" renderType="Bare">
 									<Label text="{i18n>tbl.terms}"/>
 									<HBox wrap="Wrap" renderType="Bare" class="repoioTbChips" items="{path: 'view>/tb/terms', templateShareable: false}">
-										<ObjectStatus text="{view>text}" state="Information" icon="sap-icon://course-book" inverted="true" class="repoioTbChip"/>
+										<rc:TokenCell values="{view>text}" class="repoioTermTok"/>
 									</HBox>
 									<Text text="{i18n>tbl.notLinked}" visible="{= ${view>/tb/terms}.length === 0 }" class="repoioUmMuted"/>
 								</VBox>
@@ -228,7 +231,10 @@
 									</t:Column>
 									<t:Column minWidth="120">
 										<t:label><Label text="{i18n>tb.result}"/></t:label>
-										<t:template><GenericTag text="{view>resultText}" status="{view>state}" design="Full" class="repoioSitTag"/></t:template>
+										<t:template><HBox renderType="Bare">
+											<GenericTag text="{view>resultText}" status="{view>state}" design="Full" visible="{= ${view>result} !== 'pass' }" class="repoioSitTag"/>
+											<ObjectStatus text="{view>resultText}" state="Success" icon="sap-icon://sys-enter-2" visible="{= ${view>result} === 'pass' }"/>
+										</HBox></t:template>
 									</t:Column>
 									<t:Column minWidth="120" hAlign="End">
 										<t:label><Label text="{i18n>tbl.failedRows}"/></t:label>
@@ -236,7 +242,11 @@
 									</t:Column>
 									<t:Column minWidth="120" hAlign="End">
 										<t:label><Label text="{i18n>tbl.failedPct}"/></t:label>
-										<t:template><Text text="{view>pctText}" textDirection="LTR"/></t:template>
+										<t:template><HBox renderType="Bare" justifyContent="End">
+											<GenericTag text="{i18n>tag.share}" status="{view>state}" design="StatusIconHidden" visible="{view>shareKpi}" class="repoioKpiTag"><value><ObjectNumber number="{view>pctNum}" unit="%" state="{view>state}" emphasized="false"/></value></GenericTag>
+											<GenericTag text="{i18n>tb.notMeasured}" status="Warning" design="StatusIconHidden" valueState="Error" visible="{view>shareErr}" class="repoioKpiTag"/>
+											<Text text="—" visible="{= !${view>shareKpi} &amp;&amp; !${view>shareErr} }" class="repoioUmMuted"/>
+										</HBox></t:template>
 									</t:Column>
 									<t:Column minWidth="120">
 										<t:label><Label text="{i18n>tbl.lastRun}"/></t:label>
@@ -274,7 +284,10 @@
 									</t:Column>
 									<t:Column minWidth="120">
 										<t:label><Label text="{i18n>domains.col.status}"/></t:label>
-										<t:template><ObjectStatus text="{view>statusText}" state="{view>state}"/></t:template>
+										<t:template><HBox renderType="Bare">
+											<GenericTag text="{view>statusText}" status="{view>state}" design="Full" visible="{= ${view>state} === 'Warning' || ${view>state} === 'Error' }" class="repoioSitTag"/>
+											<ObjectStatus text="{view>statusText}" state="{view>state}" visible="{= ${view>state} !== 'Warning' &amp;&amp; ${view>state} !== 'Error' }"/>
+										</HBox></t:template>
 									</t:Column>
 								</t:columns>
 							</t:Table>

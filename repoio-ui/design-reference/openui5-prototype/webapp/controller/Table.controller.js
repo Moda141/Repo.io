@@ -34,13 +34,14 @@ sap.ui.define([
 			this._X = X;
 			this._cols = X.columns.map(function (c) {
 				return { key: c.key, label: ar ? c.ar : c.en, name: c.name, type: c.type, notNull: c.notNull, pii: c.pii,
-					termText: c.term ? (ar ? c.termAr : c.termEn) : "", nullText: c.nullPct.toFixed(1) + "%", nullNum: c.nullPct.toFixed(1),
+					termText: c.term ? (ar ? c.termAr : c.termEn) : "", nullText: c.nullPct.toFixed(1) + "%", nullNum: c.nullPct.toFixed(1), nullKpi: c.nullPct >= 1,
 					nullState: c.nullPct >= 20 ? "Error" : c.nullPct >= 5 ? "Warning" : "Success",
 					usedText: c.usedIn.length ? c.usedIn.map(function (u) { return u.repo; }).join(", ") : T("src.notUsed") };
 			});
 			var tests = X.tests.map(function (x) {
 				return { rule: ar ? x.ar : x.en, column: x.column || "—", result: x.result, resultText: T("tb.r." + x.result), state: RESULT[x.result][0], icon: RESULT[x.result][1],
-					failedText: x.failed > 0 ? n(x.failed) : "—", pctText: x.pct ? x.pct.toFixed(1) + "%" : "—", date: x.date };
+					failedText: x.failed > 0 ? n(x.failed) : "—", pctText: x.pct ? x.pct.toFixed(1) + "%" : "—", date: x.date,
+					pctNum: x.pct >= 0.1 ? x.pct.toFixed(1) : "<0.1", shareKpi: x.failed > 0, shareErr: x.failed < 0 };
 			});
 			this._tests = tests;
 			var cnt = function (r) { return tests.filter(function (x) { return x.result === r; }).length; },
