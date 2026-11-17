@@ -169,28 +169,7 @@
 							<Text text="{i18n>onto.rec.preview}: {view>/onto/rec/crumb} ({view>/onto/rec/count})" class="repoioOntoPreviewTitle"/>
 							<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>common.close}" press=".onClosePreview"/>
 						</HBox>
-						<ScrollContainer vertical="true" horizontal="false" class="repoioOntoTableScroll">
-							<Table items="{view>/onto/rec/rows}" mode="SingleSelectMaster" selectionChange=".onRecRowPress" sticky="ColumnHeaders"
-								noDataText="{i18n>onto.rec.none}" popinLayout="GridSmall" contextualWidth="Auto">
-								<columns>
-									<Column><Text text="{i18n>onto.from}"/></Column>
-									<Column width="8rem" minScreenWidth="30rem" demandPopin="true"><Text text="{i18n>onto.rec.type}"/></Column>
-									<Column><Text text="{i18n>onto.to}"/></Column>
-									<Column minScreenWidth="40rem" demandPopin="true"><Text text="{i18n>onto.attrs}"/></Column>
-									<Column width="8rem" minScreenWidth="36rem" demandPopin="true"><Text text="{i18n>domains.col.status}"/></Column>
-									<Column minScreenWidth="46rem" demandPopin="true" width="8rem"><Text text="{i18n>onto.rec.cr}"/></Column>
-								</columns>
-								<ColumnListItem highlight="{= ${view>status} === 'pending' ? 'Warning' : 'None' }">
-									<ObjectIdentifier title="{view>from}" text="{view>fromName}"/>
-									<Text text="{view>type}"/>
-									<ObjectIdentifier title="{view>to}" text="{view>toName}"/>
-									<Text text="{view>attrs}" class="repoioMono"/>
-									<ObjectStatus text="{= ${view>status} === 'pending' ? ${i18n>onto.rec.status.pending} : ${i18n>onto.rec.status.active} }"
-										state="{= ${view>status} === 'pending' ? 'Warning' : 'Success' }"/>
-									<Text text="{view>cr}" class="repoioMono"/>
-								</ColumnListItem>
-							</Table>
-						</ScrollContainer>
+						<VBox id="recGridBox" renderType="Bare" class="repoioOntoTableScroll repoioTbGridBox"/>
 					</VBox>
 				</VBox>
 

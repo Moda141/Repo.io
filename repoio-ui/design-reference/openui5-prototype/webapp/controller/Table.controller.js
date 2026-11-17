@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
 	"sap/m/ObjectStatus",
-	"sap/m/VBox"
-], function (BaseController, MessageToast, Column, ColumnListItem, Text, ObjectStatus, VBox) {
+	"sap/m/VBox",
+	"repoio/proto/util/gridTable"
+], function (BaseController, MessageToast, Column, ColumnListItem, Text, ObjectStatus, VBox, Grid) {
 	"use strict";
 
 	var RESULT = { pass: ["Success", "sap-icon://sys-enter-2"], warn: ["Warning", "sap-icon://alert"], fail: ["Error", "sap-icon://error"] };
@@ -90,30 +91,39 @@ sap.ui.define([
 				tests: tests, testsTitle: T("tb.testsN", [tests.length]),
 				tc: { all: T("tb.tc.all", [tests.length]), fail: T("tb.tc.fail", [failed]), warn: T("tb.tc.warn", [cnt("warn")]), pass: T("tb.tc.pass", [cnt("pass")]) },
 				depsTab: T("tb.tab.deps", [deps.length]), deps: deps,
-				dataTab: T("tb.dataTab", [tbl.name, X.sample.length, n(tbl.rows)]), errTab: T("tb.errTab", [X.errors.length])
+				dataTab: T("tb.dataTabShort", [tbl.name]), errTab: T("tb.errTab", [X.errors.length])
 			}));
 			this._trend(X, target);
 			this._grids();
 		},
 
-		_cell: function (v, bad) {
-			if (bad) { return new ObjectStatus({ text: v === null || v === undefined ? "∅" : String(v), state: "Error", icon: "sap-icon://error" }); }
-			return new Text({ text: v === null || v === undefined ? "—" : String(v), wrapping: false }).addStyleClass(v === null || v === undefined ? "repoioUmMuted" : "");
-		},
+		/* Data preview: grid tables (sap.ui.table) built once and refilled per table. Errors list the failed check as a token
+		   and mark the failing value. */
 		_grids: function () {
-			var that = this, X = this._X, ar = this.lang() === "ar", oData = this.byId("tbData"), oErr = this.byId("tbErrors");
-			[oData, oErr].forEach(function (t) { t.destroyColumns(); t.destroyItems(); });
-			var head = function (c) {
-				return new Column({ header: new VBox({ items: [new Text({ text: c.name, wrapping: false }).addStyleClass("repoioMono"),
-					new Text({ text: ar ? c.ar : c.en, wrapping: false }).addStyleClass("repoioUmMuted")], renderType: "Bare" }) });
-			};
-			X.columns.forEach(function (c) { oData.addColumn(head(c)); });
-			X.sample.forEach(function (r) { oData.addItem(new ColumnListItem({ cells: X.columns.map(function (c) { return that._cell(r[c.name]); }) })); });
-			oErr.addColumn(new Column({ header: new Text({ text: this.text("tbl.rule") }) }));
-			X.columns.forEach(function (c) { oErr.addColumn(head(c)); });
-			X.errors.forEach(function (e) {
-				oErr.addItem(new ColumnListItem({ cells: [new Text({ text: ar ? e.ar : e.en })].concat(X.columns.map(function (c) { return that._cell(e.row[c.name], c.name === e.column); })) }));
-			});
+			var that = this, X = this._X, ar = this.lang() === "ar", T = this.text.bind(this), n = this.fmt.num,
+				tb = this.viewModel().getProperty("/tb"),
+				cols = X.columns.map(function (c) { return { key: c.name, label: c.name, sub: ar ? c.ar : c.en, mono: c.key, bad: true, width: c.type === "Date" ? "8rem" : "11rem" }; });
+			[["tbDataBox", "_gData"], ["tbErrBox", "_gErr"]].forEach(function (x) { if (that[x[1]]) { that[x[1]].destroy(); that[x[1]] = null; } that.byId(x[0]).destroyItems(); });
+			this._gData = Grid.create({ title: T("tb.gridData", [tb.name, X.sample.length, n(this.data().getProperty("/sources/" + this._a.source).tables
+				.filter(function (t) { return t.id === that._a.table; })[0].rows)]), columns: cols, rows: X.sample, fixed: 1, itemsText: T("tb.items"),
+				onExport: this.onExportRows.bind(this), exportText: T("tb.exportRows") });
+			this._gErr = Grid.create({ title: T("tb.gridErr", [X.errors.length]), itemsText: T("tb.items"), fixed: 1, noData: T("tb.noErrors"),
+				columns: [{ key: "_checks", label: T("tb.failedChecks"), tokens: true, width: "13rem" }].concat(cols),
+				rows: X.errors.map(function (e) { return Object.assign({}, e.row, { _bad: e.column, _checks: [ar ? e.ar : e.en] }); }) });
+			this.byId("tbDataBox").addItem(this._gData);
+			this.byId("tbErrBox").addItem(this._gErr);
+		},
+		onExportRows: function () {
+			var X = this._X, rows = [X.columns.map(function (c) { return c.name; })].concat(X.sample.map(function (r) { return X.columns.map(function (c) { return r[c.name] === null ? "" : r[c.name]; }); }));
+			this._download(rows, this._key + "-sample.csv");
+		},
+		_download: function (rows, name) {
+			var csv = rows.map(function (r) { return r.map(function (v) { return "\"" + String(v).replace(/"/g, "\"\"") + "\""; }).join(","); }).join("\n"),
+				a = document.createElement("a");
+			a.href = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv" }));
+			a.download = name;
+			a.click();
+			setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
 		},
 		_trend: function (X, target) {
 			var c = this.colors, rtl = this.isRtl(), days = (this.data().getProperty("/trend") || []).map(function (t) { return t.d; }).slice(-X.trend.length);
@@ -150,12 +160,7 @@ sap.ui.define([
 			var rows = [["technical_name", "business_name", "data_type", "key", "not_null", "empty_pct"]].concat(this._X.columns.map(function (c) {
 				return [c.name, c.en, c.type, c.key, c.notNull, c.nullPct];
 			}));
-			var csv = rows.map(function (r) { return r.map(function (v) { return "\"" + String(v).replace(/"/g, "\"\"") + "\""; }).join(","); }).join("\n"),
-				a = document.createElement("a");
-			a.href = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv" }));
-			a.download = this._key + "-columns.csv";
-			a.click();
-			setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+			this._download(rows, this._key + "-columns.csv");
 		},
 		onCopyLink: function () {
 			var that = this, done = function () { MessageToast.show(that.text("cat.linkCopied")); };
@@ -163,6 +168,7 @@ sap.ui.define([
 		},
 		onToCatalog: function () { this.router().navTo("domains"); },
 		onToSource: function () { this.router().navTo("domains", { item: this.viewModel().getProperty("/tb/sourceName") }); },
-		onBack: function () { window.history.go(-1); }
+		onBack: function () { window.history.go(-1); },
+		onExit: function () { if (this._gData) { this._gData.destroy(); } if (this._gErr) { this._gErr.destroy(); } }
 	});
 });

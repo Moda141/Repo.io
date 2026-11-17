@@ -11,13 +11,14 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/m/Toolbar"
-], function (BaseController, MessageToast, Dialog, Button, List, StandardListItem, Popover, SearchField, Table, Column, ColumnListItem, Text, Toolbar) {
+	"sap/m/Toolbar",
+	"repoio/proto/util/rating"
+], function (BaseController, MessageToast, Dialog, Button, List, StandardListItem, Popover, SearchField, Table, Column, ColumnListItem, Text, Toolbar, Rating) {
 	"use strict";
 
 	var FILTERS = ["status", "id", "name", "mobile", "gov", "seg", "src", "quality"],
 		DEFAULT_SHOW = { status: true, id: true, name: true, mobile: true, gov: true, seg: true, src: false, quality: false },
-		COLS = ["image", "seg", "mobile", "gov", "src", "quality", "status", "changed"],
+		COLS = ["image", "seg", "mobile", "gov", "src", "quality", "rating", "status", "changed"],
 		SEG_ICON = { teacher: "sap-icon://education", retailer: "sap-icon://retail-store", callCenter: "sap-icon://call", student: "sap-icon://family-care",
 			charityStudent: "sap-icon://heart" },
 		SEG_COLOR = { teacher: "Accent6", retailer: "Accent8", callCenter: "Accent5", student: "Accent3", charityStudent: "Accent2" },
@@ -104,6 +105,7 @@ sap.ui.define([
 				return { id: r.id, name: r.name, mobile: r.mobile, stateName: that.text("gov." + r.state), territory: r.territory, changed: r.changed, changedBy: r.changedBy,
 					segText: seg ? that._t(seg) : "—", acctText: that.text("gr.acct", [r.accountType]),
 					icon: r.image || SEG_ICON[r.segment] || "sap-icon://customer", color: SEG_COLOR[r.segment] || "Accent6",
+					stars: r.rating ? r.rating.stars : 0, rating: r.rating, ratingTip: r.rating ? that.text("rt.tip", [r.rating.stars, r.rating.score]) : "",
 					srcText: r.sources.map(function (s) { return that._srcName(s); }).join(" · "),
 					qualityText: r.quality.toFixed(1), qualityState: r.quality >= 90 ? "Success" : r.quality >= 80 ? "Warning" : "Error",
 					statusText: that.text("gr.st." + r.status), statusState: ST[r.status][0], statusIcon: ST[r.status][1], selected: r.id === g.sel };
@@ -216,6 +218,10 @@ sap.ui.define([
 			if (sub === "lineage") { this.router().navTo("goldenLineage", { repo: repo, id: id }); } else { this.router().navTo("goldenRecord", { repo: repo, id: id }); }
 		},
 		onOpen: function (oEvent) { this._go(oEvent.getSource().getBindingContext("view").getProperty("id")); },
+		onRating: function (oEvent) {
+			var r = oEvent.getSource().getBindingContext("view").getProperty("rating");
+			if (r) { Rating.open(this, r, oEvent.getSource()); }
+		},
 		onOpenSelected: function () { this._go(this.viewModel().getProperty("/gr/sel")); },
 		onLineage: function () { this._go(this.viewModel().getProperty("/gr/sel"), "lineage"); },
 		/* Golden records are never created or edited here: these start a change request (J3). */

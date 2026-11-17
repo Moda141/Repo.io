@@ -16,8 +16,9 @@ sap.ui.define([
 
 	/* Record image from a URL, for any golden record (customer, product, vendor…). The console never changes a golden
 	   record: the dialog checks the link in the browser (https, it is an image, big enough) and submits a change request
-	   on the record's image_url. After approval the server checks the link again and keeps its own copy in the media
-	   store, so the record never depends on the outside site. Pending requests are kept per browser in the prototype. */
+	   on the record's image. After approval the server downloads the image once (https only, PNG / JPEG / WebP, at most
+	   5 MB, no internal addresses), re-encodes it without metadata and serves its own copy from the media store, so
+	   the record never depends on the outside site (spec: type/recordImage.json). Pending requests are kept per browser in the prototype. */
 	var KEY = "repoio-proto-image-requests", MIN = 64;
 
 	function load() { try { return JSON.parse(window.localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
@@ -33,7 +34,7 @@ sap.ui.define([
 				oWhy = new TextArea({ rows: 2, width: "100%", placeholder: T("img.reasonPh"), valueLiveUpdate: true }),
 				oNew = new Avatar({ displaySize: "XL", displayShape: "Square", fallbackIcon: "sap-icon://picture", showBorder: true }),
 				oOld = new Avatar({ displaySize: "XL", displayShape: "Square", src: o.current || o.icon, showBorder: true }),
-				chk = ["https", "image", "size"].map(function (k) { return new ObjectStatus({ text: T("img.chk." + k), icon: "sap-icon://less", state: "None" }); }),
+				chk = ["https", "type", "image", "size"].map(function (k) { return new ObjectStatus({ text: T("img.chk." + k), icon: "sap-icon://less", state: "None" }); }),
 				oSubmit, oRemove, oDlg;
 			var set = function (i, st) {
 				chk[i].setState(st === true ? "Success" : st === false ? "Error" : "None");
@@ -47,27 +48,28 @@ sap.ui.define([
 				var v = oUrl.getValue().trim(), u = null, seq = ++state.seq;
 				state.ok = false; state.url = v;
 				try { u = v ? new URL(v) : null; } catch (e) { u = null; }
+				var svg = !!(u && /\.svgz?$/i.test(u.pathname));
 				set(0, v ? !!(u && u.protocol === "https:") : null);
-				set(1, null); set(2, null);
+				set(1, v && u ? !svg : null); set(2, null); set(3, null);
 				oNew.setSrc("");
 				oUrl.setValueState(v && !(u && u.protocol === "https:") ? "Error" : "None");
 				oUrl.setValueStateText(T("img.httpsOnly"));
 				refresh();
-				if (!u || u.protocol !== "https:") { return; }
-				set(1, "wait");
+				if (!u || u.protocol !== "https:" || svg) { return; }
+				set(2, "wait");
 				var img = new window.Image();
 				img.referrerPolicy = "no-referrer";
 				img.onload = function () {
 					if (seq !== state.seq) { return; }
 					var big = img.naturalWidth >= MIN && img.naturalHeight >= MIN;
-					set(1, true); set(2, big);
-					chk[2].setText(T("img.chk.sizeIs", [img.naturalWidth, img.naturalHeight, MIN]));
+					set(2, true); set(3, big);
+					chk[3].setText(T("img.chk.sizeIs", [img.naturalWidth, img.naturalHeight, MIN]));
 					oNew.setSrc(v);
 					state.ok = big;
 					refresh();
 				};
-				img.onerror = function () { if (seq === state.seq) { set(1, false); chk[1].setText(T("img.chk.noLoad")); refresh(); } };
-				chk[1].setText(T("img.chk.image")); chk[2].setText(T("img.chk.size"));
+				img.onerror = function () { if (seq === state.seq) { set(2, false); chk[2].setText(T("img.chk.noLoad")); refresh(); } };
+				chk[2].setText(T("img.chk.image")); chk[3].setText(T("img.chk.size"));
 				img.src = v;
 			};
 			oUrl.attachLiveChange(check);

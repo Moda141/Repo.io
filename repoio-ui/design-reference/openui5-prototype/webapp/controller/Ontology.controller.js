@@ -16,9 +16,10 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/core/Item",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"repoio/proto/util/gridTable"
 ], function (BaseController, MessageToast, MessageBox, Dialog, Button, Label, Input, TextArea, Select, MessageStrip,
-	Table, Column, ColumnListItem, Text, VBox, SimpleForm, Item, JSONModel) {
+	Table, Column, ColumnListItem, Text, VBox, SimpleForm, Item, JSONModel, Grid) {
 	"use strict";
 
 	/* Relationship types are defined between the six governed domains only (README §3, CLAUDE.md rule 14);
@@ -333,8 +334,12 @@ sap.ui.define([
 			m.setProperty("/onto/rec/rows", links.map(function (l) {
 				var a = that._record(l.from), b = that._record(l.to);
 				return { id: l.id, from: l.from, fromName: that._recName(a), to: l.to, toName: that._recName(b), type: that._label(rel(l)), kind: rel(l).kind,
-					attrs: Object.keys(l.attrs).map(function (k) { return k + "=" + l.attrs[k]; }).join(" · ") || "—", status: l.status, cr: l.cr };
+					attrs: Object.keys(l.attrs).map(function (k) { return k + "=" + l.attrs[k]; }).join(" · ") || "—", status: l.status, cr: l.cr,
+					fromText: l.from + " · " + that._recName(a), toText: l.to + " · " + that._recName(b),
+					attrList: Object.keys(l.attrs).map(function (k) { return k + " = " + l.attrs[k]; }),
+					statusText: that.text(l.status === "pending" ? "onto.rec.status.pending" : "onto.rec.status.active") };
 			}));
+			this._recGrid(m.getProperty("/onto/rec/rows"));
 			m.setProperty("/onto/rec/count", links.length);
 			// Filter choices: domains with links, and the governed types (optionally narrowed to the domain).
 			m.setProperty("/onto/rec/domains", [{ key: "", text: this.text("onto.rec.allDomains") }].concat(["Customer", "Vendor", "Product"].map(function (d) {
@@ -380,6 +385,20 @@ sap.ui.define([
 		onRecRowPress: function (e) {
 			var id = e.getParameter("listItem").getBindingContext("view").getProperty("id");
 			this._selectLink(id); this.byId("graph").selectElement(id, "focus");
+		},
+		/* Record links preview as a grid table (sap.ui.table): attributes as tokens, a row selects the link in the graph. */
+		_recGrid: function (rows) {
+			var that = this, T = this.text.bind(this), title = T("onto.rec.gridTitle", [rows.length]);
+			if (!this._rg) {
+				this._rg = Grid.create({ title: title, rows: rows, itemsText: T("tb.items"), noData: T("onto.rec.none"), fixed: 1,
+					columns: [{ key: "fromText", label: T("onto.from"), width: "14rem" }, { key: "type", label: T("onto.rec.type"), width: "11rem" },
+						{ key: "toText", label: T("onto.to"), width: "14rem" }, { key: "attrList", label: T("onto.attrs"), tokens: true, width: "12rem" },
+						{ key: "statusText", label: T("domains.col.status"), width: "9rem" }, { key: "cr", label: T("onto.rec.cr"), mono: true, width: "9rem" }],
+					rowPress: function (o) { that._selectLink(o.id); that.byId("graph").selectElement(o.id, "focus"); } });
+				this.byId("recGridBox").addItem(this._rg);
+			} else {
+				Grid.update(this._rg, rows, title);
+			}
 		},
 		/* Data preview opens under the graph; the graph keeps the rest of the height and is never hidden. */
 		onTogglePreview: function () { this._refitGraph(); },

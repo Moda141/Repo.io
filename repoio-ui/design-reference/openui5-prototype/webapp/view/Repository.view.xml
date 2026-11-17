@@ -1,10 +1,11 @@
 <mvc:View controllerName="repoio.proto.controller.Repository"
 	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
-	<!-- Repository (design-reference/prototypes/02-domains-repository.png on Morning Horizon): header with the repository
-	     facts and figures; sections Model, Golden records, Data sources and Tables. Read only: model changes go through
-	     Models & rules, golden records through change requests; Connection details per ADR-0006. -->
-	<uxap:ObjectPageLayout id="op" upperCaseAnchorBar="false" showFooter="false" headerContentPinnable="true" toggleHeaderOnTitleClick="true"
-		subSectionLayout="TitleOnTop" class="repoioGrOp">
+	<!-- Repository, laid out like an SAP S/4HANA Cloud object page with tabs (Repo.io look): header with the repository
+	     facts, big status figures and overview bars; tabs General information, Attributes, Golden records (with the
+	     record rating and its explanation), Data sources and Tables. Read only: model changes go through Models & rules,
+	     golden records through change requests; Connection details per ADR-0006. -->
+	<uxap:ObjectPageLayout id="op" useIconTabBar="true" upperCaseAnchorBar="false" showFooter="false" headerContentPinnable="true"
+		toggleHeaderOnTitleClick="true" class="repoioGrOp repoioRp">
 		<uxap:headerTitle>
 			<uxap:ObjectPageDynamicHeaderTitle>
 				<uxap:breadcrumbs>
@@ -14,7 +15,7 @@
 					</Breadcrumbs>
 				</uxap:breadcrumbs>
 				<uxap:heading><Title text="{view>/rp/name}" level="H1" wrapping="true"/></uxap:heading>
-				<uxap:expandedContent><Text text="{view>/rp/sub}" class="repoioUmMuted"/></uxap:expandedContent>
+				<uxap:expandedContent><Text text="{view>/rp/code}" class="repoioUmMuted repoioMono"/></uxap:expandedContent>
 				<uxap:snappedHeading>
 					<HBox alignItems="Center" renderType="Bare">
 						<Avatar src="{view>/rp/icon}" displayShape="Square" displaySize="XS" class="sapUiSmallMarginEnd"/>
@@ -23,10 +24,10 @@
 				</uxap:snappedHeading>
 				<uxap:snappedContent><ObjectStatus text="{view>/rp/healthText}" state="{view>/rp/healthState}" icon="{view>/rp/healthIcon}"/></uxap:snappedContent>
 				<uxap:actions>
-					<Button text="{i18n>rc.open}" type="Emphasized" icon="sap-icon://connected" press=".onConnect" enabled="{view>/rp/deployed}"/>
+					<Button text="{i18n>rc.open}" type="Transparent" press=".onConnect" enabled="{view>/rp/deployed}"/>
 					<Button text="{i18n>rp.openGolden}" type="Transparent" visible="{view>/rp/hasGoldenList}" press=".onOpenGolden"/>
 					<Button text="{i18n>rp.openModel}" type="Transparent" visible="{view>/rp/hasModel}" press=".onOpenModel"/>
-					<Button icon="sap-icon://chain-link" type="Transparent" tooltip="{i18n>cat.copyLink}" press=".onCopyLink"/>
+					<Button icon="sap-icon://action" type="Transparent" tooltip="{i18n>cat.copyLink}" press=".onCopyLink"/>
 				</uxap:actions>
 				<uxap:navigationActions>
 					<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>go.close}" press=".onToCatalog"/>
@@ -35,169 +36,191 @@
 		</uxap:headerTitle>
 
 		<uxap:headerContent>
-			<FlexBox wrap="Wrap" alignItems="Start" class="repoioGoHead">
+			<FlexBox wrap="Wrap" alignItems="Start" class="repoioRpHead">
 				<Avatar src="{view>/rp/icon}" displayShape="Square" displaySize="L" class="repoioGoAvatar"/>
-				<VBox class="repoioGoFacet">
-					<HBox class="repoioGoPair" renderType="Bare">
-						<Label text="{i18n>domains.col.domain}" showColon="true" class="sapUiTinyMarginEnd"/>
-						<Link text="{view>/rp/domainText}" press=".onToDomain"/>
-					</HBox>
-					<HBox class="repoioGoPair" renderType="Bare">
-						<Label text="{i18n>repo.model}" showColon="true" class="sapUiTinyMarginEnd"/>
-						<Text text="{view>/rp/model}"/>
-					</HBox>
-					<HBox class="repoioGoPair" alignItems="Center" renderType="Bare">
-						<Label text="{i18n>repo.owners}" showColon="true" class="sapUiTinyMarginEnd"/>
-						<HBox items="{path: 'view>/rp/owners', templateShareable: false}" renderType="Bare" class="repoioRpOwners">
-							<rc:PersonLink name="{view>name}"/>
-						</HBox>
+				<VBox class="repoioRpPairs" renderType="Bare">
+					<HBox class="repoioRpPair" renderType="Bare"><Label text="{i18n>domains.col.domain}" showColon="true"/><Link text="{view>/rp/domainText}" press=".onToDomain"/></HBox>
+					<HBox class="repoioRpPair" renderType="Bare"><Label text="{i18n>repo.model}" showColon="true"/><Text text="{view>/rp/model}"/></HBox>
+					<HBox class="repoioRpPair" renderType="Bare"><Label text="{i18n>repo.deployed}" showColon="true"/><Text text="{view>/rp/deployedText}" textDirection="LTR"/></HBox>
+					<HBox class="repoioRpPair" alignItems="Center" renderType="Bare">
+						<Label text="{i18n>repo.owners}" showColon="true"/>
+						<HBox items="{path: 'view>/rp/owners', templateShareable: false}" renderType="Bare" class="repoioRpOwners"><rc:PersonLink name="{view>name}"/></HBox>
 					</HBox>
 					<HBox wrap="Wrap" renderType="Bare" items="{path: 'view>/rp/tags', templateShareable: false}" class="repoioTbChips">
 						<ObjectStatus text="{view>text}" state="{view>state}" icon="{view>icon}" inverted="true" class="repoioTbChip"/>
 					</HBox>
 				</VBox>
-				<VBox class="repoioGoFacet" items="{path: 'view>/rp/kpis', templateShareable: false}">
-					<VBox renderType="Bare" class="repoioRpKpi">
+				<!-- Big figures, like "Request priority / Request status" -->
+				<HBox renderType="Bare" class="repoioRpBig" items="{path: 'view>/rp/big', templateShareable: false}">
+					<VBox renderType="Bare" class="repoioRpBigItem">
 						<Label text="{view>label}"/>
-						<ObjectStatus text="{view>text}" state="{view>state}" icon="{view>icon}" visible="{= !!${view>icon} }" class="sapMObjectStatusLarge"/>
-						<ObjectNumber number="{view>value}" unit="{view>unit}" state="{view>state}" emphasized="true" visible="{= !${view>icon} }"
-							class="sapMObjectNumberLarge" textDirection="LTR"/>
+						<Text text="{view>value}" class="repoioRpBigVal" textDirection="{view>dir}"/>
 					</VBox>
+				</HBox>
+				<!-- Overview bars, like "Assignment status overview" -->
+				<VBox renderType="Bare" class="repoioRpBar">
+					<Label text="{i18n>rp.capacity}"/>
+					<core:HTML content="{view>/rp/capBar}"/>
+				</VBox>
+				<VBox renderType="Bare" class="repoioRpBar">
+					<Label text="{i18n>rp.ratingOverview}"/>
+					<HBox alignItems="Center" renderType="Bare">
+						<RatingIndicator value="{view>/rp/avgStars}" maxValue="5" displayOnly="true" iconSize="1rem"/>
+						<Text text="{view>/rp/avgText}" class="sapUiTinyMarginBegin repoioUmMuted"/>
+					</HBox>
+					<core:HTML content="{view>/rp/ratingBar}"/>
 				</VBox>
 			</FlexBox>
 		</uxap:headerContent>
 
 		<uxap:sections>
-			<!-- Model -->
-			<uxap:ObjectPageSection id="secModel" title="{i18n>repo.sec.model}" titleUppercase="false">
+			<!-- General information -->
+			<uxap:ObjectPageSection id="secGeneral" title="{i18n>rp.tab.general}" titleUppercase="false">
 				<uxap:subSections>
-					<uxap:ObjectPageSubSection title="{i18n>repo.sec.model}" titleUppercase="false">
-						<VBox renderType="Bare">
-							<FlexBox wrap="Wrap" class="repoioRpModel" renderType="Bare">
-								<VBox class="repoioRpBlock" renderType="Bare">
-									<Title text="{i18n>repo.sub.assigned}" level="H4" class="repoioGoSubTitle"/>
-									<VBox items="{path: 'view>/rp/modelFacts', templateShareable: false}" renderType="Bare" class="repoioRpKv">
-										<HBox class="repoioRpKvRow" renderType="Bare">
-											<Label text="{view>label}" class="repoioRpKvLbl"/>
-											<Text text="{view>value}" textDirection="{view>dir}"/>
-										</HBox>
-									</VBox>
+					<uxap:ObjectPageSubSection title="{i18n>rp.tab.general}" titleUppercase="false" showTitle="false">
+						<FlexBox wrap="Wrap" class="repoioRpModel" renderType="Bare">
+							<VBox class="repoioRpBlock" renderType="Bare">
+								<Title text="{i18n>repo.sub.assigned}" level="H4" class="repoioGoSubTitle"/>
+								<VBox items="{path: 'view>/rp/modelFacts', templateShareable: false}" renderType="Bare" class="repoioRpKv">
+									<HBox class="repoioRpKvRow" renderType="Bare">
+										<Label text="{view>label}" class="repoioRpKvLbl"/>
+										<Text text="{view>value}" textDirection="{view>dir}"/>
+									</HBox>
 								</VBox>
-								<VBox class="repoioRpBlock" renderType="Bare">
-									<Title text="{i18n>repo.sub.matching}" level="H4" class="repoioGoSubTitle"/>
-									<MessageStrip text="{i18n>rp.noModel}" type="Information" showIcon="true" visible="{= !${view>/rp/hasModel} }">
-										<link><Link text="{i18n>rp.createModel}" press=".onOpenModel"/></link>
-									</MessageStrip>
-									<VBox visible="{view>/rp/hasModel}" items="{path: 'view>/rp/matchFacts', templateShareable: false}" renderType="Bare" class="repoioRpKv">
-										<HBox class="repoioRpKvRow" renderType="Bare">
-											<Label text="{view>label}" class="repoioRpKvLbl"/>
-											<Text text="{view>value}" textDirection="{view>dir}"/>
-										</HBox>
-									</VBox>
+							</VBox>
+							<VBox class="repoioRpBlock" renderType="Bare">
+								<Title text="{i18n>repo.sub.matching}" level="H4" class="repoioGoSubTitle"/>
+								<MessageStrip text="{i18n>rp.noModel}" type="Information" showIcon="true" visible="{= !${view>/rp/hasModel} }">
+									<link><Link text="{i18n>rp.createModel}" press=".onOpenModel"/></link>
+								</MessageStrip>
+								<VBox visible="{view>/rp/hasModel}" items="{path: 'view>/rp/matchFacts', templateShareable: false}" renderType="Bare" class="repoioRpKv">
+									<HBox class="repoioRpKvRow" renderType="Bare">
+										<Label text="{view>label}" class="repoioRpKvLbl"/>
+										<Text text="{view>value}" textDirection="{view>dir}"/>
+									</HBox>
 								</VBox>
-							</FlexBox>
-							<Table items="{view>/rp/attrs}" class="repoioDenseTable sapUiMediumMarginTop" sticky="ColumnHeaders" growing="true" growingThreshold="12"
-								growingScrollToLoad="false" noDataText="{i18n>rp.noAttrs}">
-								<headerToolbar>
-									<OverflowToolbar style="Clear">
-										<Title text="{view>/rp/attrsTitle}" level="H3" titleStyle="H5"/>
-										<ToolbarSpacer/>
-										<SearchField value="{view>/rp/aq}" liveChange=".onAttrSearch" placeholder="{i18n>lin.find}" width="14rem"/>
-										<Button text="{i18n>repo.requestChange}" type="Transparent" press=".onRequestModel"/>
-									</OverflowToolbar>
-								</headerToolbar>
-								<columns>
-									<Column width="26%"><Text text="{i18n>repo.attr}"/></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true" width="8rem"><Text text="{i18n>repo.type}"/></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.matchRole}"/></Column>
-									<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.survivorship}"/></Column>
-								</columns>
-								<items>
-									<ColumnListItem>
-										<VBox renderType="Bare">
-											<HBox alignItems="Center" renderType="Bare">
-												<Text text="{view>label}" class="repoioGrName"/>
-												<ObjectStatus text="{i18n>rp.derived}" state="Information" inverted="true" visible="{view>derived}" class="repoioTbChip"/>
-											</HBox>
-											<Text text="{view>col}" class="repoioMono repoioUmMuted" textDirection="LTR"/>
-										</VBox>
-										<Text text="{view>kindText}"/>
-										<Text text="{view>role}" class="{= ${view>role} === '—' ? 'repoioUmMuted' : '' }"/>
-										<Text text="{view>surv}" class="{= ${view>surv} === '—' ? 'repoioUmMuted' : '' }"/>
-									</ColumnListItem>
-								</items>
-							</Table>
-						</VBox>
+							</VBox>
+						</FlexBox>
 					</uxap:ObjectPageSubSection>
 				</uxap:subSections>
 			</uxap:ObjectPageSection>
 
-			<!-- Golden records -->
-			<uxap:ObjectPageSection id="secGolden" title="{i18n>repo.sec.golden}" titleUppercase="false">
+			<!-- Attributes -->
+			<uxap:ObjectPageSection id="secAttrs" title="{view>/rp/attrsTab}" titleUppercase="false">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection title="{view>/rp/attrsTab}" titleUppercase="false" showTitle="false">
+						<Table items="{view>/rp/attrs}" class="repoioDenseTable repoioRpCard" sticky="ColumnHeaders" growing="true" growingThreshold="15"
+							growingScrollToLoad="false" noDataText="{i18n>rp.noAttrs}">
+							<headerToolbar>
+								<OverflowToolbar style="Clear">
+									<Title text="{view>/rp/attrsTitle}" level="H3" titleStyle="H5"/>
+									<ToolbarSpacer/>
+									<SearchField value="{view>/rp/aq}" liveChange=".onAttrSearch" placeholder="{i18n>lin.find}" width="14rem"/>
+									<Button text="{i18n>repo.requestChange}" type="Transparent" press=".onRequestModel"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="26%"><Text text="{i18n>repo.attr}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="8rem"><Text text="{i18n>repo.type}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.matchRole}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.survivorship}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<VBox renderType="Bare">
+										<HBox alignItems="Center" renderType="Bare">
+											<Text text="{view>label}" class="repoioGrName"/>
+											<ObjectStatus text="{i18n>rp.derived}" state="Information" inverted="true" visible="{view>derived}" class="repoioTbChip"/>
+										</HBox>
+										<Text text="{view>col}" class="repoioMono repoioUmMuted" textDirection="LTR"/>
+									</VBox>
+									<Text text="{view>kindText}"/>
+									<Text text="{view>role}" class="{= ${view>role} === '—' ? 'repoioUmMuted' : '' }"/>
+									<Text text="{view>surv}" class="{= ${view>surv} === '—' ? 'repoioUmMuted' : '' }"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Golden records, like "Matching resources" -->
+			<uxap:ObjectPageSection id="secGolden" title="{view>/rp/goldenTab}" titleUppercase="false">
 				<uxap:subSections>
 					<uxap:ObjectPageSubSection title="{i18n>repo.sec.golden}" titleUppercase="false">
 						<VBox renderType="Bare">
-							<Table items="{view>/rp/golden}" class="repoioDenseTable" noDataText="{view>/rp/goldenEmpty}">
+							<MessageStrip text="{i18n>rp.ratingNote}" type="Information" showIcon="true" showCloseButton="true" class="sapUiSmallMarginBottom"
+								visible="{view>/rp/deployed}"/>
+							<Table items="{view>/rp/golden}" mode="MultiSelect" class="repoioDenseTable repoioRpCard" sticky="ColumnHeaders" growing="true"
+								growingThreshold="15" growingScrollToLoad="false" noDataText="{view>/rp/goldenEmpty}">
 								<headerToolbar>
 									<OverflowToolbar style="Clear">
 										<Title text="{view>/rp/goldenTitle}" level="H3" titleStyle="H5"/>
 										<ToolbarSpacer/>
+										<SearchField value="{view>/rp/gq}" liveChange=".onGoldenFilter" placeholder="{i18n>repo.goldenSearch}" width="14rem"/>
 										<SegmentedButton selectedKey="{view>/rp/gf}" selectionChange=".onGoldenFilter">
 											<items>
 												<SegmentedButtonItem key="all" text="{view>/rp/gc/all}"/>
-												<SegmentedButtonItem key="pos" text="{view>/rp/gc/pos}"/>
-												<SegmentedButtonItem key="crit" text="{view>/rp/gc/crit}"/>
-												<SegmentedButtonItem key="neg" text="{view>/rp/gc/neg}"/>
+												<SegmentedButtonItem key="attn" text="{view>/rp/gc/attn}"/>
 											</items>
 										</SegmentedButton>
-										<SearchField value="{view>/rp/gq}" liveChange=".onGoldenFilter" placeholder="{i18n>repo.goldenSearch}" width="14rem"/>
+										<Select selectedKey="{view>/rp/gsort}" change=".onGoldenFilter" width="11rem">
+											<core:Item key="rating" text="{i18n>rp.sort.rating}"/>
+											<core:Item key="quality" text="{i18n>rp.sort.quality}"/>
+											<core:Item key="name" text="{i18n>rp.sort.name}"/>
+										</Select>
 									</OverflowToolbar>
 								</headerToolbar>
 								<columns>
-									<Column width="28%"><Text text="{i18n>repo.goldenRecord}"/></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.contributing}"/></Column>
-									<Column hAlign="End" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.sourceRecords}"/></Column>
-									<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.matchProb}"/></Column>
-									<Column hAlign="End"><Text text="{i18n>domains.col.quality}"/></Column>
-									<Column><Text text="{i18n>domains.col.status}"/></Column>
-									<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.lastMerge}"/></Column>
+									<Column width="24%"><Text text="{i18n>hub.c.name}"/></Column>
+									<Column hAlign="Center" width="7rem"><Text text="{i18n>domains.col.quality}"/></Column>
+									<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true" width="8rem"><Text text="{i18n>repo.matchProb}"/></Column>
+									<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.contributing}"/></Column>
+									<Column width="10rem"><Text text="{i18n>gr.c.rating}"/></Column>
+									<Column minScreenWidth="Desktop" demandPopin="true" width="9rem"><Text text="{i18n>domains.col.status}"/></Column>
+									<Column hAlign="End" width="14rem"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
 								</columns>
 								<items>
-									<ColumnListItem type="{= ${view>open} ? 'Navigation' : 'Inactive' }" press=".onGolden">
-										<VBox renderType="Bare">
-											<Text text="{view>name}" class="repoioGrName"/>
-											<Text text="{view>id} · {view>sub}" class="repoioUmMuted"/>
-										</VBox>
+									<ColumnListItem>
+										<HBox alignItems="Center" renderType="Bare">
+											<Avatar src="{view>avatar}" displaySize="XS" displayShape="Circle" backgroundColor="Accent6" class="sapUiSmallMarginEnd"/>
+											<VBox renderType="Bare">
+												<Link text="{view>name}" press=".onGolden" enabled="{view>open}" wrapping="false"/>
+												<Text text="{view>id} · {view>sub}" class="repoioUmMuted" wrapping="false"/>
+											</VBox>
+										</HBox>
+										<ObjectStatus text="{view>qualityText}" state="{view>qualityState}" inverted="true" class="repoioBtpBadge" textDirection="LTR"/>
+										<Text text="{view>probText}" textDirection="LTR"/>
 										<Text text="{view>srcText}"/>
-										<Text text="{view>sourceRecords}" textDirection="LTR"/>
-										<ObjectStatus text="{view>probText}" state="{view>probState}" textDirection="LTR"/>
-										<ObjectStatus text="{view>qualityText}" state="{view>qualityState}" textDirection="LTR"/>
+										<HBox alignItems="Center" renderType="Bare" class="repoioRtCell">
+											<RatingIndicator value="{view>stars}" maxValue="5" displayOnly="true" iconSize="0.875rem" tooltip="{view>ratingTip}"/>
+											<Button icon="sap-icon://slim-arrow-down" type="Transparent" tooltip="{i18n>rt.why}" press=".onRating" class="repoioRtBtn"/>
+										</HBox>
 										<ObjectStatus text="{view>stateText}" state="{view>state}" icon="{view>stateIcon}"/>
-										<Text text="{view>lastMerge}" textDirection="LTR"/>
+										<HBox justifyContent="End" renderType="Bare" class="repoioRpActs">
+											<Button text="{i18n>rp.a.open}" press=".onGolden" enabled="{view>open}"/>
+											<Button text="{i18n>rp.a.request}" press=".onRequestRecord"/>
+										</HBox>
 									</ColumnListItem>
 								</items>
 							</Table>
-							<HBox class="repoioRpFoot" alignItems="Center" renderType="Bare" visible="{view>/rp/deployed}">
-								<Text text="{view>/rp/goldenFooter}" class="repoioUmMuted"/>
-								<Link text="{i18n>rp.openGolden}" press=".onOpenGolden" visible="{view>/rp/hasGoldenList}" class="sapUiSmallMarginBegin"/>
-							</HBox>
 						</VBox>
 					</uxap:ObjectPageSubSection>
 				</uxap:subSections>
 			</uxap:ObjectPageSection>
 
 			<!-- Data sources -->
-			<uxap:ObjectPageSection id="secSources" title="{i18n>repo.sec.sources}" titleUppercase="false">
+			<uxap:ObjectPageSection id="secSources" title="{view>/rp/sourcesTab}" titleUppercase="false">
 				<uxap:subSections>
-					<uxap:ObjectPageSubSection title="{i18n>repo.sec.sources}" titleUppercase="false">
-						<Table items="{view>/rp/sources}" class="repoioDenseTable">
+					<uxap:ObjectPageSubSection title="{i18n>repo.sec.sources}" titleUppercase="false" showTitle="false">
+						<Table items="{view>/rp/sources}" class="repoioDenseTable repoioRpCard">
 							<columns>
 								<Column width="26%"><Text text="{i18n>repo.source}"/></Column>
 								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.connector}"/></Column>
 								<Column hAlign="Center" width="5rem"><Text text="{i18n>rp.prio}"/></Column>
 								<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.tables}"/></Column>
 								<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.rows}"/></Column>
-								<Column hAlign="End"><Text text="{i18n>domains.col.quality}"/></Column>
+								<Column hAlign="Center"><Text text="{i18n>domains.col.quality}"/></Column>
 								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.contributes}"/></Column>
 								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>repo.lastSync}"/></Column>
 								<Column><Text text="{i18n>domains.col.status}"/></Column>
@@ -215,7 +238,7 @@
 									<ObjectNumber number="{view>priority}" emphasized="true"/>
 									<Text text="{view>tables}" textDirection="LTR"/>
 									<Text text="{view>rowsText}" textDirection="LTR"/>
-									<ObjectStatus text="{view>qualityText}" state="{view>qualityState}" textDirection="LTR"/>
+									<ObjectStatus text="{view>qualityText}" state="{view>qualityState}" inverted="true" class="repoioBtpBadge" textDirection="LTR"/>
 									<Text text="{view>contribText}"/>
 									<Text text="{view>sync}" textDirection="LTR"/>
 									<ObjectStatus text="{view>stateText}" state="{view>state}" icon="{view>stateIcon}"/>
@@ -227,16 +250,16 @@
 			</uxap:ObjectPageSection>
 
 			<!-- Tables -->
-			<uxap:ObjectPageSection id="secTables" title="{i18n>rp.sec.tables}" titleUppercase="false">
+			<uxap:ObjectPageSection id="secTables" title="{view>/rp/tablesTab}" titleUppercase="false">
 				<uxap:subSections>
-					<uxap:ObjectPageSubSection title="{i18n>rp.sec.tables}" titleUppercase="false">
-						<Table items="{view>/rp/tables}" class="repoioDenseTable">
+					<uxap:ObjectPageSubSection title="{i18n>rp.sec.tables}" titleUppercase="false" showTitle="false">
+						<Table items="{view>/rp/tables}" class="repoioDenseTable repoioRpCard">
 							<columns>
 								<Column width="28%"><Text text="{i18n>src.table}"/></Column>
 								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.source}"/></Column>
 								<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.rows}"/></Column>
 								<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>src.columns}"/></Column>
-								<Column hAlign="End"><Text text="{i18n>domains.col.quality}"/></Column>
+								<Column hAlign="Center"><Text text="{i18n>domains.col.quality}"/></Column>
 								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>src.profiled}"/></Column>
 							</columns>
 							<items>
@@ -251,7 +274,7 @@
 									<Text text="{view>sourceName}"/>
 									<Text text="{view>rowsText}" textDirection="LTR"/>
 									<Text text="{view>cols}" textDirection="LTR"/>
-									<ObjectStatus text="{view>qualityText}" state="{view>qualityState}" textDirection="LTR"/>
+									<ObjectStatus text="{view>qualityText}" state="{view>qualityState}" inverted="true" class="repoioBtpBadge" textDirection="LTR"/>
 									<Text text="{view>profiled}" textDirection="LTR"/>
 								</ColumnListItem>
 							</items>

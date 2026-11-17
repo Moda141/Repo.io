@@ -120,6 +120,7 @@
 						<Column visible="{view>/gr/cols/gov}" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>gr.c.gov}"/></Column>
 						<Column visible="{view>/gr/cols/src}" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>gr.c.src}"/></Column>
 						<Column visible="{view>/gr/cols/quality}" hAlign="End" width="7rem" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>gr.c.quality}"/></Column>
+						<Column visible="{view>/gr/cols/rating}" width="9rem" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>gr.c.rating}"/></Column>
 						<Column visible="{view>/gr/cols/status}" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>gr.c.status}"/></Column>
 						<Column visible="{view>/gr/cols/changed}" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>gr.c.changed}"/></Column>
 					</columns>
@@ -141,6 +142,10 @@
 							</VBox>
 							<Text text="{view>srcText}"/>
 							<ObjectNumber number="{view>qualityText}" unit="%" state="{view>qualityState}" textDirection="LTR"/>
+							<HBox alignItems="Center" renderType="Bare" class="repoioRtCell">
+								<RatingIndicator value="{view>stars}" maxValue="5" displayOnly="true" iconSize="0.875rem" tooltip="{view>ratingTip}"/>
+								<Button icon="sap-icon://slim-arrow-down" type="Transparent" tooltip="{i18n>rt.why}" press=".onRating" class="repoioRtBtn"/>
+							</HBox>
 							<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
 							<VBox renderType="Bare">
 								<Text text="{view>changed}" textDirection="LTR" wrapping="false"/>

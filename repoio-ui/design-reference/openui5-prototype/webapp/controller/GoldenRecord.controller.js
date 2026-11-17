@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/VBox",
 	"sap/m/Text",
-	"repoio/proto/util/imageRequest"
-], function (BaseController, Lin, MessageToast, Popover, List, StandardListItem, VBox, Text, ImageRequest) {
+	"repoio/proto/util/imageRequest",
+	"repoio/proto/util/rating"
+], function (BaseController, Lin, MessageToast, Popover, List, StandardListItem, VBox, Text, ImageRequest, Rating) {
 	"use strict";
 
 	var SEG_ICON = { teacher: "sap-icon://education", retailer: "sap-icon://retail-store", callCenter: "sap-icon://call", student: "sap-icon://family-care",
@@ -83,6 +84,7 @@ sap.ui.define([
 			vm.setProperty("/go", {
 				rec: rec, repoName: repo ? repo.name : this._repo, icon: rec.image || SEG_ICON[rec.segment] || "sap-icon://customer", color: SEG_COLOR[rec.segment] || "Accent6",
 				segIcon: SEG_ICON[rec.segment] || "sap-icon://customer", hasImage: !!rec.image, imgBanner: this._imgBanner(rec.id),
+				stars: rec.rating ? rec.rating.stars : 0, ratingText: rec.rating ? this.text("rt.tip", [rec.rating.stars, rec.rating.score]) : "",
 				snapped: (seg ? this._t(seg) : "") + " · " + this.text("gov." + rec.state) + " · " + rec.mobile,
 				facet1: [{ label: this.text("go.f.segment"), value: seg ? this._t(seg) : "—" }, { label: this.text("go.f.account"), value: rec.accountType, dir: "LTR" },
 					{ label: this.text("go.f.gov"), value: this.text("gov." + rec.state) + " · " + rec.territory }],
@@ -169,6 +171,7 @@ sap.ui.define([
 			var p = ImageRequest.pending(id);
 			return p ? this.text(p.action === "remove" ? "img.banner.remove" : "img.banner.set", [p.cr, p.at]) : "";
 		},
+		onRating: function (oEvent) { if (this._rec && this._rec.rating) { Rating.open(this, this._rec.rating, oEvent.getSource()); } },
 		onImage: function () {
 			var that = this, go = this.viewModel().getProperty("/go");
 			ImageRequest.open({ ctrl: this, id: go.rec.id, name: go.rec.name, current: go.rec.image || "", icon: go.segIcon,

@@ -271,11 +271,10 @@
 					<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>go.close}" press=".onClosePreview"/>
 				</HBox>
 			</HBox>
-			<ScrollContainer vertical="true" horizontal="true" height="100%" class="repoioTbPrevBody">
-				<Table id="tbData" class="repoioDenseTable repoioTbGrid" sticky="ColumnHeaders" fixedLayout="false" visible="{= ${view>/tb/pv} === 'data' }"/>
-				<Table id="tbErrors" class="repoioDenseTable repoioTbGrid" sticky="ColumnHeaders" fixedLayout="false" visible="{= ${view>/tb/pv} === 'errors' }"
-					noDataText="{i18n>tb.noErrors}"/>
-			</ScrollContainer>
+			<VBox renderType="Bare" class="repoioTbPrevBody">
+				<VBox id="tbDataBox" renderType="Bare" height="100%" visible="{= ${view>/tb/pv} === 'data' }" class="repoioTbGridBox"/>
+				<VBox id="tbErrBox" renderType="Bare" height="100%" visible="{= ${view>/tb/pv} === 'errors' }" class="repoioTbGridBox"/>
+			</VBox>
 		</VBox>
 	</VBox>
 </mvc:View>

@@ -1,3 +1,4 @@
+import os, sys
 import json, random, sys
 random.seed(11)
 out = sys.argv[1]
@@ -226,6 +227,11 @@ for r in rows:
     if r["segment"] == "retailer":
         r["image"] = "img/records/store-%d.svg" % (ri % 4 + 1)
         ri += 1
+# rating: computed by the pipeline in the product (tools/rating_rule.py is the sample rule)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from rating_rule import rating
+for r in rows:
+    r["rating"] = rating(r["quality"], r["prob"], len(r["sources"]), r["changed"], r["status"] == "unchanged")
 data = {"_comment": "Golden records (J2) and column lineage, sample values only. In the product the list and the record come from the golden records API (Iceberg golden_customer through Trino), provenance from change_log, and lineage from the catalog (OpenLineage events).",
         "repos": {"customer-master": {"total": 951247, "rows": rows, "details": details, "lineage": lineage}},
         "editingStatus": ["unchanged", "openCr", "review"],

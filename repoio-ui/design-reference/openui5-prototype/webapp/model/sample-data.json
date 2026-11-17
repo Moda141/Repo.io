@@ -328,7 +328,35 @@
      "qualityState": "Success",
      "lastMerge": "2026-11-04 02:06",
      "state": "Success",
-     "stateKey": "pos"
+     "stateKey": "pos",
+     "rating": {
+      "stars": 5.0,
+      "score": 100,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": true
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": true
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": true
+       }
+      ]
+     }
     },
     {
      "id": "GR-C-000921",
@@ -351,7 +379,35 @@
      "qualityState": "Success",
      "lastMerge": "2026-11-04 02:06",
      "state": "Success",
-     "stateKey": "pos"
+     "stateKey": "pos",
+     "rating": {
+      "stars": 5.0,
+      "score": 100,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": true
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": true
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": true
+       }
+      ]
+     }
     },
     {
      "id": "GR-C-001377",
@@ -374,7 +430,35 @@
      "qualityState": "Warning",
      "lastMerge": "2026-11-03 02:05",
      "state": "Success",
-     "stateKey": "pos"
+     "stateKey": "pos",
+     "rating": {
+      "stars": 5.0,
+      "score": 100,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": true
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": true
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": true
+       }
+      ]
+     }
     },
     {
      "id": "GR-C-002045",
@@ -397,7 +481,35 @@
      "qualityState": "Warning",
      "lastMerge": "2026-11-04 02:06",
      "state": "Warning",
-     "stateKey": "crit"
+     "stateKey": "crit",
+     "rating": {
+      "stars": 1.5,
+      "score": 30,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": false
+       },
+       {
+        "key": "agreement",
+        "met": false
+       },
+       {
+        "key": "sources",
+        "met": true
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": false
+       }
+      ]
+     }
     },
     {
      "id": "GR-C-003310",
@@ -424,7 +536,35 @@
      "qualityState": "Warning",
      "lastMerge": "2026-11-02 02:07",
      "state": "Warning",
-     "stateKey": "crit"
+     "stateKey": "crit",
+     "rating": {
+      "stars": 1.5,
+      "score": 30,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": false
+       },
+       {
+        "key": "agreement",
+        "met": false
+       },
+       {
+        "key": "sources",
+        "met": true
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": false
+       }
+      ]
+     }
     },
     {
      "id": "GR-C-004182",
@@ -443,7 +583,35 @@
      "qualityState": "Success",
      "lastMerge": "2026-11-01 01:31",
      "state": "Success",
-     "stateKey": "pos"
+     "stateKey": "pos",
+     "rating": {
+      "stars": 4.0,
+      "score": 85,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": true
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": false
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": true
+       }
+      ]
+     }
     },
     {
      "id": "GR-C-005507",
@@ -466,7 +634,35 @@
      "qualityState": "Error",
      "lastMerge": "2026-11-04 02:06",
      "state": "Error",
-     "stateKey": "neg"
+     "stateKey": "neg",
+     "rating": {
+      "stars": 1.5,
+      "score": 30,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": false
+       },
+       {
+        "key": "agreement",
+        "met": false
+       },
+       {
+        "key": "sources",
+        "met": true
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": false
+       }
+      ]
+     }
     },
     {
      "id": "GR-C-006090",
@@ -485,7 +681,35 @@
      "qualityState": "Success",
      "lastMerge": "2026-11-04 02:06",
      "state": "Success",
-     "stateKey": "pos"
+     "stateKey": "pos",
+     "rating": {
+      "stars": 4.0,
+      "score": 85,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": true
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": false
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": true
+       }
+      ]
+     }
     }
    ],
    "sourceRows": [
@@ -593,7 +817,35 @@
      "qualityState": "Success",
      "lastMerge": "2026-11-04 01:31",
      "state": "Success",
-     "stateKey": "pos"
+     "stateKey": "pos",
+     "rating": {
+      "stars": 4.0,
+      "score": 85,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": true
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": false
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": true
+       }
+      ]
+     }
     },
     {
      "id": "GR-P-00047",
@@ -612,7 +864,35 @@
      "qualityState": "Success",
      "lastMerge": "2026-11-04 01:31",
      "state": "Success",
-     "stateKey": "pos"
+     "stateKey": "pos",
+     "rating": {
+      "stars": 4.0,
+      "score": 85,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": true
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": false
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": true
+       }
+      ]
+     }
     },
     {
      "id": "GR-P-00103",
@@ -631,7 +911,35 @@
      "qualityState": "Warning",
      "lastMerge": "2026-11-03 01:30",
      "state": "Warning",
-     "stateKey": "crit"
+     "stateKey": "crit",
+     "rating": {
+      "stars": 3.5,
+      "score": 70,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": true
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": false
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": false
+       }
+      ]
+     }
     }
    ],
    "sourceRows": [
@@ -793,7 +1101,35 @@
      "qualityState": "Success",
      "lastMerge": "2026-11-04 01:31",
      "state": "Success",
-     "stateKey": "pos"
+     "stateKey": "pos",
+     "rating": {
+      "stars": 5.0,
+      "score": 100,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": true
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": true
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": true
+       }
+      ]
+     }
     },
     {
      "id": "GR-B-01121",
@@ -816,7 +1152,35 @@
      "qualityState": "Success",
      "lastMerge": "2026-11-04 01:31",
      "state": "Success",
-     "stateKey": "pos"
+     "stateKey": "pos",
+     "rating": {
+      "stars": 5.0,
+      "score": 100,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": true
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": true
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": true
+       }
+      ]
+     }
     },
     {
      "id": "GR-B-02210",
@@ -835,7 +1199,35 @@
      "qualityState": "Success",
      "lastMerge": "2026-11-03 01:30",
      "state": "Success",
-     "stateKey": "pos"
+     "stateKey": "pos",
+     "rating": {
+      "stars": 4.0,
+      "score": 85,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": true
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": false
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": true
+       }
+      ]
+     }
     },
     {
      "id": "GR-B-03305",
@@ -854,7 +1246,35 @@
      "qualityState": "Warning",
      "lastMerge": "2026-11-02 14:15",
      "state": "Warning",
-     "stateKey": "crit"
+     "stateKey": "crit",
+     "rating": {
+      "stars": 1.0,
+      "score": 15,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": false
+       },
+       {
+        "key": "agreement",
+        "met": false
+       },
+       {
+        "key": "sources",
+        "met": false
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": false
+       }
+      ]
+     }
     }
    ],
    "sourceRows": [
@@ -1005,7 +1425,35 @@
      "qualityState": "Success",
      "lastMerge": "2026-11-04 01:31",
      "state": "Success",
-     "stateKey": "pos"
+     "stateKey": "pos",
+     "rating": {
+      "stars": 4.0,
+      "score": 85,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": true
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": false
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": true
+       }
+      ]
+     }
     },
     {
      "id": "GR-V-0088",
@@ -1024,7 +1472,35 @@
      "qualityState": "Warning",
      "lastMerge": "2026-11-04 01:31",
      "state": "Warning",
-     "stateKey": "crit"
+     "stateKey": "crit",
+     "rating": {
+      "stars": 3.5,
+      "score": 70,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": true
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": false
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": false
+       }
+      ]
+     }
     },
     {
      "id": "GR-V-0120",
@@ -1043,7 +1519,35 @@
      "qualityState": "Success",
      "lastMerge": "2026-11-03 01:30",
      "state": "Success",
-     "stateKey": "pos"
+     "stateKey": "pos",
+     "rating": {
+      "stars": 4.0,
+      "score": 85,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": true
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": false
+       },
+       {
+        "key": "fresh",
+        "met": true
+       },
+       {
+        "key": "clear",
+        "met": true
+       }
+      ]
+     }
     }
    ],
    "sourceRows": [
@@ -1119,7 +1623,35 @@
      "qualityState": "Warning",
      "lastMerge": "2025-12-01 10:21",
      "state": "None",
-     "stateKey": "neutral"
+     "stateKey": "neutral",
+     "rating": {
+      "stars": 1.0,
+      "score": 25,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": false
+       },
+       {
+        "key": "agreement",
+        "met": true
+       },
+       {
+        "key": "sources",
+        "met": false
+       },
+       {
+        "key": "fresh",
+        "met": false
+       },
+       {
+        "key": "clear",
+        "met": false
+       }
+      ]
+     }
     },
     {
      "id": "GR-A-0577",
@@ -1138,7 +1670,35 @@
      "qualityState": "Warning",
      "lastMerge": "2025-12-01 10:21",
      "state": "None",
-     "stateKey": "neutral"
+     "stateKey": "neutral",
+     "rating": {
+      "stars": 0.0,
+      "score": 0,
+      "ruleVersion": "1",
+      "computed": "2026-11-16 02:10",
+      "factors": [
+       {
+        "key": "quality",
+        "met": false
+       },
+       {
+        "key": "agreement",
+        "met": false
+       },
+       {
+        "key": "sources",
+        "met": false
+       },
+       {
+        "key": "fresh",
+        "met": false
+       },
+       {
+        "key": "clear",
+        "met": false
+       }
+      ]
+     }
     }
    ],
    "sourceRows": [

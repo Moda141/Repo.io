@@ -1,8 +1,9 @@
 sap.ui.define([
 	"repoio/proto/controller/BaseController",
 	"sap/m/MessageToast",
-	"repoio/proto/util/repoConnect"
-], function (BaseController, MessageToast, RepoConnect) {
+	"repoio/proto/util/repoConnect",
+	"repoio/proto/util/rating"
+], function (BaseController, MessageToast, RepoConnect, Rating) {
 	"use strict";
 
 	var HEALTH_ICON = { healthy: "sap-icon://sys-enter-2", attention: "sap-icon://alert", draft: "sap-icon://edit", archived: "sap-icon://locked" },
@@ -20,6 +21,7 @@ sap.ui.define([
 			this._id = oEvent.getParameter("arguments").repo;
 			Promise.all([this.data().dataLoaded(), C.getModel("rules").dataLoaded(), C.getModel("golden").dataLoaded(), C.getModel("tables").dataLoaded()]).then(function () {
 				that._show();
+				if (that._golden) { that.onGoldenFilter(); }
 				var op = that.byId("op");
 				op.setSelectedSection(op.getSections()[0]);
 			});
@@ -67,15 +69,34 @@ sap.ui.define([
 				{ label: T("repo.priority"), value: prio, dir: "Inherit" }
 			] : [];
 
-			// Golden records
-			var gr = (r.goldenRecords || []).map(function (g) {
-				return { id: g.id, name: g.name, sub: g.sub, srcText: g.sources.map(function (s) { return s.name; }).join(" · "), sourceRecords: String(g.sourceRecords),
-					probText: g.prob.toFixed(2), probState: g.probState, qualityText: that.fmt.pct(g.quality), qualityState: g.qualityState,
-					stateKey: g.stateKey, stateText: T(GOLDEN[g.stateKey] || "golden.pos"), state: g.state, stateIcon: STATE_ICON[g.state] || "",
-					lastMerge: g.lastMerge, open: !!goldenIds[g.id] };
+			// Golden records: the golden records API sample when there is one (customer-master), otherwise the repository sample
+			var G = C.getModel("golden").getProperty("/repos/" + r.id), STK = { unchanged: "pos", openCr: "crit", review: "crit" };
+			var gr = (G ? G.rows.map(function (g) {
+				return { id: g.id, name: g.name, sub: that.text("gov." + g.state), image: g.image, quality: g.quality, prob: g.prob, nSrc: g.sources.length,
+					srcText: g.sources.map(function (k) { return sources[k] ? sources[k].name : k; }).join(" · "), rating: g.rating, stateKey: STK[g.status] || "pos",
+					stateText: T("gr.st." + g.status), state: { unchanged: "Success", openCr: "Information", review: "Warning" }[g.status] || "None", lastMerge: g.changed };
+			}) : (r.goldenRecords || []).map(function (g) {
+				return { id: g.id, name: g.name, sub: g.sub, image: "", quality: g.quality, prob: g.prob, nSrc: g.sources.length,
+					srcText: g.sources.map(function (s) { return s.name; }).join(" · "), rating: g.rating, stateKey: g.stateKey,
+					stateText: T(GOLDEN[g.stateKey] || "golden.pos"), state: g.state, lastMerge: g.lastMerge };
+			})).map(function (g) {
+				return Object.assign(g, { avatar: g.image || "sap-icon://customer", qualityText: g.quality.toFixed(2) + "%",
+					qualityState: g.quality >= 90 ? "Success" : g.quality >= 80 ? "Warning" : "Error", probText: (g.prob * 100).toFixed(1) + "%",
+					stars: g.rating ? g.rating.stars : 0, ratingTip: g.rating ? T("rt.tip", [g.rating.stars, g.rating.score]) : "",
+					stateIcon: STATE_ICON[g.state] || "", open: !!goldenIds[g.id], attn: g.stateKey !== "pos" || (g.rating && g.rating.stars < 3) });
 			});
 			this._golden = gr;
-			var gc = function (k) { return gr.filter(function (g) { return k === "all" || g.stateKey === k; }).length; };
+			var nAttn = gr.filter(function (g) { return g.attn; }).length,
+				avg = gr.length ? gr.reduce(function (x, g) { return x + (g.rating ? g.rating.stars : 0); }, 0) / gr.length : 0,
+				bk = Rating.buckets(gr), bmax = Math.max.apply(null, bk.concat([1]));
+			var bar = function (val, max, label, sub) {
+				var pct = max ? Math.min(100, val / max * 100) : 0;
+				return "<div class=\"repoioRpMeter\"><div class=\"repoioRpMeterTrack\"><span style=\"width:" + pct.toFixed(1) + "%\">" + label + "</span></div>" +
+					"<div class=\"repoioRpMeterSub\">" + sub + "</div></div>";
+			};
+			var ratingBar = "<div class=\"repoioRpStars\">" + bk.map(function (c, i) {
+				return "<div class=\"repoioRpStarCol\" title=\"" + T("rt.bucket", [i + 1, c]) + "\"><span style=\"height:" + Math.round(c / bmax * 100) + "%\"></span><i>" + (i + 1) + "★</i></div>";
+			}).join("") + "</div>";
 
 			// Tables of the participating sources that feed this repository
 			var tables = [];
@@ -94,6 +115,16 @@ sap.ui.define([
 				owners: r.owners, tags: tags, deployed: deployed,
 				healthText: T("health." + r.healthKey), healthState: r.healthState, healthIcon: HEALTH_ICON[r.healthKey] || "",
 				hasModel: !!M, hasGoldenList: deployed && !!C.getModel("golden").getProperty("/repos/" + r.id),
+				code: T("rp.sub", [r.code]), deployedText: deployed ? r.deployed : T("repo.notDeployed"),
+				big: [
+					{ label: T("domains.col.status"), value: T("health." + r.healthKey), dir: "Inherit" },
+					{ label: T("domains.col.quality"), value: deployed ? r.quality.toFixed(1) + "%" : "—", dir: "LTR" },
+					{ label: T("repo.golden"), value: deployed ? n(r.golden) : "—", dir: "LTR" }
+				],
+				capBar: bar(deployed ? r.golden : 0, r.cap, deployed ? n(r.golden) : "0", T("rp.capOf", [n(r.cap)])),
+				avgStars: Math.round(avg * 2) / 2, avgText: gr.length ? T("rp.avg", [avg.toFixed(1), gr.length]) : T("rp.noRatings"), ratingBar: ratingBar,
+				attrsTab: T("rp.tab.attrs", [this._attrs.length]), goldenTab: T("rp.tab.golden", [gr.length]),
+				sourcesTab: T("rp.tab.sources", [r.sourceIds.length]), tablesTab: T("rp.tab.tables", [tables.length]), gsort: "rating",
 				kpis: [
 					{ label: T("domains.col.status"), text: T("health." + r.healthKey), state: r.healthState, icon: HEALTH_ICON[r.healthKey] || "sap-icon://status-inactive" },
 					{ label: T("repo.golden"), value: deployed ? n(r.golden) : "—", unit: "", state: "None" },
@@ -111,8 +142,8 @@ sap.ui.define([
 				],
 				matchFacts: matchFacts,
 				aq: "", attrs: this._attrs, attrsTitle: T("rp.attrsN", [this._attrs.length]),
-				gf: "all", gq: "", golden: gr, goldenTitle: T("rp.goldenN", [deployed ? n(r.golden) : 0]),
-				gc: { all: T("rp.gc.all", [gc("all")]), pos: T("rp.gc.pos", [gc("pos")]), crit: T("rp.gc.crit", [gc("crit")]), neg: T("rp.gc.neg", [gc("neg")]) },
+				gf: "all", gq: "", golden: [], goldenTitle: T("rp.goldenSample", [gr.length, n(deployed ? r.golden : 0)]),
+				gc: { all: T("rp.gc.all", [gr.length]), attn: T("rp.gc.attn", [nAttn]) },
 				goldenEmpty: deployed ? T("repo.goldenEmpty") : T("repo.goldenEmptyDraft"),
 				goldenFooter: T("repo.goldenFooter", [gr.length, n(r.golden)]),
 				sources: r.sourceRows.slice().sort(function (a, b) { return a.priority - b.priority; }).map(function (s) {
@@ -130,9 +161,19 @@ sap.ui.define([
 			this.viewModel().setProperty("/rp/attrsTitle", this.text("rp.attrsN", [f.length]));
 		},
 		onGoldenFilter: function () {
-			var V = this.viewModel(), k = V.getProperty("/rp/gf"), q = (V.getProperty("/rp/gq") || "").toLowerCase();
-			V.setProperty("/rp/golden", this._golden.filter(function (g) { return (k === "all" || g.stateKey === k) && (!q || (g.name + " " + g.id).toLowerCase().indexOf(q) > -1); }));
+			var V = this.viewModel(), k = V.getProperty("/rp/gf"), q = (V.getProperty("/rp/gq") || "").toLowerCase(), sort = V.getProperty("/rp/gsort");
+			V.setProperty("/rp/golden", this._golden.filter(function (g) { return (k === "all" || g.attn) && (!q || (g.name + " " + g.id).toLowerCase().indexOf(q) > -1); })
+				.sort(function (a, b) {
+					if (sort === "quality") { return b.quality - a.quality; }
+					if (sort === "name") { return a.name.localeCompare(b.name); }
+					return (b.stars - a.stars) || (b.quality - a.quality);
+				}));
 		},
+		onRating: function (e) {
+			var r = e.getSource().getBindingContext("view").getProperty("rating");
+			if (r) { Rating.open(this, r, e.getSource()); }
+		},
+		onRequestRecord: function (e) { MessageToast.show(this.text("go.t.request", [e.getSource().getBindingContext("view").getProperty("id")])); },
 		onGolden: function (e) {
 			var o = e.getSource().getBindingContext("view").getObject();
 			if (o.open) { this.router().navTo("goldenRecord", { repo: this._id, id: o.id }); }
