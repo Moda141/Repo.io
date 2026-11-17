@@ -457,11 +457,12 @@ html:root, html:root .sapUiBody {
 .repoioOntoPreview .repoioOntoTableScroll { flex: 1 1 auto; min-height: 0; }
 .repoioLine.repoioLineBundle { border-top: 3px solid #7fa7d4; }
 /* Home: compact hero banner (image kept, smaller) and the "needs me now" tiles */
-.repoioHero.repoioHeroCompact.sapMFlexBox { grid-template-columns: minmax(13rem, 1.1fr) minmax(0, 3fr); height: 9.5rem; margin-block: 1rem 0.75rem; }
-.repoioHeroCompact .repoioHeroImg, .repoioHeroCompact img.repoioHeroImg { height: 100%; width: 100%; object-fit: cover; object-position: center 40%; }
+.repoioHero.repoioHeroCompact.sapMFlexBox { grid-template-columns: minmax(13rem, 1.1fr) minmax(0, 3fr); height: auto; min-height: 9.5rem; margin-block: 1rem 0.75rem; }
+/* The image adds no height of its own (height 0) and stretches to the row the text sets (min-height 100%) */
+.repoioHeroCompact .repoioHeroImg, .repoioHeroCompact img.repoioHeroImg { height: 0; min-height: 100%; width: 100%; object-fit: cover; object-position: center 40%; }
 .repoioHeroCompact .repoioHeroBody { padding: 0.875rem 1.5rem; }
 .repoioHeroCompact .repoioHeroText .sapMText { line-height: 1.5; color: #556b82; }
-@media (max-width: 900px) { .repoioHero.repoioHeroCompact.sapMFlexBox { grid-template-columns: 1fr; height: auto; } .repoioHeroCompact .repoioHeroImg, .repoioHeroCompact img.repoioHeroImg { height: 6.5rem; } }
+@media (max-width: 900px) { .repoioHero.repoioHeroCompact.sapMFlexBox { grid-template-columns: 1fr; height: auto; } .repoioHeroCompact .repoioHeroImg, .repoioHeroCompact img.repoioHeroImg { height: 6.5rem; min-height: 0; } }
 .repoioAttention { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.75rem; }
 .repoioAttention .repoioAttnTile { margin: 0; }
 .repoioStepHead .sapMObjStatus { margin-inline-start: 0.75rem; }
@@ -1562,3 +1563,6 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioTourDlg .repoioTourDots { justify-content: center; }
 .repoioTourDlg .repoioTourFoot { justify-content: center; }
 @media (prefers-reduced-motion: reduce) { .repoioTourSpot { transition: none; } }
+
+/* The "prototype" label leaves the header first when it gets narrow, instead of being cut to one word */
+@media (max-width: 1180px) { .repoioProtoBadge.sapMText { display: none; } }
