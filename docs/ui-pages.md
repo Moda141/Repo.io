@@ -64,7 +64,13 @@
      repositories and model attributes it maps to. Each repository card
      opens **Connection details**: JDBC, ODBC, Python, Databricks and
      Snowflake values and snippets to read its golden tables (ADR-0006,
-     J16 step 7). A repository opens its own page (S/4HANA object
+     J16 step 7). A domain opens its **overview** (SAP Fiori Overview
+     Page: variant, repository and source-system filters, KPI cards for
+     golden records, data quality against the target, the match review
+     queue and quarantine — each with a "By …" switch and a chart — a
+     repositories card whose names open the repository page, a link card
+     to the domain's work pages and a donut of source records by system).
+     A repository opens its own page (S/4HANA object
      page with tabs: general information, attributes with matching role
      and survivorship rule, golden records with their rating, data
      sources, tables); a source table opens a page in the
