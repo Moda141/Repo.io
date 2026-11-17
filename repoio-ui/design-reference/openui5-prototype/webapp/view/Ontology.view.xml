@@ -5,33 +5,52 @@
 	     concept tree | graph canvas | details panel. Sample data only. -->
 	<Page id="page" showHeader="false" enableScrolling="false" class="repoioOntoPage">
 		<VBox class="repoioOnto" renderType="Bare" height="100%">
-			<!-- Ontology header: name, version and governed actions -->
-			<OverflowToolbar class="repoioOntoHeader" design="Transparent" height="3.25rem">
-				<core:Icon src="sap-icon://tree" class="repoioOntoHeaderIcon" decorative="true"/>
-				<Title text="{view>/onto/name}" level="H1" titleStyle="H4"/>
-				<Select id="versionSelect" selectedKey="{view>/onto/version}" change=".onVersion" width="11rem"
-					items="{view>/onto/versions}" ariaLabelledBy="versionLabel">
-					<core:Item key="{view>key}" text="v{view>key} &#183; {path: 'view>state', formatter: '.versionStateText'}"/>
-				</Select>
-				<ObjectStatus text="{path: 'view>/onto/state', formatter: '.versionStateText'}" state="{path: 'view>/onto/state', formatter: '.versionState'}" inverted="true"/>
-				<ObjectStatus visible="{= ${view>/onto/changes} > 0 }" text="{i18n>onto.changes} {view>/onto/changes}" icon="sap-icon://edit" state="Warning"/>
-				<core:InvisibleText id="versionLabel" text="{i18n>onto.version}"/>
-				<ToolbarSpacer/>
-				<Button text="{i18n>onto.sparql}" icon="sap-icon://search" type="Transparent" press=".onSparql"/>
-				<Button text="{i18n>onto.validate}" icon="sap-icon://validate" type="Transparent" press=".onValidate"/>
-				<Button text="{i18n>onto.export}" icon="sap-icon://download" type="Transparent" press=".onExport"/>
-				<Button text="{i18n>onto.submit}" type="Emphasized" enabled="{view>/onto/editable}" press=".onSubmit"
-					tooltip="{= ${view>/onto/changes} > 0 ? ${i18n>onto.submitTip} : ${i18n>onto.noChanges} }"/>
-			</OverflowToolbar>
+			<!-- SAP Datasphere editor toolbar: labelled groups (File, View, Tools), the ontology and its version, Details -->
+			<HBox class="repoioDsTb repoioOntoTb" alignItems="Start" renderType="Bare">
+				<VBox class="repoioDsTbGrp" renderType="Bare">
+					<Text text="{i18n>onto.tb.file}" class="repoioDsTbLbl"/>
+					<HBox>
+						<Button icon="sap-icon://save" type="Transparent" tooltip="{= ${view>/onto/changes} > 0 ? ${i18n>onto.submitTip} : ${i18n>onto.noChanges} }"
+							enabled="{view>/onto/editable}" press=".onSubmit"/>
+						<Button icon="sap-icon://download" type="Transparent" tooltip="{i18n>onto.export}" press=".onExport"/>
+					</HBox>
+				</VBox>
+				<VBox class="repoioDsTbGrp" renderType="Bare">
+					<Text text="{i18n>tb.tb.view}" class="repoioDsTbLbl"/>
+					<HBox>
+						<ToggleButton icon="sap-icon://screen-split-one" type="Transparent" tooltip="{i18n>onto.tb.side}" pressed="{view>/onto/side}"/>
+						<ToggleButton icon="{= ${view>/onto/full} ? 'sap-icon://exit-full-screen' : 'sap-icon://full-screen' }" type="Transparent" pressed="{view>/onto/full}"
+							tooltip="{i18n>onto.focus}"/>
+					</HBox>
+				</VBox>
+				<VBox class="repoioDsTbGrp" renderType="Bare">
+					<Text text="{i18n>ds.tb.tools}" class="repoioDsTbLbl"/>
+					<HBox>
+						<Button icon="sap-icon://validate" type="Transparent" tooltip="{i18n>onto.validate}" press=".onValidate"/>
+						<Button icon="sap-icon://search" type="Transparent" tooltip="{i18n>onto.sparql}" press=".onSparql"/>
+					</HBox>
+				</VBox>
+				<HBox class="repoioDsTbRight" alignItems="Center" renderType="Bare">
+					<Title text="{view>/onto/name}" level="H1" titleStyle="H5" wrapping="false"/>
+					<Select id="versionSelect" selectedKey="{view>/onto/version}" change=".onVersion" width="11rem"
+						items="{view>/onto/versions}" ariaLabelledBy="versionLabel">
+						<core:Item key="{view>key}" text="v{view>key} &#183; {path: 'view>state', formatter: '.versionStateText'}"/>
+					</Select>
+					<ObjectStatus visible="{= ${view>/onto/changes} > 0 }" text="{i18n>onto.changes} {view>/onto/changes}" icon="sap-icon://edit" state="Warning"/>
+					<core:InvisibleText id="versionLabel" text="{i18n>onto.version}"/>
+					<Button text="{i18n>onto.submit}" type="Ghost" enabled="{view>/onto/editable}" press=".onSubmit"/>
+					<ToggleButton text="{i18n>ds.details}" pressed="{view>/onto/details}" type="Emphasized"/>
+				</HBox>
+			</HBox>
 			<MessageStrip visible="{= !${view>/onto/editable} }" type="Information" showIcon="true" class="repoioOntoStrip"
 				text="{= ${view>/onto/state} === 'review' ? ${i18n>onto.inReviewNote} : ${i18n>onto.readOnlyNote} }"/>
 
 			<HBox class="repoioOntoBody" renderType="Bare">
 				<!-- Left: concepts tree and the relationship type catalog -->
-				<VBox class="repoioOntoSide" renderType="Bare" visible="{= !${view>/onto/full} &amp;&amp; ${view>/onto/mode} === 'schema' }">
+				<VBox class="repoioOntoSide" renderType="Bare" visible="{= !${view>/onto/full} &amp;&amp; ${view>/onto/side} &amp;&amp; ${view>/onto/mode} === 'schema' }">
 					<IconTabHeader id="sideTabs" selectedKey="{view>/onto/tab}" mode="Inline" backgroundDesign="Transparent" select=".onSideTab">
 						<items>
-							<IconTabFilter key="concepts" text="{i18n>onto.tab.concepts}"/>
+							<IconTabFilter key="concepts" text="{i18n>onto.tab.ontology}"/>
 							<IconTabFilter key="types" text="{i18n>onto.tab.types}"/>
 						</items>
 					</IconTabHeader>
@@ -94,8 +113,6 @@
 							visible="{= ${view>/onto/mode} === 'records' }">
 							<layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData>
 						</ToggleButton>
-						<ToggleButton icon="{= ${view>/onto/full} ? 'sap-icon://exit-full-screen' : 'sap-icon://full-screen' }" pressed="{view>/onto/full}"
-							tooltip="{i18n>onto.focus}" type="Transparent"/>
 					</OverflowToolbar>
 					<HBox class="repoioOntoCrumbBar" renderType="Bare" alignItems="Center" visible="{= ${view>/onto/mode} === 'records' }">
 						<core:Icon src="sap-icon://customer-and-contacts" decorative="true" class="repoioOntoLinkIcon"/>
@@ -178,7 +195,7 @@
 				</VBox>
 
 				<!-- Right: details of the selected concept or relationship -->
-				<VBox class="repoioOntoDetail" renderType="Bare" visible="{= !!${view>/onto/sel/kind} }">
+				<VBox class="repoioOntoDetail" renderType="Bare" visible="{= !!${view>/onto/sel/kind} &amp;&amp; ${view>/onto/details} }">
 					<HBox class="repoioOntoDetailHead" renderType="Bare" alignItems="Center">
 						<core:Icon src="{= ${view>/onto/sel/kind} === 'node' ? 'sap-icon://dimension' : ${view>/onto/sel/kind} === 'record' ? 'sap-icon://customer' : 'sap-icon://chain-link' }" color="#ffffff" decorative="true"/>
 						<Text text="{= ${view>/onto/sel/kind} === 'node' ? ${i18n>onto.concept} : ${view>/onto/sel/kind} === 'record' ? ${i18n>onto.rec.golden} : ${view>/onto/sel/kind} === 'link' ? ${i18n>onto.rec.link} : ${i18n>onto.relationship} }" class="repoioOntoDetailKind"/>
@@ -211,6 +228,12 @@
 								</MultiComboBox>
 								<Label text="{i18n>domain.owner}" class="sapUiSmallMarginTop"/>
 								<rc:PersonLink name="{view>/onto/sel/owner}"/>
+								<Label text="{i18n>onto.imported}" class="sapUiSmallMarginTop"/>
+								<Text text="{i18n>onto.importedNone}"/>
+								<Label text="{i18n>onto.createdOn}" class="sapUiSmallMarginTop"/>
+								<Text text="{view>/onto/sel/created}" textDirection="LTR"/>
+								<Label text="{i18n>onto.modifiedOn}" class="sapUiSmallMarginTop"/>
+								<Text text="{view>/onto/sel/modified}" textDirection="LTR"/>
 
 								<Title text="{i18n>onto.links}" level="H3" titleStyle="H6" class="sapUiMediumMarginTop sapUiTinyMarginBottom"/>
 								<Text text="{i18n>onto.linksHint}" class="repoioHint sapUiTinyMarginBottom"/>

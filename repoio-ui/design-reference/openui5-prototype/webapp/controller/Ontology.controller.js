@@ -48,7 +48,7 @@ sap.ui.define([
 					versions: that._o.versions, version: that._o.versions[0].key, state: that._o.versions[0].state, editable: true, changes: 0,
 					tab: "concepts", query: "", show: { type: true, subclass: true }, group: true, showIsolated: false, isolatedCount: 0, layout: "hierarchy", zoom: 100, stats: {}, edgeLabels: true, mode: "schema",
 					rec: { domain: "", type: "", query: "", preview: false, rows: [], domains: [], types: [] },
-					full: false, rtl: that.isRtl(), sel: {}, graph: { nodes: [], edges: [] }, tree: [], types: [], conceptOptions: []
+					full: false, side: true, details: true, rtl: that.isRtl(), sel: {}, graph: { nodes: [], edges: [] }, tree: [], types: [], conceptOptions: []
 				});
 				that._refresh(true);
 			};
@@ -58,6 +58,8 @@ sap.ui.define([
 		/* ---------- derived models ---------- */
 
 		_name: function (c) { return c ? (this.lang() === "ar" ? c.nameAr : c.nameEn) : ""; },
+		/* Created / modified come from the ontology version that introduced or last changed the concept. */
+		_verDate: function (v) { return v ? v.date + " · v" + v.key : "—"; },
 		_label: function (r) { return this.lang() === "ar" ? r.labelAr : r.labelEn; },
 		_concept: function (id) { return this._o.concepts.filter(function (c) { return c.id === id; })[0]; },
 		_rel: function (id) { return this._allRels().filter(function (r) { return r.id === id; })[0]; },
@@ -202,7 +204,9 @@ sap.ui.define([
 				kind: "node", id: id, title: this._name(c), name: this._name(c), desc: ar ? c.descAr : c.descEn, parents: c.parent.slice(),
 				owner: c.owner, kindText: this.text("onto.cat." + c.cat) + (c.draft ? " · " + this.text("onto.draftItem") : ""),
 				kindState: c.draft ? "Warning" : "None", links: links, props: c.props, rels: rels, propsCount: c.props.length, relsCount: rels.length,
-				domain: this._domainOf(id), linkCount: this._domainOf(id) ? this._recLinks(this._domainOf(id), "").length : 0
+				domain: this._domainOf(id), linkCount: this._domainOf(id) ? this._recLinks(this._domainOf(id), "").length : 0,
+				created: this._verDate(c.draft ? this._o.versions[0] : this._o.versions[this._o.versions.length - 1]),
+				modified: this._verDate(this._changes["c:" + id] || c.draft ? this._o.versions[0] : this._o.versions.filter(function (v) { return v.state === "published"; })[0] || this._o.versions[0])
 			});
 		},
 

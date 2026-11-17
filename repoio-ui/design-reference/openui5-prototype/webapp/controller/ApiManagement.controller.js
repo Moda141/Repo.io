@@ -4,8 +4,10 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/model/Filter",
 	"sap/m/MessageToast",
-	"sap/m/MessageBox"
-], function (BaseController, People, Fragment, Filter, MessageToast, MessageBox) {
+	"sap/m/MessageBox",
+	"sap/m/Menu",
+	"sap/m/MenuItem"
+], function (BaseController, People, Fragment, Filter, MessageToast, MessageBox, Menu, MenuItem) {
 	"use strict";
 
 	var TODAY = "2026-11-12", ME = "محمد", SOON_DAYS = 14,
@@ -63,6 +65,7 @@ sap.ui.define([
 			vm.setProperty("/api/apis", rows);
 			vm.setProperty("/api/catTitle", this.text("api.catalog.titleN", [rows.length]));
 			this.viewModel().setProperty("/api/n/catalog", this._d.apis.length);
+			this.viewModel().setProperty("/api/allText", this.text("api.all", [this._d.apis.length]));
 		},
 		onKind: function () { this._catalog(); },
 		onFilter: function () { this._catalog(); this._webhooks(); },
@@ -440,6 +443,25 @@ sap.ui.define([
 			var ctx = oEvent.getSource().getBindingContext("view"), a = ctx && ctx.getProperty("ops") ? ctx.getObject() : this._specApi;
 			MessageToast.show(this.text("api.t.download", [a.id + "-" + a.version + ".openapi.json"]));
 		},
-		onTry: function () { MessageToast.show(this.text("api.t.try")); }
+		onTry: function () { MessageToast.show(this.text("api.t.try")); },
+
+		/* Row "…" menu (SAP BTP cockpit pattern): the row's actions, run with the row as the source. */
+		onRowMenu: function (oEvent) {
+			var that = this, btn = oEvent.getSource(), o = btn.getBindingContext("view").getObject(), kind = btn.data("menu"), ev = { getSource: function () { return btn; } };
+			var item = function (key, icon, fn, enabled) {
+				return new MenuItem({ text: that.text(key), icon: icon, enabled: enabled !== false, press: function () { fn.call(that, ev); } });
+			};
+			var items = {
+				api: [item("api.a.spec", "sap-icon://document-text", this.onSpec), item("api.a.download", "sap-icon://download", this.onDownloadSpec)],
+				token: [item("api.a.revoke", "sap-icon://cancel", this.onRevoke, !!o.canRevoke)],
+				app: [item("api.a.approve", "sap-icon://accept", this.onApproveApp, o.status === "pending")],
+				webhook: [item("api.a.test", "sap-icon://paper-plane", this.onTestWebhook), item("api.a.log", "sap-icon://list", this.onWebhookLog),
+					item(o.status === "paused" ? "api.a.resume" : "api.a.pause", o.status === "paused" ? "sap-icon://media-play" : "sap-icon://media-pause", this.onToggleWebhook)]
+			}[kind] || [];
+			var oMenu = new Menu({ items: items, closed: function () { oMenu.destroy(); } });
+			this.getView().addDependent(oMenu);
+			oMenu.openBy(btn);
+		},
+		onToConnections: function () { this.router().navTo("connections", {}); }
 	});
 });

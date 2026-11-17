@@ -21,23 +21,22 @@ sap.ui.define([
 	var MIN_READABLE = 0.7, MAX_FIT = 1.15;
 
 	/*
-	 * "Studio" look (reference: Ontology Studio), on the console theme (Morning Horizon): a light canvas, concepts as white
-	 * label-sized cards with a coloured border per category, records as small filled circles, relationship
-	 * types in teal, is-a in dashed violet, one blue for selection.
+	 * SAP Datasphere ontology editor look, on the console theme (Morning Horizon): concepts as light circles with the name
+	 * underneath and the selected one ringed in blue; relationships as thin grey lines with their name along the line;
+	 * is-a dashed violet; records as small filled circles; draft items in orange.
 	 */
-	var C = { master: "#e8955a", abstract: "#8b83d6", governance: "#8a9aaa", asset: "#2f9e7a", business: "#c99a2e",
-		type: "#1d9e75", subclass: "#7f77dd", system: "#5b8fd6", sel: "#2563eb", draft: "#e9730c", ink: "#1f2937", muted: "#6b7280", canvas: "#f4f6fa" };
+	var C = { node: "#dce6f0", ring: "#b6c6d6", abstract: "#8b83d6", governance: "#a7b4c2", asset: "#8fc9b4", business: "#e3c98f",
+		type: "#8396a8", subclass: "#7f77dd", system: "#5b8fd6", sel: "#0064d9", draft: "#e9730c", ink: "#1d2d3e", muted: "#556b82", canvas: "#ffffff" };
 	var STYLE = [
 		{ selector: "node", style: {
-			"shape": "round-rectangle", "width": "label", "height": "label", "padding": 11, "background-color": "#ffffff",
-			"border-width": 2, "border-color": C.master, "label": "data(label)", "font-family": FONT, "font-size": 12, "color": C.ink,
-			"text-valign": "center", "text-halign": "center", "text-wrap": "ellipsis", "text-max-width": 150, "min-width": 48,
-			"overlay-opacity": 0, "transition-property": "border-color border-width opacity", "transition-duration": "0.15s" } },
-		{ selector: "node[cat = 'abstract']", style: { "border-style": "dashed", "border-color": C.abstract, "color": "#4b4f8a" } },
-		{ selector: "node[cat = 'governance']", style: { "border-color": C.governance } },
-		{ selector: "node[cat = 'asset']", style: { "border-color": C.asset } },
-		{ selector: "node[cat = 'business']", style: { "border-color": C.business } },
-		/* Golden records (instance level): filled circles with the code and name underneath. */
+			"shape": "ellipse", "width": 34, "height": 34, "background-color": C.node, "border-width": 1.5, "border-color": C.ring,
+			"label": "data(label)", "font-family": FONT, "font-size": 11, "color": C.ink, "text-valign": "bottom", "text-halign": "center",
+			"text-margin-y": 6, "text-wrap": "wrap", "text-max-width": 120, "text-background-color": C.canvas, "text-background-opacity": 0.85,
+			"text-background-padding": 1, "overlay-opacity": 0, "transition-property": "border-color border-width opacity", "transition-duration": "0.15s" } },
+		{ selector: "node[cat = 'abstract']", style: { "border-style": "dashed", "border-color": C.abstract, "background-color": "#ece9fb" } },
+		{ selector: "node[cat = 'governance']", style: { "background-color": "#e7ebef", "border-color": C.governance } },
+		{ selector: "node[cat = 'asset']", style: { "background-color": "#e0f2ea", "border-color": C.asset } },
+		{ selector: "node[cat = 'business']", style: { "background-color": "#f8efdc", "border-color": C.business } },
 		{ selector: "node[cat ^= 'rec-']", style: { "shape": "ellipse", "width": 26, "height": 26, "padding": 0, "min-width": 26, "border-width": 2,
 			"text-valign": "bottom", "text-margin-y": 5, "text-wrap": "wrap", "text-max-width": 120, "font-size": 10, "color": "#374151",
 			"text-background-color": C.canvas, "text-background-opacity": 0.85, "text-background-padding": 1 } },
@@ -46,12 +45,12 @@ sap.ui.define([
 		{ selector: "node[cat = 'rec-product']", style: { "background-color": "#5fc7a0", "border-color": "#1d9e75" } },
 		{ selector: "node[?hit]", style: { "border-width": 3, "border-color": C.sel } },
 		{ selector: "node[?draft]", style: { "border-style": "dashed", "border-color": C.draft } },
-		{ selector: "node:selected", style: { "border-width": 3, "border-color": C.sel, "background-color": "#eff6ff", "font-weight": "bold" } },
+		{ selector: "node:selected", style: { "border-width": 3.5, "border-color": C.sel, "background-color": "#ffffff", "font-weight": "bold", "width": 40, "height": 40 } },
 		{ selector: "node[cat ^= 'rec-']:selected", style: { "background-color": "#2563eb" } },
 		{ selector: "edge", style: {
-			"width": 1.5, "line-color": C.type, "curve-style": "bezier", "control-point-step-size": 30, "target-arrow-shape": "triangle",
-			"target-arrow-color": C.type, "arrow-scale": 0.9, "source-distance-from-node": 2, "target-distance-from-node": 2,
-			"label": "data(label)", "font-family": FONT, "font-size": 9, "color": C.type, "text-rotation": "autorotate",
+			"width": 1.2, "line-color": C.type, "curve-style": "bezier", "control-point-step-size": 30, "target-arrow-shape": "triangle",
+			"target-arrow-color": C.type, "arrow-scale": 0.8, "source-distance-from-node": 2, "target-distance-from-node": 2,
+			"label": "data(label)", "font-family": FONT, "font-size": 9, "color": C.muted, "text-rotation": "autorotate",
 			"text-background-color": C.canvas, "text-background-opacity": 0.9, "text-background-padding": 2, "overlay-opacity": 0, "loop-sweep": -40 } },
 		{ selector: "edge[kind = 'system']", style: { "line-style": "dotted", "line-color": C.system, "target-arrow-color": C.system, "color": C.system, "width": 1.25 } },
 		{ selector: "edge[kind = 'subclass']", style: { "line-style": "dashed", "line-dash-pattern": [6, 4], "line-color": C.subclass, "target-arrow-color": C.subclass,

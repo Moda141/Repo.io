@@ -5,16 +5,35 @@
 	<f:DynamicPage id="page" headerExpanded="true" toggleHeaderOnTitleClick="false" class="repoioEdge repoioApiPage">
 		<f:title>
 			<f:DynamicPageTitle>
+				<f:breadcrumbs>
+					<Breadcrumbs currentLocationText="{i18n>nav.apiManagement}">
+						<Link text="{i18n>nav.integrationHub}" press=".onToConnections"/>
+					</Breadcrumbs>
+				</f:breadcrumbs>
 				<f:heading><Title text="{i18n>nav.apiManagement}" level="H1"/></f:heading>
-				<f:expandedContent><Text text="{i18n>api.subtitle}"/></f:expandedContent>
+				<f:expandedContent>
+					<VBox renderType="Bare" class="repoioBtpSub">
+						<Text text="{view>/api/allText}" class="repoioBtpAll"/>
+						<Text text="{i18n>api.subtitle}" class="repoioUmMuted"/>
+					</VBox>
+				</f:expandedContent>
 				<f:actions>
 					<ObjectStatus text="{i18n>api.adminOnly}" icon="sap-icon://locked" state="Information" class="repoioApiAdminTag"/>
+					<MenuButton text="{i18n>api.create}" type="Emphasized" buttonMode="Regular">
+						<menu>
+							<Menu>
+								<MenuItem text="{i18n>api.tok.new}" icon="sap-icon://key" press=".onNewToken"/>
+								<MenuItem text="{i18n>api.app.new}" icon="sap-icon://it-system" press=".onNewApp"/>
+								<MenuItem text="{i18n>api.wh.new}" icon="sap-icon://paper-plane" press=".onNewWebhook"/>
+							</Menu>
+						</menu>
+					</MenuButton>
 				</f:actions>
 			</f:DynamicPageTitle>
 		</f:title>
 		<f:content>
 			<IconTabBar id="apiTabs" selectedKey="{view>/api/tab}" select=".onTab" expandable="false" headerMode="Inline"
-				applyContentPadding="false" class="repoioApiTabs">
+				applyContentPadding="false" class="repoioApiTabs repoioBtpTabs">
 				<items>
 					<!-- 1. API catalog: rendered from repoio-spec; read-only. -->
 					<IconTabFilter key="catalog" text="{i18n>api.tab.catalog}" count="{view>/api/n/catalog}">
@@ -50,10 +69,10 @@
 								<Column width="5rem"><Text text="{i18n>api.col.version}"/></Column>
 								<Column width="12.5rem"><Text text="{i18n>api.col.status}"/></Column>
 								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>api.col.base}"/></Column>
-								<Column hAlign="End" width="5.5rem"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
+								<Column hAlign="End" width="3.5rem"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
 							</columns>
 							<items>
-								<ColumnListItem type="Active" press=".onSpec">
+								<ColumnListItem type="Navigation" press=".onSpec">
 									<HBox alignItems="Center">
 										<core:Icon src="{view>icon}" class="repoioExRowIcon" decorative="true"/>
 										<Link text="{view>title}" press=".onSpec" wrapping="false"/>
@@ -61,12 +80,10 @@
 									<Text text="{view>kindText}"/>
 									<Text text="{view>domainText}"/>
 									<Text text="{view>version}" textDirection="LTR"/>
-									<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+									<ObjectStatus text="{view>statusText}" state="{view>statusState}" inverted="true" class="repoioBtpBadge"/>
 									<Text text="{view>base}" class="repoioMono" textDirection="LTR" wrapping="false" tooltip="{view>base}"/>
-									<HBox justifyContent="End">
-										<Button icon="sap-icon://document-text" type="Transparent" tooltip="{i18n>api.a.spec}" press=".onSpec"/>
-										<Button icon="sap-icon://download" type="Transparent" tooltip="{i18n>api.a.download}" press=".onDownloadSpec"/>
-									</HBox>
+									<Button icon="sap-icon://overflow" type="Transparent" tooltip="{i18n>api.col.actions}" press=".onRowMenu" app:menu="api"
+										xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
 								</ColumnListItem>
 							</items>
 						</Table>
@@ -125,8 +142,9 @@
 									<Text text="{view>hint}" class="repoioMono" textDirection="LTR" wrapping="false"/>
 									<Text text="{view>expires}" textDirection="LTR" wrapping="false"/>
 									<Text text="{view>lastUsed}" textDirection="LTR" wrapping="false"/>
-									<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
-									<Button icon="sap-icon://cancel" type="Transparent" tooltip="{i18n>api.a.revoke}" visible="{view>canRevoke}" press=".onRevoke"/>
+									<ObjectStatus text="{view>statusText}" state="{view>statusState}" inverted="true" class="repoioBtpBadge"/>
+									<Button icon="sap-icon://overflow" type="Transparent" tooltip="{i18n>api.col.actions}" press=".onRowMenu" app:menu="token"
+										xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
 								</ColumnListItem>
 							</items>
 						</Table>
@@ -144,7 +162,7 @@
 								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>api.col.grants}"/></Column>
 								<Column minScreenWidth="Tablet" demandPopin="true" width="12rem"><Text text="{i18n>api.col.approvedBy}"/></Column>
 								<Column width="9rem"><Text text="{i18n>api.col.status}"/></Column>
-								<Column hAlign="End" width="7rem"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
+								<Column hAlign="End" width="3.5rem"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
 							</columns>
 							<items>
 								<ColumnListItem>
@@ -158,8 +176,9 @@
 										<rc:PersonLink name="{view>approvedBy}" visible="{= !!${view>approvedBy} }"/>
 										<Text text="{view>approvedText}" wrapping="false" class="repoioApiOwnerName"/>
 									</HBox>
-									<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
-									<Button text="{i18n>api.a.approve}" type="Transparent" visible="{= ${view>status} === 'pending' }" press=".onApproveApp"/>
+									<ObjectStatus text="{view>statusText}" state="{view>statusState}" inverted="true" class="repoioBtpBadge"/>
+									<Button icon="sap-icon://overflow" type="Transparent" tooltip="{i18n>api.col.actions}" press=".onRowMenu" app:menu="app"
+										xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
 								</ColumnListItem>
 							</items>
 						</Table>
@@ -195,7 +214,7 @@
 								<Column width="8.5rem"><Text text="{i18n>api.col.lastDelivery}"/></Column>
 								<Column minScreenWidth="Desktop" demandPopin="true" hAlign="End" width="6rem"><Text text="{i18n>api.col.success}"/></Column>
 								<Column width="7rem"><Text text="{i18n>api.col.status}"/></Column>
-								<Column hAlign="End" width="7rem"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
+								<Column hAlign="End" width="3.5rem"><Text text="{i18n>api.col.actions}" class="sapUiInvisibleText"/></Column>
 							</columns>
 							<items>
 								<ColumnListItem highlight="{view>highlight}">
@@ -208,13 +227,9 @@
 									</HBox>
 									<ObjectStatus text="{view>lastText}" state="{view>lastState}" textDirection="LTR"/>
 									<Text text="{view>rateText}" textDirection="LTR"/>
-									<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
-									<HBox justifyContent="End">
-										<Button icon="sap-icon://paper-plane" type="Transparent" tooltip="{i18n>api.a.test}" press=".onTestWebhook"/>
-										<Button icon="sap-icon://list" type="Transparent" tooltip="{i18n>api.a.log}" press=".onWebhookLog"/>
-										<Button icon="{= ${view>status} === 'paused' ? 'sap-icon://media-play' : 'sap-icon://media-pause' }" type="Transparent"
-											tooltip="{= ${view>status} === 'paused' ? ${i18n>api.a.resume} : ${i18n>api.a.pause} }" press=".onToggleWebhook"/>
-									</HBox>
+									<ObjectStatus text="{view>statusText}" state="{view>statusState}" inverted="true" class="repoioBtpBadge"/>
+									<Button icon="sap-icon://overflow" type="Transparent" tooltip="{i18n>api.col.actions}" press=".onRowMenu" app:menu="webhook"
+										xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/>
 								</ColumnListItem>
 							</items>
 						</Table>

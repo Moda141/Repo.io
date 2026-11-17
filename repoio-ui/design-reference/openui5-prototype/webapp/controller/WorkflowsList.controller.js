@@ -8,19 +8,40 @@ sap.ui.define([
 	var FAV_KEY = "repoio-proto-wf-favs",
 		ME = "محمد",
 		STATUS = { published: ["Success", "sap-icon://sys-enter-2"], draft: ["None", "sap-icon://edit"], inReview: ["Information", "sap-icon://pending"], retired: ["None", "sap-icon://locked"] },
-		COLL = [["all", "sap-icon://world"], ["recent", "sap-icon://history"], ["mine", "sap-icon://employee"], ["shared", "sap-icon://share-2"], ["fav", "sap-icon://favorite"]];
+		COLL = [["all", "sap-icon://world"], ["mine", "sap-icon://employee"], ["shared", "sap-icon://share-2"], ["recent", "sap-icon://history"], ["fav", "sap-icon://favorite"]];
 
-	/* Workflows list (J7), laid out like the SAP Datasphere Repository Explorer. */
+	/* Diagram preview for a workflow card: begin, its steps as tasks (a gateway when it writes back), end. Generated from the
+	   step count only; the designer holds the real flow. */
+	var thumb = function (w, rtl) {
+		var n = Math.max(2, Math.min(w.steps - 2, 6)), W = 260, H = 96, gap = (W - 40) / (n + 1), y = 48, parts = [], x0 = 20,
+			X = function (x) { return rtl ? W - x : x; };
+		parts.push('<circle cx="' + X(x0) + '" cy="' + y + '" r="7" fill="#fff" stroke="#256f3a" stroke-width="2"/>');
+		var prev = x0 + 7;
+		for (var i = 1; i <= n; i++) {
+			var cx = x0 + i * gap, gw = w.writeback && i === n;
+			parts.push('<line x1="' + X(prev) + '" y1="' + y + '" x2="' + X(cx - (gw ? 9 : 14)) + '" y2="' + y + '" stroke="#8396a8" stroke-width="1.2"/>');
+			parts.push(gw ? '<path d="M' + X(cx) + ' ' + (y - 9) + 'L' + X(cx + 9) + ' ' + y + 'L' + X(cx) + ' ' + (y + 9) + 'L' + X(cx - 9) + ' ' + y + 'Z" fill="#fff3b8" stroke="#c35500" stroke-width="1.2"/>'
+				: '<rect x="' + (X(cx) - 14) + '" y="' + (y - 9 - (i % 2 ? 0 : 0)) + '" width="28" height="18" rx="3" fill="#fff" stroke="#0064d9" stroke-width="1.2"/>');
+			prev = cx + (gw ? 9 : 14);
+		}
+		parts.push('<line x1="' + X(prev) + '" y1="' + y + '" x2="' + X(W - 27) + '" y2="' + y + '" stroke="#8396a8" stroke-width="1.2"/>');
+		parts.push('<circle cx="' + X(W - 20) + '" cy="' + y + '" r="7" fill="#fff" stroke="#aa0808" stroke-width="3"/>');
+		return '<div class="repoioHubThumb"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-hidden="true">' +
+			'<defs><pattern id="g" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M12 0H0V12" fill="none" stroke="#dbe7f3" stroke-width="0.6"/></pattern></defs>' +
+			'<rect width="' + W + '" height="' + H + '" fill="#f1f6fb"/><rect width="' + W + '" height="' + H + '" fill="url(#g)"/>' + parts.join("") + '</svg></div>';
+	};
+
+	/* Workflows list (J7), laid out like the SAP Signavio Process Collaboration Hub. */
 	return BaseController.extend("repoio.proto.controller.WorkflowsList", {
 		onInit: function () {
-			this.viewModel().setProperty("/wl", { q: "", coll: "all", showFilters: true, rows: [], facets: [], active: 0, selected: 0, page: 1, size: 25 });
-			this._sel = { domain: {}, status: {}, writeback: {} };
+			this.viewModel().setProperty("/wl", { q: "", coll: "all", fdom: "all", fst: "all", rows: [], suggested: [], selected: 0, page: 1, size: 25, me: {} });
 			this.router().getRoute("workflows").attachPatternMatched(this._onMatched, this);
 		},
 
 		_onMatched: function () {
-			var that = this, oM = this.getOwnerComponent().getModel("workflows");
-			Promise.all([oM.dataLoaded(), this.data().dataLoaded()]).then(function () {
+			var that = this, oM = this.getOwnerComponent().getModel("workflows"), oU = this.getOwnerComponent().getModel("users");
+			Promise.all([oM.dataLoaded(), this.data().dataLoaded(), oU.dataLoaded()]).then(function () {
+				that._me(oU.getData());
 				var favs = that.store(FAV_KEY) || {};
 				that._doms = that.data().getProperty("/domains");
 				that._all = oM.getProperty("/workflows").map(function (w) { return Object.assign({}, w, { fav: !!favs[w.id] }); });
@@ -35,47 +56,52 @@ sap.ui.define([
 				(c === "shared" && w.shared) || (c === "fav" && w.fav);
 		},
 
+		/* The signed-in user (E-1001 in the prototype) and their roles, as on the shell user card. */
+		_me: function (d) {
+			var ar = this.lang() === "ar", e = d.employees.filter(function (x) { return x.id === "E-1001"; })[0] || {},
+				u = d.users.filter(function (x) { return x.employee === e.id; })[0] || { direct: [] };
+			this.viewModel().setProperty("/wl/me", { name: e.name, initials: "MM", title: ar ? e.title_ar : e.title_en,
+				roles: u.direct.map(function (k) { var r = d.roles.filter(function (x) { return x.id === k; })[0]; return { text: r ? (ar ? r.ar || r.en : r.en || r.ar) : k }; }) });
+		},
+		_myRoles: function (w) {
+			var out = [];
+			if (w.owner === ME) { out.push(this.text("hub.role.owner")); }
+			if (w.shared && w.owner !== ME) { out.push(this.text("hub.role.contributor")); }
+			if (!out.length) { out.push(this.text("hub.role.reader")); }
+			return out.map(function (t) { return { text: t }; });
+		},
+
 		_apply: function (bResetPage) {
-			var that = this, vm = this.viewModel(), ar = this.lang() === "ar", c = vm.getProperty("/wl/coll"),
-				q = (vm.getProperty("/wl/q") || "").trim().toLowerCase(), sel = this._sel;
-			var val = function (w, k) { return k === "writeback" ? (w.writeback || "none") : w[k]; };
-			var match = function (w, skip) {
+			var that = this, vm = this.viewModel(), ar = this.lang() === "ar", rtl = this.isRtl(), c = vm.getProperty("/wl/coll"),
+				q = (vm.getProperty("/wl/q") || "").trim().toLowerCase(), fdom = vm.getProperty("/wl/fdom"), fst = vm.getProperty("/wl/fst");
+			var match = function (w) {
 				if (!that._inColl(w, c)) { return false; }
 				if (q && [w.id, w.en, w.ar, w.tpl_en, w.tpl_ar, w.template].join(" ").toLowerCase().indexOf(q) < 0) { return false; }
-				return Object.keys(sel).every(function (k) { return k === skip || !Object.keys(sel[k]).length || sel[k][val(w, k)]; });
+				return (fdom === "all" || w.domain === fdom) && (fst === "all" || w.status === fst);
 			};
-			var rows = this._all.filter(function (w) { return match(w); })
-				.sort(function (a, b) { return a.changed < b.changed ? 1 : -1; })
-				.map(function (w) {
-					var d = that._dom(w.domain), st = STATUS[w.status];
-					return Object.assign({}, w, {
-						title: ar ? w.ar : w.en, domIcon: d.icon, domText: that.domainName(d), tplText: ar ? w.tpl_ar : w.tpl_en,
-						statusText: that.text("wl.st." + w.status), statusState: st[0], statusIcon: st[1],
-						wbText: w.writeback ? that.text("wl.wb." + w.writeback) : "—", runs: w.status === "published" || w.status === "retired" ? that.fmt.num(w.runs30) : "—"
-					});
+			var view = function (w) {
+				var d = that._dom(w.domain), st = STATUS[w.status];
+				return Object.assign({}, w, {
+					title: ar ? w.ar : w.en, domIcon: d.icon, domText: that.domainName(d), tplText: ar ? w.tpl_ar : w.tpl_en,
+					statusText: that.text("wl.st." + w.status), statusState: st[0], statusIcon: st[1], stepsText: that.text("hub.steps", [w.steps]),
+					wbText: w.writeback ? that.text("wl.wb." + w.writeback) : "", runs: w.status === "published" || w.status === "retired" ? that.fmt.num(w.runs30) : "—",
+					roles: that._myRoles(w), changedText: that.text("hub.changed", [w.changed]), thumb: thumb(w, rtl)
 				});
-			var facet = function (key, values) {
-				return { key: key, title: that.text("wl.facet." + key), values: values.map(function (v) {
-					return { key: v.key, text: v.text, icon: v.icon, selected: !!sel[key][v.key],
-						count: that._all.filter(function (w) { return match(w, key) && val(w, key) === v.key; }).length };
-				}) };
 			};
+			var rows = this._all.filter(match).sort(function (a, b) { return a.changed < b.changed ? 1 : -1; }).map(view);
 			this._rows = rows;
 			vm.setProperty("/wl/count", rows.length);
 			if (bResetPage) { vm.setProperty("/wl/page", 1); }
 			this._slice();
-			vm.setProperty("/wl/collections", COLL.map(function (x) { return { key: x[0], icon: x[1], text: that.text("wl.coll." + x[0]), selected: x[0] === c }; }));
-			var cur = COLL.filter(function (x) { return x[0] === c; })[0];
-			vm.setProperty("/wl/collIcon", cur[1]);
-			vm.setProperty("/wl/scopeText", this.text("wl.coll." + c) + " (" + rows.length + ")");
-			vm.setProperty("/wl/searchPh", this.text("wl.searchPh", [this.text("wl.coll." + c)]));
-			vm.setProperty("/wl/active", Object.keys(sel).reduce(function (n, k) { return n + Object.keys(sel[k]).length; }, 0));
-			vm.setProperty("/wl/facets", [
-				facet("domain", this._doms.map(function (d) { return { key: d.id, text: that.domainName(d), icon: d.icon }; })),
-				facet("status", Object.keys(STATUS).map(function (k) { return { key: k, text: that.text("wl.st." + k), icon: STATUS[k][1] }; })),
-				facet("writeback", [["c4c", "sap-icon://upload-to-cloud"], ["erp", "sap-icon://upload-to-cloud"], ["none", "sap-icon://less"]].map(function (x) {
-					return { key: x[0], text: that.text("wl.wb." + x[0]), icon: x[1] }; }))
-			]);
+			vm.setProperty("/wl/allTitle", this.text("hub.all", [rows.length]));
+			// Suggested: the most used published workflows and the latest drafts of this collection
+			vm.setProperty("/wl/suggested", this._all.filter(function (w) { return that._inColl(w, c) && w.status !== "retired"; })
+				.sort(function (a, b) { return (b.runs30 || 0) - (a.runs30 || 0) || (a.changed < b.changed ? 1 : -1); }).slice(0, 5).map(view));
+			vm.setProperty("/wl/collections", COLL.map(function (x) {
+				return { key: x[0], icon: x[1], text: that.text("wl.coll." + x[0]), count: String(that._all.filter(function (w) { return that._inColl(w, x[0]); }).length) };
+			}));
+			vm.setProperty("/wl/domOpts", [{ key: "all", text: this.text("hub.allDomains") }].concat(this._doms.map(function (d) { return { key: d.id, text: that.domainName(d) }; })));
+			vm.setProperty("/wl/stOpts", [{ key: "all", text: this.text("api.st.allStates") }].concat(Object.keys(STATUS).map(function (k) { return { key: k, text: that.text("wl.st." + k) }; })));
 			this.byId("wlTable").removeSelections(true);
 			this.onSelect();
 		},
@@ -92,19 +118,11 @@ sap.ui.define([
 		},
 
 		onSearch: function () { this._apply(true); },
-		onCollection: function (oEvent) {
-			this.viewModel().setProperty("/wl/coll", oEvent.getParameter("listItem").getBindingContext("view").getProperty("key"));
+		onCollectionTab: function (oEvent) {
+			this.viewModel().setProperty("/wl/coll", oEvent.getParameter("key"));
 			this._apply(true);
 		},
-		onFacetChange: function (oEvent) {
-			var key = oEvent.getSource().data("facet"), sel = this._sel[key];
-			oEvent.getParameter("listItems").forEach(function (li) {
-				var v = li.getBindingContext("view").getProperty("key");
-				if (li.getSelected()) { sel[v] = true; } else { delete sel[v]; }
-			});
-			this._apply(true);
-		},
-		onClearFacets: function () { this._sel = { domain: {}, status: {}, writeback: {} }; this._apply(true); },
+		onQuickFilter: function () { this._apply(true); },
 
 		_selected: function () { return this.byId("wlTable").getSelectedItems().map(function (i) { return i.getBindingContext("view").getObject(); }); },
 		onSelect: function () {
