@@ -64,8 +64,13 @@
      repositories and model attributes it maps to. Each repository card
      opens **Connection details**: JDBC, ODBC, Python, Databricks and
      Snowflake values and snippets to read its golden tables (ADR-0006,
-     J16 step 7). Prototype:
-     `repoio-ui/design-reference/prototypes/02-domains.html`.
+     J16 step 7). A repository opens its own page (model and match
+     model, attributes with matching role and survivorship rule, golden
+     records, data sources, tables); a source table opens a page in the
+     SAP Datasphere Data Builder pattern (General, Columns, Associations,
+     Business purpose, Data quality review, Dependent objects, docked
+     data preview with Data and Errors). Both read only. [J2]
+     Prototype: `repoio-ui/design-reference/prototypes/02-domains.html`.
    - **Golden Records management** — steward working area over the records
      themselves: browse per domain, inspect, review states, history.
      Shares the record-detail component with Explore. [J2, J5]

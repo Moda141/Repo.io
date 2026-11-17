@@ -124,9 +124,25 @@ the API supports it.
 5. If the record needs a correction, the path is explicit: **Request a
    change** (→ J3, pre-filled with this record). Golden records are
    never edited inline.
+6. The record image works the same way: the header image opens *Add /
+   change the image*, the user pastes an https link to an image (checked
+   in the browser: secure link, it opens an image, at least 64 × 64 px)
+   and a reason, and a change request on `image_url` goes for approval;
+   a banner shows the pending request and the current image stays until
+   it is approved. After approval the server checks the link again and
+   keeps its own copy in the media store.
+7. From **Domain management** the user opens a **repository** (its
+   model and match model, attributes with their matching role and
+   survivorship rule, golden records, data sources and tables) and a
+   **source table** (general details, columns with PII and glossary
+   terms, associations, business purpose, data quality review, dependent
+   repositories, and a data preview with the rows that failed a check).
+   Both are read only.
 
 *Edge cases:* search with no results → suggestions (spellings, filters);
-record under stewardship review → banner showing review state.
+record under stewardship review → banner showing review state; a link
+that is not https or does not open an image cannot be sent; a draft
+repository shows no golden records and no connection details.
 
 *Screens:* the list is a Fiori List Report (variant, filter bar with
 Adapt Filters and Go, records table); the record is a Fiori Object Page
