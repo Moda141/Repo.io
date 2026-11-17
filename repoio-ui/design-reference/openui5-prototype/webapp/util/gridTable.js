@@ -32,6 +32,8 @@ sap.ui.define([
 			}).addStyleClass("repoioGrid");
 			oTable.setModel(oModel, "g");
 			oTable.data("title", oTitle);
+			// Few columns share the full width; many columns keep their width and scroll sideways.
+			var fill = (o.columns || []).length <= 8;
 			(o.columns || []).forEach(function (c) {
 				var tpl;
 				if (c.tokens) {
@@ -41,7 +43,7 @@ sap.ui.define([
 					if (c.mono) { tpl.addStyleClass("repoioMono"); }
 				}
 				oTable.addColumn(new Column({
-					width: c.width || "11rem", minWidth: 60, resizable: true, sortProperty: c.tokens ? undefined : c.key,
+					width: fill ? undefined : (c.width || "11rem"), minWidth: fill ? 110 : 60, resizable: true, sortProperty: c.tokens ? undefined : c.key,
 					label: c.sub ? new Label({ text: c.label, tooltip: c.sub + " · " + c.label, wrapping: false }) : new Label({ text: c.label, wrapping: false }),
 					template: tpl
 				}));

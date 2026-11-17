@@ -38,6 +38,7 @@ resources/sap/ui/core/themes/sap_horizon/fonts/72-Black-full.woff2
 resources/sap/ui/core/themes/sap_horizon/fonts/72-Black.woff2
 resources/sap/ui/core/themes/sap_horizon/fonts/72-Bold-full.woff2
 resources/sap/ui/core/themes/sap_horizon/fonts/72-Bold.woff2
+resources/sap/ui/core/themes/sap_horizon/fonts/72-Light-full.woff2
 resources/sap/ui/core/themes/sap_horizon/fonts/72-Light.woff2
 resources/sap/ui/core/themes/sap_horizon/fonts/72-Regular-full.woff2
 resources/sap/ui/core/themes/sap_horizon/fonts/72-Regular.woff2

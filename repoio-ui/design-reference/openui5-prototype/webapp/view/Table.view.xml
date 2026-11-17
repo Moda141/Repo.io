@@ -1,5 +1,5 @@
 <mvc:View controllerName="repoio.proto.controller.Table"
-	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control" height="100%">
+	xmlns="sap.m" xmlns:t="sap.ui.table" xmlns:trm="sap.ui.table.rowmodes" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control" height="100%">
 	<!-- Source table, laid out like the SAP Datasphere Data Builder table editor (Repo.io look): grouped toolbar, title,
 	     tabs (General, Columns, Associations, Business purpose, Data quality, Dependent objects) and a data preview
 	     docked at the bottom (Data / Errors). Read only: the source system owns the table; descriptions and terms are
@@ -65,64 +65,78 @@
 					<!-- Columns -->
 					<IconTabFilter key="columns" text="{view>/tb/colsTab}">
 						<VBox class="repoioTbCard" renderType="Bare">
-							<Table items="{view>/tb/columns}" class="repoioDenseTable" sticky="ColumnHeaders" noDataText="{i18n>lin.noColumns}">
-								<headerToolbar>
+							<t:Table rows="{view>/tb/columns}" selectionMode="None" enableColumnReordering="true" class="repoioGrid repoioGridCard" noData="{i18n>lin.noColumns}">
+								<t:rowMode><trm:Fixed rowCount="{= Math.max(1, Math.min(${view>/tb/columns}.length, 15)) }" rowContentHeight="46"/></t:rowMode>
+								<t:extension>
 									<OverflowToolbar style="Clear">
-										<Title text="{view>/tb/colsTab}" level="H2" titleStyle="H5"/>
-										<ToolbarSpacer/>
-										<SearchField value="{view>/tb/cq}" liveChange=".onColSearch" placeholder="{i18n>lin.find}" width="14rem"/>
-									</OverflowToolbar>
-								</headerToolbar>
-								<columns>
-									<Column width="2.5rem" hAlign="Center"><Text text="" tooltip="{i18n>tb.key}"/></Column>
-									<Column width="24%"><Text text="{i18n>tb.c.name}"/></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tb.c.type}"/></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tb.c.notNull}"/></Column>
-									<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>tbl.term}"/></Column>
-									<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tbl.empty}"/></Column>
-									<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>src.usedIn}"/></Column>
-								</columns>
-								<items>
-									<ColumnListItem>
-										<core:Icon src="sap-icon://key" visible="{view>key}" tooltip="{i18n>tb.key}" class="repoioTbKey"/>
-										<VBox renderType="Bare">
-											<HBox alignItems="Center" renderType="Bare">
-												<Text text="{view>label}" class="repoioGrName"/>
-												<GenericTag text="{i18n>tb.pii}" status="Warning" design="Full" visible="{view>pii}" class="repoioSitTag"/>
-											</HBox>
-											<Text text="{view>name}" class="repoioMono repoioUmMuted" textDirection="LTR"/>
-										</VBox>
-										<Text text="{view>type}" class="repoioMono" textDirection="LTR"/>
-										<Text text="{= ${view>notNull} ? ${i18n>common.yes} : ${i18n>common.no} }"/>
-										<Text text="{= ${view>termText} || ${i18n>tbl.notLinked} }" class="{= ${view>termText} ? '' : 'repoioUmMuted' }"/>
-										<GenericTag text="{i18n>tag.empty}" status="{view>nullState}" design="StatusIconHidden" class="repoioKpiTag"><value><ObjectNumber number="{view>nullNum}" unit="%" state="{view>nullState}" emphasized="false"/></value></GenericTag>
-										<Text text="{view>usedText}"/>
-									</ColumnListItem>
-								</items>
-							</Table>
+																			<Title text="{view>/tb/colsTab}" level="H2" titleStyle="H5"/>
+																			<ToolbarSpacer/>
+																			<SearchField value="{view>/tb/cq}" liveChange=".onColSearch" placeholder="{i18n>lin.find}" width="14rem"/>
+																		</OverflowToolbar>
+								</t:extension>
+								<t:columns>
+									<t:Column width="2.5rem" hAlign="Center">
+										<t:label><Label text=""/></t:label>
+										<t:template><core:Icon src="sap-icon://key" visible="{view>key}" tooltip="{i18n>tb.key}" class="repoioTbKey"/></t:template>
+									</t:Column>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>tb.c.name}"/></t:label>
+										<t:template><VBox renderType="Bare">
+																					<HBox alignItems="Center" renderType="Bare">
+																						<Text text="{view>label}" class="repoioGrName"/>
+																						<GenericTag text="{i18n>tb.pii}" status="Warning" design="Full" visible="{view>pii}" class="repoioSitTag"/>
+																					</HBox>
+																					<Text text="{view>name}" class="repoioMono repoioUmMuted" textDirection="LTR"/>
+																				</VBox></t:template>
+									</t:Column>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>tb.c.type}"/></t:label>
+										<t:template><Text text="{view>type}" class="repoioMono" textDirection="LTR"/></t:template>
+									</t:Column>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>tb.c.notNull}"/></t:label>
+										<t:template><Text text="{= ${view>notNull} ? ${i18n>common.yes} : ${i18n>common.no} }"/></t:template>
+									</t:Column>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>tbl.term}"/></t:label>
+										<t:template><Text text="{= ${view>termText} || ${i18n>tbl.notLinked} }" class="{= ${view>termText} ? '' : 'repoioUmMuted' }"/></t:template>
+									</t:Column>
+									<t:Column minWidth="120" hAlign="End">
+										<t:label><Label text="{i18n>tbl.empty}"/></t:label>
+										<t:template><GenericTag text="{i18n>tag.empty}" status="{view>nullState}" design="StatusIconHidden" class="repoioKpiTag"><value><ObjectNumber number="{view>nullNum}" unit="%" state="{view>nullState}" emphasized="false"/></value></GenericTag></t:template>
+									</t:Column>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>src.usedIn}"/></t:label>
+										<t:template><Text text="{view>usedText}"/></t:template>
+									</t:Column>
+								</t:columns>
+							</t:Table>
 						</VBox>
 					</IconTabFilter>
 
 					<!-- Associations -->
 					<IconTabFilter key="assoc" text="{view>/tb/assocTab}">
 						<VBox class="repoioTbCard" renderType="Bare">
-							<Table items="{view>/tb/associations}" class="repoioDenseTable" noDataText="{i18n>tb.noAssoc}">
-								<columns>
-									<Column width="24%"><Text text="{i18n>tb.a.name}"/></Column>
-									<Column><Text text="{i18n>tb.a.target}"/></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tb.a.on}"/></Column>
-								</columns>
-								<items>
-									<ColumnListItem>
-										<Text text="{view>name}" class="repoioMono" textDirection="LTR"/>
-										<HBox alignItems="Center" renderType="Bare">
-											<core:Icon src="sap-icon://table-view" class="sapUiTinyMarginEnd" decorative="true"/>
-											<Link text="{view>targetName}" press=".onAssoc"/>
-										</HBox>
-										<Text text="{view>on}" class="repoioMono" textDirection="LTR"/>
-									</ColumnListItem>
-								</items>
-							</Table>
+							<t:Table rows="{view>/tb/associations}" selectionMode="None" enableColumnReordering="true" class="repoioGrid repoioGridCard" noData="{i18n>tb.noAssoc}">
+								<t:rowMode><trm:Fixed rowCount="{= Math.max(1, Math.min(${view>/tb/associations}.length, 15)) }"/></t:rowMode>
+								<t:columns>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>tb.a.name}"/></t:label>
+										<t:template><Text text="{view>name}" class="repoioMono" textDirection="LTR"/></t:template>
+									</t:Column>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>tb.a.target}"/></t:label>
+										<t:template><HBox alignItems="Center" renderType="Bare">
+																					<core:Icon src="sap-icon://table-view" class="sapUiTinyMarginEnd" decorative="true"/>
+																					<Link text="{view>targetName}" press=".onAssoc"/>
+																				</HBox></t:template>
+									</t:Column>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>tb.a.on}"/></t:label>
+										<t:template><Text text="{view>on}" class="repoioMono" textDirection="LTR"/></t:template>
+									</t:Column>
+								</t:columns>
+							</t:Table>
 						</VBox>
 					</IconTabFilter>
 
@@ -187,67 +201,83 @@
 							</VBox>
 						</VBox>
 						<VBox class="repoioTbCard" renderType="Bare">
-							<Table items="{view>/tb/tests}" class="repoioDenseTable" noDataText="{i18n>tbl.noTests}">
-								<headerToolbar>
+							<t:Table rows="{view>/tb/tests}" selectionMode="None" enableColumnReordering="true" class="repoioGrid repoioGridCard" noData="{i18n>tbl.noTests}">
+								<t:rowMode><trm:Fixed rowCount="{= Math.max(1, Math.min(${view>/tb/tests}.length, 15)) }"/></t:rowMode>
+								<t:extension>
 									<OverflowToolbar style="Clear">
-										<Title text="{view>/tb/testsTitle}" level="H3" titleStyle="H5"/>
-										<ToolbarSpacer/>
-										<SegmentedButton selectedKey="{view>/tb/tf}" selectionChange=".onTestFilter">
-											<items>
-												<SegmentedButtonItem key="all" text="{view>/tb/tc/all}"/>
-												<SegmentedButtonItem key="fail" text="{view>/tb/tc/fail}"/>
-												<SegmentedButtonItem key="warn" text="{view>/tb/tc/warn}"/>
-												<SegmentedButtonItem key="pass" text="{view>/tb/tc/pass}"/>
-											</items>
-										</SegmentedButton>
-									</OverflowToolbar>
-								</headerToolbar>
-								<columns>
-									<Column width="34%"><Text text="{i18n>tbl.rule}"/></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tbl.column}"/></Column>
-									<Column><Text text="{i18n>tb.result}"/></Column>
-									<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tbl.failedRows}"/></Column>
-									<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>tbl.failedPct}"/></Column>
-									<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>tbl.lastRun}"/></Column>
-								</columns>
-								<items>
-									<ColumnListItem>
-										<Text text="{view>rule}" class="repoioGrName"/>
-										<Text text="{view>column}" class="repoioMono" textDirection="LTR"/>
-										<GenericTag text="{view>resultText}" status="{view>state}" design="Full" class="repoioSitTag"/>
-										<Text text="{view>failedText}" textDirection="LTR"/>
-										<Text text="{view>pctText}" textDirection="LTR"/>
-										<Text text="{view>date}" textDirection="LTR"/>
-									</ColumnListItem>
-								</items>
-							</Table>
+																			<Title text="{view>/tb/testsTitle}" level="H3" titleStyle="H5"/>
+																			<ToolbarSpacer/>
+																			<SegmentedButton selectedKey="{view>/tb/tf}" selectionChange=".onTestFilter">
+																				<items>
+																					<SegmentedButtonItem key="all" text="{view>/tb/tc/all}"/>
+																					<SegmentedButtonItem key="fail" text="{view>/tb/tc/fail}"/>
+																					<SegmentedButtonItem key="warn" text="{view>/tb/tc/warn}"/>
+																					<SegmentedButtonItem key="pass" text="{view>/tb/tc/pass}"/>
+																				</items>
+																			</SegmentedButton>
+																		</OverflowToolbar>
+								</t:extension>
+								<t:columns>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>tbl.rule}"/></t:label>
+										<t:template><Text text="{view>rule}" class="repoioGrName"/></t:template>
+									</t:Column>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>tbl.column}"/></t:label>
+										<t:template><Text text="{view>column}" class="repoioMono" textDirection="LTR"/></t:template>
+									</t:Column>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>tb.result}"/></t:label>
+										<t:template><GenericTag text="{view>resultText}" status="{view>state}" design="Full" class="repoioSitTag"/></t:template>
+									</t:Column>
+									<t:Column minWidth="120" hAlign="End">
+										<t:label><Label text="{i18n>tbl.failedRows}"/></t:label>
+										<t:template><Text text="{view>failedText}" textDirection="LTR"/></t:template>
+									</t:Column>
+									<t:Column minWidth="120" hAlign="End">
+										<t:label><Label text="{i18n>tbl.failedPct}"/></t:label>
+										<t:template><Text text="{view>pctText}" textDirection="LTR"/></t:template>
+									</t:Column>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>tbl.lastRun}"/></t:label>
+										<t:template><Text text="{view>date}" textDirection="LTR"/></t:template>
+									</t:Column>
+								</t:columns>
+							</t:Table>
 						</VBox>
 					</IconTabFilter>
 
 					<!-- Dependent objects -->
 					<IconTabFilter key="deps" text="{view>/tb/depsTab}">
 						<VBox class="repoioTbCard" renderType="Bare">
-							<Table items="{view>/tb/deps}" class="repoioDenseTable" noDataText="{i18n>tb.noDeps}">
-								<columns>
-									<Column width="26%"><Text text="{i18n>repo.repository}"/></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>domains.col.domain}"/></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>repo.model}"/></Column>
-									<Column><Text text="{i18n>tb.d.cols}"/></Column>
-									<Column><Text text="{i18n>domains.col.status}"/></Column>
-								</columns>
-								<items>
-									<ColumnListItem>
-										<HBox alignItems="Center" renderType="Bare">
-											<core:Icon src="sap-icon://badge" class="sapUiTinyMarginEnd" decorative="true"/>
-											<Link text="{view>name}" press=".onDep"/>
-										</HBox>
-										<Text text="{view>domain}"/>
-										<Text text="{view>model}"/>
-										<Text text="{view>colsText}" class="repoioMono" textDirection="LTR"/>
-										<ObjectStatus text="{view>statusText}" state="{view>state}"/>
-									</ColumnListItem>
-								</items>
-							</Table>
+							<t:Table rows="{view>/tb/deps}" selectionMode="None" enableColumnReordering="true" class="repoioGrid repoioGridCard" noData="{i18n>tb.noDeps}">
+								<t:rowMode><trm:Fixed rowCount="{= Math.max(1, Math.min(${view>/tb/deps}.length, 15)) }"/></t:rowMode>
+								<t:columns>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>repo.repository}"/></t:label>
+										<t:template><HBox alignItems="Center" renderType="Bare">
+																					<core:Icon src="sap-icon://badge" class="sapUiTinyMarginEnd" decorative="true"/>
+																					<Link text="{view>name}" press=".onDep"/>
+																				</HBox></t:template>
+									</t:Column>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>domains.col.domain}"/></t:label>
+										<t:template><Text text="{view>domain}"/></t:template>
+									</t:Column>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>repo.model}"/></t:label>
+										<t:template><Text text="{view>model}"/></t:template>
+									</t:Column>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>tb.d.cols}"/></t:label>
+										<t:template><Text text="{view>colsText}" class="repoioMono" textDirection="LTR"/></t:template>
+									</t:Column>
+									<t:Column minWidth="120">
+										<t:label><Label text="{i18n>domains.col.status}"/></t:label>
+										<t:template><ObjectStatus text="{view>statusText}" state="{view>state}"/></t:template>
+									</t:Column>
+								</t:columns>
+							</t:Table>
 						</VBox>
 					</IconTabFilter>
 				</items>
