@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/m/ObjectStatus",
 	"sap/m/List",
 	"sap/m/StandardListItem",
-	"sap/m/MessageToast"
+	"sap/m/MessageToast",
+	"repoio/proto/util/tour"
 ], function (Controller, NavigationListItem, NavigationListGroup, ResponsivePopover, VBox, HBox, Avatar, Title, Text, Label, ObjectStatus, List,
-	StandardListItem, MessageToast) {
+	StandardListItem, MessageToast, Tour) {
 	"use strict";
 
 	return Controller.extend("repoio.proto.controller.App", {
@@ -28,7 +29,11 @@ sap.ui.define([
 				if (!bDone && window.innerWidth < 1024) { bDone = true; setTimeout(function () { oToolPage.setSideExpanded(false); }, 0); }
 			} });
 			var oNav = this.getOwnerComponent().getModel("nav");
-			Promise.all([oNav.dataLoaded(), this.getOwnerComponent().bundleReady]).then(this._buildNavigation.bind(this, ""));
+			Promise.all([oNav.dataLoaded(), this.getOwnerComponent().bundleReady]).then(function () {
+				this._buildNavigation("");
+				// First login: the guided tour opens once the shell is on screen (per-user "seen" flag; replay from the user menu)
+				if (!Tour.seen()) { setTimeout(this.onTour.bind(this), 1500); }
+			}.bind(this));
 			this.getOwnerComponent().getRouter().attachRouteMatched(this._onRouteMatched, this);
 			this._watchScrollAreas();
 		},
@@ -192,6 +197,12 @@ sap.ui.define([
 
 		/* User card: who is signed in, their team and roles (from the synced user directory, ADR-0009), shortcuts to their
 		   own work, and sign-out through Entra ID. */
+		onTour: function () {
+			var oB = this.getOwnerComponent().bundle;
+			if (this._userPop && this._userPop.isOpen()) { this._userPop.close(); }
+			Tour.start(this, function (k, a) { return oB.getText(k, a); });
+		},
+
 		onUser: function (oEvent) {
 			var that = this, oSrc = oEvent.getSource(), oU = this.getOwnerComponent().getModel("users"), oB = this.getOwnerComponent().bundle,
 				T = function (k, a) { return oB.getText(k, a); }, ar = this._lang() === "ar",
@@ -222,6 +233,7 @@ sap.ui.define([
 						new StandardListItem({ title: T("nav.myRequests"), icon: "sap-icon://request", type: "Active", press: function () { nav("myRequests"); } }),
 						new StandardListItem({ title: T("nav.awaitingApproval"), icon: "sap-icon://inbox", type: "Active", press: function () { nav("awaitingApproval"); } }),
 						new StandardListItem({ title: T("shell.uc.profile"), icon: "sap-icon://person-placeholder", type: "Active", press: function () { nav("users", { user: e.id }); } }),
+						new StandardListItem({ title: T("tour.replay"), icon: "sap-icon://travel-request", type: "Active", press: function () { oPop.close(); that.onTour(); } }),
 						new StandardListItem({ title: T("shell.uc.signOut"), icon: "sap-icon://log", type: "Active", press: function () { oPop.close(); MessageToast.show(T("shell.uc.signOutT")); } })
 					] }).addStyleClass("repoioUserList")
 				] }));

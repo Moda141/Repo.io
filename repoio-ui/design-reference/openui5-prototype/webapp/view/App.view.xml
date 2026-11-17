@@ -21,10 +21,10 @@
 				<Text text="{i18n>shell.prototype}" class="repoioProtoBadge">
 					<layoutData><OverflowToolbarLayoutData priority="Low"/></layoutData>
 				</Text>
-				<Button icon="sap-icon://inbox" text="4" type="Transparent" tooltip="{i18n>shell.inbox}"
+				<Button id="inboxBtn" icon="sap-icon://inbox" text="4" type="Transparent" tooltip="{i18n>shell.inbox}"
 					ariaLabel="{i18n>shell.inbox}" press=".onInbox"/>
-				<Button icon="sap-icon://bell" type="Transparent" tooltip="{i18n>shell.notifications}" ariaLabel="{i18n>shell.notifications}" press=".onNotifications"/>
-				<MenuButton text="{i18n>shell.languageBtn}" icon="sap-icon://world" type="Transparent" tooltip="{i18n>shell.languageTip}">
+				<Button id="bellBtn" icon="sap-icon://bell" type="Transparent" tooltip="{i18n>shell.notifications}" ariaLabel="{i18n>shell.notifications}" press=".onNotifications"/>
+				<MenuButton id="langBtn" text="{i18n>shell.languageBtn}" icon="sap-icon://world" type="Transparent" tooltip="{i18n>shell.languageTip}">
 					<menu>
 						<Menu id="langMenu" itemSelected=".onLanguage">
 							<MenuItem key="en" text="English"/>
