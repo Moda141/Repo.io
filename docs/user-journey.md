@@ -129,9 +129,18 @@ the API supports it.
    in the browser: secure link, it opens an image, at least 64 × 64 px)
    and a reason, and a change request on `image_url` goes for approval;
    a banner shows the pending request and the current image stays until
-   it is approved. After approval the server checks the link again and
-   keeps its own copy in the media store.
-7. From **Domain management** the user opens a **repository** (its
+   it is approved. After approval the server downloads the image once
+   (https only, PNG / JPEG / WebP up to 5 MB, no SVG, no internal
+   addresses), removes its metadata and serves its own copy from the
+   media store (spec: `type/recordImage.json`).
+7. Every golden record carries a **rating** (0–5 stars, score 0–100)
+   computed by the pipeline from five checks — quality 85% or more,
+   sources agree (match 0.93 or more), confirmed by two or more sources,
+   changed in the last 90 days, no open request or review. The list,
+   the record and the repository page show the stars; *How the rating is
+   calculated* lists the checks met and not met and the rule version.
+   The console never computes or sets it (spec: `type/recordRating.json`).
+8. From **Domain management** the user opens a **repository** (its
    model and match model, attributes with their matching role and
    survivorship rule, golden records, data sources and tables) and a
    **source table** (general details, columns with PII and glossary
