@@ -1532,3 +1532,9 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioDoCard .sapFCardHeaderTitle { font-size: 0.9375rem; }
 .repoioDoCard .sapFCardNumericIndicatorsMain, .repoioDoCard .sapMNCInner, .repoioDoCard .sapMNCValue { white-space: nowrap; flex-wrap: nowrap; }
 .repoioDoCard .sapMNCValue { align-items: baseline; } .repoioDoCard .sapMNCIndScale { display: flex !important; align-items: flex-end; height: auto !important; margin-inline-start: 0.25rem; }
+/* Domain overview: keep the cards clear of the side navigation and the page edge (same inset as the header) */
+.repoioDo .repoioDoGrid { padding-inline: 1rem; box-sizing: border-box; }
+@media (min-width: 1440px) { .repoioDo .repoioDoGrid { padding-inline: 2rem; } }
+/* Equal columns that fill the width (min 17rem each), so no empty strip is left beside the last card */
+.repoioDo .repoioDoGrid { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); align-items: start; gap: 0.75rem; }
+.repoioDo .repoioDoGrid > .repoioDoCard { width: auto !important; min-width: 0; }
