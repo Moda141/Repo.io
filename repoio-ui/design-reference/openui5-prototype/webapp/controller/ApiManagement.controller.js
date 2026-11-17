@@ -6,14 +6,15 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/m/Menu",
-	"sap/m/MenuItem"
-], function (BaseController, People, Fragment, Filter, MessageToast, MessageBox, Menu, MenuItem) {
+	"sap/m/MenuItem",
+	"repoio/proto/util/semantic"
+], function (BaseController, People, Fragment, Filter, MessageToast, MessageBox, Menu, MenuItem, Sem) {
 	"use strict";
 
 	var TODAY = "2026-11-12", ME = "محمد", SOON_DAYS = 14,
 		KIND = { rest: ["REST", "sap-icon://chain-link"], graphql: ["GraphQL", "sap-icon://overview-chart"], sql: ["SQL", "sap-icon://syntax"], mcp: ["MCP", "sap-icon://da"] },
-		TOK = { active: ["Success", "sap-icon://status-positive"], expiring: ["Warning", "sap-icon://past"], expired: ["None", "sap-icon://history"], revoked: ["Error", "sap-icon://status-negative"] },
-		METHOD = { GET: "Information", POST: "Success", QUERY: "Information", SQL: "Indication05", TOOL: "Indication06" };
+		TOK = Sem.GROUPS.lifecycle,
+		METHOD = { GET: Sem.category("method", "GET"), POST: Sem.category("method", "POST"), QUERY: Sem.category("method", "QUERY"), SQL: Sem.category("method", "SQL"), TOOL: Sem.category("method", "TOOL") };
 
 	var days = function (a, b) { return Math.round((new Date(b) - new Date(a)) / 864e5); };
 
@@ -246,7 +247,7 @@ sap.ui.define([
 		_result: function (code) { return code < 300 ? "ok" : code === 403 || code === 401 ? "denied" : code === 429 ? "limited" : "error"; },
 		_calls: function (bReset) {
 			var that = this, vm = this.viewModel(), f = vm.getProperty("/api/f"), q = (f.lq || "").toLowerCase(),
-				RES = { ok: ["Success", "sap-icon://status-positive"], denied: ["Error", "sap-icon://locked"], limited: ["Warning", "sap-icon://pending"], error: ["Error", "sap-icon://status-negative"] };
+				RES = Sem.GROUPS.outcome;
 			var rows = (this._d.usage.log || []).filter(function (c) {
 				return (!f.lc || c.client === f.lc) && (f.lk === "all" || c.kind === f.lk) && (f.lr === "all" || that._result(c.code) === f.lr) &&
 					(!q || [c.p, c.req, c.token, c.code].join(" ").toLowerCase().indexOf(q) > -1);

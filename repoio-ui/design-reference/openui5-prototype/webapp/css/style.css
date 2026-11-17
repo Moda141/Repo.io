@@ -150,7 +150,7 @@ html:root, html:root .sapUiBody {
 .repoioCatDesc { padding: 0 1rem; color: var(--sapTextColor, #32363a); font-size: 0.8125rem; }
 .repoioCatCardFoot { margin-top: auto; border-top: 1px solid var(--sapGroup_ContentBorderColor, #e5e5e5); padding-block: 0.125rem; padding-inline: 1rem 0.25rem; flex: none; }
 .repoioCatStar .sapMBtnIcon { color: var(--sapContent_LabelColor, #6a6d70); }
-.repoioCatStar .sapUiIcon[data-sap-ui-icon-content=""] { color: var(--sapCriticalColor, #e9730c); }
+.repoioCatStar .sapUiIcon[data-sap-ui-icon-content=""] { color: var(--sapContent_RatedColor, #d08014); }
 /* Hero: the whole image is shown; brief sits beside it on wide screens, below it on narrow ones. */
 .repoioHero.sapMFlexBox { display: grid; grid-template-columns: minmax(0, 3fr) minmax(16rem, 2fr); align-items: stretch; }
 .repoioHero .repoioHeroBody { padding: 1.5rem 1.75rem; }
@@ -1426,7 +1426,7 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioRpMeterSub { text-align: end; font-size: 0.75rem; color: var(--sapContent_LabelColor, #556b82); margin-top: 0.125rem; }
 .repoioRpStars { display: flex; align-items: flex-end; gap: 0.25rem; height: 3rem; }
 .repoioRpStarCol { flex: 1 1 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; }
-.repoioRpStarCol > span { display: block; width: 100%; min-height: 2px; background: var(--sapCriticalElementColor, #e76500); border-radius: 0.125rem 0.125rem 0 0; opacity: 0.85; }
+.repoioRpStarCol > span { display: block; width: 100%; min-height: 2px; background: var(--sapContent_RatedColor, #d08014); border-radius: 0.125rem 0.125rem 0 0; opacity: 0.85; }
 .repoioRpStarCol > i { font-style: normal; font-size: 0.625rem; color: var(--sapContent_LabelColor, #556b82); line-height: 1rem; }
 .repoioRp .repoioRpCard { border-radius: var(--sapElement_BorderCornerRadius, 0.75rem); overflow: hidden;
 	box-shadow: var(--sapContent_Shadow0, 0 0 0.125rem 0 rgba(34,53,72,0.15), 0 0.125rem 0.25rem 0 rgba(34,53,72,0.15)); }
@@ -1464,3 +1464,5 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 /* Table page: classification markers (PII, glossary terms) stay neutral, smaller than situation tags */
 .repoioClassTag .sapMObjStatusText, .repoioClassTag .sapMObjStatusIcon { font-size: .8125rem; }
 .repoioTermTok { margin-inline-end: .25rem; }
+/* Neutral classification chip (PII, tier, business line) in object headers */
+.repoioClassChip { border: 1px solid var(--sapNeutralBorderColor); border-radius: .75rem; padding: 0 .5rem; line-height: 1.375rem; margin-inline-end: .375rem; margin-block: .125rem; }

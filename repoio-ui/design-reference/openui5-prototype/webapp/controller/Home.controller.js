@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/ui/unified/DateTypeRange",
-	"sap/ui/core/library"
-], function (BaseController, Filter, FilterOperator, MessageToast, Dialog, Button, TextArea, Label, List, StandardListItem, DateTypeRange, coreLibrary) {
+	"sap/ui/core/library",
+	"repoio/proto/util/semantic"
+], function (BaseController, Filter, FilterOperator, MessageToast, Dialog, Button, TextArea, Label, List, StandardListItem, DateTypeRange, coreLibrary, Sem) {
 	"use strict";
 
 	var LAYOUT_KEY = "repoio-proto-home-cards-v2",
@@ -131,7 +132,7 @@ sap.ui.define([
 		/* ---------- Card content helpers ---------- */
 		recentType: function (k) { return k ? this.text("home.recent." + k) : ""; },
 		/* Type of a recent item as a coloured label: tables blue, repositories green, connections grey. */
-		recentState: function (k) { return { table: "Information", repository: "Success" }[k] || "None"; },
+		recentState: function () { return "None"; },
 		attnTitle: function (k) { return k ? this.text("home.attn." + k) : ""; },
 		attnSub: function (k) { return k ? this.text("home.attn." + k + ".sub") : ""; },
 		attnFooter: function (k) { return k ? this.text("home.attn." + k + ".foot") : ""; },

@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
 	"sap/m/Toolbar",
-	"repoio/proto/util/rating"
-], function (BaseController, MessageToast, Dialog, Button, List, StandardListItem, Popover, SearchField, Table, Column, ColumnListItem, Text, Toolbar, Rating) {
+	"repoio/proto/util/rating",
+	"repoio/proto/util/semantic"
+], function (BaseController, MessageToast, Dialog, Button, List, StandardListItem, Popover, SearchField, Table, Column, ColumnListItem, Text, Toolbar, Rating, Sem) {
 	"use strict";
 
 	var FILTERS = ["status", "id", "name", "mobile", "gov", "seg", "src", "quality"],
@@ -96,7 +97,7 @@ sap.ui.define([
 			var that = this, vm = this.viewModel(), g = vm.getProperty("/gr"), rd = this._repoData(), segs = this._segments(),
 				all = rd ? rd.rows.filter(function (r) { return that._match(r, g.applied); }) : [],
 				size = g.size, pages = Math.max(1, Math.ceil(all.length / size)), page = Math.min(g.page, pages),
-				ST = { unchanged: ["None", ""], openCr: ["Information", "sap-icon://request"], review: ["Warning", "sap-icon://inspect"] };
+				ST = Sem.GROUPS.record;
 			this._all = all;
 			vm.setProperty("/gr/page", page);
 			vm.setProperty("/gr/count", all.length);

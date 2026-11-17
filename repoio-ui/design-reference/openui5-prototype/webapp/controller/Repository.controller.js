@@ -2,8 +2,9 @@ sap.ui.define([
 	"repoio/proto/controller/BaseController",
 	"sap/m/MessageToast",
 	"repoio/proto/util/repoConnect",
-	"repoio/proto/util/rating"
-], function (BaseController, MessageToast, RepoConnect, Rating) {
+	"repoio/proto/util/rating",
+	"repoio/proto/util/semantic"
+], function (BaseController, MessageToast, RepoConnect, Rating, Sem) {
 	"use strict";
 
 	var HEALTH_ICON = { healthy: "sap-icon://sys-enter-2", attention: "sap-icon://alert", draft: "sap-icon://edit", archived: "sap-icon://locked" },
@@ -74,14 +75,14 @@ sap.ui.define([
 			var gr = (G ? G.rows.map(function (g) {
 				return { id: g.id, name: g.name, sub: that.text("gov." + g.state), image: g.image, quality: g.quality, prob: g.prob, nSrc: g.sources.length,
 					srcText: g.sources.map(function (k) { return sources[k] ? sources[k].name : k; }).join(" · "), rating: g.rating, stateKey: STK[g.status] || "pos",
-					stateText: T("gr.st." + g.status), state: { unchanged: "Success", openCr: "Information", review: "Warning" }[g.status] || "None", lastMerge: g.changed };
+					stateText: T("gr.st." + g.status), state: Sem.state("record", g.status), lastMerge: g.changed };
 			}) : (r.goldenRecords || []).map(function (g) {
 				return { id: g.id, name: g.name, sub: g.sub, image: "", quality: g.quality, prob: g.prob, nSrc: g.sources.length,
 					srcText: g.sources.map(function (s) { return s.name; }).join(" · "), rating: g.rating, stateKey: g.stateKey,
 					stateText: T(GOLDEN[g.stateKey] || "golden.pos"), state: g.state, lastMerge: g.lastMerge };
 			})).map(function (g) {
 				return Object.assign(g, { avatar: g.image || "sap-icon://customer", qualityText: g.quality.toFixed(2) + "%", qNum: g.quality.toFixed(1),
-					qualityState: g.quality >= 90 ? "Success" : g.quality >= 80 ? "Warning" : "Error", probText: (g.prob * 100).toFixed(1) + "%",
+					qualityState: Sem.quality(g.quality), probText: (g.prob * 100).toFixed(1) + "%",
 					stars: g.rating ? g.rating.stars : 0, ratingTip: g.rating ? T("rt.tip", [g.rating.stars, g.rating.score]) : "",
 					stateIcon: STATE_ICON[g.state] || "", open: !!goldenIds[g.id], attn: g.stateKey !== "pos" || (g.rating && g.rating.stars < 3) });
 			});
@@ -109,7 +110,8 @@ sap.ui.define([
 				});
 			});
 
-			var tags = r.tags.map(function (t) { return { text: t, state: t === "PII" ? "Warning" : t === "Tier 1" ? "Information" : "None", icon: "" }; });
+			// Tags classify the repository (PII, tier, business line); they are not statuses, so they stay neutral (Fiori semantic rule).
+			var tags = r.tags.map(function (t) { return { text: t, icon: t === "PII" ? "sap-icon://private" : /^Tier/.test(t) ? "sap-icon://tag" : "" }; });
 			this.viewModel().setProperty("/rp", {
 				name: r.name, sub: T("rp.sub", [r.code]), icon: d ? d.icon : "sap-icon://badge", domainText: this.domainName(d), model: r.model,
 				owners: r.owners, tags: tags, deployed: deployed,

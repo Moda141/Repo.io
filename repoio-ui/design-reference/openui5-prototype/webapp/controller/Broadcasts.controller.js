@@ -6,14 +6,15 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/MessageBox"
 ,
-	"repoio/proto/util/audit"
-], function (BaseController, people, Fragment, Token, MessageToast, MessageBox, Audit) {
+	"repoio/proto/util/audit",
+	"repoio/proto/util/semantic"
+], function (BaseController, people, Fragment, Token, MessageToast, MessageBox, Audit, Sem) {
 	"use strict";
 
 	var ME = "محمد",
 		NOW = new Date(2026, 10, 10, 17, 45),
-		ST = { active: ["Information", "sap-icon://play"], paused: ["Warning", "sap-icon://media-pause"], completed: ["Success", "sap-icon://sys-enter-2"], draft: ["None", "sap-icon://edit"] },
-		LAST = { sent: ["Success", "sap-icon://sys-enter-2"], partial: ["Warning", "sap-icon://alert"], failed: ["Error", "sap-icon://error"] },
+		ST = Sem.GROUPS.lifecycle,
+		LAST = Sem.GROUPS.outcome,
 		DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"],
 		COLL = [["all", "sap-icon://world"], ["mine", "sap-icon://employee"], ["attention", "sap-icon://alert"]],
 		/* Sample role→domain grants. In the product these come from the access API (Entra ID groups → domains). */
@@ -116,7 +117,7 @@ sap.ui.define([
 			vm.setProperty("/bc/facets", [
 				facet("objType", [["report", this.text("bc.ot.report"), "sap-icon://table-chart"], ["story", this.text("bc.ot.story"), "sap-icon://business-objects-experience"]]),
 				facet("schedule", ["none", "daily", "weekly", "monthly"].map(function (k) { return [k, that.text("bc.s." + k), k === "none" ? "sap-icon://less" : "sap-icon://appointment-2"]; })),
-				facet("status", Object.keys(ST).map(function (k) { return [k, that.text("bc.st." + k), ST[k][1]]; }))
+				facet("status", ["active", "paused", "completed", "draft"].map(function (k) { return [k, that.text("bc.st." + k), ST[k][1]]; }))
 			]);
 			this.byId("bcTable").removeSelections(true);
 			this.onSelect();

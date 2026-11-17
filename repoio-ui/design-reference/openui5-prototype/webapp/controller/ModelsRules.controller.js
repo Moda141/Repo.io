@@ -17,9 +17,10 @@ sap.ui.define([
 	"sap/m/Switch",
 	"sap/ui/core/Item",
 	"sap/ui/core/ListItem",
-	"sap/ui/layout/form/SimpleForm"
+	"sap/ui/layout/form/SimpleForm",
+	"repoio/proto/util/semantic"
 ], function (BaseController, Audit, MessageToast, MessageBox, Dialog, Button, Label, Select, Input, Text, TextArea, MultiComboBox, MessageStrip,
-	StepInput, CheckBox, Switch, Item, ListItem, SimpleForm) {
+	StepInput, CheckBox, Switch, Item, ListItem, SimpleForm, Sem) {
 	"use strict";
 
 	var DEFAULT_LEVELS = { jw: [0.95, 0.9], lev: [1, 2] },
@@ -673,7 +674,7 @@ sap.ui.define([
 		},
 		_samples: function () {
 			var that = this, ar = this._ar(), m = this._model(), act = m && this._active(m),
-				meta = { stopped: ["Error", "sap-icon://stop"], review: ["Warning", "sap-icon://flag"], passed: ["Success", "sap-icon://accept"] };
+				meta = Sem.GROUPS.gate;
 			this.viewModel().setProperty("/mr/samples", this._src.samples.filter(function (s) { return m && s.model === m.key; }).map(function (s) {
 				var d = that._reqResult(s, m), a = act ? that._reqResult(s, act) : null, seg = that._seg(m, s.segment);
 				return {

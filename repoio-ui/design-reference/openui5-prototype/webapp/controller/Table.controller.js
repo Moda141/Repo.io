@@ -6,11 +6,12 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/ObjectStatus",
 	"sap/m/VBox",
-	"repoio/proto/util/gridTable"
-], function (BaseController, MessageToast, Column, ColumnListItem, Text, ObjectStatus, VBox, Grid) {
+	"repoio/proto/util/gridTable",
+	"repoio/proto/util/semantic"
+], function (BaseController, MessageToast, Column, ColumnListItem, Text, ObjectStatus, VBox, Grid, Sem) {
 	"use strict";
 
-	var RESULT = { pass: ["Success", "sap-icon://sys-enter-2"], warn: ["Warning", "sap-icon://alert"], fail: ["Error", "sap-icon://error"] };
+	var RESULT = Sem.GROUPS.outcome;
 
 	/* Source table (SAP Datasphere Data Builder table editor pattern). Read only; sample values from model/tables.json. */
 	return BaseController.extend("repoio.proto.controller.Table", {
@@ -84,7 +85,7 @@ sap.ui.define([
 					{ label: T("tbl.lastRun"), value: tbl.profiled, unit: "", state: "None" }
 				],
 				dims: X.dims.map(function (d) {
-					var st = d.value >= target ? "Success" : d.value >= 80 ? "Warning" : "Error",
+					var st = Sem.quality(d.value),
 						col = { Success: "--sapPositiveElementColor", Warning: "--sapCriticalElementColor", Error: "--sapNegativeElementColor" }[st];
 					return { label: T("tb.dim." + d.key), weightText: T("tb.weight", [d.weight]), value: d.value, text: d.value.toFixed(1) + "%", num: d.value.toFixed(1), state: st,
 						bar: "<div class=\"repoioBar\" role=\"presentation\"><span style=\"width:" + d.value + "%;background:var(" + col + ")\"></span><i style=\"inset-inline-start:" + target + "%\"></i></div>" };

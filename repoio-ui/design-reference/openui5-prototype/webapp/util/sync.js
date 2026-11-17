@@ -4,13 +4,13 @@
  * In the product these read the sync API and the connections registry; here model/sync.json
  * and model/sample-data.json.
  */
-sap.ui.define([], function () {
+sap.ui.define(["repoio/proto/util/semantic"], function (Sem) {
 	"use strict";
 
 	var ICON = { c4c: "sap-icon://cloud", hana: "sap-icon://it-host", mssql: "sap-icon://database", file: "sap-icon://excel-attachment" },
 		LOGO = { c4c: "img/logos/sap.png", hana: "img/logos/sap.png", mssql: "img/logos/sqlserver.png", file: "img/logos/csv-xls.png" },
-		STATUS = { draft: ["None", "sap-icon://edit"], deployed: ["Success", "sap-icon://sys-enter-2"], changed: ["Warning", "sap-icon://edit-outside"], running: ["Information", "sap-icon://in-progress"] },
-		LAST = { succeeded: ["Success", "sap-icon://sys-enter-2"], succeededWithFailures: ["Warning", "sap-icon://alert"], failed: ["Error", "sap-icon://error"], running: ["Information", "sap-icon://in-progress"] },
+		STATUS = Sem.GROUPS.lifecycle,
+		LAST = Sem.GROUPS.outcome,
 		/* How changes are detected per connection type: delta is the source system's job, the flow only picks it. */
 		DELTA = { c4c: "watermark", hana: "cdc", mssql: "watermark", file: "upload" };
 

@@ -61,7 +61,7 @@
 									<Link text="{view>title}" press=".onOpenRuns" enabled="{= !!${view>job} }" wrapping="false" tooltip="{view>flowTip}"/>
 									<Text text="{view>flowText}" class="repoioMono repoioStSub repoioStFlow" textDirection="LTR" wrapping="false" tooltip="{view>flowTip}"/>
 								</HBox>
-								<HBox items="{view>stages}" alignItems="Center" class="repoioStStages">
+								<HBox items="{path: 'view>stages', templateShareable: false}" alignItems="Center" class="repoioStStages">
 									<HBox alignItems="Center" class="repoioStStageWrap">
 										<core:Icon src="sap-icon://navigation-right-arrow" class="repoioStArrow" visible="{= !${view>first} }" decorative="true"/>
 										<Text text="{view>text}" tooltip="{view>tip}" class="repoioStStage" wrapping="false">

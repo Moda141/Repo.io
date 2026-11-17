@@ -4,13 +4,14 @@ sap.ui.define([
 	"repoio/proto/util/access",
 	"sap/ui/core/Fragment",
 	"sap/m/MessageToast",
-	"sap/m/MessageBox"
-], function (BaseController, People, A, Fragment, MessageToast, MessageBox) {
+	"sap/m/MessageBox",
+	"repoio/proto/util/semantic"
+], function (BaseController, People, A, Fragment, MessageToast, MessageBox, Sem) {
 	"use strict";
 
 	var ME = "محمد",
 		TYPE = { info: ["sap-icon://message-information", "#0a6ed1", "Information"], maintenance: ["sap-icon://wrench", "#e9730c", "Warning"], release: ["sap-icon://notification-2", "#107e3e", "Success"] },
-		STATE = { draft: ["None", "sap-icon://edit"], scheduled: ["Information", "sap-icon://appointment"], live: ["Success", "sap-icon://broadcast"], expired: ["None", "sap-icon://past"], retired: ["None", "sap-icon://decline"] };
+		STATE = Sem.GROUPS.lifecycle;
 
 	/* Announcements (J13). In the product the announcements API stores them in the control plane, filters them by audience
 	   server-side and audits every transition; Feeds and the Home strip only read. */

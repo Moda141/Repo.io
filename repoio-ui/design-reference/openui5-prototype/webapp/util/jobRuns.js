@@ -6,23 +6,17 @@
 sap.ui.define([
 	"sap/m/Popover", "sap/m/VBox", "sap/m/HBox", "sap/m/Label", "sap/m/Text", "sap/m/Button", "sap/m/MessageStrip",
 	"sap/m/MessageToast", "sap/m/Dialog", "sap/m/RadioButtonGroup", "sap/m/RadioButton", "sap/m/Input", "sap/m/TextArea",
-	"sap/ui/layout/form/SimpleForm", "sap/ui/core/Title", "repoio/proto/util/people"
+	"sap/ui/layout/form/SimpleForm", "sap/ui/core/Title", "repoio/proto/util/people",
+	"repoio/proto/util/semantic"
 ], function (Popover, VBox, HBox, Label, Text, Button, MessageStrip, MessageToast, Dialog, RadioButtonGroup, RadioButton,
-	Input, TextArea, SimpleForm, CoreTitle, people) {
+	Input, TextArea, SimpleForm, CoreTitle, people, Sem) {
 	"use strict";
 
 	var MONTHS = {
 		en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
 		ar: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"]
 	};
-	var STATE = {
-		succeeded: ["Success", "sap-icon://sys-enter-2"], completed: ["Success", "sap-icon://sys-enter-2"],
-		succeededWithFailures: ["Warning", "sap-icon://alert"], retrying: ["Warning", "sap-icon://synchronize"],
-		failed: ["Error", "sap-icon://error"], timedOut: ["Error", "sap-icon://time-overtime"], upstreamFailed: ["Error", "sap-icon://chain-link"],
-		running: ["Information", "sap-icon://in-progress"], active: ["Information", "sap-icon://in-progress"],
-		queued: ["None", "sap-icon://pending"], pending: ["None", "sap-icon://pending"],
-		skipped: ["None", "sap-icon://media-forward"], canceled: ["None", "sap-icon://cancel"]
-	};
+	var STATE = Sem.GROUPS.outcome;
 	var KIND_ICON = { ingest: "sap-icon://download-from-cloud", push: "sap-icon://upload-to-cloud", stream: "sap-icon://process", dq: "sap-icon://quality-issue", hk: "sap-icon://wrench" };
 	// Soft semantic tints, the same family as BaseController.colors.
 	var COLOR = { succeeded: "#5fae7c", succeededWithFailures: "#e3a256", failed: "#df7a7a", timedOut: "#df7a7a", running: "#89b4e3", queued: "#b4bac0", skipped: "#d5dadd", canceled: "#b4bac0" };

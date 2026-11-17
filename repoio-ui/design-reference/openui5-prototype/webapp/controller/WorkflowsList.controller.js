@@ -1,13 +1,14 @@
 sap.ui.define([
 	"repoio/proto/controller/BaseController",
 	"sap/m/MessageToast",
-	"sap/m/MessageBox"
-], function (BaseController, MessageToast, MessageBox) {
+	"sap/m/MessageBox",
+	"repoio/proto/util/semantic"
+], function (BaseController, MessageToast, MessageBox, Sem) {
 	"use strict";
 
 	var FAV_KEY = "repoio-proto-wf-favs",
 		ME = "محمد",
-		STATUS = { published: ["Success", "sap-icon://sys-enter-2"], draft: ["None", "sap-icon://edit"], inReview: ["Information", "sap-icon://pending"], retired: ["None", "sap-icon://locked"] },
+		STATUS = Sem.GROUPS.lifecycle,
 		COLL = [["all", "sap-icon://world"], ["mine", "sap-icon://employee"], ["shared", "sap-icon://share-2"], ["recent", "sap-icon://history"], ["fav", "sap-icon://favorite"]];
 
 	/* Diagram preview for a workflow card: begin, its steps as tasks (a gateway when it writes back), end. Generated from the
@@ -101,7 +102,7 @@ sap.ui.define([
 				return { key: x[0], icon: x[1], text: that.text("wl.coll." + x[0]), count: String(that._all.filter(function (w) { return that._inColl(w, x[0]); }).length) };
 			}));
 			vm.setProperty("/wl/domOpts", [{ key: "all", text: this.text("hub.allDomains") }].concat(this._doms.map(function (d) { return { key: d.id, text: that.domainName(d) }; })));
-			vm.setProperty("/wl/stOpts", [{ key: "all", text: this.text("api.st.allStates") }].concat(Object.keys(STATUS).map(function (k) { return { key: k, text: that.text("wl.st." + k) }; })));
+			vm.setProperty("/wl/stOpts", [{ key: "all", text: this.text("api.st.allStates") }].concat(["published", "draft", "inReview", "retired"].map(function (k) { return { key: k, text: that.text("wl.st." + k) }; })));
 			this.byId("wlTable").removeSelections(true);
 			this.onSelect();
 		},

@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/m/TextArea",
 	"sap/m/CheckBox",
 	"sap/m/Text",
-	"sap/ui/layout/form/SimpleForm"
-], function (BaseController, Audit, VF, MessageToast, MessageBox, Dialog, Button, Label, Input, TextArea, CheckBox, Text, SimpleForm) {
+	"sap/ui/layout/form/SimpleForm",
+	"repoio/proto/util/semantic"
+], function (BaseController, Audit, VF, MessageToast, MessageBox, Dialog, Button, Label, Input, TextArea, CheckBox, Text, SimpleForm, Sem) {
 	"use strict";
 
 	var LTR = ["mobile_1", "mobile_2", "whatsapp", "email", "account_type", "state_id", "main_territory_id", "territory_1_id", "national_id", "tax_number", "changed"],
@@ -57,8 +58,7 @@ sap.ui.define([
 			return c ? this._t(c) : k;
 		},
 		_status: function (q) {
-			return { held: ["Error", "sap-icon://locked"], ready: ["Information", "sap-icon://synchronize"], pendingWaive: ["Warning", "sap-icon://group"],
-				pendingDiscard: ["Warning", "sap-icon://group"] }[q.status];
+			return Sem.of("quarantine", q.status);
 		},
 		_pending: function (q) { return q.status === "pendingWaive" || q.status === "pendingDiscard"; },
 

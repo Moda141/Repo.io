@@ -1,13 +1,14 @@
 sap.ui.define([
 	"repoio/proto/controller/BaseController",
 	"sap/m/MessageToast",
-	"sap/m/MessageBox"
-], function (BaseController, MessageToast, MessageBox) {
+	"sap/m/MessageBox",
+	"repoio/proto/util/semantic"
+], function (BaseController, MessageToast, MessageBox, Sem) {
 	"use strict";
 
 	var FAV_KEY = "repoio-proto-rpt-favs",
 		ME = "محمد",
-		STATUS = { published: ["Success", "sap-icon://sys-enter-2"], draft: ["None", "sap-icon://edit"], inReview: ["Information", "sap-icon://pending"], retired: ["None", "sap-icon://locked"] },
+		STATUS = Sem.GROUPS.lifecycle,
 		TYPE = { story: "sap-icon://business-objects-experience", alp: "sap-icon://table-chart" },
 		COLL = [["all", "sap-icon://world"], ["recent", "sap-icon://history"], ["mine", "sap-icon://employee"], ["shared", "sap-icon://share-2"], ["fav", "sap-icon://favorite"]];
 
@@ -75,7 +76,7 @@ sap.ui.define([
 			vm.setProperty("/rl/facets", [
 				facet("type", Object.keys(TYPE).map(function (k) { return { key: k, text: that.text("rl.type." + k), icon: TYPE[k] }; })),
 				facet("domain", this._doms.map(function (d) { return { key: d.id, text: that.domainName(d), icon: d.icon }; })),
-				facet("status", Object.keys(STATUS).map(function (k) { return { key: k, text: that.text("wl.st." + k), icon: STATUS[k][1] }; }))
+				facet("status", ["published", "draft", "inReview", "retired"].map(function (k) { return { key: k, text: that.text("wl.st." + k), icon: STATUS[k][1] }; }))
 			]);
 			this.byId("rlTable").removeSelections(true);
 			this.onSelect();

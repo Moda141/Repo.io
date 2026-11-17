@@ -1,11 +1,12 @@
 sap.ui.define([
 	"repoio/proto/controller/BaseController",
-	"sap/m/MessageToast"
-], function (BaseController, MessageToast) {
+	"sap/m/MessageToast",
+	"repoio/proto/util/semantic"
+], function (BaseController, MessageToast, Sem) {
 	"use strict";
 
 	var STAGES = ["standardise", "dq", "match", "survivorship"],
-		STATUS = { running: ["Success", "sap-icon://process"], stopped: ["None", "sap-icon://stop"], failed: ["Error", "sap-icon://error"] },
+		STATUS = Sem.GROUPS.service,
 		LAG_WARN = 10000, BEHIND_WARN = 600;
 
 	/* Streams (J10 step 1): one Spark Structured Streaming job per entity; lag, checkpoints, throughput and the DLQ. */

@@ -17,9 +17,10 @@ sap.ui.define([
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
-	"repoio/proto/util/gridTable"
+	"repoio/proto/util/gridTable",
+	"repoio/proto/util/semantic"
 ], function (BaseController, MessageToast, MessageBox, Dialog, Button, Label, Input, TextArea, Select, MessageStrip,
-	Table, Column, ColumnListItem, Text, VBox, SimpleForm, Item, JSONModel, Grid) {
+	Table, Column, ColumnListItem, Text, VBox, SimpleForm, Item, JSONModel, Grid, Sem) {
 	"use strict";
 
 	/* Relationship types are defined between the six governed domains only (README §3, CLAUDE.md rule 14);
@@ -446,7 +447,7 @@ sap.ui.define([
 		/* ---------- versions and governance ---------- */
 
 		versionStateText: function (s) { return s ? this.text("onto.state." + s) : ""; },
-		versionState: function (s) { return { draft: "Information", review: "Warning", published: "Success", retired: "None" }[s] || "None"; },
+		versionState: function (s) { return Sem.state("lifecycle", s); },
 
 		onVersion: function (e) {
 			var key = e.getParameter("selectedItem").getKey(), v = this._o.versions.filter(function (x) { return x.key === key; })[0], m = this.viewModel();

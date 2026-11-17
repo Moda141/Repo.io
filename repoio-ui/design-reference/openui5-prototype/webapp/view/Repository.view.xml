@@ -47,7 +47,7 @@
 						<HBox items="{path: 'view>/rp/owners', templateShareable: false}" renderType="Bare" class="repoioRpOwners"><rc:PersonLink name="{view>name}"/></HBox>
 					</HBox>
 					<HBox wrap="Wrap" renderType="Bare" items="{path: 'view>/rp/tags', templateShareable: false}" class="repoioTbChips">
-						<GenericTag text="{view>text}" status="{view>state}" design="{= ${view>state} === 'None' ? 'StatusIconHidden' : 'Full' }" class="repoioSitTag"/>
+						<ObjectStatus text="{view>text}" icon="{view>icon}" class="repoioClassTag repoioClassChip"/>
 					</HBox>
 				</VBox>
 				<!-- Big figures, like "Request priority / Request status" -->
