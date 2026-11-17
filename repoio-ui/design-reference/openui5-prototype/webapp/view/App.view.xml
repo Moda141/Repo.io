@@ -24,6 +24,24 @@
 				<Button id="inboxBtn" icon="sap-icon://inbox" text="4" type="Transparent" tooltip="{i18n>shell.inbox}"
 					ariaLabel="{i18n>shell.inbox}" press=".onInbox"/>
 				<Button id="bellBtn" icon="sap-icon://bell" type="Transparent" tooltip="{i18n>shell.notifications}" ariaLabel="{i18n>shell.notifications}" press=".onNotifications"/>
+				<!-- Help: guided tours (platform tour for the user's roles, the current page's tour, preview as another role) and the user guide -->
+				<MenuButton id="helpBtn" icon="sap-icon://sys-help" type="Transparent" tooltip="{i18n>help.title}" ariaLabel="{i18n>help.title}">
+					<menu>
+						<Menu itemSelected=".onHelp">
+							<MenuItem key="platform" text="{i18n>help.platform}" icon="sap-icon://travel-request"/>
+							<MenuItem key="page" text="{i18n>help.page}" icon="sap-icon://hint" enabled="{view>/shell/pageTour}"/>
+							<MenuItem text="{i18n>help.preview}" icon="sap-icon://role" startsSection="true">
+								<items>
+									<MenuItem key="as:steward" text="{i18n>help.as.steward}"/>
+									<MenuItem key="as:author" text="{i18n>help.as.author}"/>
+									<MenuItem key="as:admin" text="{i18n>help.as.admin}"/>
+									<MenuItem key="as:viewer" text="{i18n>help.as.viewer}"/>
+								</items>
+							</MenuItem>
+							<MenuItem key="guide" text="{i18n>help.guide}" icon="sap-icon://course-book" startsSection="true"/>
+						</Menu>
+					</menu>
+				</MenuButton>
 				<MenuButton id="langBtn" text="{i18n>shell.languageBtn}" icon="sap-icon://world" type="Transparent" tooltip="{i18n>shell.languageTip}">
 					<menu>
 						<Menu id="langMenu" itemSelected=".onLanguage">

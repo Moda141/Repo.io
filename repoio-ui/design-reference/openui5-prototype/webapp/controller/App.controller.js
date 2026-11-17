@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/m/MessageToast",
-	"repoio/proto/util/tour"
+	"repoio/proto/util/tour",
+	"repoio/proto/util/access"
 ], function (Controller, NavigationListItem, NavigationListGroup, ResponsivePopover, VBox, HBox, Avatar, Title, Text, Label, ObjectStatus, List,
-	StandardListItem, MessageToast, Tour) {
+	StandardListItem, MessageToast, Tour, Access) {
 	"use strict";
 
 	return Controller.extend("repoio.proto.controller.App", {
@@ -32,7 +33,7 @@ sap.ui.define([
 			Promise.all([oNav.dataLoaded(), this.getOwnerComponent().bundleReady]).then(function () {
 				this._buildNavigation("");
 				// First login: the guided tour opens once the shell is on screen (per-user "seen" flag; replay from the user menu)
-				if (!Tour.seen()) { setTimeout(this.onTour.bind(this), 1500); }
+				if (!Tour.seen("platform")) { setTimeout(this.onTour.bind(this), 1500); }
 			}.bind(this));
 			this.getOwnerComponent().getRouter().attachRouteMatched(this._onRouteMatched, this);
 			this._watchScrollAreas();
@@ -142,7 +143,17 @@ sap.ui.define([
 		_onRouteMatched: function (oEvent) {
 			this.getOwnerComponent().getModel("view").setProperty("/shell/lang", this._lang());
 			var sRoute = oEvent.getParameter("name"),
-				sKey = sRoute === "page" ? oEvent.getParameter("arguments").key :
+				sPageTour = this._pageTourId(sRoute);
+			this._route = sRoute;
+			this.getOwnerComponent().getModel("view").setProperty("/shell/pageTour", !!sPageTour);
+			// A page tour opens the first time its page opens, once the platform tour is done
+			if (sPageTour && Tour.seen("platform") && !Tour.seen(sPageTour)) {
+				clearTimeout(this._pageTourTimer);
+				this._pageTourTimer = setTimeout(function () {
+					if (this._route === sRoute && !Tour.running()) { this.onPageTour(); }
+				}.bind(this), 1800);
+			}
+			var sKey = sRoute === "page" ? oEvent.getParameter("arguments").key :
 					sRoute === "home" ? "home" : sRoute === "connections" ? "connections" :
 					sRoute === "ontology" ? "ontologyExplorer" : sRoute === "workflow" ? "newWorkflow" :
 					sRoute === "jobs" || sRoute === "jobRun" || sRoute === "streams" ? "dataJobs" : sRoute === "workflows" ? "workflowsList" :
@@ -197,10 +208,42 @@ sap.ui.define([
 
 		/* User card: who is signed in, their team and roles (from the synced user directory, ADR-0009), shortcuts to their
 		   own work, and sign-out through Entra ID. */
-		onTour: function () {
-			var oB = this.getOwnerComponent().bundle;
+		_T: function () { var oB = this.getOwnerComponent().bundle; return function (k, a) { return oB.getText(k, a); }; },
+
+		/* Role groups of the signed-in user (direct and inherited roles), used to adapt the platform tour */
+		_roleGroups: function () {
+			var d = this.getOwnerComponent().getModel("users").getData(), T = this._T(), ar = this._lang() === "ar";
+			if (!d || !d.users) { return { groups: [], names: [] }; }
+			var e = d.employees.filter(function (x) { return x.id === "E-1001"; })[0], u = d.users.filter(function (x) { return e && x.employee === e.id; })[0];
+			if (!u) { return { groups: [], names: [] }; }
+			var roles = Access.effective(d, Access.index(d.org), u, e).map(function (r) { return r.role; }), groups = [];
+			roles.forEach(function (r) { var g = Tour.ROLE_GROUP[r]; if (g && groups.indexOf(g) < 0) { groups.push(g); } });
+			return { groups: groups, names: roles.map(function (r) { var o = Access.role(d, r); return o ? (ar ? o.ar : o.en) : r; }) };
+		},
+
+		onTour: function (aGroups, sAs) {
+			var that = this, T = this._T();
 			if (this._userPop && this._userPop.isOpen()) { this._userPop.close(); }
-			Tour.start(this, function (k, a) { return oB.getText(k, a); });
+			this.getOwnerComponent().getModel("users").dataLoaded().then(function () {
+				var rg = that._roleGroups(), groups = Array.isArray(aGroups) ? aGroups : rg.groups;
+				var intro = sAs ? T("tour.previewAs", [T("help.as." + sAs)]) : rg.names.length ? T("tour.forRoles", [rg.names.join("، ")]) : "";
+				Tour.start(that, T, "platform", groups, intro);
+			});
+		},
+
+		/* The current page's tour (workflow designer, ontology explorer) */
+		_pageTourId: function (sRoute) { return { workflow: "wf", ontology: "onto" }[sRoute] || ""; },
+		onPageTour: function () {
+			var id = this._pageTourId(this._route), oPage = this.byId("pageContainer").getCurrentPage();
+			if (id && oPage && oPage.getController) { Tour.start(oPage.getController(), this._T(), id); }
+		},
+
+		onHelp: function (e) {
+			var k = e.getParameter("item").getKey();
+			if (k === "platform") { this.onTour(); }
+			else if (k === "page") { this.onPageTour(); }
+			else if (k.indexOf("as:") === 0) { var g = k.slice(3); this.onTour(g === "viewer" ? [] : [g], g); }
+			else if (k === "guide") { MessageToast.show(this._T()("help.guideT")); }
 		},
 
 		onUser: function (oEvent) {
@@ -233,7 +276,6 @@ sap.ui.define([
 						new StandardListItem({ title: T("nav.myRequests"), icon: "sap-icon://request", type: "Active", press: function () { nav("myRequests"); } }),
 						new StandardListItem({ title: T("nav.awaitingApproval"), icon: "sap-icon://inbox", type: "Active", press: function () { nav("awaitingApproval"); } }),
 						new StandardListItem({ title: T("shell.uc.profile"), icon: "sap-icon://person-placeholder", type: "Active", press: function () { nav("users", { user: e.id }); } }),
-						new StandardListItem({ title: T("tour.replay"), icon: "sap-icon://travel-request", type: "Active", press: function () { oPop.close(); that.onTour(); } }),
 						new StandardListItem({ title: T("shell.uc.signOut"), icon: "sap-icon://log", type: "Active", press: function () { oPop.close(); MessageToast.show(T("shell.uc.signOutT")); } })
 					] }).addStyleClass("repoioUserList")
 				] }));

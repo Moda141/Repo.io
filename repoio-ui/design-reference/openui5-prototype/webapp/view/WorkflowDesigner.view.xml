@@ -13,7 +13,7 @@
 				<ObjectStatus text="{view>/wf/statusText}" state="{= ${view>/wf/state} === 'published' ? 'Success' : ${view>/wf/state} === 'review' ? 'Warning' : 'Information' }" inverted="true"/>
 				<ObjectStatus visible="{view>/wf/dirty}" text="{i18n>wf.unsaved}" icon="sap-icon://edit" state="Warning"/>
 				<ToolbarSpacer/>
-				<SegmentedButton selectedKey="{path: 'view>/wf/mode', mode: 'OneWay'}" selectionChange=".onMode" class="repoioWfMode">
+				<SegmentedButton id="wfMode" selectedKey="{path: 'view>/wf/mode', mode: 'OneWay'}" selectionChange=".onMode" class="repoioWfMode">
 					<items>
 						<SegmentedButtonItem key="design" text="{i18n>fd.mode.design}" icon="sap-icon://edit"/>
 						<SegmentedButtonItem key="runs" text="{i18n>fd.mode.runs}" icon="sap-icon://line-chart" enabled="{view>/wf/hasPublished}"/>
@@ -36,11 +36,11 @@
 				<Button text="{i18n>wf.save}" icon="sap-icon://save" type="Transparent" press=".onSave" enabled="{= !${view>/wf/readOnly} }"/>
 				<Button id="validateBtn" text="{= ${view>/wf/issueCount} ? ${i18n>onto.validate} + ' (' + ${view>/wf/issueCount} + ')' : ${i18n>onto.validate} }" icon="sap-icon://validate"
 					type="{= ${view>/wf/issueCount} ? 'Negative' : 'Transparent' }" press=".onValidate"/>
-				<Button text="{i18n>fd.test.btn}" icon="sap-icon://media-play" type="Transparent" press=".onTestRun" visible="{= ${view>/wf/mode} === 'design' }"/>
+				<Button id="wfTest" text="{i18n>fd.test.btn}" icon="sap-icon://media-play" type="Transparent" press=".onTestRun" visible="{= ${view>/wf/mode} === 'design' }"/>
 				<Button text="{i18n>fd.cmp.btn}" icon="sap-icon://compare" type="Transparent" press=".onCompare" visible="{= ${view>/wf/mode} === 'design' }"/>
 				<Button text="{i18n>wf.exportBpmn}" icon="sap-icon://download" type="Transparent" press=".onExport"/>
-				<Button text="{i18n>fd.submit}" type="Emphasized" press=".onPublish" enabled="{= !${view>/wf/readOnly} }" visible="{= ${view>/wf/mode} === 'design' }"/>
-				<ToggleButton icon="sap-icon://detail-view" tooltip="{i18n>wf.details}" pressed="{view>/wf/showProps}" type="Transparent"/>
+				<Button id="wfPublish" text="{i18n>fd.submit}" type="Emphasized" press=".onPublish" enabled="{= !${view>/wf/readOnly} }" visible="{= ${view>/wf/mode} === 'design' }"/>
+				<ToggleButton id="wfDetails" icon="sap-icon://detail-view" tooltip="{i18n>wf.details}" pressed="{view>/wf/showProps}" type="Transparent"/>
 			</OverflowToolbar>
 			<MessageStrip visible="{= ${view>/wf/mode} === 'design' &amp;&amp; (${view>/wf/state} === 'published' || ${view>/wf/state} === 'retired') }" type="Information" showIcon="true"
 				class="repoioOntoStrip" text="{view>/wf/roText}">

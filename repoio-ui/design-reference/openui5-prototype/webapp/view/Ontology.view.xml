@@ -6,7 +6,7 @@
 	<Page id="page" showHeader="false" enableScrolling="false" class="repoioOntoPage">
 		<VBox class="repoioOnto" renderType="Bare" height="100%">
 			<!-- SAP Datasphere editor toolbar: labelled groups (File, View, Tools), the ontology and its version, Details -->
-			<HBox class="repoioDsTb repoioOntoTb" alignItems="Start" renderType="Bare">
+			<HBox id="ontoTb" class="repoioDsTb repoioOntoTb" alignItems="Start" renderType="Bare">
 				<VBox class="repoioDsTbGrp" renderType="Bare">
 					<Text text="{i18n>onto.tb.file}" class="repoioDsTbLbl"/>
 					<HBox>
@@ -38,8 +38,8 @@
 					</Select>
 					<ObjectStatus visible="{= ${view>/onto/changes} > 0 }" text="{i18n>onto.changes} {view>/onto/changes}" icon="sap-icon://edit" state="Warning"/>
 					<core:InvisibleText id="versionLabel" text="{i18n>onto.version}"/>
-					<Button text="{i18n>onto.submit}" type="Ghost" enabled="{view>/onto/editable}" press=".onSubmit"/>
-					<ToggleButton text="{i18n>ds.details}" pressed="{view>/onto/details}" type="Emphasized"/>
+					<Button id="ontoSubmit" text="{i18n>onto.submit}" type="Ghost" enabled="{view>/onto/editable}" press=".onSubmit"/>
+					<ToggleButton id="ontoDetails" text="{i18n>ds.details}" pressed="{view>/onto/details}" type="Emphasized"/>
 				</HBox>
 			</HBox>
 			<MessageStrip visible="{= !${view>/onto/editable} }" type="Information" showIcon="true" class="repoioOntoStrip"

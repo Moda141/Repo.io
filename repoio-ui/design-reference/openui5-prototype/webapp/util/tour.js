@@ -11,27 +11,54 @@ sap.ui.define([
 ], function (Popover, Dialog, Button, Title, Text, VBox, HBox, IllustratedMessage, HTML) {
 	"use strict";
 
-	/* First-login guided tour (OpenUI5 has no tour control, so this is a small wrapper: a dimmed page with a
-	   spotlight on one shell element and a step card beside it). The tour shows once per user; the "seen" flag is a
-	   per-user setting the profile API would keep — in the prototype it lives in localStorage. It can be replayed
-	   from the user menu. Steps whose element is not on screen (side navigation collapsed, small screen) are skipped. */
+	/* Guided tours (OpenUI5 has no tour control, so this is a small wrapper: a dimmed page with a hole around one
+	   element and a step card beside it). Three tours:
+	   - "platform": the shell, opened on the first login and adapted to the user's roles (stewards also see
+	     stewardship and data quality, administrators the integration hub and administration, template authors and
+	     requesters the change requests);
+	   - "wf" and "onto": short page tours, opened the first time the workflow designer or the ontology explorer opens.
+	   Each tour shows once per user; the "seen" flags are a per-user setting the profile API would keep — in the
+	   prototype they live in localStorage. All of them can be replayed from the help menu (?) in the header.
+	   Steps whose element is not on screen are skipped. */
 
-	var KEY = "repoio-proto-tour-v1";
+	var KEY = "repoio-proto-tour-v2-";
 
-	// [step key, how to find the element]. null = centred card (welcome / done).
-	var STEPS = [
-		["welcome", null],
-		["nav", function (app) { return app.byId("sideNavigation"); }],
-		["search", function (app) { return app.byId("navSearch"); }],
-		["domains", function (app) { return navItem(app, "domains"); }],
-		["golden", function (app) { return navItem(app, "goldenRecords"); }],
-		["stewardship", function (app) { return navItem(app, "stewardship"); }],
-		["inbox", function (app) { return app.byId("inboxBtn"); }],
-		["bell", function (app) { return app.byId("bellBtn"); }],
-		["lang", function (app) { return app.byId("langBtn"); }],
-		["user", function (app) { return app.byId("userAvatar"); }],
-		["done", null]
-	];
+	var ROLE_GROUP = { ADMIN: "admin", API_ADMIN: "admin", DATA_ENGINEER: "admin", TEMPLATE_AUTHOR: "author", REQUESTER: "author",
+		STEWARD_CUSTOMER: "steward", STEWARD_VENDOR: "steward", STEWARD_PRODUCT: "steward", HR_STEWARD: "steward", STORE_STEWARD: "steward" };
+	var byId = function (id) { return function (c) { return c.byId(id); }; };
+
+	var TOURS = {
+		platform: function (groups) {
+			var has = function (g) { return groups.indexOf(g) > -1; };
+			return [
+				["welcome", null],
+				["nav", byId("sideNavigation")],
+				["search", byId("navSearch")],
+				["domains", function (c) { return navItem(c, "domains"); }],
+				["golden", function (c) { return navItem(c, "goldenRecords"); }]
+			].concat(has("author") ? [["requests", function (c) { return navItem(c, "changeRequests"); }]] : [])
+				.concat(has("steward") ? [["stewardship", function (c) { return navItem(c, "stewardship"); }],
+					["quality", function (c) { return navItem(c, "dataQuality"); }]] : [])
+				.concat(has("admin") ? [["integration", function (c) { return navItem(c, "integrationHub"); }],
+					["admin", function (c) { return navItem(c, "administration"); }]] : [])
+				.concat([
+					["inbox", byId("inboxBtn")],
+					["bell", byId("bellBtn")],
+					["lang", byId("langBtn")],
+					["help", byId("helpBtn")],
+					["user", byId("userAvatar")],
+					["done", null]
+				]);
+		},
+		wf: function () {
+			return [["wf.intro", null], ["wf.canvas", byId("canvas")], ["wf.details", byId("wfDetails")], ["wf.validate", byId("validateBtn")],
+				["wf.test", byId("wfTest")], ["wf.mode", byId("wfMode")], ["wf.publish", byId("wfPublish")]];
+		},
+		onto: function () {
+			return [["onto.intro", null], ["onto.toolbar", byId("ontoTb")], ["onto.side", byId("sideTabs")], ["onto.graph", byId("graph")],
+				["onto.version", byId("versionSelect")], ["onto.details", byId("ontoDetails")], ["onto.submit", byId("ontoSubmit")]];
+		}
+	};
 
 	function navItem(app, key) {
 		var found = null, walk = function (items) {
@@ -51,14 +78,19 @@ sap.ui.define([
 	}
 
 	return {
-		seen: function () { try { return localStorage.getItem(KEY) === "done"; } catch (e) { return true; } },
+		ROLE_GROUP: ROLE_GROUP,
+		has: function (id) { return !!TOURS[id]; },
+		running: function () { return !!this._on; },
+		seen: function (id) { try { return localStorage.getItem(KEY + id) === "done"; } catch (e) { return true; } },
 
-		/* Start the tour. app = the App controller (shell), T = text function. */
-		start: function (app, T) {
-			var that = this;
-			if (this._on) { return; }
+		/* Start a tour. ctx = the controller whose byId finds the elements (the shell for "platform", the page for a
+		   page tour), T = text function, id = tour id, groups = role groups for the platform tour, intro = extra text
+		   for the first card (for example which roles the tour was adapted to). */
+		start: function (ctx, T, id, groups, intro) {
+			var that = this, app = ctx;
+			if (this._on || !TOURS[id]) { return; }
 			this._on = true;
-			var steps = STEPS.filter(function (s) { return !s[1] || rectOf(s[1](app)); }),
+			var steps = TOURS[id](groups || []).filter(function (s) { return !s[1] || rectOf(s[1](app)); }),
 				total = steps.length, i = 0;
 
 			var mask = document.createElement("div"), spot = document.createElement("div");
@@ -83,7 +115,7 @@ sap.ui.define([
 
 			var oPop = new Popover({ showHeader: false, placement: "Auto", modal: false, contentWidth: "22rem", horizontalScrolling: false, verticalScrolling: false,
 				ariaLabelledBy: [oTitle], content: [content] }).addStyleClass("repoioTourPop");
-			var oIll = new IllustratedMessage({ illustrationType: "sapIllus-SuccessHighFive", illustrationSize: "Dialog" });
+			var oIll = new IllustratedMessage({ illustrationType: "sapIllus-SuccessHighFive", illustrationSize: "Dialog", visible: id === "platform" });
 			var oDlg = new Dialog({ showHeader: false, contentWidth: "26rem", draggable: false, escapeHandler: function (p) { p.resolve(); finish(); },
 				content: [oIll], ariaLabelledBy: [oTitle] }).addStyleClass("repoioTourDlg");
 			// Closing the card any other way (click outside, Escape) ends the tour; moving between steps does not.
@@ -116,12 +148,12 @@ sap.ui.define([
 				var key = steps[i][0], find = steps[i][1], target = find ? find(app) : null;
 				oCount.setText(T("tour.count", [i + 1, total]));
 				oTitle.setText(T("tour." + key + ".t"));
-				oBody.setText(T("tour." + key + ".d"));
+				oBody.setText(T("tour." + key + ".d") + (i === 0 && intro ? "\n\n" + intro : ""));
 				oDots.setContent("<div class=\"repoioTourDots\">" + steps.map(function (s, k) {
 					return "<span class=\"" + (k === i ? "on" : "") + "\"></span>"; }).join("") + "</div>");
 				oBack.setVisible(i > 0);
 				oSkip.setVisible(i < total - 1);
-				oNext.setText(i === total - 1 ? T("tour.finish") : i === 0 ? T("tour.start") : T("tour.next"));
+				oNext.setText(i === total - 1 ? T(id === "platform" ? "tour.finish" : "tour.gotIt") : i === 0 ? T("tour.start") : T("tour.next"));
 				if (target && target.isA && target.isA("sap.tnt.NavigationListItem") && target.getParent() && target.getParent().setExpanded) {
 					target.getParent().setExpanded(true);
 				}
@@ -143,12 +175,18 @@ sap.ui.define([
 					if (oPop.isOpen()) { oPop.close(); }
 					oPop.openBy(spot);
 				}
-				setTimeout(function () { moving = false; oNext.focus(); }, 400);
+				layer();
+				setTimeout(function () { layer(); moving = false; oNext.focus(); }, 400);
+			}
+			// UI5 gives every popup a rising z-index; the mask and the ring sit just under the open card
+			function layer() {
+				var d = (oPop.isOpen() ? oPop : oDlg).getDomRef(), z = d ? parseInt(window.getComputedStyle(d).zIndex, 10) : NaN;
+				if (!isNaN(z)) { mask.style.zIndex = z - 2; spot.style.zIndex = z - 1; }
 			}
 			function finish() {
 				if (!that._on) { return; }
 				that._on = false;
-				try { localStorage.setItem(KEY, "done"); } catch (e) { /* private mode: the tour may show again */ }
+				try { localStorage.setItem(KEY + id, "done"); } catch (e) { /* private mode: the tour may show again */ }
 				document.removeEventListener("keydown", onKey, true);
 				window.removeEventListener("resize", onResize);
 				mask.remove();
