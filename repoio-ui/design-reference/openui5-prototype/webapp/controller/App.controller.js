@@ -78,7 +78,7 @@ sap.ui.define([
 				fnItem = function (n) {
 					var oItem = new NavigationListItem({
 						key: n.key, text: fnText(n.key), icon: n.icon || "",
-						expanded: !!q || n.key === "favorites" || (n.items || []).some(function (c) { return c.key === that._sSelectedKey; }),
+						expanded: !!q || (n.items || []).some(function (c) { return c.key === that._sSelectedKey; }),
 						selectable: !n.items
 					});
 					(n.items || []).filter(fnMatch).forEach(function (c) {
@@ -152,7 +152,10 @@ sap.ui.define([
 			var fnWalk = function (aItems) {
 				aItems.forEach(function (it) {
 					var aSub = it.getItems ? it.getItems() : [];
-					if (it.isA("sap.tnt.NavigationListItem") && aSub.some(function (c) { return c.getKey && c.getKey() === sKey; })) { it.setExpanded(true); }
+					// Fiori side navigation: only the group of the current page stays open, so the tree fits the screen.
+					if (it.isA("sap.tnt.NavigationListItem") && aSub.length) {
+						it.setExpanded(aSub.some(function (c) { return c.getKey && c.getKey() === sKey; }));
+					}
 					fnWalk(aSub);
 				});
 			};

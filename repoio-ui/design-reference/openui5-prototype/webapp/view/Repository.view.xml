@@ -54,7 +54,8 @@
 				<HBox renderType="Bare" class="repoioRpBig" items="{path: 'view>/rp/big', templateShareable: false}">
 					<VBox renderType="Bare" class="repoioRpBigItem">
 						<Label text="{view>label}"/>
-						<Text text="{view>value}" class="repoioRpBigVal" textDirection="{view>dir}"/>
+						<!-- Fiori header KPI: a status figure carries its semantic colour and icon, plain figures stay neutral -->
+						<ObjectStatus text="{view>value}" state="{= ${view>state} || 'None' }" icon="{view>icon}" class="repoioRpBigVal repoioRpBigStatus" textDirection="{view>dir}"/>
 					</VBox>
 				</HBox>
 				<!-- Overview bars, like "Assignment status overview" -->
@@ -202,7 +203,7 @@
 										<t:label><Label text="{i18n>gr.c.rating}"/></t:label>
 										<t:template><HBox alignItems="Center" renderType="Bare" class="repoioRtCell">
 																					<RatingIndicator value="{view>stars}" maxValue="5" displayOnly="true" iconSize="0.875rem" tooltip="{view>ratingTip}"/>
-																					<Button icon="sap-icon://slim-arrow-down" type="Transparent" tooltip="{i18n>rt.why}" press=".onRating" class="repoioRtBtn"/>
+																					<Button icon="sap-icon://hint" type="Transparent" tooltip="{i18n>rt.why}" press=".onRating" class="repoioRtBtn"/>
 																				</HBox></t:template>
 									</t:Column>
 									<t:Column width="9rem">

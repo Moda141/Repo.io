@@ -17,7 +17,7 @@
 		<OverflowToolbar class="repoioExBar">
 			<ToggleButton icon="sap-icon://filter" pressed="{view>/rl/showFilters}" tooltip="{i18n>cat.filters}" type="Emphasized"/>
 			<ToolbarSpacer/>
-			<MenuButton icon="sap-icon://add" type="Transparent" tooltip="{i18n>rl.new}">
+			<MenuButton icon="sap-icon://add" text="{i18n>common.create}" type="Transparent" tooltip="{i18n>rl.new}">
 				<menu>
 					<Menu>
 						<MenuItem text="{i18n>rl.newStory}" icon="sap-icon://business-objects-experience" press=".onNewStory"/>

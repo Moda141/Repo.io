@@ -140,7 +140,7 @@ sap.ui.define([
 				var age = it.age || 0, over = age > sla, r = { id: it.id, kind: it.kind, navigated: it.id === that._openId, checked: !!checked[it.id], flags: [] };
 				if (tab === "decided") {
 					r.title = it.names; r.sub = it.id; r.c2 = T("md.dec." + it.decision); r.c2b = it.by + " · " + it.at; r.probText = it.prob.toFixed(3); r.probState = "None";
-					r.c4 = it.note || "—"; r.c5 = that._segText(it.segment); r.c5State = "None"; r.highlight = it.decision === "merge" ? "Success" : "None";
+					r.c4 = it.note || "—"; r.c5 = that._segText(it.segment); r.c5State = "None"; r.highlight = "None";
 					return r;
 				}
 				r.title = that._names(it);
@@ -148,7 +148,7 @@ sap.ui.define([
 				r.probText = it.prob.toFixed(3);
 				r.probState = it.prob >= 0.93 ? "Success" : it.prob >= 0.85 ? "Information" : "Warning";
 				r.c5 = over ? T("md.ageOver", [age]) : T("md.age", [age]); r.c5State = over ? "Error" : age >= sla ? "Warning" : "None"; r.c5Icon = over ? "sap-icon://alert" : "";
-				r.highlight = over ? "Error" : that._eligible(it) ? "Success" : "None";
+				r.highlight = over ? "Error" : age >= sla ? "Warning" : "None"; // highlight only the SLA exceptions
 				(it.risks || []).forEach(function (k) { r.flags.push({ text: T("md.risk." + k), icon: "sap-icon://warning2" }); });
 				if (tab === "pairs") {
 					r.c2 = that._segText(it.segment); r.c2b = it.records.slice(1).map(function (x) { return that._srcName(x.source); }).join(" · ");

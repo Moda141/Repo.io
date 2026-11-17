@@ -6,7 +6,7 @@ sap.ui.define([
 	"use strict";
 
 	var AREA = { analytics: "sap-icon://business-objects-experience", users: "sap-icon://employee", data: "sap-icon://database", workflow: "sap-icon://workflow-tasks", integration: "sap-icon://chain-link", system: "sap-icon://action-settings", auth: "sap-icon://shield" },
-		BAD = ["denied", "delete", "retire", "lock"], GOOD = ["approve", "publish", "create", "issue"],
+		BAD = ["denied"], // Fiori semantic colors: an action is not good or bad; only a denied request is an exception
 		SYS = { system: "sap-icon://it-system", sync: "sap-icon://synchronize", anonymous: "sap-icon://question-mark" };
 
 	var csvCell = function (v) { v = String(v === undefined || v === null ? "" : v); return /[",\n]/.test(v) ? "\"" + v.replace(/"/g, "\"\"") + "\"" : v; };
@@ -47,7 +47,7 @@ sap.ui.define([
 			return { i: e._i, at: e.at, atText: e.at.replace("T", " ").slice(0, 16), actor: e.actor, person: person,
 				actorText: person ? this._pname(e.actor) : this.text("au.actor." + e.actor), actorIcon: SYS[e.actor] || "",
 				area: e.area, areaText: this.text("au.area." + e.area), areaIcon: AREA[e.area],
-				action: act, actionText: this.text("au.act." + act), actionState: BAD.indexOf(act) > -1 ? "Error" : GOOD.indexOf(act) > -1 ? "Success" : "None",
+				action: act, actionText: this.text("au.act." + act), actionState: BAD.indexOf(act) > -1 ? "Error" : "None",
 				highlight: act === "denied" ? "Error" : "None",
 				text: this._ar() ? e.ar : e.en, objectText: e.object || "", type: e.type, typeText: this.text("au.type." + (e.type || "other")),
 				versionText: e.version ? "v" + e.version : "—", ip: e.ip || "",

@@ -58,6 +58,8 @@
 							</HBox>
 						</VBox>
 					</HBox>
+					<!-- The thumbnails look alike, so the card also states what tells workflows apart: domain, steps, target system -->
+					<Text text="{view>domText} · {view>stepsText}{= ${view>writeback} ? ' · ' + ${view>wbText} : '' }" class="repoioUmMuted repoioHubTileFacts" wrapping="true"/>
 					<core:HTML content="{view>thumb}"/>
 				</VBox>
 			</HBox>
@@ -86,6 +88,7 @@
 					class="repoioDenseTable" fixedLayout="false" noDataText="{i18n>wl.noData}" popinLayout="GridSmall">
 					<columns>
 						<Column><Text text="{i18n>hub.c.name}"/></Column>
+						<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>domains.col.status}"/></Column>
 						<Column minScreenWidth="Tablet" demandPopin="true" width="6rem"><Text text="{i18n>hub.c.type}"/></Column>
 						<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>hub.c.desc}"/></Column>
 						<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>hub.c.role}"/></Column>
@@ -100,13 +103,15 @@
 								<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioHubName">
 									<core:Icon src="sap-icon://process" class="repoioExRowIcon"/>
 									<Link text="{view>title}" press=".onOpen" wrapping="false"/>
-									<ObjectStatus text="{view>statusText}" state="{view>statusState}" inverted="true" class="repoioHubBadge"/>
 									<ObjectStatus text="{view>version}" state="None" inverted="true" class="repoioHubBadge"/>
-									<ObjectStatus text="{view>wbText}" icon="sap-icon://upload-to-cloud" state="Indication06" inverted="true" visible="{= !!${view>writeback} }"
-										class="repoioHubBadge"/>
 								</HBox>
-								<Text text="{view>id}" class="repoioMono repoioUmMuted" wrapping="false"/>
+								<!-- Status has its own column (Fiori: one fact per column, scannable); the write-back target is a property, shown with the id -->
+								<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioHubSub">
+									<Text text="{view>id}" class="repoioMono repoioUmMuted" wrapping="false"/>
+									<ObjectStatus text="{view>wbText}" icon="sap-icon://upload-to-cloud" visible="{= !!${view>writeback} }" class="repoioHubWb"/>
+								</HBox>
 							</VBox>
+							<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
 							<Text text="{i18n>hub.bpmn}"/>
 							<VBox renderType="Bare">
 								<Text text="{view>tplText}" wrapping="false"/>

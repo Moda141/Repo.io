@@ -17,7 +17,7 @@
 		<OverflowToolbar class="repoioExBar">
 			<ToggleButton icon="sap-icon://filter" pressed="{view>/ds/showFilters}" tooltip="{i18n>cat.filters}" type="Emphasized"/>
 			<ToolbarSpacer/>
-			<Button icon="sap-icon://add" type="Transparent" tooltip="{i18n>ds.new}" press=".onNew"/>
+			<Button icon="sap-icon://add" text="{i18n>common.create}" type="Transparent" tooltip="{i18n>ds.new}" press=".onNew"/>
 			<Button icon="sap-icon://edit" type="Transparent" tooltip="{i18n>common.edit}" enabled="{= ${view>/ds/selected} === 1 }" press=".onEdit"/>
 			<Button icon="sap-icon://upload-to-cloud" type="Transparent" tooltip="{i18n>ds.deploy}" enabled="{view>/ds/canDeploy}" press=".onDeploy"/>
 			<Button icon="sap-icon://media-play" type="Transparent" tooltip="{i18n>ds.run}" enabled="{view>/ds/canRun}" press=".onRun"/>

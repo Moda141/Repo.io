@@ -119,7 +119,7 @@ sap.ui.define([
 				hasModel: !!M, hasGoldenList: deployed && !!C.getModel("golden").getProperty("/repos/" + r.id),
 				code: T("rp.sub", [r.code]), deployedText: deployed ? r.deployed : T("repo.notDeployed"),
 				big: [
-					{ label: T("domains.col.status"), value: T("health." + r.healthKey), dir: "Inherit" },
+					{ label: T("domains.col.status"), value: T("health." + r.healthKey), dir: "Inherit", state: r.healthKey === "healthy" ? "Success" : r.healthState, icon: HEALTH_ICON[r.healthKey] || "" },
 					{ label: T("domains.col.quality"), value: deployed ? r.quality.toFixed(1) + "%" : "—", dir: "LTR" },
 					{ label: T("repo.golden"), value: deployed ? n(r.golden) : "—", dir: "LTR" }
 				],

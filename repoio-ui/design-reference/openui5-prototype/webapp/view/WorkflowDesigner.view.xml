@@ -67,7 +67,7 @@
 				<VBox class="repoioOntoDetail repoioWfProps" renderType="Bare" visible="{view>/wf/showProps}">
 					<customData><core:CustomData key="wide" value="{= ${view>/wf/sel/type} === 'writeBack' || ${view>/wf/sel/type} === 'test' ? 'yes' : 'no' }" writeToDom="true"/></customData>
 					<HBox class="repoioOntoDetailHead" renderType="Bare" alignItems="Center">
-						<core:Icon src="sap-icon://action-settings" color="#ffffff" decorative="true"/>
+						<core:Icon src="sap-icon://action-settings" decorative="true"/>
 						<Text text="{i18n>wf.properties}" class="repoioOntoDetailKind"/>
 						<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>common.close}" press=".onCloseProps" class="repoioOntoDetailClose"/>
 					</HBox>

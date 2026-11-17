@@ -108,6 +108,7 @@ sap.ui.define([
 					icon: r.image || SEG_ICON[r.segment] || "sap-icon://customer", color: SEG_COLOR[r.segment] || "Accent6",
 					stars: r.rating ? r.rating.stars : 0, rating: r.rating, ratingTip: r.rating ? that.text("rt.tip", [r.rating.stars, r.rating.score]) : "",
 					srcText: r.sources.map(function (s) { return that._srcName(s); }).join(" · "),
+					srcList: r.sources.map(function (s) { return that._srcName(s); }),
 					qualityText: r.quality.toFixed(1), qualityState: r.quality >= 90 ? "Success" : r.quality >= 80 ? "Warning" : "Error",
 					statusText: that.text("gr.st." + r.status), statusState: ST[r.status][0], statusIcon: ST[r.status][1], selected: r.id === g.sel };
 			}));

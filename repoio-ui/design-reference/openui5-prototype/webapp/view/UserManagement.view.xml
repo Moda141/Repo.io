@@ -37,7 +37,8 @@
 								<Text text="{view>/um/u/sub}" class="repoioUmMuted"/>
 							</VBox>
 						</HBox>
-						<MessageStrip text="{i18n>um.unit.noRoles}" type="Information" showIcon="true" visible="{= !${view>/um/u/assignable} }" class="repoioUmStrip"/>
+						<!-- Fixed explanation: a hint line, not a MessageStrip (strips are for messages that change) -->
+				<HBox alignItems="Center" renderType="Bare" class="repoioHintLine" visible="{= !${view>/um/u/assignable} }"><core:Icon src="sap-icon://hint" decorative="true"/><Text text="{i18n>um.unit.noRoles}"/></HBox>
 						<VBox visible="{view>/um/u/assignable}" renderType="Bare">
 							<HBox alignItems="Center" renderType="Bare" class="repoioUmRolesHead">
 								<Text text="{view>/um/u/rolesTitle}" class="repoioUmLabel"/>

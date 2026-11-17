@@ -3,7 +3,7 @@
 	<!-- J10: Quarantine. Records the data quality step (Great Expectations) held on the dead-letter path: never dropped,
 	     never blocking the stream. A steward reprocesses them, corrects and reprocesses (recorded, optionally written back
 	     to the source), or asks for an exception or a discard, which a second steward approves. -->
-	<f:FlexibleColumnLayout id="fcl" layout="{view>/qa/layout}" class="repoioMdFcl">
+	<f:FlexibleColumnLayout id="fcl" autoFocus="false" layout="{view>/qa/layout}" class="repoioMdFcl">
 		<f:beginColumnPages>
 			<f:DynamicPage id="qaQueue" headerExpanded="true" toggleHeaderOnTitleClick="true" class="repoioEdge repoioMdQueue">
 				<f:title>

@@ -176,7 +176,7 @@
 				<!-- Right: details of the selected concept or relationship -->
 				<VBox class="repoioOntoDetail" renderType="Bare" visible="{= !!${view>/onto/sel/kind} &amp;&amp; ${view>/onto/details} }">
 					<HBox class="repoioOntoDetailHead" renderType="Bare" alignItems="Center">
-						<core:Icon src="{= ${view>/onto/sel/kind} === 'node' ? 'sap-icon://dimension' : ${view>/onto/sel/kind} === 'record' ? 'sap-icon://customer' : 'sap-icon://chain-link' }" color="#ffffff" decorative="true"/>
+						<core:Icon src="{= ${view>/onto/sel/kind} === 'node' ? 'sap-icon://dimension' : ${view>/onto/sel/kind} === 'record' ? 'sap-icon://customer' : 'sap-icon://chain-link' }" decorative="true"/>
 						<Text text="{= ${view>/onto/sel/kind} === 'node' ? ${i18n>onto.concept} : ${view>/onto/sel/kind} === 'record' ? ${i18n>onto.rec.golden} : ${view>/onto/sel/kind} === 'link' ? ${i18n>onto.rec.link} : ${i18n>onto.relationship} }" class="repoioOntoDetailKind"/>
 						<Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>common.close}" press=".onCloseDetail" class="repoioOntoDetailClose"/>
 					</HBox>

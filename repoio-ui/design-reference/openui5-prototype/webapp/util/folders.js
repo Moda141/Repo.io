@@ -26,7 +26,9 @@ sap.ui.define([], function () {
 
 		/* Business name of a folder, shown as its tooltip (domain or repository). */
 		_label: function (c, aSeg, i) {
-			if (aSeg[0] === "platform" || i === 2 || (i === 1 && aSeg[0] === "platform")) { return ""; }
+			if (i === 0 && aSeg[0] === "platform") { return c.text("fld.platform"); }
+			if (i === aSeg.length - 1 && KIND_ICON[aSeg[i]] !== undefined || aSeg[i] === "other") { return c.text("fld.kind." + aSeg[i]); }
+			if (aSeg[0] === "platform" || i >= 2) { return ""; }
 			var doms = c.data().getProperty("/domains") || [], repos = c.data().getProperty("/repos") || {};
 			if (i === 0) {
 				var d = doms.filter(function (x) { return F.domFolder(x.id) === aSeg[0]; })[0];
@@ -44,7 +46,8 @@ sap.ui.define([], function () {
 				aSeg.forEach(function (s, i) {
 					var k = F.key(aSeg.slice(0, i + 1)), n = level.nodes.filter(function (x) { return x.key === k; })[0];
 					if (!n) {
-						n = { key: k, text: s, tip: [s, F._label(c, aSeg, i)].filter(Boolean).join(" — "), count: 0, nodes: [], selected: k === sSelected,
+						// The business name is the text (translated, the user's language); the technical Airflow folder is the tooltip.
+						n = { key: k, seg: s, text: F._label(c, aSeg, i) || s, tip: "dags/" + aSeg.slice(0, i + 1).join("/"), count: 0, nodes: [], selected: k === sSelected,
 							icon: i === aSeg.length - 1 && KIND_ICON[s] ? KIND_ICON[s] : "sap-icon://folder-blank" };
 						level.nodes.push(n);
 					}
@@ -53,7 +56,7 @@ sap.ui.define([], function () {
 				});
 			});
 			var sort = function (n) {
-				n.nodes.sort(function (a, b) { return (a.text === "platform") - (b.text === "platform") || (a.text < b.text ? -1 : 1); });
+				n.nodes.sort(function (a, b) { return (a.seg === "platform") - (b.seg === "platform") || (a.text < b.text ? -1 : 1); });
 				n.nodes.forEach(sort);
 			};
 			sort(root);

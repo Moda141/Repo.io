@@ -51,7 +51,8 @@
 						<Text text="{view>categoryText}" wrapping="false"/>
 						<Text text="{view>featureText}"/>
 						<ObjectStatus text="{view>stateText}" state="{view>stateState}" icon="{view>stateIcon}"/>
-						<ObjectStatus text="{view>lastSync}" state="{view>syncState}" textDirection="LTR"/>
+						<ObjectStatus text="{view>lastSync}" textDirection="LTR" state="{= ${view>syncState} === 'Warning' || ${view>syncState} === 'Error' ? ${view>syncState} : 'None' }"
+							icon="{= ${view>syncState} === 'Warning' || ${view>syncState} === 'Error' ? 'sap-icon://alert' : '' }" tooltip="{= ${view>syncState} === 'Warning' || ${view>syncState} === 'Error' ? ${i18n>conn.syncLate} : '' }"/>
 						<rc:PersonLink name="{view>owner}"/>
 						<Text text="{view>changed}" wrapping="false" textDirection="LTR"/>
 					</ColumnListItem>

@@ -41,7 +41,8 @@
 			</tnt:SideNavigation>
 		</tnt:sideContent>
 		<tnt:mainContents>
-			<NavContainer id="pageContainer"/>
+			<!-- autoFocus off: UI5 otherwise focuses the first title or breadcrumb on every navigation, which shows a focus ring as if it were selected. Keyboard users start with Tab. -->
+			<NavContainer id="pageContainer" autoFocus="false"/>
 		</tnt:mainContents>
 	</tnt:ToolPage>
 </mvc:View>

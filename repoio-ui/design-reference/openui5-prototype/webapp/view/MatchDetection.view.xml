@@ -4,7 +4,7 @@
 	     from Splink's review band, stopped change requests from the request check. A decision goes to the match review API:
 	     it merges or keeps records apart and becomes a labelled pair for the next training. Risky decisions need a second
 	     steward; nobody releases their own request. -->
-	<f:FlexibleColumnLayout id="fcl" layout="{view>/md/layout}" class="repoioMdFcl">
+	<f:FlexibleColumnLayout id="fcl" autoFocus="false" layout="{view>/md/layout}" class="repoioMdFcl">
 		<f:beginColumnPages>
 			<f:DynamicPage id="mdQueue" headerExpanded="true" toggleHeaderOnTitleClick="true" class="repoioEdge repoioMdQueue">
 				<f:title>

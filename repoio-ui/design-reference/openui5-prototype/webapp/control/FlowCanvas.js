@@ -214,7 +214,7 @@ sap.ui.define([
 			var W = m.width + PAD * 2, H = m.height + PAD * 2, cw = d.clientWidth, ch = d.clientHeight - 40;
 			if (!cw || !ch) { return; }
 			// Fit when it fits; otherwise stay readable and start from Begin (left in LTR, right in RTL).
-			this._z = Math.max(0.72, Math.min(1, cw / W, ch / H));
+			this._z = Math.max(0.85, Math.min(1, cw / W, ch / H));
 			var over = W * this._z > cw;
 			this._tx = !over ? (cw - W * this._z) / 2 : (this.getRtl() ? cw - W * this._z : 0);
 			this._ty = Math.max(0, (ch - H * this._z) / 2);

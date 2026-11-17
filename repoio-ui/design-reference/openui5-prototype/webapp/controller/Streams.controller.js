@@ -67,10 +67,11 @@ sap.ui.define([
 			var rtl = this.isRtl(), pal = [c.brand, c.crit, c.neg];
 			this.byId("stChart").setOption({
 				animation: false, color: pal,
-				grid: { left: rtl ? 12 : 52, right: rtl ? 52 : 12, top: 28, bottom: 22 },
+				grid: { left: rtl ? 12 : 52, right: rtl ? 52 : 12, top: 28, bottom: 40 },
 				legend: { top: 0, itemWidth: 10, itemHeight: 10, textStyle: { fontSize: 11, color: c.label } },
 				tooltip: { trigger: "axis" },
-				xAxis: { type: "category", inverse: rtl, data: ["-55", "-50", "-45", "-40", "-35", "-30", "-25", "-20", "-15", "-10", "-5", this.text("st.now")],
+				xAxis: { type: "category", inverse: rtl, name: this.text("st.axisMin"), nameLocation: "middle", nameGap: 22, nameTextStyle: { fontSize: 10, color: c.label },
+					data: ["-55", "-50", "-45", "-40", "-35", "-30", "-25", "-20", "-15", "-10", "-5", this.text("st.now")],
 					axisTick: { show: false }, axisLabel: { fontSize: 10, color: c.label }, axisLine: { lineStyle: { color: c.grid } } },
 				yAxis: { type: "value", position: rtl ? "right" : "left", splitLine: { lineStyle: { color: c.grid } }, axisLabel: { fontSize: 10, color: c.label } },
 				series: rows.map(function (r) { return { name: r.title, type: "line", symbolSize: 4, data: r.lagHist }; })

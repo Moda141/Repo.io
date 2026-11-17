@@ -15,7 +15,8 @@
 		</f:title>
 		<f:content>
 			<VBox renderType="Bare">
-				<MessageStrip text="{view>/au/retText}" type="Information" showIcon="true" class="repoioApiStrip"/>
+				<!-- Fixed explanation: a hint line, not a MessageStrip (strips are for messages that change) -->
+				<HBox alignItems="Center" renderType="Bare" class="repoioHintLine"><core:Icon src="sap-icon://hint" decorative="true"/><Text text="{view>/au/retText}"/></HBox>
 				<Table id="auTable" items="{view>/au/rows}" class="repoioDenseTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar"
 					growing="true" growingThreshold="25" growingScrollToLoad="true" noDataText="{i18n>au.none}">
 					<headerToolbar>

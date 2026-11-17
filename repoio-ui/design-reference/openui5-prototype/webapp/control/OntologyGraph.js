@@ -33,10 +33,13 @@ sap.ui.define([
 			"label": "data(label)", "font-family": FONT, "font-size": 11, "color": C.ink, "text-valign": "bottom", "text-halign": "center",
 			"text-margin-y": 6, "text-wrap": "wrap", "text-max-width": 120, "text-background-color": C.canvas, "text-background-opacity": 0.85,
 			"text-background-padding": 1, "overlay-opacity": 0, "transition-property": "border-color border-width opacity", "transition-duration": "0.15s" } },
+		/* Fiori: type is carried by shape and colour together (never colour alone). Master entities are the primary
+		   objects, so they are larger and stronger; governance, asset and business concepts get their own shapes. */
+		{ selector: "node[!cat], node[cat = 'master']", style: { "width": 38, "height": 38, "background-color": "#d6e6fb", "border-color": "#5b8fd6", "border-width": 2 } },
 		{ selector: "node[cat = 'abstract']", style: { "border-style": "dashed", "border-color": C.abstract, "background-color": "#ece9fb" } },
-		{ selector: "node[cat = 'governance']", style: { "background-color": "#e7ebef", "border-color": C.governance } },
-		{ selector: "node[cat = 'asset']", style: { "background-color": "#e0f2ea", "border-color": C.asset } },
-		{ selector: "node[cat = 'business']", style: { "background-color": "#f8efdc", "border-color": C.business } },
+		{ selector: "node[cat = 'governance']", style: { "shape": "round-rectangle", "width": 30, "height": 30, "background-color": "#e7ebef", "border-color": C.governance } },
+		{ selector: "node[cat = 'asset']", style: { "shape": "barrel", "width": 34, "height": 30, "background-color": "#e0f2ea", "border-color": C.asset } },
+		{ selector: "node[cat = 'business']", style: { "shape": "round-diamond", "width": 34, "height": 34, "background-color": "#f8efdc", "border-color": C.business } },
 		{ selector: "node[cat ^= 'rec-']", style: { "shape": "ellipse", "width": 26, "height": 26, "padding": 0, "min-width": 26, "border-width": 2,
 			"text-valign": "bottom", "text-margin-y": 5, "text-wrap": "wrap", "text-max-width": 120, "font-size": 10, "color": "#374151",
 			"text-background-color": C.canvas, "text-background-opacity": 0.85, "text-background-padding": 1 } },
@@ -52,6 +55,8 @@ sap.ui.define([
 			"target-arrow-color": C.type, "arrow-scale": 0.8, "source-distance-from-node": 2, "target-distance-from-node": 2,
 			"label": "data(label)", "font-family": FONT, "font-size": 9, "color": C.muted, "text-rotation": "autorotate",
 			"text-background-color": C.canvas, "text-background-opacity": 0.9, "text-background-padding": 2, "overlay-opacity": 0, "loop-sweep": -40 } },
+		{ selector: "edge[kind != 'bundle']", style: { "label": "" } },
+		{ selector: "edge.showlabel, edge:selected", style: { "label": "data(label)" } },
 		{ selector: "edge[kind = 'system']", style: { "line-style": "dotted", "line-color": C.system, "target-arrow-color": C.system, "color": C.system, "width": 1.25 } },
 		{ selector: "edge[kind = 'subclass']", style: { "line-style": "dashed", "line-dash-pattern": [6, 4], "line-color": C.subclass, "target-arrow-color": C.subclass,
 			"target-arrow-shape": "triangle-backcurve", "label": "" } },
@@ -128,13 +133,14 @@ sap.ui.define([
 		selectElement: function (sId, bCenter) {
 			var cy = this._cy;
 			if (!cy) { this._pendingSelect = sId; return; }
-			cy.elements().unselect().removeClass("faded");
+			cy.elements().unselect().removeClass("faded showlabel");
 			if (!sId) { return; }
 			var el = cy.getElementById(sId);
 			if (!el || el.empty()) { return; }
 			el.select();
 			var hood = el.isNode() ? el.closedNeighborhood() : el.union(el.connectedNodes());
 			cy.elements().not(hood).addClass("faded");
+			hood.edges().addClass("showlabel");
 			if (bCenter === "focus") {
 				// Zoom to the element and its neighbours, readable but never closer than MAX_FIT.
 				cy.stop(); cy.fit(hood, 70);

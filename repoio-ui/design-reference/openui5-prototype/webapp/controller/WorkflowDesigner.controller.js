@@ -74,7 +74,7 @@ sap.ui.define([
 			this._W = W;
 			this.viewModel().setProperty("/wf", {
 				name: "", tech: "", domain: "", owner: ME, version: 2, state: "draft", readOnly: false, dirty: false, mode: "design", overlay: "",
-				canUndo: false, canRedo: false, showProps: true, rtl: this.isRtl(), canvas: { nodes: [], edges: [], width: 0, height: 0 },
+				canUndo: false, canRedo: false, showProps: false, rtl: this.isRtl(), canvas: { nodes: [], edges: [], width: 0, height: 0 },
 				sel: {}, steps: [], issues: [], issueCount: 0, msgLang: ar ? "ar" : "en", hasPublished: true, reviewer: "", roText: "",
 				test: { active: false }, compare: { active: false }, versions: [],
 				templates: W.templates.map(function (t) {

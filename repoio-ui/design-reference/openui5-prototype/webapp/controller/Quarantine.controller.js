@@ -69,7 +69,7 @@ sap.ui.define([
 				return { id: x.id, name: x.record.name || T("qa.noName"), src: that._srcName(x.source) + " · " + x.sourceKey + " · " + that._repoName(x.repo),
 					ruleText: T("go.dq." + x.rule), more: x.also.length ? T("qa.more", [x.also.length]) : "", col: r.col, value: x.record[r.col] || T("qa.empty"),
 					run: x.run, statusText: T("qa.st." + x.status), statusState: st[0], statusIcon: st[1], held: T("qa.heldAt", [x.held]),
-					highlight: r.severity === "error" ? "Error" : "Warning", checked: !!checked[x.id], navigated: x.id === that._openId,
+					highlight: x.status === "held" ? "None" : st[0], checked: !!checked[x.id], navigated: x.id === that._openId,
 					short: T("go.dq." + x.rule) + " · " + (x.record[r.col] || T("qa.empty")), statusShort: T("qa.stShort." + that._statusKey(x)) };
 			});
 			this._header(rows, f, T);

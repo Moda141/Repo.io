@@ -15,7 +15,8 @@
 		</f:title>
 		<f:content>
 			<VBox renderType="Bare">
-				<MessageStrip text="{i18n>ra.rule}" type="Information" showIcon="true" class="repoioApiStrip"/>
+				<!-- Fixed explanation: a hint line, not a MessageStrip (strips are for messages that change) -->
+				<HBox alignItems="Center" renderType="Bare" class="repoioHintLine"><core:Icon src="sap-icon://hint" decorative="true"/><Text text="{i18n>ra.rule}"/></HBox>
 				<Table items="{view>/ra/rows}" class="repoioDenseTable" popinLayout="GridSmall" sticky="ColumnHeaders,HeaderToolbar" noDataText="{i18n>um.noData}">
 					<headerToolbar>
 						<OverflowToolbar>

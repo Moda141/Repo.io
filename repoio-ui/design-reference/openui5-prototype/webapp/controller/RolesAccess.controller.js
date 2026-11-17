@@ -38,7 +38,7 @@ sap.ui.define([
 			return r.domains.map(function (id) { return that.domainName(that._doms.filter(function (x) { return x.id === id; })[0]); }).join(" · ");
 		},
 		_assign: function (r) {
-			return r.sensitive ? { text: this.text("ra.userOnly"), icon: "sap-icon://locked", state: "Warning", note: this.text("ra.assign.userOnlyNote") }
+			return r.sensitive ? { text: this.text("ra.userOnly"), icon: "sap-icon://locked", state: "None", note: this.text("ra.assign.userOnlyNote") }
 				: { text: this.text("ra.assign.units"), icon: "sap-icon://org-chart", state: "None", note: this.text("ra.assign.unitsNote") };
 		},
 		_unitPath: function (k) { var that = this; return this._idx[k].path.slice(1).map(function (x) { return that._t(that._idx[x].unit); }).join(" › "); },

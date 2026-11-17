@@ -34,7 +34,7 @@ sap.ui.define([], function () {
 		lifecycle: {
 			draft: ["None", I.draft], inReview: ["Information", I.pending], review: ["Information", I.pending],
 			scheduled: ["Information", "sap-icon://appointment"], running: ["Information", I.run],
-			published: ["Success", I.ok], deployed: ["Success", I.ok], live: ["Success", "sap-icon://broadcast"],
+			published: ["Success", I.ok], deployed: ["Success", I.ok], live: ["Success", I.ok],
 			active: ["Success", "sap-icon://status-positive"], completed: ["Success", I.ok],
 			changed: ["Warning", "sap-icon://edit-outside"], paused: ["Warning", "sap-icon://media-pause"], expiring: ["Warning", I.past],
 			expired: ["None", I.past], retired: ["None", I.locked], revoked: ["None", "sap-icon://status-inactive"]
@@ -65,7 +65,7 @@ sap.ui.define([], function () {
 		},
 		/* Quarantine queue. */
 		quarantine: {
-			held: ["Error", I.locked], ready: ["Information", "sap-icon://synchronize"],
+			held: ["None", I.locked], // the normal state of the queue: neutral (management by exception) ready: ["Information", "sap-icon://synchronize"],
 			pendingWaive: ["Warning", "sap-icon://group"], pendingDiscard: ["Warning", "sap-icon://group"]
 		}
 	};

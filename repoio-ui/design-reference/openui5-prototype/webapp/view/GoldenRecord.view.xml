@@ -60,7 +60,7 @@
 					<Label text="{i18n>gr.c.rating}"/>
 					<HBox alignItems="Center" renderType="Bare" class="repoioRtCell">
 						<RatingIndicator value="{view>/go/stars}" maxValue="5" displayOnly="true" iconSize="1.25rem"/>
-						<Button icon="sap-icon://slim-arrow-down" type="Transparent" tooltip="{i18n>rt.why}" press=".onRating" class="repoioRtBtn"/>
+						<Button icon="sap-icon://hint" type="Transparent" tooltip="{i18n>rt.why}" press=".onRating" class="repoioRtBtn"/>
 					</HBox>
 					<Text text="{view>/go/ratingText}" class="repoioUmMuted"/>
 				</VBox>
