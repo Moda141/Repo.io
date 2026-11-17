@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/HBox",
 	"repoio/proto/control/PersonLink",
 	"sap/m/Button",
-	"repoio/proto/util/repoConnect"
-], function (BaseController, MessageToast, ResponsivePopover, VBox, Text, ObjectAttribute, ObjectStatus, Label, HBox, PersonLink, Button, RepoConnect) {
+	"repoio/proto/util/repoConnect",
+	"repoio/proto/util/createFlows"
+], function (BaseController, MessageToast, ResponsivePopover, VBox, Text, ObjectAttribute, ObjectStatus, Label, HBox, PersonLink, Button, RepoConnect, Flows) {
 	"use strict";
 
 	var FAV_KEY = "repoio-proto-catalog-favs",
@@ -152,6 +153,15 @@ sap.ui.define([
 				url = window.location.href.split("#")[0] + "#/domains/" + encodeURIComponent(o.id);
 			var done = function () { MessageToast.show(that.text("cat.linkCopied")); };
 			try { navigator.clipboard.writeText(url).then(done, done); } catch (err) { done(); }
+		},
+
+		onCreateDomain: function () {
+			var that = this, V = this.viewModel();
+			Flows.createDomain(this, function (req) {
+				var p = (V.getProperty("/cat/pending") || []).concat([req]);
+				V.setProperty("/cat/pending", p);
+				V.setProperty("/cat/pendingText", that.text("cdom.pending", [p.length, p.map(function (x) { return x.name + " (" + x.id + ")"; }).join("، ")]));
+			});
 		},
 
 		/* Repositories and tables open their own pages; domains and sources show a quick view. */

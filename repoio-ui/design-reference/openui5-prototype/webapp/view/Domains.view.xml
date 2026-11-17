@@ -37,11 +37,13 @@
 						<IconTabFilter key="recent" text="{i18n>cat.tab.recent}"/>
 					</items>
 				</IconTabBar>
+				<MessageStrip text="{view>/cat/pendingText}" type="Information" showIcon="true" visible="{= !!${view>/cat/pendingText} }" class="repoioCatPending"/>
 				<OverflowToolbar style="Clear" class="repoioCatBar">
 					<ToggleButton icon="sap-icon://filter" type="Transparent" pressed="{view>/cat/showFilters}" tooltip="{i18n>cat.filters}"/>
 					<Title text="{view>/cat/resultText}" level="H2" titleStyle="H6"/>
 					<Link text="{i18n>cat.clearAll}" visible="{= ${view>/cat/active} > 0 }" press=".onClearFacets"/>
 					<ToolbarSpacer/>
+					<Button text="{i18n>cdom.button}" icon="sap-icon://add" type="Transparent" press=".onCreateDomain"/>
 					<Button icon="sap-icon://refresh" type="Transparent" tooltip="{i18n>cat.refresh}" press=".onRefresh"/>
 					<SegmentedButton selectedKey="{view>/cat/mode}">
 						<items>

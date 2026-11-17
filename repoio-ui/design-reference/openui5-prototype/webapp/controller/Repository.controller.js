@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"repoio/proto/util/repoConnect",
 	"repoio/proto/util/rating",
-	"repoio/proto/util/semantic"
-], function (BaseController, MessageToast, RepoConnect, Rating, Sem) {
+	"repoio/proto/util/semantic",
+	"repoio/proto/util/createFlows"
+], function (BaseController, MessageToast, RepoConnect, Rating, Sem, Flows) {
 	"use strict";
 
 	var HEALTH_ICON = { healthy: "sap-icon://sys-enter-2", attention: "sap-icon://alert", draft: "sap-icon://edit", archived: "sap-icon://locked" },
@@ -126,7 +127,7 @@ sap.ui.define([
 				capBar: bar(deployed ? r.golden : 0, r.cap, deployed ? n(r.golden) : "0", T("rp.capOf", [n(r.cap)])),
 				avgStars: Math.round(avg * 2) / 2, avgText: gr.length ? T("rp.avg", [avg.toFixed(1), gr.length]) : T("rp.noRatings"), ratingBar: ratingBar,
 				attrsTab: T("rp.tab.attrs", [this._attrs.length]), goldenTab: T("rp.tab.golden", [gr.length]),
-				sourcesTab: T("rp.tab.sources", [r.sourceIds.length]), tablesTab: T("rp.tab.tables", [tables.length]), gsort: "rating",
+				sourcesTab: T("rp.tab.sources", [r.sourceIds.length]), sourcesTitle: T("cds.listTitle", [r.sourceIds.length]), tablesTab: T("rp.tab.tables", [tables.length]), gsort: "rating",
 				kpis: [
 					{ label: T("domains.col.status"), text: T("health." + r.healthKey), state: r.healthState, icon: HEALTH_ICON[r.healthKey] || "sap-icon://status-inactive" },
 					{ label: T("repo.golden"), value: deployed ? n(r.golden) : "—", unit: "", state: "None" },
@@ -150,8 +151,10 @@ sap.ui.define([
 				goldenFooter: T("repo.goldenFooter", [gr.length, n(r.golden)]),
 				sources: r.sourceRows.slice().sort(function (a, b) { return a.priority - b.priority; }).map(function (s) {
 					return { name: s.name, host: s.host, type: s.type, priority: String(s.priority), tables: String(s.tables), rowsText: n(s.rows),
-						qualityText: that.fmt.pct(s.quality), qNum: s.quality.toFixed(1), qualityState: s.qualityState, contribText: T("rp.contrib", [s.contributes, s.goldenCount]),
-						sync: s.sync, stateText: T("rp.sync." + s.state), state: s.state === "None" ? "None" : s.state, stateIcon: STATE_ICON[s.state] || "" };
+						qualityText: that.fmt.pct(s.quality), qNum: s.quality === null ? "—" : s.quality.toFixed(1), qualityState: s.qualityState,
+						contribText: s.pending ? "—" : T("rp.contrib", [s.contributes, s.goldenCount]),
+						sync: s.sync, stateText: s.pending ? T("cds.pending") : T("rp.sync." + s.state), state: s.state === "None" ? "None" : s.state,
+						stateIcon: s.pending ? "sap-icon://pending" : STATE_ICON[s.state] || "" };
 				}),
 				tables: tables
 			});
@@ -185,6 +188,10 @@ sap.ui.define([
 			this.router().navTo("table", { source: o.source, schema: o.schema, table: o.table });
 		},
 		onConnect: function () { this._openRepoConnect(this._id); },
+		onAddSource: function () {
+			var that = this;
+			Flows.addDataSource(this, this._id, function () { that._show(); });
+		},
 		onOpenGolden: function () { this.router().navTo("goldenRecords", { repo: this._id }); },
 		onOpenModel: function () { this.router().navTo("models", { model: this._model ? this._model.key : undefined }); },
 		onRequestModel: function () { MessageToast.show(this.text("repo.requestChangeToast")); },

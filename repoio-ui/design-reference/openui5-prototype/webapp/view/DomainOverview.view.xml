@@ -27,6 +27,7 @@
 					<Text text="{view>/do/filterText}" class="repoioUmMuted"/>
 				</f:snappedContent>
 				<f:actions>
+					<Button text="{i18n>crepo.button}" icon="sap-icon://add" type="Emphasized" press=".onCreateRepo"/>
 					<Button icon="sap-icon://action" type="Transparent" tooltip="{i18n>gr.share}" press=".onShare"/>
 				</f:actions>
 			</f:DynamicPageTitle>
@@ -74,7 +75,7 @@
 									</Select>
 									<core:InvisibleText id="doGoldenBy" text="{i18n>do.c.golden}"/>
 									<Label text="{view>/do/c/golden/chartTitle}" class="repoioDoChartTitle"/>
-									<rc:EChart option="{view>/do/c/golden/option}" width="100%" height="12rem" ariaLabel="{i18n>do.c.golden}"/>
+									<rc:EChart option="{view>/do/c/golden/option}" width="100%" height="9.5rem" ariaLabel="{i18n>do.c.golden}"/>
 								</VBox>
 							</f:content>
 						</f:Card>
@@ -95,7 +96,7 @@
 										<core:Item key="source" text="{i18n>do.by.source}"/>
 									</Select>
 									<Label text="{view>/do/c/quality/chartTitle}" class="repoioDoChartTitle"/>
-									<rc:EChart option="{view>/do/c/quality/option}" width="100%" height="12rem" ariaLabel="{i18n>do.c.quality}"/>
+									<rc:EChart option="{view>/do/c/quality/option}" width="100%" height="9.5rem" ariaLabel="{i18n>do.c.quality}"/>
 								</VBox>
 							</f:content>
 						</f:Card>
@@ -111,7 +112,7 @@
 										<core:Item key="kind" text="{i18n>do.by.kind}"/>
 									</Select>
 									<Label text="{view>/do/c/match/chartTitle}" class="repoioDoChartTitle"/>
-									<rc:EChart option="{view>/do/c/match/option}" width="100%" height="12rem" ariaLabel="{i18n>do.c.match}"/>
+									<rc:EChart option="{view>/do/c/match/option}" width="100%" height="9.5rem" ariaLabel="{i18n>do.c.match}"/>
 								</VBox>
 							</f:content>
 						</f:Card>
@@ -127,7 +128,7 @@
 										<core:Item key="source" text="{i18n>do.by.source}"/>
 									</Select>
 									<Label text="{view>/do/c/qa/chartTitle}" class="repoioDoChartTitle"/>
-									<rc:EChart option="{view>/do/c/qa/option}" width="100%" height="12rem" ariaLabel="{i18n>do.c.quarantine}"/>
+									<rc:EChart option="{view>/do/c/qa/option}" width="100%" height="9.5rem" ariaLabel="{i18n>do.c.quarantine}"/>
 								</VBox>
 							</f:content>
 						</f:Card>
@@ -178,7 +179,7 @@
 							</f:header>
 							<f:content>
 								<VBox renderType="Bare" class="repoioDoBody">
-									<rc:EChart option="{view>/do/c/src/option}" width="100%" height="15rem" ariaLabel="{i18n>do.c.sources}"/>
+									<rc:EChart option="{view>/do/c/src/option}" width="100%" height="12rem" ariaLabel="{i18n>do.c.sources}"/>
 								</VBox>
 							</f:content>
 						</f:Card>

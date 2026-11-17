@@ -1,8 +1,9 @@
 sap.ui.define([
 	"repoio/proto/controller/BaseController",
 	"repoio/proto/util/semantic",
-	"sap/m/MessageToast"
-], function (BaseController, Sem, MessageToast) {
+	"sap/m/MessageToast",
+	"repoio/proto/util/createFlows"
+], function (BaseController, Sem, MessageToast, Flows) {
 	"use strict";
 
 	/* Domain overview (SAP Fiori Overview Page). Reads the domain, its repositories and the stewardship queues, and
@@ -66,7 +67,7 @@ sap.ui.define([
 			m.setProperty("/do/repos", repos.map(function (r) {
 				return { id: r.id, name: r.name, healthText: T("health." + r.healthKey),
 					healthState: r.healthKey === "healthy" ? "Success" : r.healthState, healthIcon: HEALTH_ICON[r.healthKey] || "",
-					meta: T("do.repoMeta", [that.fmt.num(r.golden), r.quality.toFixed(1), r.sourceIds.length]) };
+					meta: T("do.repoMeta", [that.fmt.num(r.golden), r.quality === null ? "—" : r.quality.toFixed(1) + "%", r.sourceIds.length]) };
 			}));
 			m.setProperty("/do/links", this._links(repos[0] || all[0]));
 
@@ -103,20 +104,21 @@ sap.ui.define([
 			var that = this, T = this.text.bind(this), m = this.viewModel(), by = m.getProperty("/do/c/quality/by"),
 				target = this.data().getProperty("/target") || 95, rows;
 			// Weighted by golden records: a large repository counts more than an empty draft one
-			var w = repos.reduce(function (a, r) { return a + Math.max(r.golden, 1); }, 0),
-				avg = repos.length ? repos.reduce(function (a, r) { return a + r.quality * Math.max(r.golden, 1); }, 0) / w : 0;
+			var qr = repos.filter(function (r) { return r.quality !== null; }),
+				w = qr.reduce(function (a, r) { return a + Math.max(r.golden, 1); }, 0),
+				avg = qr.length ? qr.reduce(function (a, r) { return a + r.quality * Math.max(r.golden, 1); }, 0) / w : 0;
 			if (by === "source") {
 				var acc = {};
-				repos.forEach(function (r) { (r.sourceRows || []).forEach(function (s) {
+				qr.forEach(function (r) { (r.sourceRows || []).filter(function (s) { return s.quality !== null; }).forEach(function (s) {
 					acc[s.id] = acc[s.id] || { q: 0, n: 0 }; acc[s.id].q += s.quality * s.rows; acc[s.id].n += s.rows; }); });
 				rows = Object.keys(acc).map(function (k) { return { name: that._srcName(k), v: +(acc[k].q / Math.max(acc[k].n, 1)).toFixed(1) }; });
 			} else {
-				rows = repos.map(function (r) { return { name: r.name, v: r.quality }; });
+				rows = qr.map(function (r) { return { name: r.name, v: r.quality }; });
 			}
 			var st = Sem.quality(avg);
 			m.setProperty("/do/c/quality", Object.assign(m.getProperty("/do/c/quality"), {
-				num: repos.length ? avg.toFixed(1) : "—", state: { Success: "Good", Warning: "Critical", Error: "Error" }[st] || "Neutral",
-				trend: "None", target: String(target), gap: repos.length ? (avg - target).toFixed(1) : "—",
+				num: qr.length ? avg.toFixed(1) : "—", state: { Success: "Good", Warning: "Critical", Error: "Error" }[st] || "Neutral",
+				trend: "None", target: String(target), gap: qr.length ? (avg - target).toFixed(1) : "—",
 				sub: T("do.sortAsc"), details: T("do.c.qualityDetails"),
 				chartTitle: by === "source" ? T("do.chart.qualitySource") : T("do.chart.qualityRepo"),
 				option: this._bar(rows.sort(function (a, b) { return a.v - b.v; }), target, true) }));
@@ -208,6 +210,10 @@ sap.ui.define([
 			].map(function (l) { l.repo = r ? r.id : ""; l.domain = k; return l; });
 		},
 
+		onCreateRepo: function () {
+			var that = this;
+			Flows.createRepository(this, this._d.id, function (id) { that.router().navTo("repository", { repo: id }); });
+		},
 		onFilter: function () { this._apply(); },
 		onClear: function () { this.viewModel().setProperty("/do/f", { repos: [], sources: [] }); this._apply(); },
 		onBy: function () { this._apply(); },

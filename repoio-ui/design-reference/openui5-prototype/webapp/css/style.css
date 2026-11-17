@@ -1512,9 +1512,23 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioDoItem { padding-block: 0.5rem; width: 100%; gap: 0.125rem; }
 .repoioDoLinkIcon { font-size: 1.125rem; color: var(--sapContent_IconColor, #0064d9); margin-inline-end: 0.75rem; flex: none; }
 .repoioDoGrid { display: flex; gap: 1rem; padding: 0.75rem 0 1rem; }
-.repoioDoGrid > .repoioDoCard { width: calc((100% - 3rem) / 4) !important; min-width: 16rem; height: auto; flex: 0 0 auto; }
+
 .repoioDoBody > .repoioChart { width: 100% !important; align-self: stretch; }
-@media (max-width: 1280px) { .repoioDoGrid > .repoioDoCard { width: calc((100% - 2rem) / 3) !important; } }
-@media (max-width: 960px) { .repoioDoGrid > .repoioDoCard { width: calc((100% - 1rem) / 2) !important; } }
-@media (max-width: 600px) { .repoioDoGrid > .repoioDoCard { width: 100% !important; } }
+
+
+
 .repoioDoCard .sapFCardContent > .repoioDoBody, .repoioDoCard .sapFCardContent > .repoioDoList { width: 100%; box-sizing: border-box; flex: 1 1 auto; }
+
+/* Overview Page card size: fixed-width cards (like SAP OVP) instead of stretching to a quarter of the screen,
+   and a header KPI that is clear but not dominant */
+.repoioDoGrid { gap: 0.75rem; }
+.repoioDoGrid > .repoioDoCard { width: 18.5rem !important; height: auto; flex: 0 0 auto; }
+@media (max-width: 600px) { .repoioDoGrid > .repoioDoCard { width: 100% !important; } }
+.repoioDoCard .sapMNCValue, .repoioDoCard .sapMNCLargeFontSize { font-size: 1.5rem !important; line-height: 1.75rem !important; }
+.repoioDoCard .sapMNCIndScale { font-size: 0.875rem !important; }
+.repoioDoCard .sapFCardNumericHeader { padding-bottom: 0.5rem; }
+.repoioDoBody { padding: 0 0.75rem 0.5rem; }
+.repoioDoBy { margin-bottom: 0.25rem; }
+.repoioDoCard .sapFCardHeaderTitle { font-size: 0.9375rem; }
+.repoioDoCard .sapFCardNumericIndicatorsMain, .repoioDoCard .sapMNCInner, .repoioDoCard .sapMNCValue { white-space: nowrap; flex-wrap: nowrap; }
+.repoioDoCard .sapMNCValue { align-items: baseline; } .repoioDoCard .sapMNCIndScale { display: flex !important; align-items: flex-end; height: auto !important; margin-inline-start: 0.25rem; }

@@ -231,7 +231,14 @@
 			<uxap:ObjectPageSection id="secSources" title="{view>/rp/sourcesTab}" titleUppercase="false">
 				<uxap:subSections>
 					<uxap:ObjectPageSubSection title="{i18n>repo.sec.sources}" titleUppercase="false" showTitle="false">
-						<t:Table rows="{view>/rp/sources}" selectionMode="None" enableColumnReordering="true" class="repoioGrid repoioGridCard">
+						<t:Table rows="{view>/rp/sources}" selectionMode="None" enableColumnReordering="true" class="repoioGrid repoioGridCard" noData="{i18n>cds.none}">
+							<t:extension>
+								<OverflowToolbar style="Clear">
+									<Title text="{view>/rp/sourcesTitle}" level="H3" titleStyle="H6"/>
+									<ToolbarSpacer/>
+									<Button text="{i18n>cds.button}" icon="sap-icon://add" type="Transparent" press=".onAddSource"/>
+								</OverflowToolbar>
+							</t:extension>
 							<t:rowMode><trm:Fixed rowCount="{= Math.max(1, Math.min(${view>/rp/sources}.length, 15)) }" rowContentHeight="46"/></t:rowMode>
 							<t:columns>
 								<t:Column minWidth="120">
@@ -262,7 +269,7 @@
 								</t:Column>
 								<t:Column minWidth="120" hAlign="Center">
 									<t:label><Label text="{i18n>domains.col.quality}"/></t:label>
-									<t:template><GenericTag text="{i18n>tag.dq}" status="{view>qualityState}" design="StatusIconHidden" class="repoioKpiTag"><value><ObjectNumber number="{view>qNum}" unit="%" state="{view>qualityState}" emphasized="false"/></value></GenericTag></t:template>
+									<t:template><HBox renderType="Bare"><Text text="—" visible="{= ${view>qNum} === '—' }"/><GenericTag visible="{= ${view>qNum} !== '—' }" text="{i18n>tag.dq}" status="{view>qualityState}" design="StatusIconHidden" class="repoioKpiTag"><value><ObjectNumber number="{view>qNum}" unit="%" state="{view>qualityState}" emphasized="false"/></value></GenericTag></HBox></t:template>
 								</t:Column>
 								<t:Column minWidth="120">
 									<t:label><Label text="{i18n>repo.contributes}"/></t:label>
