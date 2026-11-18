@@ -16,7 +16,7 @@ sap.ui.define([
 	/* Source table (SAP Datasphere Data Builder table editor pattern). Read only; sample values from model/tables.json. */
 	return BaseController.extend("repoio.proto.controller.Table", {
 		onInit: function () {
-			this.viewModel().setProperty("/tb", { tab: "general", preview: false, pv: "data", max: false, tf: "all", cq: "" });
+			this.viewModel().setProperty("/tb", { preview: false, pv: "data", max: false, tf: "all", cq: "" });
 			this.router().getRoute("table").attachPatternMatched(this._onMatched, this);
 		},
 		_onMatched: function (oEvent) {
@@ -37,6 +37,7 @@ sap.ui.define([
 			this._X = X;
 			this._cols = X.columns.map(function (c) {
 				return { key: c.key, label: ar ? c.ar : c.en, name: c.name, type: c.type, notNull: c.notNull, pii: c.pii,
+					semantic: c.semantic || "none", semText: T("tb.sem." + (c.semantic || "none")), labelCol: c.labelCol || "",
 					termText: c.term ? (ar ? c.termAr : c.termEn) : "", nullText: c.nullPct.toFixed(1) + "%", nullNum: c.nullPct.toFixed(1), nullKpi: c.nullPct >= 1,
 					nullState: c.nullPct >= 20 ? "Error" : c.nullPct >= 5 ? "Warning" : "Success",
 					usedText: c.usedIn.length ? c.usedIn.map(function (u) { return u.repo; }).join(", ") : T("src.notUsed") };
@@ -61,8 +62,8 @@ sap.ui.define([
 			});
 			var g = function (label, value, opt) { return Object.assign({ label: T(label), value: value, type: "text", dir: "Inherit" }, opt || {}); };
 			this.viewModel().setProperty("/tb", Object.assign(this.viewModel().getProperty("/tb"), {
-				tab: this.viewModel().getProperty("/tb/tab") || "general", cq: "", tf: "all",
-				name: tbl.name, schema: tbl.schema, sourceName: S.name, sourceId: a.source,
+				cq: "", tf: "all",
+				name: tbl.name, techName: a.table.toUpperCase(), schema: tbl.schema, sourceName: S.name, sourceId: a.source,
 				storageText: T("tb.storage." + X.storage), storageIcon: X.storage === "file" ? "sap-icon://document" : "sap-icon://cloud",
 				qualityText: this.fmt.pct(score), qNum: score.toFixed(1), qualityState: tbl.qualityState,
 				general: [
@@ -99,6 +100,10 @@ sap.ui.define([
 			}));
 			this._trend(X, target);
 			this._grids();
+			// A new table opens at the top, on General
+			var oOp = this.byId("op");
+			oOp.setSelectedSection(oOp.getSections()[0]);
+			oOp.scrollToSection(oOp.getSections()[0].getId(), 0);
 		},
 
 		/* Data preview: grid tables (sap.ui.table) built once and refilled per table. Errors list the failed check as a token

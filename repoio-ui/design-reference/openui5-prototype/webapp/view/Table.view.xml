@@ -1,7 +1,7 @@
 <mvc:View controllerName="repoio.proto.controller.Table"
-	xmlns="sap.m" xmlns:t="sap.ui.table" xmlns:trm="sap.ui.table.rowmodes" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control" height="100%">
+	xmlns="sap.m" xmlns:t="sap.ui.table" xmlns:trm="sap.ui.table.rowmodes" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control" height="100%">
 	<!-- Source table, laid out like the SAP Datasphere Data Builder table editor (Repo.io look): grouped toolbar, title,
-	     tabs (General, Columns, Associations, Business purpose, Data quality, Dependent objects) and a data preview
+	     one scrolling page with section links (General, Columns, Associations, Business purpose, Data quality, Dependent objects) and a data preview
 	     docked at the bottom (Data / Errors). Read only: the source system owns the table; descriptions and terms are
 	     changed through a request, quality checks run as a Great Expectations job. -->
 	<VBox height="100%" renderType="Bare" class="repoioTb">
@@ -33,93 +33,126 @@
 			</HBox>
 		</HBox>
 
-		<ScrollContainer vertical="true" horizontal="false" height="100%" class="repoioTbMain">
-			<VBox renderType="Bare" class="repoioTbHead">
-				<Breadcrumbs currentLocationText="{view>/tb/name}" class="repoioTbCrumbs">
-					<Link text="{i18n>nav.domains}" press=".onToCatalog"/>
-					<Link text="{view>/tb/sourceName}" press=".onToSource"/>
-					<Link text="{view>/tb/schema}" press=".onToSource"/>
-				</Breadcrumbs>
-				<HBox alignItems="Center" renderType="Bare">
-					<core:Icon src="sap-icon://table-view" size="1.25rem" class="repoioTbIco" decorative="true"/>
-					<Title text="{view>/tb/name}" level="H1" titleStyle="H3" wrapping="true"/>
-				</HBox>
-			</VBox>
-			<IconTabBar id="tbTabs" selectedKey="{view>/tb/tab}" expandable="false" headerBackgroundDesign="Solid" backgroundDesign="Transparent"
-				applyContentPadding="false" class="repoioTbTabs">
-				<items>
-					<!-- General -->
-					<IconTabFilter key="general" text="{i18n>tb.tab.general}">
-						<VBox class="repoioTbCard" renderType="Bare">
-							<FlexBox wrap="Wrap" class="repoioTbFields" renderType="Bare" items="{path: 'view>/tb/general', templateShareable: false}">
-								<VBox class="repoioTbField" renderType="Bare">
-									<Label text="{view>label}"/>
-									<Text text="{view>value}" textDirection="{view>dir}" visible="{= ${view>type} === 'text' }" class="{= ${view>mono} ? 'repoioMono' : '' }"/>
-									<Switch state="{view>on}" enabled="false" visible="{= ${view>type} === 'switch' }" customTextOn=" " customTextOff=" "/>
-									<rc:PersonLink name="{view>value}" visible="{= ${view>type} === 'person' }"/>
+		<!-- One scrolling page with section links (Object Page anchor bar), like the Datasphere table editor -->
+		<uxap:ObjectPageLayout id="op" upperCaseAnchorBar="false" showFooter="false" headerContentPinnable="false" toggleHeaderOnTitleClick="false"
+			useIconTabBar="false" showAnchorBarPopover="false" class="repoioTbMain repoioTbOp">
+			<uxap:headerTitle>
+				<uxap:ObjectPageDynamicHeaderTitle>
+					<uxap:breadcrumbs>
+						<Breadcrumbs currentLocationText="{view>/tb/name}">
+							<Link text="{i18n>nav.domains}" press=".onToCatalog"/>
+							<Link text="{view>/tb/sourceName}" press=".onToSource"/>
+							<Link text="{view>/tb/schema}" press=".onToSource"/>
+						</Breadcrumbs>
+					</uxap:breadcrumbs>
+					<uxap:expandedHeading>
+						<VBox renderType="Bare">
+							<HBox alignItems="Center" renderType="Bare">
+								<core:Icon src="sap-icon://table-view" size="1.125rem" class="repoioTbIco" decorative="true"/>
+								<Title text="{view>/tb/name}" level="H1" titleStyle="H4" wrapping="true"/>
+							</HBox>
+							<Text text="{view>/tb/techName}" class="repoioMono repoioUmMuted repoioTbTech" textDirection="LTR"/>
+						</VBox>
+					</uxap:expandedHeading>
+					<uxap:snappedHeading>
+						<HBox alignItems="Center" renderType="Bare">
+							<core:Icon src="sap-icon://table-view" size="1.125rem" class="repoioTbIco" decorative="true"/>
+							<Title text="{view>/tb/name}" level="H1" titleStyle="H4" wrapping="false"/>
+						</HBox>
+					</uxap:snappedHeading>
+				</uxap:ObjectPageDynamicHeaderTitle>
+			</uxap:headerTitle>
+			<uxap:sections>
+				<uxap:ObjectPageSection title="{i18n>tb.tab.general}" titleUppercase="false" showTitle="false">
+					<uxap:subSections><uxap:ObjectPageSubSection>
+						<VBox renderType="Bare">
+							<!-- Fields stacked label-over-value, as in the Datasphere table editor. Read only: the boxes are display fields. -->
+							<VBox class="repoioTbCard repoioTbFormCard" renderType="Bare">
+								<VBox renderType="Bare" class="repoioTbForm" items="{path: 'view>/tb/general', templateShareable: false}">
+									<VBox class="repoioTbFormField" renderType="Bare">
+										<Label text="{view>label}"/>
+										<Input value="{view>value}" editable="false" textDirection="{view>dir}" visible="{= ${view>type} === 'text' }"
+											class="{= ${view>mono} ? 'repoioMono' : '' }"/>
+										<Switch state="{view>on}" enabled="false" customTextOn=" " customTextOff=" " visible="{= ${view>type} === 'switch' }"/>
+										<rc:PersonLink name="{view>value}" visible="{= ${view>type} === 'person' }"/>
+									</VBox>
 								</VBox>
-							</FlexBox>
+								<MessageStrip text="{i18n>tb.readOnly}" type="Information" showIcon="true" class="repoioTbFormNote"/>
+							</VBox>
 						</VBox>
-					</IconTabFilter>
-
-					<!-- Columns -->
-					<IconTabFilter key="columns" text="{view>/tb/colsTab}">
-						<VBox class="repoioTbCard" renderType="Bare">
-							<t:Table rows="{view>/tb/columns}" selectionMode="None" enableColumnReordering="true" class="repoioGrid repoioGridCard" noData="{i18n>lin.noColumns}">
-								<t:rowMode><trm:Fixed rowCount="{= Math.max(1, Math.min(${view>/tb/columns}.length, 15)) }" rowContentHeight="46"/></t:rowMode>
-								<t:extension>
-									<OverflowToolbar style="Clear">
-																			<Title text="{view>/tb/colsTab}" level="H2" titleStyle="H5"/>
-																			<ToolbarSpacer/>
-																			<SearchField value="{view>/tb/cq}" liveChange=".onColSearch" placeholder="{i18n>lin.find}" width="14rem"/>
-																		</OverflowToolbar>
-								</t:extension>
-								<t:columns>
-									<t:Column width="2.5rem" hAlign="Center">
-										<t:label><Label text=""/></t:label>
-										<t:template><core:Icon src="sap-icon://key" visible="{view>key}" tooltip="{i18n>tb.key}" class="repoioTbKey"/></t:template>
-									</t:Column>
-									<t:Column minWidth="120">
-										<t:label><Label text="{i18n>tb.c.name}"/></t:label>
-										<t:template><VBox renderType="Bare">
-																					<HBox alignItems="Center" renderType="Bare">
-																						<Text text="{view>label}" class="repoioGrName"/>
-																						<ObjectStatus text="{i18n>tb.pii}" icon="sap-icon://private" state="Information" visible="{view>pii}" class="repoioClassTag"/>
-																					</HBox>
-																					<Text text="{view>name}" class="repoioMono repoioUmMuted" textDirection="LTR"/>
-																				</VBox></t:template>
-									</t:Column>
-									<t:Column minWidth="120">
-										<t:label><Label text="{i18n>tb.c.type}"/></t:label>
-										<t:template><Text text="{view>type}" class="repoioMono" textDirection="LTR"/></t:template>
-									</t:Column>
-									<t:Column minWidth="120">
-										<t:label><Label text="{i18n>tb.c.notNull}"/></t:label>
-										<t:template><Text text="{= ${view>notNull} ? ${i18n>common.yes} : ${i18n>common.no} }"/></t:template>
-									</t:Column>
-									<t:Column minWidth="120">
-										<t:label><Label text="{i18n>tbl.term}"/></t:label>
-										<t:template><Text text="{= ${view>termText} || ${i18n>tbl.notLinked} }" class="{= ${view>termText} ? '' : 'repoioUmMuted' }"/></t:template>
-									</t:Column>
-									<t:Column minWidth="120" hAlign="End">
-										<t:label><Label text="{i18n>tbl.empty}"/></t:label>
-										<t:template><HBox renderType="Bare" justifyContent="End">
-											<GenericTag text="{i18n>tag.empty}" status="{view>nullState}" design="StatusIconHidden" visible="{view>nullKpi}" class="repoioKpiTag"><value><ObjectNumber number="{view>nullNum}" unit="%" state="{view>nullState}" emphasized="false"/></value></GenericTag>
-											<Text text="{view>nullText}" visible="{= !${view>nullKpi} }" textDirection="LTR"/>
-										</HBox></t:template>
-									</t:Column>
-									<t:Column minWidth="120">
-										<t:label><Label text="{i18n>src.usedIn}"/></t:label>
-										<t:template><Text text="{view>usedText}"/></t:template>
-									</t:Column>
-								</t:columns>
-							</t:Table>
+					</uxap:ObjectPageSubSection></uxap:subSections>
+				</uxap:ObjectPageSection>
+				<uxap:ObjectPageSection title="{view>/tb/colsTab}" titleUppercase="false">
+					<uxap:subSections><uxap:ObjectPageSubSection>
+						<VBox renderType="Bare">
+							<!-- Column list laid out like Datasphere attributes: business and technical name, data type, semantic type, label column -->
+							<VBox class="repoioTbCard" renderType="Bare">
+								<t:Table rows="{view>/tb/columns}" selectionMode="None" enableColumnReordering="true" class="repoioGrid repoioGridCard" noData="{i18n>lin.noColumns}">
+									<t:rowMode><trm:Fixed rowCount="{= Math.max(1, Math.min(${view>/tb/columns}.length, 15)) }"/></t:rowMode>
+									<t:extension>
+										<OverflowToolbar style="Clear">
+											<ToolbarSpacer/>
+											<SearchField value="{view>/tb/cq}" liveChange=".onColSearch" placeholder="{i18n>lin.find}" width="14rem"/>
+										</OverflowToolbar>
+									</t:extension>
+									<t:columns>
+										<t:Column width="2.75rem" hAlign="Center">
+											<t:label><core:Icon src="sap-icon://key" tooltip="{i18n>tb.key}" class="repoioTbKeyHead"/></t:label>
+											<t:template><core:Icon src="sap-icon://key" visible="{view>key}" tooltip="{i18n>tb.key}" class="repoioTbKey"/></t:template>
+										</t:Column>
+										<t:Column minWidth="150" width="13rem">
+											<t:label><Label text="{i18n>dsp.businessName}"/></t:label>
+											<t:template><HBox alignItems="Center" renderType="Bare">
+												<Text text="{view>label}" wrapping="false"/>
+												<ObjectStatus text="{i18n>tb.pii}" icon="sap-icon://private" state="Information" visible="{view>pii}" class="repoioClassTag"/>
+											</HBox></t:template>
+										</t:Column>
+										<t:Column minWidth="130" width="11rem">
+											<t:label><Label text="{i18n>dsp.technicalName}"/></t:label>
+											<t:template><Text text="{view>name}" class="repoioMono" textDirection="LTR" wrapping="false"/></t:template>
+										</t:Column>
+										<t:Column minWidth="110" width="9rem">
+											<t:label><Label text="{i18n>tb.c.type}"/></t:label>
+											<t:template><Text text="{view>type}" class="repoioMono" textDirection="LTR" wrapping="false"/></t:template>
+										</t:Column>
+										<t:Column minWidth="150" width="14rem">
+											<t:label><Label text="{i18n>tb.c.semantic}"/></t:label>
+											<t:template><Text text="{view>semText}" wrapping="false" class="{= ${view>semantic} === 'none' ? 'repoioUmMuted' : '' }"/></t:template>
+										</t:Column>
+										<t:Column minWidth="120" width="10rem">
+											<t:label><Label text="{i18n>tb.c.labelCol}"/></t:label>
+											<t:template><Text text="{= ${view>labelCol} || '—' }" class="{= ${view>labelCol} ? 'repoioMono' : 'repoioUmMuted' }" textDirection="LTR" wrapping="false"/></t:template>
+										</t:Column>
+										<t:Column width="6.5rem" hAlign="Center">
+											<t:label><Label text="{i18n>tb.c.notNull}"/></t:label>
+											<t:template><CheckBox selected="{view>notNull}" displayOnly="true" ariaLabelledBy="tbNotNullLbl"/></t:template>
+										</t:Column>
+										<t:Column minWidth="130" width="11rem">
+											<t:label><Label text="{i18n>tbl.term}"/></t:label>
+											<t:template><Text text="{= ${view>termText} || ${i18n>tbl.notLinked} }" wrapping="false" class="{= ${view>termText} ? '' : 'repoioUmMuted' }"/></t:template>
+										</t:Column>
+										<t:Column minWidth="100" width="8rem" hAlign="End">
+											<t:label><Label text="{i18n>tbl.empty}"/></t:label>
+											<t:template><HBox renderType="Bare" justifyContent="End">
+												<GenericTag text="{i18n>tag.empty}" status="{view>nullState}" design="StatusIconHidden" visible="{view>nullKpi}" class="repoioKpiTag"><value><ObjectNumber number="{view>nullNum}" unit="%" state="{view>nullState}" emphasized="false"/></value></GenericTag>
+												<Text text="{view>nullText}" visible="{= !${view>nullKpi} }" textDirection="LTR"/>
+											</HBox></t:template>
+										</t:Column>
+										<t:Column minWidth="140">
+											<t:label><Label text="{i18n>src.usedIn}"/></t:label>
+											<t:template><Text text="{view>usedText}" wrapping="false"/></t:template>
+										</t:Column>
+									</t:columns>
+								</t:Table>
+								<core:InvisibleText id="tbNotNullLbl" text="{i18n>tb.c.notNull}"/>
+							</VBox>
 						</VBox>
-					</IconTabFilter>
-
-					<!-- Associations -->
-					<IconTabFilter key="assoc" text="{view>/tb/assocTab}">
-						<VBox class="repoioTbCard" renderType="Bare">
+					</uxap:ObjectPageSubSection></uxap:subSections>
+				</uxap:ObjectPageSection>
+				<uxap:ObjectPageSection title="{view>/tb/assocTab}" titleUppercase="false">
+					<uxap:subSections><uxap:ObjectPageSubSection>
+						<VBox renderType="Bare">
+							<VBox class="repoioTbCard" renderType="Bare">
 							<t:Table rows="{view>/tb/associations}" selectionMode="None" enableColumnReordering="true" class="repoioGrid repoioGridCard" noData="{i18n>tb.noAssoc}">
 								<t:rowMode><trm:Fixed rowCount="{= Math.max(1, Math.min(${view>/tb/associations}.length, 15)) }"/></t:rowMode>
 								<t:columns>
@@ -141,11 +174,13 @@
 								</t:columns>
 							</t:Table>
 						</VBox>
-					</IconTabFilter>
-
-					<!-- Business purpose -->
-					<IconTabFilter key="purpose" text="{i18n>tb.tab.purpose}">
-						<VBox class="repoioTbCard" renderType="Bare">
+						</VBox>
+					</uxap:ObjectPageSubSection></uxap:subSections>
+				</uxap:ObjectPageSection>
+				<uxap:ObjectPageSection title="{i18n>tb.tab.purpose}" titleUppercase="false">
+					<uxap:subSections><uxap:ObjectPageSubSection>
+						<VBox renderType="Bare">
+							<VBox class="repoioTbCard" renderType="Bare">
 							<Label text="{i18n>tbl.sec.desc}"/>
 							<Text text="{view>/tb/desc}" class="repoioTbDesc"/>
 							<Text text="{view>/tb/descUpdated}" class="repoioUmMuted sapUiSmallMarginBottom"/>
@@ -176,11 +211,13 @@
 							</FlexBox>
 							<MessageStrip text="{i18n>tb.purposeNote}" type="Information" showIcon="true" class="sapUiSmallMarginTop"/>
 						</VBox>
-					</IconTabFilter>
-
-					<!-- Data quality -->
-					<IconTabFilter key="dq" text="{i18n>tbl.sec.dq}">
-						<VBox class="repoioTbCard" renderType="Bare">
+						</VBox>
+					</uxap:ObjectPageSubSection></uxap:subSections>
+				</uxap:ObjectPageSection>
+				<uxap:ObjectPageSection title="{i18n>tbl.sec.dq}" titleUppercase="false">
+					<uxap:subSections><uxap:ObjectPageSubSection>
+						<VBox renderType="Bare">
+							<VBox class="repoioTbCard" renderType="Bare">
 							<FlexBox wrap="Wrap" class="repoioTbKpis" renderType="Bare" items="{path: 'view>/tb/kpis', templateShareable: false}">
 								<VBox class="repoioTbKpi" renderType="Bare">
 									<Label text="{view>label}"/>
@@ -255,11 +292,13 @@
 								</t:columns>
 							</t:Table>
 						</VBox>
-					</IconTabFilter>
-
-					<!-- Dependent objects -->
-					<IconTabFilter key="deps" text="{view>/tb/depsTab}">
-						<VBox class="repoioTbCard" renderType="Bare">
+						</VBox>
+					</uxap:ObjectPageSubSection></uxap:subSections>
+				</uxap:ObjectPageSection>
+				<uxap:ObjectPageSection title="{view>/tb/depsTab}" titleUppercase="false">
+					<uxap:subSections><uxap:ObjectPageSubSection>
+						<VBox renderType="Bare">
+							<VBox class="repoioTbCard" renderType="Bare">
 							<t:Table rows="{view>/tb/deps}" selectionMode="None" enableColumnReordering="true" class="repoioGrid repoioGridCard" noData="{i18n>tb.noDeps}">
 								<t:rowMode><trm:Fixed rowCount="{= Math.max(1, Math.min(${view>/tb/deps}.length, 15)) }"/></t:rowMode>
 								<t:columns>
@@ -292,10 +331,11 @@
 								</t:columns>
 							</t:Table>
 						</VBox>
-					</IconTabFilter>
-				</items>
-			</IconTabBar>
-		</ScrollContainer>
+						</VBox>
+					</uxap:ObjectPageSubSection></uxap:subSections>
+				</uxap:ObjectPageSection>
+			</uxap:sections>
+		</uxap:ObjectPageLayout>
 
 		<!-- Data preview docked at the bottom -->
 		<VBox visible="{view>/tb/preview}" renderType="Bare" class="repoioTbPrev">

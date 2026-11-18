@@ -176,6 +176,11 @@ STREETS = ["شارع التحرير", "شارع الهرم", "طريق الحر�
 AREAS = ["القاهرة الشمالية", "الجيزة 1", "الإسكندرية الشرقية", "الدقهلية", "Direct sales Cairo", "Distributors"]
 
 
+SEMANTIC = {"org": "text", "school": "text", "first": "text", "last": "text", "person": "text", "area": "text", "book": "text",
+            "city": "geoName", "date": "dateAt", "price": "amount", "dec": "quantity"}
+LABEL_KINDS = ("org", "school", "book", "person", "area")
+
+
 def value(kind, i, rnd):
     if kind.startswith("id:"):
         return kind[3:] + str(10000 + i * 137 + rnd.randint(0, 99)).zfill(6)
@@ -245,6 +250,11 @@ def build():
                 cols.append({"name": tech, "en": en, "ar": ar, "type": dtype, "key": isKey, "notNull": notNull, "pii": pii,
                              "term": term, "termEn": TERMS.get(term, ("", ""))[0], "termAr": TERMS.get(term, ("", ""))[1],
                              "nullPct": null, "kind": kind.split(":")[0], "usedIn": use})
+            # Semantic type per column (Datasphere attribute semantics) and the label column of the key
+            label = next((c["name"] for c in cols if c["kind"] in LABEL_KINDS), "")
+            for c in cols:
+                c["semantic"] = "dateFrom" if c["kind"] == "date" and c["name"].lower().startswith("valid") else SEMANTIC.get(c["kind"], "none")
+                c["labelCol"] = label if c["key"] else ""
             # quality tests: unique key, not null on required columns, formats, freshness
             tests = []
             keyc = [c for c in cols if c["key"]]
