@@ -178,6 +178,48 @@
 						</form:SimpleForm>
 						<MessageStrip text="{i18n>sc.ret.note}" type="Information" showIcon="true" class="repoioScStrip"/>
 					</VBox>
+					<!-- Data quality: default thresholds and when a test needs a second person's approval -->
+					<VBox visible="{= ${view>/sc/sec} === 'dq' }" renderType="Bare" class="repoioScSec">
+						<Title text="{i18n>sc.sec.dq}" level="H2"/>
+						<Text text="{i18n>sc.dq.intro}" class="repoioUmMuted sapUiTinyMarginBottom"/>
+						<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" labelSpanS="12" columnsL="1" columnsM="1" class="repoioScForm">
+							<Label text="{i18n>sc.dq.repo}"/>
+							<HBox alignItems="Center" renderType="Bare" class="repoioDqeVal">
+								<StepInput value="{view>/sc/w/dataQuality/repositoryThreshold}" min="80" max="100" step="0.5" displayValuePrecision="1" width="9rem"/>
+								<Text text="%"/>
+							</HBox>
+							<Label text="{i18n>sc.dq.source}"/>
+							<HBox alignItems="Center" renderType="Bare" class="repoioDqeVal">
+								<StepInput value="{view>/sc/w/dataQuality/sourceThreshold}" min="50" max="100" step="0.5" displayValuePrecision="1" width="9rem"/>
+								<Text text="%"/>
+							</HBox>
+							<Label text="{i18n>sc.dq.approval}"/>
+							<Select selectedKey="{view>/sc/w/dataQuality/approvalFor}" width="100%">
+								<core:Item key="hold" text="{i18n>sc.dq.approval.hold}"/>
+								<core:Item key="all" text="{i18n>sc.dq.approval.all}"/>
+							</Select>
+							<Label text="{i18n>sc.dq.sample}"/>
+							<StepInput value="{view>/sc/w/dataQuality/previewSample}" min="100" max="10000" step="100" width="9rem"/>
+						</form:SimpleForm>
+						<MessageStrip text="{i18n>sc.dq.note}" type="Information" showIcon="true" class="repoioScStrip"/>
+						<Table items="{view>/sc/dqTargets}" class="repoioDenseTable sapUiSmallMarginTop" fixedLayout="false" noDataText="{i18n>sc.dq.noTargets}">
+							<headerToolbar><OverflowToolbar style="Clear"><Title text="{view>/sc/dqTitle}" level="H3"/></OverflowToolbar></headerToolbar>
+							<columns>
+								<Column><Text text="{i18n>gr.f.repo}"/></Column>
+								<Column hAlign="End" width="7rem"><Text text="{i18n>sc.dq.target}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>sc.dq.reason}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>sc.dq.setBy}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<Text text="{view>repo}"/>
+									<Text text="{view>threshold}" textDirection="LTR"/>
+									<Text text="{view>reason}"/>
+									<Text text="{view>owner} · {view>changed}"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</VBox>
 				</VBox>
 			</HBox>
 		</f:content>

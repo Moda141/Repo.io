@@ -18,7 +18,7 @@ sap.ui.define([
 	"use strict";
 
 	var ME = "محمد",
-		SECTIONS = [["auth", "sap-icon://shield"], ["mail", "sap-icon://email"], ["regional", "sap-icon://globe"], ["props", "sap-icon://tag"], ["retention", "sap-icon://history"]],
+		SECTIONS = [["auth", "sap-icon://shield"], ["mail", "sap-icon://email"], ["regional", "sap-icon://globe"], ["props", "sap-icon://tag"], ["retention", "sap-icon://history"], ["dq", "sap-icon://quality-issue"]],
 		EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/, NAME = /^[a-z][a-zA-Z0-9]{2,39}$/,
 		TYPES = ["string", "number", "date", "enum", "boolean", "user"], APPLIES = ["domain", "repository", "source", "table"];
 
@@ -36,7 +36,7 @@ sap.ui.define([
 		_onMatched: function (oEvent) {
 			var that = this, oM = this.getOwnerComponent().getModel("admin"), sec = oEvent.getParameter("arguments").section;
 			// The users model feeds the "Person" property reference (role names, eligible users).
-			Promise.all([oM.dataLoaded(), this.getOwnerComponent().getModel("users").dataLoaded()]).then(function () {
+			Promise.all([oM.dataLoaded(), this.getOwnerComponent().getModel("users").dataLoaded(), this.data().dataLoaded()]).then(function () {
 				that._d = oM.getData();
 				if (!that.viewModel().getProperty("/sc/dirty")) { that._load(); }
 				if (sec && SECTIONS.some(function (s) { return s[0] === sec; })) { that.viewModel().setProperty("/sc/sec", sec); }
@@ -50,6 +50,7 @@ sap.ui.define([
 			this._setDirty(false);
 			this._mailTest();
 			this._propsTitle();
+			this._dqTargets();
 		},
 		_sections: function () {
 			var that = this, cur = this.viewModel().getProperty("/sc/sec"), dirty = this._dirtySecs();
@@ -57,7 +58,7 @@ sap.ui.define([
 				return { key: s[0], text: that.text("sc.sec." + s[0]), icon: s[1], selected: s[0] === cur, info: dirty.indexOf(s[0]) > -1 ? that.text("sc.unsaved") : "" };
 			}));
 		},
-		_key: function (s) { return s === "props" ? "customProps" : s; },
+		_key: function (s) { return s === "props" ? "customProps" : s === "dq" ? "dataQuality" : s; },
 		_dirtySecs: function () {
 			var that = this, w = this.viewModel().getProperty("/sc/w");
 			if (!this._d || !w) { return []; }
@@ -81,6 +82,14 @@ sap.ui.define([
 			vm.setProperty("/sc/mailTest", m.lastTest ? this.text(m.lastTestOk ? "sc.mail.lastOk" : "sc.mail.lastFail", [m.lastTest.replace("T", " ").slice(0, 16)]) : this.text("sc.mail.never"));
 			vm.setProperty("/sc/mailTestState", m.lastTestOk ? "Success" : "Error");
 			vm.setProperty("/sc/mailTestIcon", m.lastTestOk ? "sap-icon://message-success" : "sap-icon://message-error");
+		},
+		/* Per-repository quality targets: read only here; each repository's data owner sets its own (with a reason) */
+		_dqTargets: function () {
+			var that = this, ar = this.lang() === "ar", repos = this.getOwnerComponent().getModel("data").getProperty("/repos") || {};
+			this.viewModel().setProperty("/sc/dqTargets", ((this._d.system.dataQuality || {}).repoTargets || []).map(function (t) {
+				return { repo: (repos[t.repo] || {}).name || t.repo, threshold: t.threshold + "%", owner: t.owner, changed: t.changed, reason: ar ? t.reasonAr : t.reasonEn };
+			}));
+			this.viewModel().setProperty("/sc/dqTitle", this.text("sc.dq.targets", [(this._d.system.dataQuality.repoTargets || []).length]));
 		},
 		_propsTitle: function () { this.viewModel().setProperty("/sc/propsTitle", this.text("sc.props.title", [(this.viewModel().getProperty("/sc/w/customProps") || []).length])); },
 		_audit: function (sObject, en, ar, before, after, sSection) {

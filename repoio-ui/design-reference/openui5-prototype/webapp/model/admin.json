@@ -39,6 +39,16 @@
 			"runDays": 180,
 			"exportDays": 30
 		},
+		"dataQuality": {
+			"repositoryThreshold": 99,
+			"sourceThreshold": 95,
+			"approvalFor": "hold",
+			"previewSample": 1000,
+			"repoTargets": [
+				{ "repo": "schools", "threshold": 97, "owner": "منى فاروق", "changed": "2026-10-12", "reasonEn": "School lists arrive by spreadsheet; stages are often missing on the first upload", "reasonAr": "قوائم المدارس تصل بملفات Excel؛ والمراحل كثيرًا ما تنقص في أول رفع" },
+				{ "repo": "digital", "threshold": 95, "owner": "أحمد ناصر", "changed": "2026-09-30", "reasonEn": "Digital SKUs are created before their print edition is priced", "reasonAr": "تُنشأ أكواد النسخ الرقمية قبل تسعير النسخة المطبوعة" }
+			]
+		},
 		"customProps": [
 			{
 				"id": "cp1",

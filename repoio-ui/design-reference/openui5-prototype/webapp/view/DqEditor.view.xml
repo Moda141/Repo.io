@@ -127,9 +127,9 @@
 							</HBox>
 							<Text text="{view>/dqe/cur/desc}" class="repoioUmMuted"/>
 							<Label text="{i18n>dqe.f.nameAr}" labelFor="dqeNameAr" required="true"/>
-							<Input id="dqeNameAr" value="{view>/dqe/cur/ar}" textDirection="RTL" liveChange=".onProp" editable="{view>/dqe/cur/editable}"/>
+							<Input valueLiveUpdate="true" id="dqeNameAr" value="{view>/dqe/cur/ar}" textDirection="RTL" liveChange=".onProp" editable="{view>/dqe/cur/editable}"/>
 							<Label text="{i18n>dqe.f.nameEn}" labelFor="dqeNameEn"/>
-							<Input id="dqeNameEn" value="{view>/dqe/cur/en}" textDirection="LTR" liveChange=".onProp" editable="{view>/dqe/cur/editable}"/>
+							<Input valueLiveUpdate="true" id="dqeNameEn" value="{view>/dqe/cur/en}" textDirection="LTR" liveChange=".onProp" editable="{view>/dqe/cur/editable}"/>
 
 							<!-- Check settings -->
 							<VBox renderType="Bare" visible="{= ${view>/dqe/cur/check} === 'inList' }">
@@ -145,7 +145,7 @@
 									<core:Item key="{view>key}" text="{view>text}"/>
 								</Select>
 								<Label text="{i18n>dqe.f.regex}" labelFor="dqeRegex" required="true"/>
-								<Input id="dqeRegex" value="{view>/dqe/cur/params/regex}" textDirection="LTR" class="repoioMono" liveChange=".onRegex"
+								<Input valueLiveUpdate="true" id="dqeRegex" value="{view>/dqe/cur/params/regex}" textDirection="LTR" class="repoioMono" liveChange=".onRegex"
 									valueState="{view>/dqe/cur/regexState}" valueStateText="{i18n>dqe.badRegex}" editable="{view>/dqe/cur/editable}"/>
 							</VBox>
 							<HBox renderType="Bare" class="repoioDqeMinMax" visible="{= ${view>/dqe/cur/check} === 'length' || ${view>/dqe/cur/check} === 'range' || ${view>/dqe/cur/check} === 'rowCount' }">
@@ -164,7 +164,7 @@
 									<core:Item key="{view>key}" text="{view>text}"/>
 								</Select>
 								<Label text="{i18n>dqe.f.whenVal}" labelFor="dqeWhenVal" required="true"/>
-								<Input id="dqeWhenVal" value="{view>/dqe/cur/params/whenVal}" textDirection="LTR" liveChange=".onProp" editable="{view>/dqe/cur/editable}"/>
+								<Input valueLiveUpdate="true" id="dqeWhenVal" value="{view>/dqe/cur/params/whenVal}" textDirection="LTR" liveChange=".onProp" editable="{view>/dqe/cur/editable}"/>
 							</VBox>
 							<VBox renderType="Bare" visible="{= ${view>/dqe/cur/check} === 'fresh' }">
 								<Label text="{i18n>dqe.f.hours}" labelFor="dqeHours"/>
@@ -177,6 +177,11 @@
 								<Slider id="dqeTh" value="{view>/dqe/cur/threshold}" min="80" max="100" step="0.5" width="12rem" liveChange=".onTh" enabled="{view>/dqe/cur/editable}"/>
 								<Text text="{view>/dqe/cur/threshold}%" class="repoioMono" textDirection="LTR"/>
 							</HBox>
+							<Text text="{view>/dqe/cur/thHint}" class="repoioUmMuted"/>
+							<VBox renderType="Bare" visible="{= !!${view>/dqe/cur/below} }">
+								<Label text="{i18n>dqe.f.reason}" labelFor="dqeReason" required="true"/>
+								<Input valueLiveUpdate="true" id="dqeReason" value="{view>/dqe/cur/reason}" liveChange=".onProp" editable="{view>/dqe/cur/editable}" placeholder="{i18n>dqe.reasonPh}"/>
+							</VBox>
 							<Label text="{i18n>dq.d.sev}" labelFor="dqeSev"/>
 							<RadioButtonGroup id="dqeSev" selectedIndex="{view>/dqe/cur/sevIdx}" select=".onSev" enabled="{view>/dqe/cur/editable}">
 								<RadioButton text="{i18n>dq.sev.quarantine}" enabled="{= ${view>/dqe/level} === 'repository' }"/>
@@ -184,6 +189,14 @@
 								<RadioButton text="{i18n>dq.sev.warn}"/>
 							</RadioButtonGroup>
 							<Text text="{view>/dqe/cur/sevHint}" class="repoioUmMuted"/>
+							<!-- Four eyes: a second person approves tests that hold records or lower the threshold -->
+							<VBox renderType="Bare" visible="{= !!${view>/dqe/cur/needsApp} }" class="repoioDqeApp">
+								<MessageStrip text="{view>/dqe/cur/appText}" type="Information" showIcon="true"/>
+								<Label text="{i18n>dqe.f.approver}" labelFor="dqeApprover" required="true"/>
+								<Select id="dqeApprover" selectedKey="{view>/dqe/cur/approver}" items="{view>/dqe/reviewers}" width="100%" change=".onProp" forceSelection="false">
+									<core:Item key="{view>key}" text="{view>text}"/>
+								</Select>
+							</VBox>
 
 							<!-- Try it on sample records, then the expectation the DQ service will store -->
 							<HBox alignItems="Center" renderType="Bare" class="repoioDqeVal sapUiSmallMarginTop">
@@ -221,9 +234,9 @@
 								<core:Item key="{view>key}" text="{view>text}"/>
 							</Select>
 							<Label text="{i18n>dqe.f.nameAr}" labelFor="dqePyAr" required="true"/>
-							<Input id="dqePyAr" value="{view>/dqe/py/ar}" textDirection="RTL" liveChange=".onPyProp"/>
+							<Input valueLiveUpdate="true" id="dqePyAr" value="{view>/dqe/py/ar}" textDirection="RTL" liveChange=".onPyProp"/>
 							<Label text="{i18n>dqe.f.nameEn}" labelFor="dqePyEn"/>
-							<Input id="dqePyEn" value="{view>/dqe/py/en}" textDirection="LTR" liveChange=".onPyProp"/>
+							<Input valueLiveUpdate="true" id="dqePyEn" value="{view>/dqe/py/en}" textDirection="LTR" liveChange=".onPyProp"/>
 							<Label text="{i18n>dq.d.dim}" labelFor="dqePyDim"/>
 							<Select id="dqePyDim" selectedKey="{view>/dqe/py/dim}" items="{view>/dqe/dimOpts}" width="100%" change=".onPyProp">
 								<core:Item key="{view>key}" text="{view>text}"/>
@@ -233,6 +246,11 @@
 								<Slider id="dqePyTh" value="{view>/dqe/py/threshold}" min="80" max="100" step="0.5" width="12rem" liveChange=".onPyProp"/>
 								<Text text="{view>/dqe/py/threshold}%" class="repoioMono" textDirection="LTR"/>
 							</HBox>
+							<Text text="{view>/dqe/py/thHint}" class="repoioUmMuted"/>
+							<VBox renderType="Bare" visible="{= !!${view>/dqe/py/below} }">
+								<Label text="{i18n>dqe.f.reason}" labelFor="dqePyReason" required="true"/>
+								<Input valueLiveUpdate="true" id="dqePyReason" value="{view>/dqe/py/reason}" liveChange=".onPyProp" placeholder="{i18n>dqe.reasonPh}"/>
+							</VBox>
 							<Label text="{i18n>dq.d.sev}" labelFor="dqePySev"/>
 							<RadioButtonGroup id="dqePySev" selectedIndex="{view>/dqe/py/sevIdx}" select=".onPyProp">
 								<RadioButton text="{i18n>dq.sev.quarantine}" enabled="{= ${view>/dqe/level} === 'repository' }"/>

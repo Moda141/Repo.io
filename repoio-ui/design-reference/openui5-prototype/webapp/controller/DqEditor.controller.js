@@ -26,9 +26,11 @@ sap.ui.define([
 
 		_onMatched: function (oEvent) {
 			var that = this, a = oEvent.getParameter("arguments"), q = a["?query"] || {}, C = this.getOwnerComponent();
-			Promise.all([DQ.load(this), C.getModel("rules").dataLoaded(), C.getModel("tables").dataLoaded(), C.getModel("stewardship").dataLoaded(), this._bundles]).then(function (r) {
+			Promise.all([DQ.load(this), C.getModel("rules").dataLoaded(), C.getModel("tables").dataLoaded(), C.getModel("stewardship").dataLoaded(), this._bundles,
+				C.getModel("admin").dataLoaded()]).then(function (r) {
 				that._m = r[0];
 				that._B = { ar: r[4][0], en: r[4][1] };
+				that._dqCfg = C.getModel("admin").getProperty("/system/dataQuality");
 				var tests = that._m.getProperty("/tests"), edit = a.id !== "new" ? tests.filter(function (t) { return t.id === a.id; })[0] : null,
 					from = q.from ? tests.filter(function (t) { return t.id === q.from; })[0] : null, base = edit || from;
 				that._edit = edit;
@@ -69,7 +71,7 @@ sap.ui.define([
 			if (vm.getProperty("/dqe/mode") === "python") {
 				vm.setProperty("/dqe/py/column", (vm.getProperty("/dqe/colOpts")[0] || {}).key || "");
 				vm.setProperty("/dqe/py/sevIdx", SEVS.indexOf(repo ? "flag" : "warn"));
-				vm.setProperty("/dqe/py/threshold", repo ? 99 : 95);
+				vm.setProperty("/dqe/py/threshold", this._defTh().value);
 				vm.setProperty("/dqe/pyFields", this._cols.filter(function (c) { return c.kind !== "table"; }).map(function (c) { return { name: c.key, type: c.kind, label: c.label }; }));
 			}
 			this._state();
@@ -183,7 +185,7 @@ sap.ui.define([
 			}
 			var repo = this._target.level === "repository", label = { ar: this._labelIn("ar", col), en: this._labelIn("en", col) },
 				k = { uid: ++uid, testId: "", isNew: true, editable: true, check: key, params: this._defaults(key, col), dim: meta.dim,
-					threshold: repo ? 99 : 95, severity: repo ? "flag" : "warn",
+					threshold: this._defTh().value, severity: repo ? "flag" : "warn", reason: "", approver: "",
 					ar: this._B.ar.getText("dq.auto." + key, [label.ar]), en: this._B.en.getText("dq.auto." + key, [label.en]) };
 			col.checks.push(k);
 			this._sel = { col: col.key, uid: k.uid };
@@ -226,17 +228,47 @@ sap.ui.define([
 				sevHint: T("dq.sevHint." + k.severity), thLabel: T("dqe.f.threshold", [f.col.label]),
 				editable: k.editable, isNew: k.isNew, lockText: k.editable ? "" : T("dqe.locked", [k.testId]), testId: k.testId,
 				listHint: lst ? T("dqe.listHint", [lst.systems.join(", ")]) : "", regexState: "None", canTry: true,
+				reason: k.reason || "", approver: k.approver || "", thHint: this._defTh().text,
 				tryText: "", tryFails: []
 			});
+			this._approvalUi();
 			this._ge();
+		},
+		/* Default threshold for the target: the repository's own target (set by its data owner), else the platform default
+		   (System configuration → Data quality). */
+		_defTh: function () {
+			var c = this._dqCfg || { repositoryThreshold: 99, sourceThreshold: 95, repoTargets: [] }, t = this._target || {};
+			if (t.level === "repository") {
+				var own = (c.repoTargets || []).filter(function (x) { return x.repo === t.repo; })[0];
+				if (own) { return { value: own.threshold, text: this.text("dqe.th.repo", [own.threshold, own.owner]) }; }
+				return { value: c.repositoryThreshold, text: this.text("dqe.th.platform", [c.repositoryThreshold]) };
+			}
+			return { value: c.sourceThreshold, text: this.text("dqe.th.platform", [c.sourceThreshold]) };
+		},
+		/* Four eyes: tests that hold records, thresholds below the default (or every change, per System configuration)
+		   wait for a second person's approval; flag and warn-only tests at or above the default go live at once. */
+		_why: function (sev, th) {
+			var c = this._dqCfg || {};
+			if (c.approvalFor === "all") { return "all"; }
+			if (sev === "quarantine") { return "hold"; }
+			if (th < this._defTh().value) { return "below"; }
+			return "";
+		},
+		_approvalUi: function () {
+			var vm = this.viewModel(), c = vm.getProperty("/dqe/cur"), sev = SEVS[c.sevIdx], th = Number(c.threshold), why = this._why(sev, th);
+			vm.setProperty("/dqe/cur/below", th < this._defTh().value);
+			vm.setProperty("/dqe/cur/needsApp", !!why && c.editable);
+			vm.setProperty("/dqe/cur/appText", why ? this.text("dqe.app." + why) : "");
 		},
 		/* Copy the panel back to the check; a change to an existing test makes it "edited" (a new version on save) */
 		_sync: function () {
 			var k = this._chk, c = this.viewModel().getProperty("/dqe/cur");
 			if (!k || !k.editable) { return; }
 			k.ar = c.ar; k.en = c.en; k.params = JSON.parse(JSON.stringify(c.params)); k.threshold = Number(c.threshold); k.severity = SEVS[c.sevIdx] || k.severity;
+			k.reason = c.reason; k.approver = c.approver;
 			if (!k.isNew) { k.edited = true; }
 			this.viewModel().setProperty("/dqe/cur/sevHint", this.text("dq.sevHint." + k.severity));
+			this._approvalUi();
 			this.viewModel().setProperty("/dqe/cur/tryText", "");
 			this._ge();
 			this._render();
@@ -336,7 +368,7 @@ sap.ui.define([
 			vm.setProperty("/dqe/py", {
 				column: col, ar: base ? DQ.name({ lang: function () { return "ar"; }, text: this._tx("ar") }, base) + (isEdit ? "" : " " + this.text("dqe.copySuffixAr")) : "",
 				en: base && base.en ? base.en + (isEdit ? "" : " (copy)") : "", dim: base ? base.dim : "consistency",
-				threshold: base ? base.threshold : repo ? 99 : 95, sevIdx: SEVS.indexOf(base ? base.severity : repo ? "flag" : "warn"),
+				threshold: base ? base.threshold : this._defTh().value, sevIdx: SEVS.indexOf(base ? base.severity : repo ? "flag" : "warn"), reason: "",
 				reviewer: base && base.reviewer ? base.reviewer : "", code: base ? (base.params || {}).code : tpl.replace("COLUMN", col),
 				log: [], running: false, thLabel: this.text("dqe.f.thresholdPy")
 			});
@@ -391,17 +423,21 @@ sap.ui.define([
 			var T = this.text.bind(this), vm = this.viewModel(), mode = vm.getProperty("/dqe/mode");
 			if (mode === "python") {
 				var py = vm.getProperty("/dqe/py") || {};
-				vm.setProperty("/dqe/canSave", !!(py.ar && py.ar.trim() && py.code && py.code.trim() && py.column));
+				var below = Number(py.threshold) < this._defTh().value;
+				vm.setProperty("/dqe/py/below", below);
+				vm.setProperty("/dqe/py/thHint", this._defTh().text);
+				vm.setProperty("/dqe/canSave", !!(py.ar && py.ar.trim() && py.code && py.code.trim() && py.column && (!below || (py.reason && py.reason.trim()))));
 				vm.setProperty("/dqe/primaryText", T("dqe.sendReview"));
 				vm.setProperty("/dqe/footText", T("dqe.foot.python"));
 				return;
 			}
-			var ch = this._changes(), valid = ch.every(function (x) {
-				var p = x.chk.params;
-				return x.chk.ar && x.chk.ar.trim() && (x.chk.check !== "pattern" || p.regex) && (x.chk.check !== "requiredWhen" || (p.whenCol && p.whenVal));
-			});
+			var that = this, def = this._defTh().value, ch = this._changes(), valid = ch.every(function (x) {
+				var p = x.chk.params, k = x.chk, why = that._why(k.severity, k.threshold);
+				return k.ar && k.ar.trim() && (k.check !== "pattern" || p.regex) && (k.check !== "requiredWhen" || (p.whenCol && p.whenVal)) &&
+					(k.threshold >= def || (k.reason && k.reason.trim())) && (!why || k.approver);
+			}), nApp = ch.filter(function (x) { return !!that._why(x.chk.severity, x.chk.threshold); }).length, nNow = ch.length - nApp;
 			vm.setProperty("/dqe/canSave", ch.length > 0 && valid);
-			vm.setProperty("/dqe/primaryText", T("dqe.activate", [ch.length]));
+			vm.setProperty("/dqe/primaryText", nApp && !nNow ? T("dqe.sendApproval", [nApp]) : nApp ? T("dqe.saveMixed", [nNow, nApp]) : T("dqe.activate", [ch.length]));
 			vm.setProperty("/dqe/footText", ch.length ? T("dqe.foot.n", [ch.length]) + (valid ? "" : " · " + T("dqe.foot.invalid")) : T("dqe.foot.none"));
 		},
 		onPrimary: function () { this._save(this.viewModel().getProperty("/dqe/mode") === "python" ? "inReview" : "active"); },
@@ -422,17 +458,20 @@ sap.ui.define([
 				if (status === "inReview" && !py.reviewer) { MessageBox.warning(T("dqe.needReviewer")); return; }
 				if (status === "inReview" && !this._pyRanOk) { MessageBox.warning(T("dqe.needRun")); return; }
 				put({ id: this._edit ? this._edit.id : "", check: "python", column: py.column, dim: py.dim, threshold: Number(py.threshold), severity: SEVS[py.sevIdx],
-					author: "python", status: status, ar: py.ar, en: py.en, reviewer: py.reviewer,
+					author: "python", status: status, ar: py.ar, en: py.en, reviewer: py.reviewer, reason: py.reason || "",
 					params: { code: py.code, expectation: ((/name="([^"]+)"/.exec(py.code) || [])[1]) || "expect_custom" } });
 			} else {
+				var nApp = 0;
 				this._changes().forEach(function (x) {
-					var k = x.chk;
+					var k = x.chk, why = that._why(k.severity, k.threshold), st = status === "draft" ? "draft" : why ? "inReview" : "active";
+					if (st === "inReview") { nApp++; }
 					put({ id: k.testId, check: k.check, column: x.col.key, dim: k.dim, threshold: k.threshold, severity: k.severity, author: "builder",
-						status: status === "active" && !k.isNew && k.status ? k.status : status, ar: k.ar, en: k.en, params: k.params, reviewer: "" });
+						status: st, ar: k.ar, en: k.en, params: k.params, reviewer: why ? k.approver : "", reason: k.reason || "" });
 				});
+				if (status !== "draft" && nApp) { status = nApp === saved.length ? "inReview" : "mixed"; }
 			}
 			this._m.setProperty("/tests", tests.slice());
-			MessageToast.show(T(status === "draft" ? "dqe.t.draft" : status === "inReview" ? "dqe.t.review" : "dqe.t.active", [saved.length, saved.join(", ")]));
+			MessageToast.show(T(status === "draft" ? "dqe.t.draft" : status === "inReview" ? "dqe.t.review" : status === "mixed" ? "dqe.t.mixed" : "dqe.t.active", [saved.length, saved.join(", ")]));
 			if (saved.length === 1) { this.router().navTo("dqTest", { id: saved[0] }, true); } else { this.router().navTo("dqTests", {}, true); }
 		},
 		onCancel: function () {
