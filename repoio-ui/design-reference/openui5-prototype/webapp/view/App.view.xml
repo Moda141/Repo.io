@@ -13,6 +13,11 @@
 					tooltip="{i18n>shell.menu}" ariaLabel="{i18n>shell.menu}">
 					<layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData>
 				</Button>
+				<!-- Back to the page this one was opened from (shown only when there is one) -->
+				<Button id="backBtn" icon="sap-icon://nav-back" type="Transparent" press=".onBack" visible="{view>/shell/canBack}"
+					tooltip="{view>/shell/backTip}" ariaLabel="{view>/shell/backTip}">
+					<layoutData><OverflowToolbarLayoutData priority="NeverOverflow"/></layoutData>
+				</Button>
 				<Image src="img/logo.png" height="1.75rem" alt="Repo.io" press=".onHome" class="repoioLogo" decorative="false"/>
 				<SearchField id="navSearch" width="22rem" class="repoioNavSearch" placeholder="{i18n>shell.navSearch}"
 					liveChange=".onNavSearch" search=".onNavSearch" ariaLabel="{i18n>shell.navSearch}">

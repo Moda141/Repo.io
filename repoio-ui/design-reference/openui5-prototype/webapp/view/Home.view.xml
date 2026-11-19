@@ -31,7 +31,7 @@
 			<!-- J1: what needs me now. Each tile opens its list (counts are permission-filtered server-side). -->
 			<HBox items="{home>/attention}" wrap="Wrap" renderType="Bare" class="repoioAttention">
 				<GenericTile header="{path: 'home>key', formatter: '.attnTitle'}" subheader="{path: 'home>key', formatter: '.attnSub'}" frameType="OneByOne"
-					press=".onNavKey" app:key="{home>nav}" class="repoioAttnTile" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+					press=".onAttn" class="repoioAttnTile">
 					<TileContent footer="{path: 'home>key', formatter: '.attnFooter'}">
 						<NumericContent value="{home>value}" valueColor="{home>color}" icon="{home>icon}" withMargin="false"/>
 					</TileContent>
@@ -80,7 +80,7 @@
 						<f:header><card:Header title="{i18n>home.card.recent}" subtitle="{i18n>home.card.recentSub}" iconSrc="sap-icon://history"/></f:header>
 						<f:content>
 							<List items="{home>/recent}" showSeparators="Inner" class="repoioRecent">
-								<StandardListItem icon="{home>icon}" title="{home>name}" iconInset="false" description="{home>changed}"
+								<StandardListItem icon="{home>icon}" title="{home>name}" iconInset="false" description="{home>changed}" type="Navigation" press=".onRecent"
 									info="{path: 'home>type', formatter: '.recentType'}" infoState="{path: 'home>type', formatter: '.recentState'}"/>
 							</List>
 						</f:content>
@@ -104,7 +104,7 @@
 							press=".onNavKey" app:key="domains" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/></f:header>
 						<f:content>
 							<List items="{data>/domains}" showSeparators="Inner" class="sapUiSmallMarginBottom">
-								<CustomListItem type="Navigation" press=".onNavKey" app:key="domains" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+								<CustomListItem type="Navigation" press=".onDomain">
 									<HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBeginEnd sapUiTinyMarginTopBottom">
 										<VBox>
 											<Text text="{= ${view>/lang} === 'ar' ? ${data>name} : ${data>nameEn} }" class="sapUiTinyMarginBottom"/>
@@ -163,13 +163,13 @@
 							statusText="{view>/home/pipeStatus}" press=".onNavKey" app:key="dataJobs" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"/></f:header>
 						<f:content>
 							<List items="{home>/pipelines}" showSeparators="Inner">
-								<CustomListItem>
+								<CustomListItem type="Navigation" press=".onPipe">
 									<HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBeginEnd sapUiTinyMarginTopBottom">
 										<VBox>
 											<Text text="{home>name}"/>
 											<Label text="{path: 'home>stage', formatter: '.stageText'} · {home>last}"/>
 										</VBox>
-										<ObjectStatus text="{path: 'home>stateKey', formatter: '.resultText'}" state="{home>state}" icon="{= ${home>state} === 'Success' ? 'sap-icon://sys-enter-2' : 'sap-icon://alert' }"/>
+										<ObjectStatus text="{path: 'home>stateKey', formatter: '.resultText'}" state="{home>state}" icon="{home>icon}"/>
 									</HBox>
 								</CustomListItem>
 							</List>
@@ -203,7 +203,7 @@
 										<Column hAlign="End"><Text text="{i18n>home.col.score}"/></Column>
 									</columns>
 									<items>
-										<ColumnListItem type="Navigation" press=".onNavKey" app:key="matchDetection" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+										<ColumnListItem type="Navigation" press=".onPair">
 											<Text text="{home>customer}"/>
 											<Text text="{home>source}"/>
 											<Text text="{home>detected}"/>

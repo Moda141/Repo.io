@@ -72,7 +72,7 @@ sap.ui.define([
 					var res = r.pass >= t.threshold ? "pass" : t.severity === "warn" ? "warn" : "fail", s = Sem.of("dq", res);
 					return { d: r.d, checkedText: r.checked ? that.fmt.num(r.checked) : "—", failedText: that.fmt.num(r.failed), passText: DQ.pct(r.pass),
 						resText: T("dq.res." + res), resState: s[0], resIcon: s[1],
-						runText: (t.schedule === "stream" ? "customer_dq_gate" : "dq_nightly_suite") + " · " + r.d.slice(5) };
+						runId: r.run || "", runText: r.run ? r.run + " · dq_nightly_suite" : "—" };
 				}),
 				colLabel: t.column || T("dq.f.value"),
 				failTitle: t.level === "repository" ? T("dq.s.failsRepo", [held.length]) : T("dq.s.failsSrc"),
@@ -154,6 +154,10 @@ sap.ui.define([
 			var id = oEvent.getSource().getBindingContext("view").getProperty("qid");
 			if (id) { this.router().navTo("quarantine", { id: id }); }
 		},
-		onRunLink: function () { this.router().navTo("jobs"); }
+		/* Each result comes from that night's dq_nightly_suite run: open the run itself (tasks, objects, messages) */
+		onRunLink: function (oEvent) {
+			var id = oEvent.getSource().getBindingContext("view").getProperty("runId");
+			if (id) { this.router().navTo("jobRun", { runId: id }); }
+		}
 	});
 });

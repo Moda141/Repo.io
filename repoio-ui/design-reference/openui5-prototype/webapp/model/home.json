@@ -273,35 +273,69 @@
    "type": "table",
    "icon": "sap-icon://table-view",
    "domain": "customers",
-   "changed": "2026-11-04 06:00"
+   "changed": "2026-11-04 06:00",
+   "go": {
+    "route": "table",
+    "args": {
+     "source": "c4c",
+     "schema": "sales",
+     "table": "customer"
+    }
+   }
   },
   {
    "name": "Customer Master",
    "type": "repository",
    "icon": "sap-icon://badge",
    "domain": "customers",
-   "changed": "2026-11-04 02:06"
+   "changed": "2026-11-04 02:06",
+   "go": {
+    "route": "repository",
+    "args": {
+     "repo": "customer-master"
+    }
+   }
   },
   {
    "name": "SAP C4C",
    "type": "connection",
    "icon": "sap-icon://connected",
    "domain": "customers",
-   "changed": "2026-11-04 02:00"
+   "changed": "2026-11-04 02:00",
+   "go": {
+    "route": "connections",
+    "args": {
+     "conn": "C4C_PROD"
+    }
+   }
   },
   {
    "name": "KNA1 — Customer General",
    "type": "table",
    "icon": "sap-icon://table-view",
    "domain": "customers",
-   "changed": "2026-11-04 05:00"
+   "changed": "2026-11-04 05:00",
+   "go": {
+    "route": "table",
+    "args": {
+     "source": "s4",
+     "schema": "sd",
+     "table": "kna1"
+    }
+   }
   },
   {
    "name": "كتالوج الكتب",
    "type": "repository",
    "icon": "sap-icon://badge",
    "domain": "products",
-   "changed": "2026-11-04 01:31"
+   "changed": "2026-11-04 01:31",
+   "go": {
+    "route": "repository",
+    "args": {
+     "repo": "catalog"
+    }
+   }
   }
  ],
  "actions": [
@@ -347,9 +381,39 @@
   }
  ],
  "attention": [
-  { "key": "approval", "nav": "awaitingApproval", "value": 4, "color": "Neutral", "icon": "sap-icon://inbox" },
-  { "key": "overdue", "nav": "openChangeRequests", "value": 2, "color": "Error", "icon": "sap-icon://lateness" },
-  { "key": "dq", "nav": "alerts", "value": 7, "color": "Critical", "icon": "sap-icon://quality-issue" },
-  { "key": "writeback", "nav": "dataJobs", "value": 1, "color": "Error", "icon": "sap-icon://upload-to-cloud" }
+  {
+   "key": "approval",
+   "nav": "awaitingApproval",
+   "value": 4,
+   "color": "Neutral",
+   "icon": "sap-icon://inbox"
+  },
+  {
+   "key": "overdue",
+   "nav": "openChangeRequests",
+   "value": 2,
+   "color": "Error",
+   "icon": "sap-icon://lateness"
+  },
+  {
+   "key": "dq",
+   "nav": "testCases",
+   "value": 7,
+   "color": "Critical",
+   "icon": "sap-icon://quality-issue",
+   "args": {
+    "query": {
+     "result": "fail"
+    }
+   }
+  },
+  {
+   "key": "writeback",
+   "nav": "dataJobs",
+   "value": 1,
+   "color": "Error",
+   "icon": "sap-icon://upload-to-cloud",
+   "args": {}
+  }
  ]
 }

@@ -15,19 +15,18 @@ sap.ui.define([
 		isRtl: function () { return sap.ui.getCore().getConfiguration().getRTL(); },
 		lang: function () { return sap.ui.getCore().getConfiguration().getLanguage().indexOf("ar") === 0 ? "ar" : "en"; },
 
-		/* Navigate by a navigation-tree key (Home, Domains, or a planned page). */
-		navKey: function (sKey) {
-			if (sKey === "home" || sKey === "domains" || sKey === "connections") { this.router().navTo(sKey); }
-			else if (sKey === "ontologyExplorer") { this.router().navTo("ontology"); }
-			else if (sKey === "newWorkflow") { this.router().navTo("workflow"); }
-			else if (sKey === "dataJobs") { this.router().navTo("jobs"); }
-			else if (sKey === "workflowsList") { this.router().navTo("workflows"); }
-			else if (sKey === "apiManagement") { this.router().navTo("apiManagement"); }
-			else if (sKey === "modelsRules") { this.router().navTo("models"); }
-			else if (sKey === "goldenRecords") { this.router().navTo("goldenRecords"); }
-			else if (sKey === "matchDetection") { this.router().navTo("matches"); }
-			else if (sKey === "quarantine") { this.router().navTo("quarantine"); }
-			else { this.router().navTo("page", { key: sKey }); }
+		/* Navigate by a navigation-tree key: the one map from side-navigation keys to routes, used by the shell and by
+		   pages that link by key (Home). Keys without a page yet open the placeholder. */
+		NAV_ROUTES: {
+			home: "home", domains: "domains", connections: "connections", ontologyExplorer: "ontology", newWorkflow: "workflow",
+			dataJobs: "jobs", workflowsList: "workflows", reports: "reports", broadcasts: "broadcasts", dataSync: "dataSync",
+			apiManagement: "apiManagement", users: "users", rolesAccess: "roles", systemConfiguration: "system", announcements: "announcements",
+			auditLog: "audit", modelsRules: "models", goldenRecords: "goldenRecords", matchDetection: "matches", quarantine: "quarantine",
+			testCases: "dqTests", alerts: "dqAlerts"
+		},
+		navKey: function (sKey, oArgs) {
+			var r = this.NAV_ROUTES[sKey];
+			if (r) { this.router().navTo(r, oArgs || {}); } else { this.router().navTo("page", { key: sKey }); }
 		},
 		onNavKey: function (oEvent) {
 			var oSrc = oEvent.getSource(), sKey = oSrc.data("key");

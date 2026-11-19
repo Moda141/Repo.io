@@ -93,7 +93,7 @@ sap.ui.define([
 		_link: function (r, x) {
 			var T = this.text.bind(this);
 			if (x.test) { return { text: T("al.go.test", [x.test]), route: "dqTest", args: { id: x.test } }; }
-			if (x.run) { return { text: T("al.go.run", [x.run]), route: "jobs", args: {} }; }
+			if (x.run) { return { text: T("al.go.run", [x.run]), route: "jobRun", args: { runId: x.run } }; }
 			if (r.event === "scoreBelow" && x.repo) { return { text: T("al.go.tests"), route: "dqTests", args: { query: { where: x.repo, result: "fail" } } }; }
 			if (r.event === "quarantineGrowth") { return { text: T("al.go.quarantine"), route: "quarantine", args: {} }; }
 			if (r.event === "streamLag") { return { text: T("al.go.streams"), route: "streams", args: {} }; }

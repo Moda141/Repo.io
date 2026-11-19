@@ -47,11 +47,8 @@ sap.ui.define([
 					that.data().getProperty("/domains").map(function (d) { return { key: d.id, text: that.domainName(d) }; })));
 				if (that.byId("fDomain")) { that.byId("fDomain").setSelectedKey(""); }
 			});
-			this._updateCounts();
 			this._steps();
-			var aPipes = oHome.getProperty("/pipelines"),
-				nWarn = aPipes.filter(function (p) { return p.state !== "Success"; }).length;
-			this.viewModel().setProperty("/home/pipeStatus", this.text("home.pipeStatus", [aPipes.length - nWarn, aPipes.length]));
+			this._live();
 			this._drawCompleteness();
 			var oCal = this.byId("runCalendar");
 			oCal.setMinDate(new Date("2026-11-01T00:00:00")).setMaxDate(new Date("2026-11-30T00:00:00"));
@@ -59,6 +56,33 @@ sap.ui.define([
 			oCal.focusDate(TODAY);
 			oHome.getProperty("/runDays").forEach(function (d) {
 				oCal.addSpecialDate(new DateTypeRange({ startDate: new Date(d + "T00:00:00"), type: "Type08" }));
+			});
+		},
+
+		/* Pipelines and merge candidates come from the same data as their pages (Data jobs, Match detection), so a row
+		   opens the run or the pair it shows. */
+		_live: function () {
+			var that = this, C = this.getOwnerComponent(), oHome = C.getModel("home"), ar = this.lang() === "ar";
+			Promise.all([C.getModel("runs").dataLoaded(), C.getModel("stewardship").dataLoaded()]).then(function () {
+				var R = C.getModel("runs").getData(), STAGE = { ingest: "ingest", push: "ingest", stream: "stream", dq: "dq" },
+					KEY = { Success: "pos", Warning: "crit", Error: "neg", Information: "run", None: "neutral" };
+				var pipes = R.jobs.filter(function (j) { return STAGE[j.kind]; }).map(function (j) {
+					var last = R.runs.filter(function (r) { return r.job === j.id; }).sort(function (a, b) { return a.start < b.start ? 1 : -1; })[0];
+					if (!last) { return null; }
+					var st = Sem.of("outcome", last.status);
+					return { name: ar ? j.title_ar : j.title_en, stage: STAGE[j.kind], last: last.start.slice(0, 16), state: st[0], icon: st[1],
+						stateKey: KEY[st[0]], runId: last.id };
+				}).filter(Boolean).slice(0, 6);
+				oHome.setProperty("/pipelines", pipes);
+				var ok = pipes.filter(function (p) { return p.state === "Success" || p.state === "Information"; }).length;
+				that.viewModel().setProperty("/home/pipeStatus", that.text("home.pipeStatus", [ok, pipes.length]));
+				var SRC = { c4c: "C4C", s4: "ERP", csv: "CSV" }, open = C.getModel("stewardship").getProperty("/pairs").filter(function (p) { return p.state === "open"; });
+				oHome.setProperty("/mergeCandidates", open.slice().sort(function (a, b) { return b.prob - a.prob; }).slice(0, 6).map(function (p) {
+					return { id: p.id, customer: p.records[0].name, domain: "customers", source: p.records.map(function (r) { return SRC[r.source] || r.source; })
+						.filter(function (v, i, a) { return a.indexOf(v) === i; }).join(" · "), detected: p.since, score: Math.round(p.prob * 100) };
+				}));
+				oHome.setProperty("/mergeCandidatesTotal", open.length);
+				that._updateCounts();
 			});
 		},
 
@@ -157,7 +181,20 @@ sap.ui.define([
 			MessageToast.show(this.text("home.wc.hidden"));
 		},
 
-		onOwnerDomain: function () { this.navKey("domains"); },
+		onOwnerDomain: function () { this.router().navTo("domain", { domain: this.data().getProperty("/domains/0/id") }); },
+		/* Every card row opens the thing it shows, not the list it comes from */
+		onAttn: function (oEvent) {
+			var o = oEvent.getSource().getBindingContext("home").getObject();
+			this.navKey(o.nav, o.args);
+		},
+		onRecent: function (oEvent) {
+			var g = oEvent.getParameter("listItem") ? oEvent.getParameter("listItem").getBindingContext("home").getProperty("go")
+				: oEvent.getSource().getBindingContext("home").getProperty("go");
+			if (g) { this.router().navTo(g.route, g.args); }
+		},
+		onDomain: function (oEvent) { this.router().navTo("domain", { domain: oEvent.getSource().getBindingContext("data").getProperty("id") }); },
+		onPipe: function (oEvent) { this.router().navTo("jobRun", { runId: oEvent.getSource().getBindingContext("home").getProperty("runId") }); },
+		onPair: function (oEvent) { this.router().navTo("matches", { id: oEvent.getSource().getBindingContext("home").getProperty("id") }); },
 
 		/* Hero "Learn more": a short brief of what the tool does. */
 		onLearnMore: function () {

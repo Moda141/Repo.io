@@ -14,14 +14,18 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/MessageToast",
 	"repoio/proto/util/tour",
-	"repoio/proto/util/access"
+	"repoio/proto/util/access",
+	"repoio/proto/controller/BaseController",
+	"sap/ui/core/routing/HashChanger"
 ], function (Controller, NavigationListItem, NavigationListGroup, ResponsivePopover, VBox, HBox, Avatar, Title, Text, Label, ObjectStatus, List,
-	StandardListItem, MessageToast, Tour, Access) {
+	StandardListItem, MessageToast, Tour, Access, BaseController, HashChanger) {
 	"use strict";
 
 	return Controller.extend("repoio.proto.controller.App", {
 		onInit: function () {
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
+			// Shell state lives under /shell; JSONModel.setProperty does not create the parent object, so it exists first
+			this.getOwnerComponent().getModel("view").setProperty("/shell", { lang: this._lang(), pageTour: false, canBack: false, backTip: "" });
 			var sLang = this._lang();
 			this.byId("langMenu").getItems().forEach(function (it) { it.setIcon(it.getKey() === sLang ? "sap-icon://accept" : ""); });
 			var oNav = this.getOwnerComponent().getModel("nav");
@@ -110,28 +114,8 @@ sap.ui.define([
 		onNavSelect: function (oEvent) {
 			var sKey = oEvent.getParameter("item").getKey(),
 				oRouter = this.getOwnerComponent().getRouter();
-			if (sKey === "home") { oRouter.navTo("home"); }
-			else if (sKey === "domains" || sKey === "connections") { oRouter.navTo(sKey); }
-			else if (sKey === "ontologyExplorer") { oRouter.navTo("ontology"); }
-			else if (sKey === "newWorkflow") { oRouter.navTo("workflow"); }
-			else if (sKey === "dataJobs") { oRouter.navTo("jobs"); }
-			else if (sKey === "workflowsList") { oRouter.navTo("workflows"); }
-			else if (sKey === "reports") { oRouter.navTo("reports"); }
-			else if (sKey === "broadcasts") { oRouter.navTo("broadcasts"); }
-			else if (sKey === "dataSync") { oRouter.navTo("dataSync"); }
-			else if (sKey === "apiManagement") { oRouter.navTo("apiManagement"); }
-			else if (sKey === "users") { oRouter.navTo("users"); }
-			else if (sKey === "rolesAccess") { oRouter.navTo("roles"); }
-			else if (sKey === "systemConfiguration") { oRouter.navTo("system"); }
-			else if (sKey === "announcements") { oRouter.navTo("announcements"); }
-			else if (sKey === "auditLog") { oRouter.navTo("audit"); }
-			else if (sKey === "modelsRules") { oRouter.navTo("models"); }
-			else if (sKey === "goldenRecords") { oRouter.navTo("goldenRecords"); }
-			else if (sKey === "matchDetection") { oRouter.navTo("matches"); }
-			else if (sKey === "quarantine") { oRouter.navTo("quarantine"); }
-			else if (sKey === "testCases") { oRouter.navTo("dqTests"); }
-			else if (sKey === "alerts") { oRouter.navTo("dqAlerts"); }
-			else { oRouter.navTo("page", { key: sKey }); }
+			var sRoute = BaseController.prototype.NAV_ROUTES[sKey];
+			this._root(function () { if (sRoute) { oRouter.navTo(sRoute); } else { oRouter.navTo("page", { key: sKey }); } });
 			if (this.getOwnerComponent().getModel("device").getProperty("/system/phone")) {
 				this.byId("toolPage").setSideExpanded(false);
 			}
@@ -157,6 +141,7 @@ sap.ui.define([
 					sRoute === "reports" || sRoute === "report" || sRoute === "studio" ? "reports" : sRoute === "broadcasts" ? "broadcasts" :
 					sRoute === "dataSync" || sRoute === "dataSyncFlow" ? "dataSync" : sRoute === "apiManagement" || sRoute === "apiReference" ? "apiManagement" : sRoute === "users" ? "users" : sRoute === "roles" ? "rolesAccess" : sRoute === "system" ? "systemConfiguration" : sRoute === "announcements" ? "announcements" : sRoute === "audit" ? "auditLog" : sRoute === "models" ? "modelsRules" : /^golden/.test(sRoute) ? "goldenRecords" : sRoute === "matches" ? "matchDetection" : sRoute === "quarantine" ? "quarantine" : /^dq(Tests|Test|Edit)$/.test(sRoute) ? "testCases" : sRoute === "dqAlerts" ? "alerts" : "domains";
 			this._sSelectedKey = sKey;
+			this._trailStep(sRoute, sKey, oEvent.getParameter("arguments") || {});
 			if (this.byId("navList").getItems().length) { this._expandTo(sKey); this.byId("sideNavigation").setSelectedKey(sKey); }
 		},
 
@@ -180,8 +165,58 @@ sap.ui.define([
 			oToolPage.setSideExpanded(!oToolPage.getSideExpanded());
 		},
 
+		/* Back trail: pages reached from another page (a link, a row, a tile) get a Back button in the shell header that
+		   returns to the page before. Choosing from the side navigation or the logo starts a new trail; the browser's own
+		   Back is recognised, so both stay in step. */
+		_trailStep: function (sRoute, sKey, a) {
+			var h = HashChanger.getInstance().getHash() || "", t = this._trail || [], vm = this.getOwnerComponent().getModel("view");
+			var label = this._pageLabel(sRoute, sKey, a);
+			if (this._fromNav || !t.length) { t = [{ h: h, label: label }]; }
+			else if (t.length > 1 && t[t.length - 2].h === h) { t.pop(); }
+			else if (t[t.length - 1].h !== h) { t.push({ h: h, label: label }); }
+			this._fromNav = false;
+			this._trail = t.slice(-25);
+			var prev = this._trail.length > 1 ? this._trail[this._trail.length - 2] : null,
+				oB = this.getOwnerComponent().bundle;
+			vm.setProperty("/shell/canBack", !!prev);
+			vm.setProperty("/shell/backTip", prev ? oB.getText("shell.backTo", [prev.label]) : "");
+		},
+		/* What the Back button names: the object for a detail page, the page title otherwise */
+		_pageLabel: function (sRoute, sKey, a) {
+			var oB = this.getOwnerComponent().bundle, T = function (k, x) { return oB.getText(k, x); },
+				repo = function (id) { var r = this.getOwnerComponent().getModel("data").getProperty("/repos/" + id); return r ? r.name : id; }.bind(this);
+			switch (sRoute) {
+				case "dqTest": case "dqEdit": return T("shell.pg.test", [a.id]);
+				case "jobRun": return T("shell.pg.run", [a.runId]);
+				case "table": return T("shell.pg.table", [a.table]);
+				case "repository": return repo(a.repo);
+				case "domain":
+					var d = (this.getOwnerComponent().getModel("data").getProperty("/domains") || []).filter(function (x) { return x.id === a.domain; })[0];
+					return d ? (sap.ui.getCore().getConfiguration().getLanguage().indexOf("ar") === 0 ? d.name : d.nameEn) : T("shell.pg.domain", [a.domain]);
+				case "goldenRecord": case "goldenLineage": return a.id;
+				case "matches": case "quarantine": return a.id ? a.id : T("nav." + sKey);
+				default: return T("nav." + sKey);
+			}
+		},
+		onBack: function () {
+			var t = this._trail || [];
+			if (t.length > 1) { HashChanger.getInstance().setHash(t[t.length - 2].h); }
+		},
 		onHome: function () {
-			this.getOwnerComponent().getRouter().navTo("home");
+			var oRouter = this.getOwnerComponent().getRouter();
+			this._root(function () { oRouter.navTo("home"); });
+		},
+		/* A side-navigation choice or the logo starts a new back trail. If it does not change the page (already there),
+		   no route event follows, so the trail is reset here. */
+		_root: function (fnNav) {
+			var hc = HashChanger.getInstance(), before = hc.getHash();
+			this._fromNav = true;
+			fnNav();
+			if (hc.getHash() === before) {
+				this._fromNav = false;
+				this._trail = (this._trail || []).slice(-1);
+				this.getOwnerComponent().getModel("view").setProperty("/shell/canBack", false);
+			}
 		},
 
 		onInbox: function () {

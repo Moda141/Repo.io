@@ -117,7 +117,7 @@
 										<Text text="{view>failedText}" textDirection="LTR"/>
 										<Text text="{view>passText}" textDirection="LTR"/>
 										<ObjectStatus text="{view>resText}" state="{view>resState}" icon="{view>resIcon}"/>
-										<Link text="{view>runText}" press=".onRunLink" class="repoioMono"/>
+										<Link text="{view>runText}" press=".onRunLink" enabled="{= !!${view>runId} }" textDirection="LTR"/>
 									</ColumnListItem>
 								</items>
 							</Table>

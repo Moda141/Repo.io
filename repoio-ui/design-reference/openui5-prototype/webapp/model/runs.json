@@ -6807,6 +6807,2334 @@
     }
    ],
    "quarantined": 4
+  },
+  {
+   "gen-dq": "added by tools/gen-dq.py",
+   "id": "R-5510",
+   "job": "dq_nightly_suite",
+   "start": "2026-10-28 02:00:00",
+   "end": "2026-10-28 02:13:50",
+   "sec": 830,
+   "status": "succeededWithFailures",
+   "launched": "schedule",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "suite": "mdm_staged_suite"
+   },
+   "dagRunId": "scheduled__2026-10-28T02:00:00+02:00",
+   "tasks": [
+    {
+     "id": "load_suite",
+     "status": "succeeded",
+     "start": "2026-10-28 02:00:00",
+     "sec": 223
+    },
+    {
+     "id": "run_expectations",
+     "status": "succeeded",
+     "start": "2026-10-28 02:03:43",
+     "sec": 186
+    },
+    {
+     "id": "publish_results",
+     "status": "succeeded",
+     "start": "2026-10-28 02:06:49",
+     "sec": 173
+    },
+    {
+     "id": "route_failures",
+     "status": "succeeded",
+     "start": "2026-10-28 02:09:42",
+     "sec": 248
+    }
+   ],
+   "objects": [
+    {
+     "src": "staged.customer",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-10-28 02:13:50",
+     "initOps": 20788,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-10-28 02:13:50",
+     "initOps": 20417,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.product",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-10-28 02:13:50",
+     "initOps": 18518,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5771"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "9f0fda8d05379ff6d6d7b3b8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:06",
+     "cat": "info",
+     "key": "jr.m.suite",
+     "args": [
+      "mdm_staged_suite",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:13:17",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_not_be_null",
+      "tax_id",
+      "25",
+      "98%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:07",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "25"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:17",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:14:14"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 2674,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 4371,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 4998,
+     "unexpected": 11,
+     "pct": 99.78,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2676,
+     "unexpected": 11,
+     "pct": 99.59,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 5896,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 25
+  },
+  {
+   "gen-dq": "added by tools/gen-dq.py",
+   "id": "R-5511",
+   "job": "dq_nightly_suite",
+   "start": "2026-10-29 02:00:01",
+   "end": "2026-10-29 02:14:27",
+   "sec": 866,
+   "status": "succeededWithFailures",
+   "launched": "schedule",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "suite": "mdm_staged_suite"
+   },
+   "dagRunId": "scheduled__2026-10-29T02:00:01+02:00",
+   "tasks": [
+    {
+     "id": "load_suite",
+     "status": "succeeded",
+     "start": "2026-10-29 02:00:01",
+     "sec": 205
+    },
+    {
+     "id": "run_expectations",
+     "status": "succeeded",
+     "start": "2026-10-29 02:03:26",
+     "sec": 193
+    },
+    {
+     "id": "publish_results",
+     "status": "succeeded",
+     "start": "2026-10-29 02:06:39",
+     "sec": 235
+    },
+    {
+     "id": "route_failures",
+     "status": "succeeded",
+     "start": "2026-10-29 02:10:34",
+     "sec": 233
+    }
+   ],
+   "objects": [
+    {
+     "src": "staged.customer",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-10-29 02:14:27",
+     "initOps": 8784,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-10-29 02:14:27",
+     "initOps": 23373,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.product",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-10-29 02:14:27",
+     "initOps": 13157,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5771"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "9f0fda8d05379ff6d6d7b3b8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:06",
+     "cat": "info",
+     "key": "jr.m.suite",
+     "args": [
+      "mdm_staged_suite",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:13:17",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_not_be_null",
+      "tax_id",
+      "25",
+      "98%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:07",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "25"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:17",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:14:14"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 2674,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 4371,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 4998,
+     "unexpected": 11,
+     "pct": 99.78,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2676,
+     "unexpected": 11,
+     "pct": 99.59,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 5896,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 25
+  },
+  {
+   "gen-dq": "added by tools/gen-dq.py",
+   "id": "R-5512",
+   "job": "dq_nightly_suite",
+   "start": "2026-10-30 02:00:02",
+   "end": "2026-10-30 02:14:09",
+   "sec": 847,
+   "status": "succeededWithFailures",
+   "launched": "schedule",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "suite": "mdm_staged_suite"
+   },
+   "dagRunId": "scheduled__2026-10-30T02:00:02+02:00",
+   "tasks": [
+    {
+     "id": "load_suite",
+     "status": "succeeded",
+     "start": "2026-10-30 02:00:02",
+     "sec": 189
+    },
+    {
+     "id": "run_expectations",
+     "status": "succeeded",
+     "start": "2026-10-30 02:03:11",
+     "sec": 243
+    },
+    {
+     "id": "publish_results",
+     "status": "succeeded",
+     "start": "2026-10-30 02:07:14",
+     "sec": 230
+    },
+    {
+     "id": "route_failures",
+     "status": "succeeded",
+     "start": "2026-10-30 02:11:04",
+     "sec": 185
+    }
+   ],
+   "objects": [
+    {
+     "src": "staged.customer",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-10-30 02:14:09",
+     "initOps": 8883,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-10-30 02:14:09",
+     "initOps": 12154,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.product",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-10-30 02:14:09",
+     "initOps": 24573,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5771"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "9f0fda8d05379ff6d6d7b3b8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:06",
+     "cat": "info",
+     "key": "jr.m.suite",
+     "args": [
+      "mdm_staged_suite",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:13:17",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_not_be_null",
+      "tax_id",
+      "25",
+      "98%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:07",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "25"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:17",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:14:14"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 2674,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 4371,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 4998,
+     "unexpected": 11,
+     "pct": 99.78,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2676,
+     "unexpected": 11,
+     "pct": 99.59,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 5896,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 25
+  },
+  {
+   "gen-dq": "added by tools/gen-dq.py",
+   "id": "R-5513",
+   "job": "dq_nightly_suite",
+   "start": "2026-10-31 02:00:03",
+   "end": "2026-10-31 02:13:02",
+   "sec": 779,
+   "status": "succeededWithFailures",
+   "launched": "schedule",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "suite": "mdm_staged_suite"
+   },
+   "dagRunId": "scheduled__2026-10-31T02:00:03+02:00",
+   "tasks": [
+    {
+     "id": "load_suite",
+     "status": "succeeded",
+     "start": "2026-10-31 02:00:03",
+     "sec": 188
+    },
+    {
+     "id": "run_expectations",
+     "status": "succeeded",
+     "start": "2026-10-31 02:03:11",
+     "sec": 193
+    },
+    {
+     "id": "publish_results",
+     "status": "succeeded",
+     "start": "2026-10-31 02:06:24",
+     "sec": 213
+    },
+    {
+     "id": "route_failures",
+     "status": "succeeded",
+     "start": "2026-10-31 02:09:57",
+     "sec": 185
+    }
+   ],
+   "objects": [
+    {
+     "src": "staged.customer",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-10-31 02:13:02",
+     "initOps": 13617,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-10-31 02:13:02",
+     "initOps": 15789,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.product",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-10-31 02:13:02",
+     "initOps": 26666,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5771"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "9f0fda8d05379ff6d6d7b3b8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:06",
+     "cat": "info",
+     "key": "jr.m.suite",
+     "args": [
+      "mdm_staged_suite",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:13:17",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_not_be_null",
+      "tax_id",
+      "25",
+      "98%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:07",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "25"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:17",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:14:14"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 2674,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 4371,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 4998,
+     "unexpected": 11,
+     "pct": 99.78,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2676,
+     "unexpected": 11,
+     "pct": 99.59,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 5896,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 25
+  },
+  {
+   "gen-dq": "added by tools/gen-dq.py",
+   "id": "R-5514",
+   "job": "dq_nightly_suite",
+   "start": "2026-11-01 02:00:04",
+   "end": "2026-11-01 02:14:17",
+   "sec": 853,
+   "status": "succeededWithFailures",
+   "launched": "schedule",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "suite": "mdm_staged_suite"
+   },
+   "dagRunId": "scheduled__2026-11-01T02:00:04+02:00",
+   "tasks": [
+    {
+     "id": "load_suite",
+     "status": "succeeded",
+     "start": "2026-11-01 02:00:04",
+     "sec": 250
+    },
+    {
+     "id": "run_expectations",
+     "status": "succeeded",
+     "start": "2026-11-01 02:04:14",
+     "sec": 199
+    },
+    {
+     "id": "publish_results",
+     "status": "succeeded",
+     "start": "2026-11-01 02:07:33",
+     "sec": 227
+    },
+    {
+     "id": "route_failures",
+     "status": "succeeded",
+     "start": "2026-11-01 02:11:20",
+     "sec": 177
+    }
+   ],
+   "objects": [
+    {
+     "src": "staged.customer",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-01 02:14:17",
+     "initOps": 16987,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-01 02:14:17",
+     "initOps": 19025,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.product",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-01 02:14:17",
+     "initOps": 8132,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5771"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "9f0fda8d05379ff6d6d7b3b8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:06",
+     "cat": "info",
+     "key": "jr.m.suite",
+     "args": [
+      "mdm_staged_suite",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:13:17",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_not_be_null",
+      "tax_id",
+      "25",
+      "98%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:07",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "25"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:17",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:14:14"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 2674,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 4371,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 4998,
+     "unexpected": 11,
+     "pct": 99.78,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2676,
+     "unexpected": 11,
+     "pct": 99.59,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 5896,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 25
+  },
+  {
+   "gen-dq": "added by tools/gen-dq.py",
+   "id": "R-5515",
+   "job": "dq_nightly_suite",
+   "start": "2026-11-02 02:00:05",
+   "end": "2026-11-02 02:14:15",
+   "sec": 850,
+   "status": "succeededWithFailures",
+   "launched": "schedule",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "suite": "mdm_staged_suite"
+   },
+   "dagRunId": "scheduled__2026-11-02T02:00:05+02:00",
+   "tasks": [
+    {
+     "id": "load_suite",
+     "status": "succeeded",
+     "start": "2026-11-02 02:00:05",
+     "sec": 210
+    },
+    {
+     "id": "run_expectations",
+     "status": "succeeded",
+     "start": "2026-11-02 02:03:35",
+     "sec": 191
+    },
+    {
+     "id": "publish_results",
+     "status": "succeeded",
+     "start": "2026-11-02 02:06:46",
+     "sec": 236
+    },
+    {
+     "id": "route_failures",
+     "status": "succeeded",
+     "start": "2026-11-02 02:10:42",
+     "sec": 213
+    }
+   ],
+   "objects": [
+    {
+     "src": "staged.customer",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-02 02:14:15",
+     "initOps": 19650,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-02 02:14:15",
+     "initOps": 27896,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.product",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-02 02:14:15",
+     "initOps": 20927,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5771"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "9f0fda8d05379ff6d6d7b3b8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:06",
+     "cat": "info",
+     "key": "jr.m.suite",
+     "args": [
+      "mdm_staged_suite",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:13:17",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_not_be_null",
+      "tax_id",
+      "25",
+      "98%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:07",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "25"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:17",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:14:14"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 2674,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 4371,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 4998,
+     "unexpected": 11,
+     "pct": 99.78,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2676,
+     "unexpected": 11,
+     "pct": 99.59,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 5896,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 25
+  },
+  {
+   "gen-dq": "added by tools/gen-dq.py",
+   "id": "R-5516",
+   "job": "dq_nightly_suite",
+   "start": "2026-11-03 02:00:00",
+   "end": "2026-11-03 02:13:52",
+   "sec": 832,
+   "status": "succeededWithFailures",
+   "launched": "schedule",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "suite": "mdm_staged_suite"
+   },
+   "dagRunId": "scheduled__2026-11-03T02:00:00+02:00",
+   "tasks": [
+    {
+     "id": "load_suite",
+     "status": "succeeded",
+     "start": "2026-11-03 02:00:00",
+     "sec": 221
+    },
+    {
+     "id": "run_expectations",
+     "status": "succeeded",
+     "start": "2026-11-03 02:03:41",
+     "sec": 211
+    },
+    {
+     "id": "publish_results",
+     "status": "succeeded",
+     "start": "2026-11-03 02:07:12",
+     "sec": 209
+    },
+    {
+     "id": "route_failures",
+     "status": "succeeded",
+     "start": "2026-11-03 02:10:41",
+     "sec": 191
+    }
+   ],
+   "objects": [
+    {
+     "src": "staged.customer",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-03 02:13:52",
+     "initOps": 19284,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-03 02:13:52",
+     "initOps": 27704,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.product",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-03 02:13:52",
+     "initOps": 26342,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5771"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "9f0fda8d05379ff6d6d7b3b8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:06",
+     "cat": "info",
+     "key": "jr.m.suite",
+     "args": [
+      "mdm_staged_suite",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:13:17",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_not_be_null",
+      "tax_id",
+      "25",
+      "98%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:07",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "25"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:17",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:14:14"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 2674,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 4371,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 4998,
+     "unexpected": 11,
+     "pct": 99.78,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2676,
+     "unexpected": 11,
+     "pct": 99.59,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 5896,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 25
+  },
+  {
+   "gen-dq": "added by tools/gen-dq.py",
+   "id": "R-5517",
+   "job": "dq_nightly_suite",
+   "start": "2026-11-04 02:00:01",
+   "end": "2026-11-04 02:14:03",
+   "sec": 842,
+   "status": "succeededWithFailures",
+   "launched": "schedule",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "suite": "mdm_staged_suite"
+   },
+   "dagRunId": "scheduled__2026-11-04T02:00:01+02:00",
+   "tasks": [
+    {
+     "id": "load_suite",
+     "status": "succeeded",
+     "start": "2026-11-04 02:00:01",
+     "sec": 232
+    },
+    {
+     "id": "run_expectations",
+     "status": "succeeded",
+     "start": "2026-11-04 02:03:53",
+     "sec": 204
+    },
+    {
+     "id": "publish_results",
+     "status": "succeeded",
+     "start": "2026-11-04 02:07:17",
+     "sec": 226
+    },
+    {
+     "id": "route_failures",
+     "status": "succeeded",
+     "start": "2026-11-04 02:11:03",
+     "sec": 180
+    }
+   ],
+   "objects": [
+    {
+     "src": "staged.customer",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-04 02:14:03",
+     "initOps": 23670,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-04 02:14:03",
+     "initOps": 16408,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.product",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-04 02:14:03",
+     "initOps": 13473,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5771"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "9f0fda8d05379ff6d6d7b3b8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:06",
+     "cat": "info",
+     "key": "jr.m.suite",
+     "args": [
+      "mdm_staged_suite",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:13:17",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_not_be_null",
+      "tax_id",
+      "25",
+      "98%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:07",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "25"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:17",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:14:14"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 2674,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 4371,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 4998,
+     "unexpected": 11,
+     "pct": 99.78,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2676,
+     "unexpected": 11,
+     "pct": 99.59,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 5896,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 25
+  },
+  {
+   "gen-dq": "added by tools/gen-dq.py",
+   "id": "R-5518",
+   "job": "dq_nightly_suite",
+   "start": "2026-11-05 02:00:02",
+   "end": "2026-11-05 02:14:38",
+   "sec": 876,
+   "status": "succeededWithFailures",
+   "launched": "schedule",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "suite": "mdm_staged_suite"
+   },
+   "dagRunId": "scheduled__2026-11-05T02:00:02+02:00",
+   "tasks": [
+    {
+     "id": "load_suite",
+     "status": "succeeded",
+     "start": "2026-11-05 02:00:02",
+     "sec": 248
+    },
+    {
+     "id": "run_expectations",
+     "status": "succeeded",
+     "start": "2026-11-05 02:04:10",
+     "sec": 191
+    },
+    {
+     "id": "publish_results",
+     "status": "succeeded",
+     "start": "2026-11-05 02:07:21",
+     "sec": 206
+    },
+    {
+     "id": "route_failures",
+     "status": "succeeded",
+     "start": "2026-11-05 02:10:47",
+     "sec": 231
+    }
+   ],
+   "objects": [
+    {
+     "src": "staged.customer",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-05 02:14:38",
+     "initOps": 17100,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-05 02:14:38",
+     "initOps": 10766,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.product",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-05 02:14:38",
+     "initOps": 11326,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5771"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "9f0fda8d05379ff6d6d7b3b8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:06",
+     "cat": "info",
+     "key": "jr.m.suite",
+     "args": [
+      "mdm_staged_suite",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:13:17",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_not_be_null",
+      "tax_id",
+      "25",
+      "98%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:07",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "25"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:17",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:14:14"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 2674,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 4371,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 4998,
+     "unexpected": 11,
+     "pct": 99.78,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2676,
+     "unexpected": 11,
+     "pct": 99.59,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 5896,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 25
+  },
+  {
+   "gen-dq": "added by tools/gen-dq.py",
+   "id": "R-5519",
+   "job": "dq_nightly_suite",
+   "start": "2026-11-06 02:00:03",
+   "end": "2026-11-06 02:15:05",
+   "sec": 902,
+   "status": "succeededWithFailures",
+   "launched": "schedule",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "suite": "mdm_staged_suite"
+   },
+   "dagRunId": "scheduled__2026-11-06T02:00:03+02:00",
+   "tasks": [
+    {
+     "id": "load_suite",
+     "status": "succeeded",
+     "start": "2026-11-06 02:00:03",
+     "sec": 218
+    },
+    {
+     "id": "run_expectations",
+     "status": "succeeded",
+     "start": "2026-11-06 02:03:41",
+     "sec": 225
+    },
+    {
+     "id": "publish_results",
+     "status": "succeeded",
+     "start": "2026-11-06 02:07:26",
+     "sec": 229
+    },
+    {
+     "id": "route_failures",
+     "status": "succeeded",
+     "start": "2026-11-06 02:11:15",
+     "sec": 230
+    }
+   ],
+   "objects": [
+    {
+     "src": "staged.customer",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-06 02:15:05",
+     "initOps": 15498,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-06 02:15:05",
+     "initOps": 24203,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.product",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-06 02:15:05",
+     "initOps": 15342,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5771"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "9f0fda8d05379ff6d6d7b3b8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:06",
+     "cat": "info",
+     "key": "jr.m.suite",
+     "args": [
+      "mdm_staged_suite",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:13:17",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_not_be_null",
+      "tax_id",
+      "25",
+      "98%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:07",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "25"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:17",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:14:14"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 2674,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 4371,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 4998,
+     "unexpected": 11,
+     "pct": 99.78,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2676,
+     "unexpected": 11,
+     "pct": 99.59,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 5896,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 25
+  },
+  {
+   "gen-dq": "added by tools/gen-dq.py",
+   "id": "R-5520",
+   "job": "dq_nightly_suite",
+   "start": "2026-11-07 02:00:04",
+   "end": "2026-11-07 02:14:46",
+   "sec": 882,
+   "status": "succeededWithFailures",
+   "launched": "schedule",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "suite": "mdm_staged_suite"
+   },
+   "dagRunId": "scheduled__2026-11-07T02:00:04+02:00",
+   "tasks": [
+    {
+     "id": "load_suite",
+     "status": "succeeded",
+     "start": "2026-11-07 02:00:04",
+     "sec": 183
+    },
+    {
+     "id": "run_expectations",
+     "status": "succeeded",
+     "start": "2026-11-07 02:03:07",
+     "sec": 249
+    },
+    {
+     "id": "publish_results",
+     "status": "succeeded",
+     "start": "2026-11-07 02:07:16",
+     "sec": 227
+    },
+    {
+     "id": "route_failures",
+     "status": "succeeded",
+     "start": "2026-11-07 02:11:03",
+     "sec": 223
+    }
+   ],
+   "objects": [
+    {
+     "src": "staged.customer",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-07 02:14:46",
+     "initOps": 25824,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-07 02:14:46",
+     "initOps": 21801,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.product",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-07 02:14:46",
+     "initOps": 15257,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5771"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "9f0fda8d05379ff6d6d7b3b8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:06",
+     "cat": "info",
+     "key": "jr.m.suite",
+     "args": [
+      "mdm_staged_suite",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:13:17",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_not_be_null",
+      "tax_id",
+      "25",
+      "98%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:07",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "25"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:17",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:14:14"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 2674,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 4371,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 4998,
+     "unexpected": 11,
+     "pct": 99.78,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2676,
+     "unexpected": 11,
+     "pct": 99.59,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 5896,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 25
+  },
+  {
+   "gen-dq": "added by tools/gen-dq.py",
+   "id": "R-5521",
+   "job": "dq_nightly_suite",
+   "start": "2026-11-08 02:00:05",
+   "end": "2026-11-08 02:14:16",
+   "sec": 851,
+   "status": "succeededWithFailures",
+   "launched": "schedule",
+   "runAs": "سارة عادل",
+   "error": "",
+   "runType": "direct",
+   "params": {
+    "suite": "mdm_staged_suite"
+   },
+   "dagRunId": "scheduled__2026-11-08T02:00:05+02:00",
+   "tasks": [
+    {
+     "id": "load_suite",
+     "status": "succeeded",
+     "start": "2026-11-08 02:00:05",
+     "sec": 201
+    },
+    {
+     "id": "run_expectations",
+     "status": "succeeded",
+     "start": "2026-11-08 02:03:26",
+     "sec": 216
+    },
+    {
+     "id": "publish_results",
+     "status": "succeeded",
+     "start": "2026-11-08 02:07:02",
+     "sec": 197
+    },
+    {
+     "id": "route_failures",
+     "status": "succeeded",
+     "start": "2026-11-08 02:10:19",
+     "sec": 237
+    }
+   ],
+   "objects": [
+    {
+     "src": "staged.customer",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-08 02:14:16",
+     "initOps": 20541,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.vendor",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-08 02:14:16",
+     "initOps": 10764,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    },
+    {
+     "src": "staged.product",
+     "tgt": "dq.results",
+     "load": "full",
+     "status": "completed",
+     "last": "2026-11-08 02:14:16",
+     "initOps": 18143,
+     "deltaOps": 0,
+     "parts": 1,
+     "partsDone": 1,
+     "partsErr": 0,
+     "state": "",
+     "threads": 2,
+     "records": 0
+    }
+   ],
+   "messages": [
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.started",
+     "args": [
+      "R-5771"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:03",
+     "cat": "info",
+     "key": "jr.m.handle",
+     "args": [
+      "9f0fda8d05379ff6d6d7b3b8"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:00:06",
+     "cat": "info",
+     "key": "jr.m.suite",
+     "args": [
+      "mdm_staged_suite",
+      "30"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:13:17",
+     "cat": "warning",
+     "key": "jr.m.dqBreach",
+     "args": [
+      "expect_column_values_to_not_be_null",
+      "tax_id",
+      "25",
+      "98%"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:07",
+     "cat": "warning",
+     "key": "jr.m.quarantine",
+     "args": [
+      "25"
+     ],
+     "detail": ""
+    },
+    {
+     "ts": "2026-11-09 02:14:17",
+     "cat": "info",
+     "key": "jr.m.done",
+     "args": [
+      "00:14:14"
+     ],
+     "detail": ""
+    }
+   ],
+   "metrics": {},
+   "dq": [
+    {
+     "exp": "expect_column_values_to_not_be_null",
+     "col": "tax_id",
+     "evaluated": 2674,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_match_regex",
+     "col": "phone",
+     "evaluated": 4371,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    },
+    {
+     "exp": "expect_column_values_to_be_unique",
+     "col": "source_id",
+     "evaluated": 4998,
+     "unexpected": 11,
+     "pct": 99.78,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_values_to_be_in_set",
+     "col": "country",
+     "evaluated": 2676,
+     "unexpected": 11,
+     "pct": 99.59,
+     "ok": false
+    },
+    {
+     "exp": "expect_column_value_lengths_to_be_between",
+     "col": "name_ar",
+     "evaluated": 5896,
+     "unexpected": 0,
+     "pct": 100.0,
+     "ok": true
+    }
+   ],
+   "quarantined": 25
   }
  ],
 	"streams": [{"job": "mdm_customer_stream", "entity": "customer", "title_en": "Customer MDM stream", "title_ar": "تدفق MDM للعملاء", "folder": "customer/customer_master/stream", "owner": "سارة عادل", "status": "running", "group": "repoio-mdm-customer", "from": "raw.customer", "to": "golden.customer", "lag": 1240, "behindSec": 38, "checkpoint": "2026-11-10 12:29:22", "rate": 85, "dlq": 12, "dlqHour": 2, "stages": {"standardise": "ok", "dq": "ok", "match": "ok", "survivorship": "ok"}, "lagHist": [900, 1100, 800, 1500, 1300, 1000, 1240, 1600, 1400, 1200, 1100, 1240]}, {"job": "mdm_vendor_stream", "entity": "vendor", "title_en": "Vendor MDM stream", "title_ar": "تدفق MDM للموردين", "folder": "vendor/vendor_master/stream", "owner": "هالة سمير", "status": "running", "group": "repoio-mdm-vendor", "from": "raw.vendor", "to": "golden.vendor", "lag": 18400, "behindSec": 1260, "checkpoint": "2026-11-10 12:26:05", "rate": 14, "dlq": 486, "dlqHour": 420, "dlqReason": "SCHEMA_DRIFT", "stages": {"standardise": "ok", "dq": "warn", "match": "ok", "survivorship": "ok"}, "lagHist": [600, 700, 900, 1500, 2600, 4100, 6200, 8800, 11300, 13900, 16200, 18400]}, {"job": "", "entity": "product", "title_en": "Book catalog MDM stream", "title_ar": "تدفق MDM لكتالوج الكتب", "folder": "product/book_catalog/stream", "owner": "كريم فوزي", "status": "failed", "error": "SPARK_EXECUTOR_LOST", "group": "repoio-mdm-product", "from": "raw.product", "to": "golden.product", "lag": 52300, "behindSec": 7420, "checkpoint": "2026-11-10 10:26:12", "rate": 0, "dlq": 0, "dlqHour": 0, "stages": {"standardise": "error", "dq": "idle", "match": "idle", "survivorship": "idle"}, "lagHist": [200, 300, 250, 400, 9000, 15000, 21000, 27500, 33800, 40100, 46200, 52300]}],

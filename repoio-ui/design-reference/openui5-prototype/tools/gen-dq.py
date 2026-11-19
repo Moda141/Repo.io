@@ -11,13 +11,24 @@ Sample values only. In the product:
 Deterministic: rerunning gives the same file. Inputs: model/tables.json (source-table tests) and
 model/stewardship.json (the repository gate rules the Quarantine page uses).
 """
+import datetime
 import json
 import os
 import random
 
 ROOT = os.path.join(os.path.dirname(__file__), "..", "webapp", "model")
-NOW = "2026-11-17 06:00"
-DAYS = ["2026-11-%02d" % d for d in range(4, 18)]  # 14 daily runs, oldest first
+# Aligned with model/runs.json ("now" 2026-11-10): the results of each day come from that night's dq_nightly_suite run
+NOW = "2026-11-10 02:15"
+DAYS = [(datetime.date(2026, 11, 10) - datetime.timedelta(days=13 - i)).isoformat() for i in range(14)]  # 14 nightly runs, oldest first
+WEEK = datetime.timedelta(days=7)
+
+
+def back7(s):
+    """The alert sample was written for a week later; move it onto the runs timeline."""
+    if not s:
+        return s
+    d = datetime.datetime.strptime(s, "%Y-%m-%d %H:%M") - WEEK
+    return d.strftime("%Y-%m-%d %H:%M")
 
 # Check types offered by the builder palette (Great Expectations expectations), grouped by quality dimension.
 CHECKS = [
@@ -161,6 +172,58 @@ def series(rnd, base, n=14, spread=0.8):
     return out
 
 
+RUNS = os.path.join(ROOT, "runs.json")
+GEN = "tools/gen-dq.py"
+
+
+def nightly_runs(tests):
+    """One dq_nightly_suite run per day in model/runs.json (the runs the results come from). Runs that already exist
+    are kept; the missing ones are added (marked "gen") from the shape of an existing run. Returns {date: run id}."""
+    data = json.load(open(RUNS, encoding="utf-8"))
+    runs = [r for r in data["runs"] if r.get("gen-dq") is None]
+    have = {r["start"][:10]: r for r in runs if r["job"] == "dq_nightly_suite"}
+    tpl = sorted(have.values(), key=lambda r: r["start"])[0]
+    rnd, out = random.Random(4242), {}
+    for i, d in enumerate(DAYS):
+        if d in have:
+            out[d] = have[d]["id"]
+            continue
+        failing = any(t["level"] == "repository" and t["severity"] == "quarantine" and r["d"] == d and r["pass"] < t["threshold"]
+                      for t in tests for r in t["runs"])
+        start = datetime.datetime.strptime(d + " 02:00:0" + str(i % 6), "%Y-%m-%d %H:%M:%S")
+        secs = [rnd.randint(170, 250) for _ in range(4)]
+        run = json.loads(json.dumps(tpl))
+        run.update({"id": "R-55%02d" % (10 + i), "start": start.strftime("%Y-%m-%d %H:%M:%S"),
+                    "end": (start + datetime.timedelta(seconds=sum(secs))).strftime("%Y-%m-%d %H:%M:%S"), "sec": sum(secs),
+                    "status": "succeededWithFailures" if failing else "succeeded",
+                    "dagRunId": "scheduled__%sT%s+02:00" % (d, start.strftime("%H:%M:%S")), "gen": GEN})
+        t0 = start
+        for task, sec in zip(run["tasks"], secs):
+            task.update({"status": "succeeded", "start": t0.strftime("%Y-%m-%d %H:%M:%S"), "sec": sec})
+            t0 += datetime.timedelta(seconds=sec)
+        for o in run.get("objects", []):
+            o.update({"status": "completed", "last": run["end"], "initOps": rnd.randint(8000, 30000)})
+        runs.append(run)
+        out[d] = run["id"]
+    # Existing runs keep their order; the added (older) runs follow them
+    # Write by text so the hand-formatted parts of runs.json stay as they are: drop the runs added last time, then
+    # append the new ones at the end of the "runs" array.
+    text = open(RUNS, encoding="utf-8").read()
+    head, sep, tail = text.partition('\n ],\n\t"streams"')
+    assert sep, "runs.json layout changed"
+    mark = ',\n  {\n   "gen-dq": "added by ' + GEN + '"'
+    head = head.split(mark)[0]
+    added = [r for r in runs if r.get("gen") == GEN]
+    for r in added:
+        r.pop("gen", None)
+        body = json.dumps(r, ensure_ascii=False, indent=1)
+        body = "\n".join("  " + line for line in body.split("\n"))
+        head += mark + ",\n" + body.split("\n", 1)[1]
+    with open(RUNS, "w", encoding="utf-8") as f:
+        f.write(head + sep + tail)
+    return out
+
+
 def main():
     tables = json.load(open(os.path.join(ROOT, "tables.json"), encoding="utf-8"))["tables"]
     stew = json.load(open(os.path.join(ROOT, "stewardship.json"), encoding="utf-8"))
@@ -257,7 +320,13 @@ def main():
         ("AL-04", "2026-11-13 03:05", "resolved", "أحمد ناصر", {"job": "c4c_customer_pull", "run": "R-5702"}),
         ("AL-06", "2026-11-13 08:00", "resolved", "محمد", {"count": 2}),
     ]
-    alerts = [{"id": "A-%04d" % (3120 - i), "rule": r, "at": at, "status": st, "by": by, "ctx": ctx} for i, (r, at, st, by, ctx) in enumerate(fired)]
+    alerts = [{"id": "A-%04d" % (3120 - i), "rule": r, "at": back7(at), "status": st, "by": by, "ctx": ctx} for i, (r, at, st, by, ctx) in enumerate(fired)]
+    for r in alert_rules:
+        r["last"] = back7(r["last"]) if r["last"] >= "2026-11-08" else r["last"]
+    run_ids = nightly_runs(tests)
+    for t in tests:
+        for r in t["runs"]:
+            r["run"] = run_ids[r["d"]]
 
     out = {
         "_comment": __doc__.strip().split("\n\n")[1].replace("\n", " "),
