@@ -153,6 +153,7 @@ sap.ui.define([
 		_levelsText: function (c) {
 			if (c.method === "exact") { return this.text("mr.lv.exact"); }
 			if (c.method === "array") { return this.text("mr.lv.array"); }
+			if (c.method === "overlap") { return this.text("mr.lv.overlap"); }
 			var lv = c.levels || DEFAULT_LEVELS[c.method];
 			return lv.map(function (v) { return (c.method === "lev" ? "≤ " : "≥ ") + v; }).join(" · ") + " · " + this.text("mr.lv.else");
 		},
@@ -528,8 +529,11 @@ sap.ui.define([
 				oLevels = new Input({ width: "100%", textDirection: "LTR" }),
 				oLvLabel = new Label({ text: this.text("mr.cmp.levelsIn") }),
 				oHint = new Text({ text: "" }).addStyleClass("repoioUmMuted"),
+				oMHint = new Text({ text: "" }).addStyleClass("repoioUmMuted"),
 				syncLv = function (bKeep) {
 					var k = oMethod.getSelectedKey(), show = !!M[k].levels;
+					// What the method compares, so the steward can pick between "any value in common" and the detailed levels
+					oMHint.setText(that.text("mr.md." + k));
 					oLevels.setVisible(show); oLvLabel.setVisible(show);
 					if (show) { oLevels.setValue(((bKeep && oCmp && oCmp.method === k && oCmp.levels) || DEFAULT_LEVELS[k]).join(", ")); }
 					oLvLabel.setText(that.text(k === "lev" ? "mr.cmp.levelsLev" : "mr.cmp.levelsIn"));
@@ -550,7 +554,7 @@ sap.ui.define([
 				title: this.text(oCmp ? "mr.cmp.editTitle" : "mr.cmp.addTitle", [this._t(m)]), contentWidth: "30rem",
 				content: [new SimpleForm({ editable: true, layout: "ResponsiveGridLayout", labelSpanM: 12, labelSpanL: 12, columnsL: 1, columnsM: 1, content: [
 					new Label({ text: this.text("mr.cmp.field"), required: true }), oField, oHint,
-					new Label({ text: this.text("mr.cmp.method"), required: true }), oMethod,
+					new Label({ text: this.text("mr.cmp.method"), required: true }), oMethod, oMHint,
 					oLvLabel, oLevels
 				] }), new MessageStrip({ text: this.text("mr.cmp.retrain"), type: "Information", showIcon: true }).addStyleClass("sapUiSmallMargin")],
 				beginButton: new Button({ text: this.text("common.save"), type: "Emphasized", press: function () {
@@ -607,11 +611,23 @@ sap.ui.define([
 
 		/* ---------- the Splink settings the matching service builds from this model (read-only preview) ---------- */
 		_splinkText: function (m) {
+			// "Shared values in detail": one level per kind of overlap between two lists, learned like any other level
+			var overlap = function (col) {
+				var l = col + "_l", r = col + "_r";
+				return ["        cl.CustomComparison(output_column_name=\"" + col + "\", comparison_levels=[",
+					"            cll.NullLevel(\"" + col + "\"),",
+					"            cll.CustomLevel(\"array_sort(" + l + ") = array_sort(" + r + ")\", \"same values\"),",
+					"            cll.CustomLevel(\"size(array_intersect(" + l + ", " + r + ")) = least(size(" + l + "), size(" + r + "))\", \"one contains the other\"),",
+					"            cll.ArrayIntersectLevel(\"" + col + "\", min_intersection=1),",
+					"            cll.ElseLevel(),",
+					"        ]),"].join("\n");
+			};
 			var that = this, segBy = m.segmentBy ? this._field(m.segmentBy, m).col : "",
 				cmp = m.comparisons.filter(function (c) { return c.on; }).map(function (c) {
 					var f = that._field(c.field), mt = that._src.methods[c.method], args = "\"" + f.col + "\"";
 					if (c.method === "jw" || c.method === "lev") { args += ", [" + (c.levels || DEFAULT_LEVELS[c.method]).join(", ") + "]"; }
 					if (c.method === "array") { args += ", [1]"; }
+					if (c.method === "overlap") { return overlap(f.col); }
 					return "        cl." + mt.splink + "(" + args + "),";
 				}),
 				blk = m.blocking.map(function (b) { that._decorateBlk(b); return "        " + b.sql + ","; }),
@@ -623,7 +639,8 @@ sap.ui.define([
 				});
 			return ["# " + this._t(m) + " · " + m.repo + " · " + this.text("mr.ver.short", [m.dirty && m.status === "active" ? Number(m.version) + 1 : m.version]),
 				"from splink import SettingsCreator, block_on",
-				"import splink.comparison_library as cl",
+				"import splink.comparison_library as cl" + (m.comparisons.some(function (c) { return c.on && c.method === "overlap"; }) ?
+					"\nimport splink.comparison_level_library as cll" : ""),
 				"",
 				"# Shared by consolidation and the request check. A missing value adds no weight (Splink null level).",
 				"settings = SettingsCreator(",

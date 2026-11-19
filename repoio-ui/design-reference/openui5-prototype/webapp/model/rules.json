@@ -35,6 +35,14 @@
 			"kinds": [
 				"array"
 			]
+		},
+		"overlap": {
+			"en": "Shared values in detail",
+			"ar": "القيم المشتركة بالتفصيل",
+			"splink": "CustomComparison",
+			"kinds": [
+				"array"
+			]
 		}
 	},
 	"samples": [
@@ -298,7 +306,7 @@
 				},
 				{
 					"field": "final_stages",
-					"method": "array",
+					"method": "overlap",
 					"weight": 1.6,
 					"on": true
 				},
