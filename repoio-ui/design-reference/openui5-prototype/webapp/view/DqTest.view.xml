@@ -41,12 +41,12 @@
 			<FlexBox wrap="Wrap" renderType="Bare" class="repoioDqKpis">
 				<VBox renderType="Bare" class="repoioDqKpi">
 					<Label text="{i18n>dq.k.pass}"/>
-					<ObjectNumber number="{view>/dqt/passNum}" unit="%" state="{view>/dqt/resState}" emphasized="true" class="repoioDqKpiNum" textDirection="LTR"/>
+					<ObjectNumber number="{view>/dqt/passNum}" unit="%" state="{view>/dqt/resState}" emphasized="true" class="repoioDqKpiNum"/>
 					<Text text="{view>/dqt/thText}" class="repoioUmMuted"/>
 				</VBox>
 				<VBox renderType="Bare" class="repoioDqKpi">
 					<Label text="{i18n>dq.k.failed}"/>
-					<Text text="{view>/dqt/failedNum}" class="repoioDqKpiBig" textDirection="LTR"/>
+					<Text text="{view>/dqt/failedNum}" class="repoioDqKpiBig"/>
 					<Text text="{view>/dqt/checkedText}" class="repoioUmMuted"/>
 				</VBox>
 				<VBox renderType="Bare" class="repoioDqKpi" visible="{= ${view>/dqt/level} === 'repository' }">
@@ -56,7 +56,7 @@
 				</VBox>
 				<VBox renderType="Bare" class="repoioDqKpi">
 					<Label text="{i18n>dq.k.runs}"/>
-					<HBox alignItems="Baseline" renderType="Bare" class="repoioDqVal"><Text text="{view>/dqt/passedRuns}" class="repoioDqKpiBig" textDirection="LTR"/><Text text="{view>/dqt/runsUnit}"/></HBox>
+					<HBox alignItems="Baseline" renderType="Bare" class="repoioDqVal"><Text text="{view>/dqt/passedRuns}" class="repoioDqKpiBig"/><Text text="{view>/dqt/runsUnit}"/></HBox>
 					<Text text="{i18n>dq.k.runsSub}" class="repoioUmMuted"/>
 				</VBox>
 				<VBox renderType="Bare" class="repoioDqKpi">
