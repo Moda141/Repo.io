@@ -1580,3 +1580,81 @@ html[dir="rtl"] .repoioJdArrow { transform: scaleX(-1); }
 .repoioTbFormNote { margin-top: 1rem; max-width: 47rem; }
 .repoioTbKeyHead { color: var(--sapContent_LabelColor, #556b82); }
 .repoioTbOp .repoioClassTag.sapMObjectStatus { margin-inline-start: 0.5rem; }
+
+/* ---------- Data Quality: Test cases (J10) ---------- */
+.repoioDq .repoioDqTabs.sapMITH { padding-inline: 1rem; background: transparent; box-shadow: none; }
+.repoioDqTabHint { display: block; padding: 0.25rem 1rem 0.5rem; }
+.repoioDqName.sapMLnk { font-weight: 600; }
+.repoioDqIdLine { gap: 0.5rem; margin-top: 0.125rem; }
+.repoioDqPyTag.sapMObjectStatus .sapMObjStatusText { font-size: var(--sapFontSmallSize, 0.75rem); }
+.repoioDqTh { font-size: var(--sapFontSmallSize, 0.75rem); }
+.repoioDqSpark { display: block; margin: 0 auto; }
+.repoioDqSparkNone { color: var(--sapContent_LabelColor); }
+.repoioDq .repoioAlpVisual { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1279px) { .repoioDq .repoioAlpVisual { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1023px) { .repoioDq .repoioAlpVisual { grid-template-columns: 1fr; } }
+/* Test detail */
+.repoioDqTStatus { margin-inline-start: 0.75rem; }
+.repoioDqKpis { gap: 2.5rem; padding-block: 0.25rem; }
+.repoioDqKpi { min-width: 8rem; gap: 0.125rem; }
+.repoioDqKpiNum.sapMObjectNumber .sapMObjectNumberText { font-size: 1.5rem; }
+.repoioDqKpiLink.sapMLnk { font-size: 1.5rem; font-weight: 700; }
+.repoioDqVal { gap: 0.375rem; }
+.repoioDqCodeBox { margin-top: 1.25rem; gap: 0.375rem; max-width: 60rem; }
+.repoioDqBad { color: var(--sapNegativeTextColor, #aa0808); }
+.repoioDqHistItem { gap: 0.75rem; padding: 0.5rem 0; }
+.repoioDqHistIcon { color: var(--sapContent_IconColor); margin-top: 0.125rem; }
+.repoioDqKpiBig.sapMText { font-size: 1.5rem; font-weight: 700; color: var(--sapTextColor); line-height: 1.25; }
+/* Test editor: palette · columns · properties */
+.repoioDqeTarget { gap: 0.75rem 1.5rem; }
+.repoioDqeHint { max-width: 36rem; align-self: center; }
+.repoioDqeBuilder { gap: 1rem; padding: 1rem; align-items: stretch; min-height: 100%; box-sizing: border-box; }
+.repoioDqePane { background: var(--sapGroup_ContentBackground, #fff); border-radius: var(--sapElement_BorderCornerRadius, 0.75rem);
+	box-shadow: var(--sapContent_Shadow0); padding: 0.875rem 1rem; gap: 0.375rem; min-width: 0; }
+.repoioDqePalette { flex: 0 0 17rem; }
+.repoioDqeCols { flex: 1 1 0; }
+.repoioDqeProps { flex: 0 0 22rem; }
+.repoioDqeCode { flex: 1 1 0; }
+.repoioDqePaneHint { font-size: var(--sapFontSmallSize, 0.75rem); margin-bottom: 0.25rem; }
+.repoioDqePalList .sapMLIB.repoioDqeChk { padding: 0; cursor: grab; border-radius: 0.5rem; }
+.repoioDqePalList .sapMLIB.repoioDqeChk:hover { background: var(--sapList_Hover_Background); }
+.repoioDqeChkIn { gap: 0.5rem; padding: 0.375rem 0.25rem; width: 100%; }
+.repoioDqeGrip { color: var(--sapContent_NonInteractiveIconColor, #758ca4); font-size: 0.75rem; }
+.repoioDqeChkIcon { color: var(--sapContent_IconColor); }
+.repoioDqeChkTxt { flex: 1 1 auto; min-width: 0; }
+.repoioDqeChkDesc { font-size: var(--sapFontSmallSize, 0.75rem); }
+.repoioDqeColList .sapMLIB.repoioDqeCol { padding: 0; }
+.repoioDqeColIn { width: 100%; padding: 0.5rem 0.5rem; gap: 0.25rem; }
+.repoioDqeColName { gap: 0.5rem; min-width: 0; }
+.repoioDqeTags { gap: 0.25rem; }
+.repoioDqeDrop { font-size: var(--sapFontSmallSize, 0.75rem); color: var(--sapContent_LabelColor); border: 1px dashed var(--sapField_BorderColor, #bfc5ca);
+	border-radius: 0.375rem; padding: 0.125rem 0.5rem; display: inline-block; }
+.repoioDqeForm { gap: 0.25rem; }
+.repoioDqeForm > .sapMLabel { margin-top: 0.5rem; }
+.repoioDqeForm .sapMInputBase, .repoioDqeForm .sapMSlt { width: 100%; }
+.repoioDqeVal { gap: 0.5rem; }
+.repoioDqeMinMax { gap: 1rem; }
+.repoioDqeTry { margin-top: 0.5rem; gap: 0.25rem; padding: 0.5rem 0.75rem; background: var(--sapNeutralBackground, #eff1f2); border-radius: 0.5rem; }
+.repoioDqeLog { gap: 0.125rem; font-size: var(--sapFontSmallSize, 0.75rem); }
+.repoioDqeGe { margin-top: 0.5rem; }
+.repoioDqeGe .sapMPanelContent { padding: 0; }
+@media (max-width: 1279px) {
+	.repoioDqeBuilder { flex-wrap: wrap; }
+	.repoioDqePalette, .repoioDqeProps { flex: 1 1 18rem; }
+	.repoioDqeCols, .repoioDqeCode { flex: 1 1 100%; order: -1; }
+}
+/* Bound styling: XML views cannot bind "class", so a bound value is written to data-rc and styled here */
+[data-rc~="mono"], [data-rc~="mono"] .sapMText, [data-rc~="mono"] input { font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
+[data-rc~="muted"].sapMText { color: var(--sapContent_LabelColor, #6a6d70); }
+[data-rc~="dsNew"].sapMText { font-style: italic; color: var(--sapContent_LabelColor, #6a6d70); }
+[data-rc~="diff"].sapMText { color: var(--sapCriticalTextColor, #b44f00); font-weight: bold; }
+[data-rc~="dlqHot"].sapMLnk { color: var(--sapNegativeColor, #bb0000); font-weight: bold; }
+.repoioDqeTag[data-rc~="sel"].sapMGenericTag { outline: 2px solid var(--sapContent_FocusColor, #0070f2); outline-offset: 1px; }
+.repoioGrFilter.repoioDqeLevelBox { width: auto; }
+/* Alerts */
+.repoioAlTabs.sapMITB > .sapMITH { padding-inline: 1rem; }
+.repoioAl .repoioAlCh { gap: 0.375rem; margin-top: 0.125rem; color: var(--sapContent_IconColor); }
+.repoioAlForm { gap: 0.25rem; padding: 0.75rem 1rem; }
+.repoioAlForm > .sapMLabel { margin-top: 0.375rem; }
+.repoioAlSec.sapMTitle { margin-top: 0.875rem; padding-bottom: 0.25rem; border-bottom: 1px solid var(--sapGroup_TitleBorderColor, #d9d9d9); }
+.repoioAlRow { gap: 1rem; }

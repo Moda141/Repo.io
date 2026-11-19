@@ -137,11 +137,11 @@
 								</t:Column>
 								<t:Column minWidth="120">
 									<t:label><Label text="{i18n>repo.matchRole}"/></t:label>
-									<t:template><Text text="{view>role}" class="{= ${view>role} === '—' ? 'repoioUmMuted' : '' }"/></t:template>
+									<t:template><Text text="{view>role}"><customData><core:CustomData key="rc" value="{= ${view>role} === '—' ? 'muted' : 'none' }" writeToDom="true"/></customData></Text></t:template>
 								</t:Column>
 								<t:Column minWidth="120">
 									<t:label><Label text="{i18n>repo.survivorship}"/></t:label>
-									<t:template><Text text="{view>surv}" class="{= ${view>surv} === '—' ? 'repoioUmMuted' : '' }"/></t:template>
+									<t:template><Text text="{view>surv}"><customData><core:CustomData key="rc" value="{= ${view>surv} === '—' ? 'muted' : 'none' }" writeToDom="true"/></customData></Text></t:template>
 								</t:Column>
 							</t:columns>
 						</t:Table>

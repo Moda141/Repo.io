@@ -119,6 +119,10 @@
 			"tables": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/tables.json"
+			},
+			"dq": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/dq.json"
 			}
 		},
 		"resources": {
@@ -298,6 +302,26 @@
 					"target": "quarantine"
 				},
 				{
+					"name": "dqTests",
+					"pattern": "data-quality/tests:?query:",
+					"target": "dqTests"
+				},
+				{
+					"name": "dqEdit",
+					"pattern": "data-quality/tests/{id}/edit:?query:",
+					"target": "dqEdit"
+				},
+				{
+					"name": "dqTest",
+					"pattern": "data-quality/tests/{id}",
+					"target": "dqTest"
+				},
+				{
+					"name": "dqAlerts",
+					"pattern": "data-quality/alerts/:tab:",
+					"target": "dqAlerts"
+				},
+				{
 					"name": "page",
 					"pattern": "page/{key}",
 					"target": "placeholder"
@@ -447,6 +471,26 @@
 				"quarantine": {
 					"id": "quarantine",
 					"name": "Quarantine",
+					"level": 2
+				},
+				"dqTests": {
+					"id": "dqTests",
+					"name": "DqTests",
+					"level": 2
+				},
+				"dqTest": {
+					"id": "dqTest",
+					"name": "DqTest",
+					"level": 3
+				},
+				"dqEdit": {
+					"id": "dqEdit",
+					"name": "DqEditor",
+					"level": 4
+				},
+				"dqAlerts": {
+					"id": "dqAlerts",
+					"name": "DqAlerts",
 					"level": 2
 				},
 				"domain": {

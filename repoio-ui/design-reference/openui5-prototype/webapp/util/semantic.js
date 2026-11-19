@@ -63,9 +63,22 @@ sap.ui.define([], function () {
 		gate: {
 			passed: ["Success", "sap-icon://accept"], review: ["Warning", "sap-icon://flag"], stopped: ["Error", "sap-icon://stop"]
 		},
-		/* Quarantine queue. */
+		/* Data quality test results against the test's threshold: below the threshold fails; a test that has not run is neutral. */
+		dq: {
+			pass: ["Success", I.ok], fail: ["Error", I.err], warn: ["Warning", I.warn], notRun: ["None", I.pending]
+		},
+		/* What a failing data quality test does to the record. */
+		dqSeverity: {
+			quarantine: ["Error", I.locked], flag: ["Warning", "sap-icon://flag"], warn: ["None", "sap-icon://message-information"]
+		},
+		/* Fired alerts: open needs someone; acknowledged is being handled; resolved is done. */
+		alert: {
+			open: ["Error", "sap-icon://alert"], ack: ["Information", "sap-icon://employee-approvals"], resolved: ["Success", I.ok]
+		},
+				/* Quarantine queue. */
 		quarantine: {
-			held: ["None", I.locked], // the normal state of the queue: neutral (management by exception) ready: ["Information", "sap-icon://synchronize"],
+			held: ["None", I.locked], // the normal state of the queue: neutral (management by exception)
+			ready: ["Information", "sap-icon://synchronize"],
 			pendingWaive: ["Warning", "sap-icon://group"], pendingDiscard: ["Warning", "sap-icon://group"]
 		}
 	};

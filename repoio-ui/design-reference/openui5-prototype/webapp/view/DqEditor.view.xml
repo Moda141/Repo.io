@@ -1,0 +1,271 @@
+<mvc:View controllerName="repoio.proto.controller.DqEditor"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control"
+	xmlns:dnd="sap.ui.core.dnd" height="100%">
+	<!-- J10: test editor. Two ways to make a data quality test, both stored as Great Expectations expectations:
+	     - Visual builder: drag a check from the palette onto a column (or select the column and press Add), then set it
+	       in the properties panel and try it on sample records;
+	     - Python: a custom check in the code editor, tried on sample records in an isolated worker, and sent to a second
+	       person for review before it runs on real data.
+	     The preview is a call to the DQ service on sample data; the browser never runs the check or the code. -->
+	<f:DynamicPage id="dqePage" headerExpanded="true" toggleHeaderOnTitleClick="false" showFooter="true" class="repoioEdge repoioDqe">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:breadcrumbs>
+					<Breadcrumbs currentLocationText="{view>/dqe/crumb}">
+						<Link text="{i18n>nav.testCases}" press=".onCancel"/>
+					</Breadcrumbs>
+				</f:breadcrumbs>
+				<f:heading>
+					<HBox alignItems="Center" renderType="Bare">
+						<Title text="{view>/dqe/title}" level="H1" wrapping="false"/>
+						<ObjectStatus text="{view>/dqe/modeText}" icon="{view>/dqe/modeIcon}" state="Information" class="repoioDqTStatus"/>
+					</HBox>
+				</f:heading>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader pinnable="false">
+				<!-- Where the test runs -->
+				<FlexBox wrap="Wrap" alignItems="End" class="repoioGrFilters repoioDqeTarget">
+					<VBox class="repoioGrFilter repoioDqeLevelBox">
+						<Label text="{i18n>dqe.level}" labelFor="dqeLevel"/>
+						<SegmentedButton id="dqeLevel" selectedKey="{view>/dqe/level}" selectionChange=".onLevel" enabled="{view>/dqe/isNew}">
+							<items>
+								<SegmentedButtonItem key="repository" text="{i18n>dqe.level.repository}" icon="sap-icon://database"/>
+								<SegmentedButtonItem key="source" text="{i18n>dqe.level.source}" icon="sap-icon://table-view"/>
+							</items>
+						</SegmentedButton>
+					</VBox>
+					<VBox class="repoioGrFilter" visible="{= ${view>/dqe/level} === 'repository' }">
+						<Label text="{i18n>gr.f.repo}" labelFor="dqeRepo" required="true"/>
+						<Select id="dqeRepo" selectedKey="{view>/dqe/repo}" items="{view>/dqe/repoOpts}" width="100%" change=".onTarget" enabled="{view>/dqe/isNew}">
+							<core:Item key="{view>key}" text="{view>text}"/>
+						</Select>
+					</VBox>
+					<VBox class="repoioGrFilter" visible="{= ${view>/dqe/level} === 'source' }">
+						<Label text="{i18n>dqe.table}" labelFor="dqeTable" required="true"/>
+						<Select id="dqeTable" selectedKey="{view>/dqe/tableKey}" items="{view>/dqe/tableOpts}" width="100%" change=".onTarget" enabled="{view>/dqe/isNew}">
+							<core:Item key="{view>key}" text="{view>text}"/>
+						</Select>
+					</VBox>
+					<Text text="{view>/dqe/levelHint}" class="repoioUmMuted repoioDqeHint"/>
+				</FlexBox>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<VBox renderType="Bare" height="100%">
+				<!-- ===================== Visual builder ===================== -->
+				<HBox renderType="Bare" class="repoioDqeBuilder" visible="{= ${view>/dqe/mode} === 'builder' }">
+					<!-- Palette: the check types, grouped by quality dimension -->
+					<VBox renderType="Bare" class="repoioDqePane repoioDqePalette">
+						<Title text="{i18n>dqe.palette}" level="H2" titleStyle="H5"/>
+						<Text text="{i18n>dqe.paletteHint}" class="repoioUmMuted repoioDqePaneHint"/>
+						<List id="dqePal" items="{path: 'view>/dqe/palette', sorter: {path: 'dimOrder', group: '.groupDim'}}" groupHeaderFactory=".groupHeader"
+							showSeparators="None" class="repoioDqePalList" ariaLabelledBy="dqePalLbl">
+							<dragDropConfig>
+								<dnd:DragInfo sourceAggregation="items" groupName="dqCheck"/>
+							</dragDropConfig>
+							<CustomListItem class="repoioDqeChk" tooltip="{view>desc}">
+								<HBox alignItems="Center" renderType="Bare" class="repoioDqeChkIn">
+									<core:Icon src="sap-icon://grip" class="repoioDqeGrip" decorative="true"/>
+									<core:Icon src="{view>icon}" class="repoioDqeChkIcon" decorative="true"/>
+									<VBox renderType="Bare" class="repoioDqeChkTxt">
+										<Text text="{view>name}" wrapping="false"/>
+										<Text text="{view>desc}" class="repoioUmMuted repoioDqeChkDesc" maxLines="2"/>
+									</VBox>
+									<Button icon="sap-icon://add" type="Transparent" tooltip="{view>addTip}" press=".onAddCheck" enabled="{view>canAdd}"/>
+								</HBox>
+							</CustomListItem>
+						</List>
+						<core:InvisibleText id="dqePalLbl" text="{i18n>dqe.palette}"/>
+					</VBox>
+
+					<!-- The table's columns: drop targets -->
+					<VBox renderType="Bare" class="repoioDqePane repoioDqeCols">
+						<HBox alignItems="Center" justifyContent="SpaceBetween" renderType="Bare">
+							<Title text="{view>/dqe/colsTitle}" level="H2" titleStyle="H5"/>
+							<SearchField value="{view>/dqe/cq}" liveChange=".onColSearch" width="12rem" placeholder="{i18n>lin.find}"/>
+						</HBox>
+						<Text text="{i18n>dqe.colsHint}" class="repoioUmMuted repoioDqePaneHint"/>
+						<List id="dqeCols" items="{view>/dqe/cols}" mode="SingleSelectMaster" selectionChange=".onColSelect" showSeparators="Inner" class="repoioDqeColList">
+							<dragDropConfig>
+								<dnd:DropInfo targetAggregation="items" dropPosition="On" groupName="dqCheck" drop=".onDrop"/>
+							</dragDropConfig>
+							<CustomListItem selected="{view>selected}" class="repoioDqeCol">
+								<VBox renderType="Bare" class="repoioDqeColIn">
+									<HBox alignItems="Center" justifyContent="SpaceBetween" renderType="Bare">
+										<HBox alignItems="Center" renderType="Bare" class="repoioDqeColName">
+											<core:Icon src="{view>icon}" class="repoioExRowIcon" decorative="true"/>
+											<Text text="{view>label}" wrapping="false"/>
+											<Text text="{view>name}" class="repoioMono repoioUmMuted" textDirection="LTR" wrapping="false" visible="{= ${view>name} !== '' }"/>
+										</HBox>
+										<Text text="{view>meta}" class="repoioUmMuted" wrapping="false"/>
+									</HBox>
+									<HBox renderType="Bare" wrap="Wrap" items="{path: 'view>checks', templateShareable: false}" class="repoioDqeTags">
+										<GenericTag text="{view>text}" status="{view>status}" design="{= ${view>isNew} ? 'Full' : 'StatusIconHidden' }" press=".onTag"
+											tooltip="{view>tip}" class="repoioDqeTag"><customData><core:CustomData key="rc" value="{= ${view>sel} ? 'sel' : 'none' }" writeToDom="true"/></customData></GenericTag>
+									</HBox>
+									<Text text="{i18n>dqe.dropHere}" class="repoioDqeDrop" visible="{= !${view>checks}.length }"/>
+								</VBox>
+							</CustomListItem>
+						</List>
+					</VBox>
+
+					<!-- Properties of the selected check -->
+					<VBox renderType="Bare" class="repoioDqePane repoioDqeProps">
+						<Title text="{i18n>dqe.props}" level="H2" titleStyle="H5"/>
+						<IllustratedMessage illustrationType="sapIllus-AddColumn" illustrationSize="Spot" title="{i18n>dqe.noSel}" description="{i18n>dqe.noSelDesc}"
+							visible="{= !${view>/dqe/cur/key} }"/>
+						<VBox renderType="Bare" visible="{= !!${view>/dqe/cur/key} }" class="repoioDqeForm">
+							<MessageStrip text="{view>/dqe/cur/lockText}" type="Information" showIcon="true" visible="{= !!${view>/dqe/cur/lockText} }">
+								<link><Link text="{i18n>dqe.openTest}" press=".onOpenExisting"/></link>
+							</MessageStrip>
+							<HBox alignItems="Center" renderType="Bare" class="repoioDqeVal">
+								<core:Icon src="{view>/dqe/cur/icon}" class="repoioExRowIcon" decorative="true"/>
+								<Text text="{view>/dqe/cur/checkText}"/>
+								<Text text="· {view>/dqe/cur/dimText}" class="repoioUmMuted"/>
+							</HBox>
+							<Text text="{view>/dqe/cur/desc}" class="repoioUmMuted"/>
+							<Label text="{i18n>dqe.f.nameAr}" labelFor="dqeNameAr" required="true"/>
+							<Input id="dqeNameAr" value="{view>/dqe/cur/ar}" textDirection="RTL" liveChange=".onProp" editable="{view>/dqe/cur/editable}"/>
+							<Label text="{i18n>dqe.f.nameEn}" labelFor="dqeNameEn"/>
+							<Input id="dqeNameEn" value="{view>/dqe/cur/en}" textDirection="LTR" liveChange=".onProp" editable="{view>/dqe/cur/editable}"/>
+
+							<!-- Check settings -->
+							<VBox renderType="Bare" visible="{= ${view>/dqe/cur/check} === 'inList' }">
+								<Label text="{i18n>dqe.f.list}" labelFor="dqeList" required="true"/>
+								<Select id="dqeList" selectedKey="{view>/dqe/cur/params/list}" items="{view>/dqe/lists}" width="100%" change=".onProp" enabled="{view>/dqe/cur/editable}">
+									<core:Item key="{view>key}" text="{view>text}"/>
+								</Select>
+								<Text text="{view>/dqe/cur/listHint}" class="repoioUmMuted"/>
+							</VBox>
+							<VBox renderType="Bare" visible="{= ${view>/dqe/cur/check} === 'pattern' }">
+								<Label text="{i18n>dqe.f.preset}" labelFor="dqePreset"/>
+								<Select id="dqePreset" selectedKey="{view>/dqe/cur/params/preset}" items="{view>/dqe/presets}" width="100%" change=".onPreset" enabled="{view>/dqe/cur/editable}">
+									<core:Item key="{view>key}" text="{view>text}"/>
+								</Select>
+								<Label text="{i18n>dqe.f.regex}" labelFor="dqeRegex" required="true"/>
+								<Input id="dqeRegex" value="{view>/dqe/cur/params/regex}" textDirection="LTR" class="repoioMono" liveChange=".onRegex"
+									valueState="{view>/dqe/cur/regexState}" valueStateText="{i18n>dqe.badRegex}" editable="{view>/dqe/cur/editable}"/>
+							</VBox>
+							<HBox renderType="Bare" class="repoioDqeMinMax" visible="{= ${view>/dqe/cur/check} === 'length' || ${view>/dqe/cur/check} === 'range' || ${view>/dqe/cur/check} === 'rowCount' }">
+								<VBox renderType="Bare">
+									<Label text="{i18n>dqe.f.min}" labelFor="dqeMin"/>
+									<StepInput id="dqeMin" value="{view>/dqe/cur/params/min}" min="0" max="10000000" change=".onProp" editable="{view>/dqe/cur/editable}" width="9rem"/>
+								</VBox>
+								<VBox renderType="Bare">
+									<Label text="{i18n>dqe.f.max}" labelFor="dqeMax"/>
+									<StepInput id="dqeMax" value="{view>/dqe/cur/params/max}" min="0" max="10000000" change=".onProp" editable="{view>/dqe/cur/editable}" width="9rem"/>
+								</VBox>
+							</HBox>
+							<VBox renderType="Bare" visible="{= ${view>/dqe/cur/check} === 'requiredWhen' }">
+								<Label text="{i18n>dqe.f.whenCol}" labelFor="dqeWhenCol" required="true"/>
+								<Select id="dqeWhenCol" selectedKey="{view>/dqe/cur/params/whenCol}" items="{view>/dqe/colOpts}" width="100%" change=".onProp" enabled="{view>/dqe/cur/editable}">
+									<core:Item key="{view>key}" text="{view>text}"/>
+								</Select>
+								<Label text="{i18n>dqe.f.whenVal}" labelFor="dqeWhenVal" required="true"/>
+								<Input id="dqeWhenVal" value="{view>/dqe/cur/params/whenVal}" textDirection="LTR" liveChange=".onProp" editable="{view>/dqe/cur/editable}"/>
+							</VBox>
+							<VBox renderType="Bare" visible="{= ${view>/dqe/cur/check} === 'fresh' }">
+								<Label text="{i18n>dqe.f.hours}" labelFor="dqeHours"/>
+								<StepInput id="dqeHours" value="{view>/dqe/cur/params/hours}" min="1" max="720" change=".onProp" editable="{view>/dqe/cur/editable}" width="9rem"/>
+							</VBox>
+
+							<!-- Threshold and what a failure does -->
+							<Label text="{view>/dqe/cur/thLabel}" labelFor="dqeTh"/>
+							<HBox alignItems="Center" renderType="Bare" class="repoioDqeVal">
+								<Slider id="dqeTh" value="{view>/dqe/cur/threshold}" min="80" max="100" step="0.5" width="12rem" liveChange=".onTh" enabled="{view>/dqe/cur/editable}"/>
+								<Text text="{view>/dqe/cur/threshold}%" class="repoioMono" textDirection="LTR"/>
+							</HBox>
+							<Label text="{i18n>dq.d.sev}" labelFor="dqeSev"/>
+							<RadioButtonGroup id="dqeSev" selectedIndex="{view>/dqe/cur/sevIdx}" select=".onSev" enabled="{view>/dqe/cur/editable}">
+								<RadioButton text="{i18n>dq.sev.quarantine}" enabled="{= ${view>/dqe/level} === 'repository' }"/>
+								<RadioButton text="{i18n>dq.sev.flag}" enabled="{= ${view>/dqe/level} === 'repository' }"/>
+								<RadioButton text="{i18n>dq.sev.warn}"/>
+							</RadioButtonGroup>
+							<Text text="{view>/dqe/cur/sevHint}" class="repoioUmMuted"/>
+
+							<!-- Try it on sample records, then the expectation the DQ service will store -->
+							<HBox alignItems="Center" renderType="Bare" class="repoioDqeVal sapUiSmallMarginTop">
+								<Button text="{i18n>dqe.try}" icon="sap-icon://lab" press=".onTry" enabled="{view>/dqe/cur/canTry}"/>
+								<Button text="{i18n>dqe.remove}" icon="sap-icon://delete" type="Transparent" press=".onRemove" visible="{view>/dqe/cur/isNew}"/>
+							</HBox>
+							<VBox renderType="Bare" visible="{= !!${view>/dqe/cur/tryText} }" class="repoioDqeTry">
+								<ObjectStatus text="{view>/dqe/cur/tryText}" state="{view>/dqe/cur/tryState}" icon="{view>/dqe/cur/tryIcon}"/>
+								<VBox renderType="Bare" items="{path: 'view>/dqe/cur/tryFails', templateShareable: false}">
+									<Text text="{view>t}" class="repoioMono repoioDqBad" textDirection="LTR"/>
+								</VBox>
+							</VBox>
+							<Panel headerText="{i18n>dqe.geTitle}" expandable="true" expanded="false" class="repoioDqeGe">
+								<rc:CodeEditor id="dqeGe" language="python" editable="false" height="9rem"/>
+							</Panel>
+						</VBox>
+					</VBox>
+				</HBox>
+
+				<!-- ===================== Python ===================== -->
+				<HBox renderType="Bare" class="repoioDqeBuilder" visible="{= ${view>/dqe/mode} === 'python' }">
+					<VBox renderType="Bare" class="repoioDqePane repoioDqeCode">
+						<HBox alignItems="Center" justifyContent="SpaceBetween" renderType="Bare">
+							<Title text="{i18n>dq.s.code}" level="H2" titleStyle="H5"/>
+							<Text text="{view>/dqe/pkgText}" class="repoioUmMuted"/>
+						</HBox>
+						<rc:CodeEditor id="dqePy" language="python" height="24rem" fields="{view>/dqe/pyFields}" change=".onCode"/>
+						<MessageStrip text="{i18n>dq.pyNote}" type="Information" showIcon="true"/>
+					</VBox>
+					<VBox renderType="Bare" class="repoioDqePane repoioDqeProps">
+						<Title text="{i18n>dqe.props}" level="H2" titleStyle="H5"/>
+						<VBox renderType="Bare" class="repoioDqeForm">
+							<Label text="{i18n>dqe.f.column}" labelFor="dqePyCol"/>
+							<Select id="dqePyCol" selectedKey="{view>/dqe/py/column}" items="{view>/dqe/colOpts}" width="100%" change=".onPyProp">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</Select>
+							<Label text="{i18n>dqe.f.nameAr}" labelFor="dqePyAr" required="true"/>
+							<Input id="dqePyAr" value="{view>/dqe/py/ar}" textDirection="RTL" liveChange=".onPyProp"/>
+							<Label text="{i18n>dqe.f.nameEn}" labelFor="dqePyEn"/>
+							<Input id="dqePyEn" value="{view>/dqe/py/en}" textDirection="LTR" liveChange=".onPyProp"/>
+							<Label text="{i18n>dq.d.dim}" labelFor="dqePyDim"/>
+							<Select id="dqePyDim" selectedKey="{view>/dqe/py/dim}" items="{view>/dqe/dimOpts}" width="100%" change=".onPyProp">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</Select>
+							<Label text="{view>/dqe/py/thLabel}" labelFor="dqePyTh"/>
+							<HBox alignItems="Center" renderType="Bare" class="repoioDqeVal">
+								<Slider id="dqePyTh" value="{view>/dqe/py/threshold}" min="80" max="100" step="0.5" width="12rem" liveChange=".onPyProp"/>
+								<Text text="{view>/dqe/py/threshold}%" class="repoioMono" textDirection="LTR"/>
+							</HBox>
+							<Label text="{i18n>dq.d.sev}" labelFor="dqePySev"/>
+							<RadioButtonGroup id="dqePySev" selectedIndex="{view>/dqe/py/sevIdx}" select=".onPyProp">
+								<RadioButton text="{i18n>dq.sev.quarantine}" enabled="{= ${view>/dqe/level} === 'repository' }"/>
+								<RadioButton text="{i18n>dq.sev.flag}" enabled="{= ${view>/dqe/level} === 'repository' }"/>
+								<RadioButton text="{i18n>dq.sev.warn}"/>
+							</RadioButtonGroup>
+							<Label text="{i18n>dqe.f.reviewer}" labelFor="dqeReviewer" required="true"/>
+							<Select id="dqeReviewer" selectedKey="{view>/dqe/py/reviewer}" items="{view>/dqe/reviewers}" width="100%" change=".onPyProp" forceSelection="false">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</Select>
+							<Text text="{i18n>dqe.reviewerHint}" class="repoioUmMuted"/>
+
+							<!-- Sample run in an isolated worker -->
+							<Button text="{i18n>dqe.runSample}" icon="sap-icon://media-play" press=".onPyRun" enabled="{= !${view>/dqe/py/running} }" class="sapUiSmallMarginTop"/>
+							<VBox renderType="Bare" visible="{= !!${view>/dqe/py/log}.length }" class="repoioDqeTry">
+								<ObjectStatus text="{view>/dqe/py/runText}" state="{view>/dqe/py/runState}" icon="{view>/dqe/py/runIcon}"/>
+								<VBox renderType="Bare" items="{path: 'view>/dqe/py/log', templateShareable: false}" class="repoioDqeLog">
+									<Text text="{view>t}" class="repoioMono" textDirection="LTR"/>
+								</VBox>
+							</VBox>
+						</VBox>
+					</VBox>
+				</HBox>
+			</VBox>
+		</f:content>
+		<f:footer>
+			<OverflowToolbar>
+				<Text text="{view>/dqe/footText}" class="repoioUmMuted"/>
+				<ToolbarSpacer/>
+				<Button text="{view>/dqe/primaryText}" type="Emphasized" enabled="{view>/dqe/canSave}" press=".onPrimary"/>
+				<Button text="{i18n>dqe.saveDraft}" enabled="{view>/dqe/canSave}" press=".onDraft"/>
+				<Button text="{i18n>common.cancel}" type="Transparent" press=".onCancel"/>
+			</OverflowToolbar>
+		</f:footer>
+	</f:DynamicPage>
+</mvc:View>

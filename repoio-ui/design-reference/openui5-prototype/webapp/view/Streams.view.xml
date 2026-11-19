@@ -78,7 +78,7 @@
 							<Text text="{view>checkpointText}" tooltip="{view>checkpoint}"/>
 							<Text text="{view>rateText}" textDirection="LTR"/>
 							<VBox alignItems="End">
-								<Link text="{view>dlqText}" press=".onOpenDlq" enabled="{= ${view>dlq} > 0 }" class="{= ${view>dlqAlert} ? 'repoioStDlqHot' : '' }"/>
+								<Link text="{view>dlqText}" press=".onOpenDlq" enabled="{= ${view>dlq} > 0 }"><customData><core:CustomData key="rc" value="{= ${view>dlqAlert} ? 'dlqHot' : 'none' }" writeToDom="true"/></customData></Link>
 								<Text text="{view>dlqHourText}" class="repoioStSub" visible="{= ${view>dlqHour} > 0 }"/>
 							</VBox>
 							<rc:PersonLink name="{view>owner}"/>

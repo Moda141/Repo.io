@@ -1,0 +1,178 @@
+<mvc:View controllerName="repoio.proto.controller.DqTests"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control" height="100%">
+	<!-- J10: Test cases. Analytical list layout (as Quarantine and Data jobs): visual or compact filters over the list of
+	     data quality tests (Great Expectations). Repository tests run in the stream on every batch and hold or flag
+	     records; source-table tests profile the source nightly and only warn. Tests are made in the visual builder or in
+	     Python; Python runs only in the isolated workers. -->
+	<f:DynamicPage id="dqPage" headerExpanded="true" toggleHeaderOnTitleClick="true" class="repoioEdge repoioDq">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading><Title text="{i18n>nav.testCases}" level="H1"/></f:heading>
+				<f:expandedContent><Text text="{view>/dq/summary}"/></f:expandedContent>
+				<f:snappedContent><Text text="{view>/dq/summary}"/></f:snappedContent>
+				<f:actions>
+					<Button text="{view>/dq/clearText}" type="Transparent" visible="{= ${view>/dq/active} > 0 }" press=".onClear"/>
+					<SegmentedButton selectedKey="{view>/dq/filterMode}">
+						<items>
+							<SegmentedButtonItem key="compact" icon="sap-icon://filter-fields" tooltip="{i18n>rp.compact}"/>
+							<SegmentedButtonItem key="visual" icon="sap-icon://filter-analytics" tooltip="{i18n>rp.visual}"/>
+						</items>
+					</SegmentedButton>
+					<Button text="{i18n>nav.alerts}" icon="sap-icon://bell" type="Transparent" press=".onAlerts"/>
+					<MenuButton id="dqNew" text="{i18n>dq.new}" icon="sap-icon://add" type="Emphasized">
+						<menu>
+							<Menu>
+								<MenuItem text="{i18n>dq.new.builder}" icon="sap-icon://drag-and-drop" press=".onNewBuilder"/>
+								<MenuItem text="{i18n>dq.new.python}" icon="sap-icon://syntax" press=".onNewPython"/>
+							</Menu>
+						</menu>
+					</MenuButton>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader pinnable="true">
+				<VBox renderType="Bare">
+					<HBox class="repoioAlpVisual" visible="{= ${view>/dq/filterMode} === 'visual' }" renderType="Bare">
+						<VBox class="repoioAlpVf" renderType="Bare">
+							<Title text="{i18n>dq.vf.result}" level="H4" titleStyle="H6" wrapping="false"/>
+							<rc:EChart id="vfDqRes" height="7.5rem" select=".onVfSelect">
+								<rc:customData><core:CustomData key="dim" value="results"/></rc:customData>
+							</rc:EChart>
+						</VBox>
+						<VBox class="repoioAlpVf" renderType="Bare">
+							<Title text="{i18n>dq.vf.dim}" level="H4" titleStyle="H6" wrapping="false"/>
+							<rc:EChart id="vfDqDim" height="7.5rem" select=".onVfSelect">
+								<rc:customData><core:CustomData key="dim" value="dims"/></rc:customData>
+							</rc:EChart>
+						</VBox>
+						<VBox class="repoioAlpVf" renderType="Bare">
+							<Title text="{i18n>dq.vf.where}" level="H4" titleStyle="H6" wrapping="false"/>
+							<rc:EChart id="vfDqWhere" height="7.5rem" select=".onVfSelect">
+								<rc:customData><core:CustomData key="dim" value="where"/></rc:customData>
+							</rc:EChart>
+						</VBox>
+						<VBox class="repoioAlpVf" renderType="Bare">
+							<Title text="{i18n>dq.vf.author}" level="H4" titleStyle="H6" wrapping="false"/>
+							<rc:EChart id="vfDqAuthor" height="7.5rem" select=".onVfSelect">
+								<rc:customData><core:CustomData key="dim" value="authors"/></rc:customData>
+							</rc:EChart>
+						</VBox>
+					</HBox>
+					<FlexBox wrap="Wrap" alignItems="End" class="repoioGrFilters" visible="{= ${view>/dq/filterMode} === 'compact' }">
+						<VBox class="repoioGrFilter">
+							<Label text="{i18n>dq.f.where}" labelFor="dqWhere"/>
+							<MultiComboBox id="dqWhere" selectedKeys="{view>/dq/f/where}" items="{view>/dq/whereOpts}" width="100%" selectionFinish=".onFilter">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+						<VBox class="repoioGrFilter">
+							<Label text="{i18n>dq.f.dim}" labelFor="dqDims"/>
+							<MultiComboBox id="dqDims" selectedKeys="{view>/dq/f/dims}" items="{view>/dq/dimOpts}" width="100%" selectionFinish=".onFilter">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+						<VBox class="repoioGrFilter">
+							<Label text="{i18n>dq.f.result}" labelFor="dqRes"/>
+							<MultiComboBox id="dqRes" selectedKeys="{view>/dq/f/results}" items="{view>/dq/resOpts}" width="100%" selectionFinish=".onFilter">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+						<VBox class="repoioGrFilter">
+							<Label text="{i18n>dq.f.sev}" labelFor="dqSev"/>
+							<MultiComboBox id="dqSev" selectedKeys="{view>/dq/f/sevs}" items="{view>/dq/sevOpts}" width="100%" selectionFinish=".onFilter">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+						<VBox class="repoioGrFilter">
+							<Label text="{i18n>dq.f.author}" labelFor="dqAuth"/>
+							<MultiComboBox id="dqAuth" selectedKeys="{view>/dq/f/authors}" items="{view>/dq/authorOpts}" width="100%" selectionFinish=".onFilter">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+						<VBox class="repoioGrFilter">
+							<Label text="{i18n>dq.f.status}" labelFor="dqSt"/>
+							<MultiComboBox id="dqSt" selectedKeys="{view>/dq/f/status}" items="{view>/dq/statusOpts}" width="100%" selectionFinish=".onFilter">
+								<core:Item key="{view>key}" text="{view>text}"/>
+							</MultiComboBox>
+						</VBox>
+					</FlexBox>
+				</VBox>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<VBox renderType="Bare">
+				<!-- Where the test runs: the stream gate on a repository, or the nightly profile of a source table -->
+				<IconTabHeader id="dqTabs" selectedKey="{view>/dq/tab}" select=".onTab" mode="Inline" class="repoioDqTabs">
+					<items>
+						<IconTabFilter key="all" text="{view>/dq/tabs/all}"/>
+						<IconTabFilter key="repository" text="{view>/dq/tabs/repository}"/>
+						<IconTabFilter key="source" text="{view>/dq/tabs/source}"/>
+					</items>
+				</IconTabHeader>
+				<Text text="{view>/dq/tabHint}" class="repoioUmMuted repoioDqTabHint"/>
+				<Table id="dqTable" items="{view>/dq/rows}" mode="MultiSelect" selectionChange=".onSelect" fixedLayout="false" popinLayout="GridSmall"
+					class="repoioDenseTable" noDataText="{i18n>dq.none}" sticky="ColumnHeaders,HeaderToolbar">
+					<headerToolbar>
+						<OverflowToolbar style="Clear">
+							<Title text="{view>/dq/listTitle}" level="H2"/>
+							<ToolbarSpacer/>
+							<SearchField value="{view>/dq/f/q}" liveChange=".onFilter" placeholder="{i18n>dq.search}" width="16rem">
+								<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" minWidth="9rem"/></layoutData>
+							</SearchField>
+							<Button text="{i18n>dq.a.run}" icon="sap-icon://media-play" type="Transparent" enabled="{view>/dq/canRun}" press=".onRun"/>
+							<Button text="{view>/dq/toggleText}" icon="sap-icon://media-pause" type="Transparent" enabled="{view>/dq/canToggle}" press=".onToggle"/>
+							<Button icon="sap-icon://delete" type="Transparent" tooltip="{i18n>dq.a.deleteDrafts}" enabled="{view>/dq/canDelete}" press=".onDelete"/>
+						</OverflowToolbar>
+					</headerToolbar>
+					<columns>
+						<Column><Text text="{i18n>dq.c.test}"/></Column>
+						<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>dq.c.where}"/></Column>
+						<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>dq.c.check}"/></Column>
+						<Column minScreenWidth="1600px"><Text text="{i18n>dq.c.dim}"/></Column>
+						<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>dq.c.sev}"/></Column>
+						<Column hAlign="End"><Text text="{i18n>dq.c.result}"/></Column>
+						<Column minScreenWidth="Desktop" demandPopin="true" hAlign="End"><Text text="{i18n>dq.c.failed}"/></Column>
+						<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center" width="7rem"><Text text="{i18n>dq.c.trend}"/></Column>
+						<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>dq.c.status}"/></Column>
+					</columns>
+					<items>
+						<ColumnListItem type="Navigation" press=".onOpen" highlight="{= ${view>result} === 'fail' ? 'Error' : ${view>result} === 'warn' ? 'Warning' : 'None' }">
+							<VBox renderType="Bare">
+								<Link text="{view>name}" press=".onOpen" wrapping="true" class="repoioDqName"/>
+								<HBox alignItems="Center" renderType="Bare" class="repoioDqIdLine">
+									<Text text="{view>id}" class="repoioMono repoioUmMuted" textDirection="LTR"/>
+									<ObjectStatus text="Python" icon="sap-icon://syntax" state="Information" visible="{view>isPython}" class="repoioDqPyTag"/>
+								</HBox>
+							</VBox>
+							<HBox alignItems="Center" renderType="Bare">
+								<core:Icon src="{view>whereIcon}" class="repoioExRowIcon" decorative="true"/>
+								<VBox renderType="Bare">
+									<Text text="{view>whereText}" wrapping="false"/>
+									<Text text="{view>whereSub}" class="repoioMono repoioUmMuted" textDirection="LTR" wrapping="false"/>
+								</VBox>
+							</HBox>
+							<HBox alignItems="Center" renderType="Bare">
+								<core:Icon src="{view>checkIcon}" class="repoioExRowIcon" decorative="true"/>
+								<Text text="{view>checkText}" wrapping="false"/>
+							</HBox>
+							<Text text="{view>dimText}" wrapping="false"/>
+							<ObjectStatus text="{view>sevText}" state="{view>sevState}" icon="{view>sevIcon}"/>
+							<VBox renderType="Bare" alignItems="End">
+								<ObjectStatus text="{view>resText}" state="{view>resState}" icon="{view>resIcon}" textDirection="LTR"/>
+								<Text text="{view>thText}" class="repoioUmMuted repoioDqTh"/>
+							</VBox>
+							<VBox renderType="Bare" alignItems="End">
+								<Text text="{view>failedText}" textDirection="LTR"/>
+								<Text text="{view>checkedText}" class="repoioUmMuted repoioDqTh" visible="{= !!${view>checkedText} }"/>
+							</VBox>
+							<core:HTML content="{view>spark}" sanitizeContent="false" preferDOM="false"/>
+							<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
+						</ColumnListItem>
+					</items>
+				</Table>
+				<rc:Pager total="{view>/dq/count}" page="{view>/dq/page}" pageSize="{view>/dq/size}" change=".onPage"/>
+			</VBox>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

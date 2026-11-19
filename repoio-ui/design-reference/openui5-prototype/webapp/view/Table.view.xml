@@ -72,7 +72,7 @@
 									<VBox class="repoioTbFormField" renderType="Bare">
 										<Label text="{view>label}"/>
 										<Input value="{view>value}" editable="false" textDirection="{view>dir}" visible="{= ${view>type} === 'text' }"
-											class="{= ${view>mono} ? 'repoioMono' : '' }"/>
+											><customData><core:CustomData key="rc" value="{= ${view>mono} ? 'mono' : 'none' }" writeToDom="true"/></customData></Input>
 										<Switch state="{view>on}" enabled="false" customTextOn=" " customTextOff=" " visible="{= ${view>type} === 'switch' }"/>
 										<rc:PersonLink name="{view>value}" visible="{= ${view>type} === 'person' }"/>
 									</VBox>
@@ -117,11 +117,11 @@
 										</t:Column>
 										<t:Column minWidth="150" width="14rem">
 											<t:label><Label text="{i18n>tb.c.semantic}"/></t:label>
-											<t:template><Text text="{view>semText}" wrapping="false" class="{= ${view>semantic} === 'none' ? 'repoioUmMuted' : '' }"/></t:template>
+											<t:template><Text text="{view>semText}" wrapping="false"><customData><core:CustomData key="rc" value="{= ${view>semantic} === 'none' ? 'muted' : 'none' }" writeToDom="true"/></customData></Text></t:template>
 										</t:Column>
 										<t:Column minWidth="120" width="10rem">
 											<t:label><Label text="{i18n>tb.c.labelCol}"/></t:label>
-											<t:template><Text text="{= ${view>labelCol} || '—' }" class="{= ${view>labelCol} ? 'repoioMono' : 'repoioUmMuted' }" textDirection="LTR" wrapping="false"/></t:template>
+											<t:template><Text text="{= ${view>labelCol} || '—' }"  textDirection="LTR" wrapping="false"><customData><core:CustomData key="rc" value="{= ${view>labelCol} ? 'mono' : 'muted' }" writeToDom="true"/></customData></Text></t:template>
 										</t:Column>
 										<t:Column width="6.5rem" hAlign="Center">
 											<t:label><Label text="{i18n>tb.c.notNull}"/></t:label>
@@ -129,7 +129,7 @@
 										</t:Column>
 										<t:Column minWidth="130" width="11rem">
 											<t:label><Label text="{i18n>tbl.term}"/></t:label>
-											<t:template><Text text="{= ${view>termText} || ${i18n>tbl.notLinked} }" wrapping="false" class="{= ${view>termText} ? '' : 'repoioUmMuted' }"/></t:template>
+											<t:template><Text text="{= ${view>termText} || ${i18n>tbl.notLinked} }" wrapping="false"><customData><core:CustomData key="rc" value="{= ${view>termText} ? 'none' : 'muted' }" writeToDom="true"/></customData></Text></t:template>
 										</t:Column>
 										<t:Column minWidth="100" width="8rem" hAlign="End">
 											<t:label><Label text="{i18n>tbl.empty}"/></t:label>

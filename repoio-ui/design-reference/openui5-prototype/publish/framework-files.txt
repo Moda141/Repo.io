@@ -22,6 +22,10 @@ resources/sap/m/themes/base/illustrations/sapIllus-Scene-SuccessCheckMark.svg
 resources/sap/m/themes/base/illustrations/sapIllus-Scene-SuccessHighFive.svg
 resources/sap/m/themes/base/illustrations/sapIllus-Spot-NoActivities.svg
 resources/sap/m/themes/base/illustrations/sapIllus-Spot-NoData.svg
+resources/sap/m/themes/base/illustrations/sapIllus-Dialog-AddColumn.svg
+resources/sap/m/themes/base/illustrations/sapIllus-Dot-AddColumn.svg
+resources/sap/m/themes/base/illustrations/sapIllus-Scene-AddColumn.svg
+resources/sap/m/themes/base/illustrations/sapIllus-Spot-AddColumn.svg
 resources/sap/m/themes/base/illustrations/sapIllus-Spot-SuccessCheckMark.svg
 resources/sap/m/themes/base/illustrations/sapIllus-Spot-SuccessHighFive.svg
 resources/sap/m/themes/sap_horizon/library-RTL.css
@@ -51,6 +55,7 @@ resources/sap/ui/core/themes/sap_horizon/fonts/72-Regular-full.woff2
 resources/sap/ui/core/themes/sap_horizon/fonts/72-Regular.woff2
 resources/sap/ui/core/themes/sap_horizon/fonts/72-SemiboldDuplex-full.woff2
 resources/sap/ui/core/themes/sap_horizon/fonts/72-SemiboldDuplex.woff2
+resources/sap/ui/core/themes/sap_horizon/fonts/72Mono-Regular-full.woff2
 resources/sap/ui/core/themes/sap_horizon/fonts/72Mono-Regular.woff2
 resources/sap/ui/core/themes/sap_horizon/fonts/SAP-icons.woff2
 resources/sap/ui/core/themes/sap_horizon/library-RTL.css

@@ -1,0 +1,112 @@
+<mvc:View controllerName="repoio.proto.controller.DqAlerts"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" height="100%">
+	<!-- J10: Alerts. Operational alert rules (data quality, ingestion, streaming, approvals) and the alerts they fired.
+	     Alerts are operational events addressed to teams and roles; Broadcasts (scheduled report delivery) are separate.
+	     Rules and alerts are permission-filtered by the alerts API; Teams messages go through a webhook connection whose
+	     secret stays in the vault, email through the corporate SMTP relay. -->
+	<f:DynamicPage id="alPage" headerExpanded="true" toggleHeaderOnTitleClick="false" class="repoioEdge repoioAl">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading><Title text="{i18n>nav.alerts}" level="H1"/></f:heading>
+				<f:expandedContent><Text text="{view>/al/summary}"/></f:expandedContent>
+				<f:snappedContent><Text text="{view>/al/summary}"/></f:snappedContent>
+				<f:actions>
+					<Button text="{i18n>nav.testCases}" icon="sap-icon://quality-issue" type="Transparent" press=".onTests"/>
+					<Button text="{i18n>al.newRule}" icon="sap-icon://add" type="Emphasized" press=".onNewRule"/>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:content>
+			<IconTabBar id="alTabs" selectedKey="{view>/al/tab}" select=".onTab" headerMode="Inline" expandable="false" stretchContentHeight="false"
+				applyContentPadding="false" class="repoioAlTabs">
+				<items>
+					<!-- Fired alerts -->
+					<IconTabFilter key="fired" text="{view>/al/firedTab}">
+						<Table id="alFired" items="{view>/al/fired}" mode="MultiSelect" selectionChange=".onSelFired" fixedLayout="false" popinLayout="GridSmall"
+							class="repoioDenseTable" sticky="ColumnHeaders,HeaderToolbar" noDataText="{i18n>al.noneFired}">
+							<headerToolbar>
+								<OverflowToolbar style="Clear">
+									<SegmentedButton selectedKey="{view>/al/st}" selectionChange=".onStatusFilter">
+										<items>
+											<SegmentedButtonItem key="active" text="{view>/al/stText/active}"/>
+											<SegmentedButtonItem key="resolved" text="{view>/al/stText/resolved}"/>
+											<SegmentedButtonItem key="all" text="{view>/al/stText/all}"/>
+										</items>
+									</SegmentedButton>
+									<ToolbarSpacer/>
+									<Button text="{i18n>al.a.ack}" icon="sap-icon://employee-approvals" type="Transparent" enabled="{view>/al/canAck}" press=".onAck"/>
+									<Button text="{i18n>al.a.resolve}" icon="sap-icon://accept" type="Transparent" enabled="{view>/al/canResolve}" press=".onResolve"/>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="9rem"><Text text="{i18n>al.c.status}"/></Column>
+								<Column><Text text="{i18n>al.c.alert}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="8rem"><Text text="{i18n>al.c.sev}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>al.c.sentTo}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="9rem"><Text text="{i18n>al.c.at}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>al.c.by}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem highlight="{= ${view>status} === 'open' ? 'Error' : 'None' }">
+									<ObjectStatus text="{view>stText}" state="{view>stState}" icon="{view>stIcon}"/>
+									<VBox renderType="Bare">
+										<Text text="{view>title}" class="repoioGrName"/>
+										<Text text="{view>msg}"/>
+										<Link text="{view>linkText}" press=".onTarget" visible="{= !!${view>linkText} }"/>
+									</VBox>
+									<ObjectStatus text="{view>sevText}" state="{view>sevState}" icon="{view>sevIcon}"/>
+									<VBox renderType="Bare">
+										<Text text="{view>to}"/>
+										<HBox renderType="Bare" items="{path: 'view>channels', templateShareable: false}" class="repoioAlCh">
+											<core:Icon src="{view>icon}" tooltip="{view>text}"/>
+										</HBox>
+									</VBox>
+									<Text text="{view>at}" textDirection="LTR"/>
+									<Text text="{view>byText}"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</IconTabFilter>
+
+					<!-- Alert rules -->
+					<IconTabFilter key="rules" text="{view>/al/rulesTab}">
+						<Table id="alRules" items="{view>/al/rules}" fixedLayout="false" popinLayout="GridSmall" class="repoioDenseTable" sticky="ColumnHeaders">
+							<columns>
+								<Column><Text text="{i18n>al.c.rule}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>al.c.where}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true" width="8rem"><Text text="{i18n>al.c.sev}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>al.c.sentTo}"/></Column>
+								<Column minScreenWidth="Desktop" demandPopin="true" hAlign="End"><Text text="{i18n>al.c.fired7}"/></Column>
+								<Column width="5rem" hAlign="Center"><Text text="{i18n>al.c.on}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem type="Navigation" press=".onEditRule">
+									<VBox renderType="Bare">
+										<Link text="{view>title}" press=".onEditRule" class="repoioDqName"/>
+										<Text text="{view>cond}"/>
+										<Text text="{view>repeatText}" class="repoioUmMuted"/>
+									</VBox>
+									<Text text="{view>scopeText}"/>
+									<ObjectStatus text="{view>sevText}" state="{view>sevState}" icon="{view>sevIcon}"/>
+									<VBox renderType="Bare">
+										<Text text="{view>to}"/>
+										<HBox renderType="Bare" items="{path: 'view>channels', templateShareable: false}" class="repoioAlCh">
+											<core:Icon src="{view>icon}" tooltip="{view>text}"/>
+										</HBox>
+										<Text text="{view>quietText}" class="repoioUmMuted" visible="{= !!${view>quietText} }"/>
+									</VBox>
+									<VBox renderType="Bare" alignItems="End">
+										<Text text="{view>fired7}" textDirection="LTR"/>
+										<Text text="{view>lastText}" class="repoioUmMuted" textDirection="LTR"/>
+									</VBox>
+									<Switch state="{view>on}" change=".onSwitch" customTextOn=" " customTextOff=" " ariaLabelledBy="alOnLbl"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+						<core:InvisibleText id="alOnLbl" text="{i18n>al.c.on}"/>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

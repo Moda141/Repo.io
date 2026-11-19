@@ -128,7 +128,7 @@
 							</HBox>
 							<HBox alignItems="Center" class="repoioDsObj">
 								<core:Icon src="sap-icon://dimension" class="repoioDsObjIcon"/>
-								<Text text="{view>tgtLabel}" wrapping="false" class="{= ${view>isNewTarget} ? 'repoioDsObjTxt repoioDsNew' : 'repoioDsObjTxt' }"/>
+								<Text text="{view>tgtLabel}" wrapping="false" class="repoioDsObjTxt"><customData><core:CustomData key="rc" value="{= ${view>isNewTarget} ? 'dsNew' : 'none' }" writeToDom="true"/></customData></Text>
 								<core:Icon src="sap-icon://error" color="#bb0000" tooltip="{view>mapTip}" visible="{view>missing}" class="repoioDsRowAct"/>
 								<Button icon="sap-icon://overflow" type="Transparent" tooltip="{i18n>ds.moreOptions}" press=".onTargetOptions" class="repoioDsRowBtn repoioDsMore"/>
 							</HBox>

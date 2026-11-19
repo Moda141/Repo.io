@@ -1,0 +1,175 @@
+<mvc:View controllerName="repoio.proto.controller.DqTest"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control" height="100%">
+	<!-- J10: one data quality test. Object page: header with the last result against its threshold, then the definition
+	     (the visual builder's settings or the reviewed Python source), the results of the last runs, the records that
+	     failed, and the change history. Read only; changes go through the editor and, for Python, a reviewer. -->
+	<uxap:ObjectPageLayout id="op" upperCaseAnchorBar="false" useIconTabBar="false" showAnchorBarPopover="false" toggleHeaderOnTitleClick="false"
+		headerContentPinnable="false" class="repoioDqT">
+		<uxap:headerTitle>
+			<uxap:ObjectPageDynamicHeaderTitle>
+				<uxap:breadcrumbs>
+					<Breadcrumbs currentLocationText="{view>/dqt/id}">
+						<Link text="{i18n>nav.testCases}" press=".onBack"/>
+					</Breadcrumbs>
+				</uxap:breadcrumbs>
+				<uxap:expandedHeading>
+					<VBox renderType="Bare">
+						<HBox alignItems="Center" renderType="Bare" wrap="Wrap">
+							<Title text="{view>/dqt/name}" level="H1" titleStyle="H3" wrapping="true"/>
+							<ObjectStatus text="{view>/dqt/statusText}" state="{view>/dqt/statusState}" icon="{view>/dqt/statusIcon}" inverted="true" class="repoioDqTStatus"/>
+						</HBox>
+						<Text text="{view>/dqt/subtitle}" class="repoioUmMuted"/>
+					</VBox>
+				</uxap:expandedHeading>
+				<uxap:snappedHeading>
+					<HBox alignItems="Center" renderType="Bare">
+						<Title text="{view>/dqt/name}" level="H1" titleStyle="H4" wrapping="false"/>
+						<ObjectStatus text="{view>/dqt/resText}" state="{view>/dqt/resState}" icon="{view>/dqt/resIcon}" class="repoioDqTStatus"/>
+					</HBox>
+				</uxap:snappedHeading>
+				<uxap:actions>
+					<Button text="{i18n>common.edit}" icon="sap-icon://edit" type="Emphasized" press=".onEdit"/>
+					<Button text="{i18n>dq.a.run}" icon="sap-icon://media-play" type="Transparent" enabled="{= ${view>/dqt/status} === 'active' }" press=".onRun"/>
+					<Button text="{= ${view>/dqt/status} === 'disabled' ? ${i18n>dq.a.enable} : ${i18n>dq.a.disable} }" type="Transparent"
+						visible="{= ${view>/dqt/status} === 'active' || ${view>/dqt/status} === 'disabled' }" press=".onToggle"/>
+					<Button text="{i18n>dq.a.copy}" icon="sap-icon://copy" type="Transparent" press=".onCopy"/>
+				</uxap:actions>
+			</uxap:ObjectPageDynamicHeaderTitle>
+		</uxap:headerTitle>
+		<uxap:headerContent>
+			<!-- KPI facets (Fiori object page header): the result against its threshold first -->
+			<FlexBox wrap="Wrap" renderType="Bare" class="repoioDqKpis">
+				<VBox renderType="Bare" class="repoioDqKpi">
+					<Label text="{i18n>dq.k.pass}"/>
+					<ObjectNumber number="{view>/dqt/passNum}" unit="%" state="{view>/dqt/resState}" emphasized="true" class="repoioDqKpiNum" textDirection="LTR"/>
+					<Text text="{view>/dqt/thText}" class="repoioUmMuted"/>
+				</VBox>
+				<VBox renderType="Bare" class="repoioDqKpi">
+					<Label text="{i18n>dq.k.failed}"/>
+					<Text text="{view>/dqt/failedNum}" class="repoioDqKpiBig" textDirection="LTR"/>
+					<Text text="{view>/dqt/checkedText}" class="repoioUmMuted"/>
+				</VBox>
+				<VBox renderType="Bare" class="repoioDqKpi" visible="{= ${view>/dqt/level} === 'repository' }">
+					<Label text="{i18n>dq.k.held}"/>
+					<Link text="{view>/dqt/heldText}" press=".onQuarantine" enabled="{= ${view>/dqt/held} > 0 }" class="repoioDqKpiLink"/>
+					<Text text="{view>/dqt/heldSub}" class="repoioUmMuted"/>
+				</VBox>
+				<VBox renderType="Bare" class="repoioDqKpi">
+					<Label text="{i18n>dq.k.runs}"/>
+					<HBox alignItems="Baseline" renderType="Bare" class="repoioDqVal"><Text text="{view>/dqt/passedRuns}" class="repoioDqKpiBig" textDirection="LTR"/><Text text="{view>/dqt/runsUnit}"/></HBox>
+					<Text text="{i18n>dq.k.runsSub}" class="repoioUmMuted"/>
+				</VBox>
+				<VBox renderType="Bare" class="repoioDqKpi">
+					<Label text="{i18n>dq.k.owner}"/>
+					<rc:PersonLink name="{view>/dqt/owner}"/>
+					<Text text="{view>/dqt/versionText}" class="repoioUmMuted"/>
+				</VBox>
+			</FlexBox>
+		</uxap:headerContent>
+		<uxap:sections>
+			<!-- Definition -->
+			<uxap:ObjectPageSection title="{i18n>dq.s.definition}" titleUppercase="false">
+				<uxap:subSections><uxap:ObjectPageSubSection>
+					<VBox renderType="Bare">
+						<VBox renderType="Bare" class="repoioTbForm" items="{path: 'view>/dqt/fields', templateShareable: false}">
+							<VBox class="repoioTbFormField" renderType="Bare">
+								<Label text="{view>label}"/>
+								<HBox alignItems="Center" renderType="Bare" class="repoioDqVal">
+									<core:Icon src="{view>icon}" visible="{= !!${view>icon} }" class="repoioExRowIcon" decorative="true"/>
+									<Text text="{view>value}" textDirection="{view>dir}"  wrapping="true"><customData><core:CustomData key="rc" value="{= ${view>mono} ? 'mono' : 'none' }" writeToDom="true"/></customData></Text>
+								</HBox>
+							</VBox>
+						</VBox>
+						<!-- Python: the reviewed source, read only -->
+						<VBox renderType="Bare" visible="{= ${view>/dqt/author} === 'python' }" class="repoioDqCodeBox">
+							<HBox alignItems="Center" justifyContent="SpaceBetween" renderType="Bare">
+								<Title text="{i18n>dq.s.code}" level="H4" titleStyle="H6"/>
+								<Text text="{view>/dqt/pkgText}" class="repoioUmMuted"/>
+							</HBox>
+							<rc:CodeEditor id="dqtCode" language="python" editable="false" height="15rem"/>
+							<MessageStrip text="{i18n>dq.pyNote}" type="Information" showIcon="true" class="sapUiTinyMarginTop"/>
+						</VBox>
+					</VBox>
+				</uxap:ObjectPageSubSection></uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Results of the last runs -->
+			<uxap:ObjectPageSection title="{i18n>dq.s.results}" titleUppercase="false">
+				<uxap:subSections><uxap:ObjectPageSubSection>
+					<VBox renderType="Bare">
+						<IllustratedMessage illustrationType="sapIllus-NoActivities" illustrationSize="Spot" title="{i18n>dq.noRuns}" description="{i18n>dq.noRunsDesc}"
+							visible="{= !${view>/dqt/hasRuns} }"/>
+						<VBox renderType="Bare" visible="{view>/dqt/hasRuns}">
+							<rc:EChart id="dqtChart" height="15rem" ariaLabel="{i18n>dq.s.results}"/>
+							<Table items="{view>/dqt/runs}" class="repoioDenseTable sapUiSmallMarginTop" fixedLayout="false" growing="true" growingThreshold="7">
+								<columns>
+									<Column><Text text="{i18n>dq.r.date}"/></Column>
+									<Column hAlign="End"><Text text="{i18n>dq.r.checked}"/></Column>
+									<Column hAlign="End"><Text text="{i18n>dq.c.failed}"/></Column>
+									<Column hAlign="End"><Text text="{i18n>dq.r.pass}"/></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>dq.r.result}"/></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>dq.r.run}"/></Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<Text text="{view>d}" textDirection="LTR"/>
+										<Text text="{view>checkedText}" textDirection="LTR"/>
+										<Text text="{view>failedText}" textDirection="LTR"/>
+										<Text text="{view>passText}" textDirection="LTR"/>
+										<ObjectStatus text="{view>resText}" state="{view>resState}" icon="{view>resIcon}"/>
+										<Link text="{view>runText}" press=".onRunLink" class="repoioMono"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</VBox>
+					</VBox>
+				</uxap:ObjectPageSubSection></uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Records that failed -->
+			<uxap:ObjectPageSection title="{view>/dqt/failTitle}" titleUppercase="false">
+				<uxap:subSections><uxap:ObjectPageSubSection>
+					<VBox renderType="Bare">
+						<Text text="{view>/dqt/failHint}" class="repoioUmMuted sapUiTinyMarginBottom"/>
+						<Table items="{view>/dqt/fails}" class="repoioDenseTable" fixedLayout="false" noDataText="{i18n>dq.noFails}">
+							<columns>
+								<Column><Text text="{i18n>dq.f.record}"/></Column>
+								<Column><Text text="{view>/dqt/colLabel}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>dq.f.since}"/></Column>
+								<Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>dq.c.status}"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem type="{= ${view>qid} ? 'Navigation' : 'Inactive' }" press=".onFail">
+									<VBox renderType="Bare">
+										<Text text="{view>name}"/>
+										<Text text="{view>key}" class="repoioMono repoioUmMuted" textDirection="LTR"/>
+									</VBox>
+									<Text text="{view>value}" class="repoioMono repoioDqBad" textDirection="LTR"/>
+									<Text text="{view>since}" textDirection="LTR"/>
+									<ObjectStatus text="{view>stText}" state="{view>stState}" icon="{view>stIcon}"/>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</VBox>
+				</uxap:ObjectPageSubSection></uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Change history -->
+			<uxap:ObjectPageSection title="{i18n>dq.s.history}" titleUppercase="false">
+				<uxap:subSections><uxap:ObjectPageSubSection>
+					<List items="{view>/dqt/history}" showSeparators="Inner" class="repoioDqHist">
+						<CustomListItem>
+							<HBox alignItems="Start" renderType="Bare" class="repoioDqHistItem">
+								<core:Icon src="{view>icon}" class="repoioDqHistIcon" decorative="true"/>
+								<VBox renderType="Bare">
+									<Text text="{view>text}"/>
+									<Text text="{view>meta}" class="repoioUmMuted"/>
+								</VBox>
+							</HBox>
+						</CustomListItem>
+					</List>
+				</uxap:ObjectPageSubSection></uxap:subSections>
+			</uxap:ObjectPageSection>
+		</uxap:sections>
+	</uxap:ObjectPageLayout>
+</mvc:View>

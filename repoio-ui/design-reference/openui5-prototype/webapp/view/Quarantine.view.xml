@@ -214,7 +214,7 @@
 										<Text text="{view>label}"/>
 										<Text text="{view>col}" class="repoioJrTech" textDirection="LTR"/>
 									</VBox>
-									<Text text="{view>value}" textDirection="{view>dir}" class="{= ${view>bad} ? 'repoioMdDiff' : '' }"/>
+									<Text text="{view>value}" textDirection="{view>dir}"><customData><core:CustomData key="rc" value="{= ${view>bad} ? 'diff' : 'none' }" writeToDom="true"/></customData></Text>
 								</ColumnListItem>
 							</items>
 						</Table>
