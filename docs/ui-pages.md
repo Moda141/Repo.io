@@ -136,10 +136,16 @@
        free-typed, switching the target system re-filters the lists live.
        Steward-maintained. [supports J3]
    - **Data Quality management**
-     - **Test cases** — Great Expectations suites: definitions, entity /
-         model bindings, per-run results. [J10]
+     - **Test cases** — Great Expectations tests: repository gate tests
+         (stream, every batch; hold in quarantine or flag for a steward)
+         and source-table tests (nightly profile; warn only), with
+         per-run results, failing records and history. Made in a visual
+         builder (checks dragged onto columns) or in Python (isolated
+         workers, second-person review before it runs). [J10]
      - **Alerts** — operational alert rules (quality, ingestion,
-         approvals) and their routing. [J10]
+         streaming, approvals, Python worker errors, stale sources), their
+         routing to teams and roles over in-app, email and Teams, and the
+         fired alerts (acknowledge, resolve with a note). [J10]
    - **Stewardship management**
      - **Match detection** — scored-pairs review queue: side-by-side
        compare, score breakdown, confirm / reject with note. [J5]

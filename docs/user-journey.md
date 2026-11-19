@@ -461,6 +461,22 @@ workflow → deletion blocked, deprecate instead.
    dropped silently, never blocking the whole stream.
 4. DQ suites and results are inspectable per run (Great Expectations
    results surfaced, not summarized away).
+   **Test cases** lists every test with its last pass rate against its
+   threshold and its last 14 runs, failing tests first. Repository gate
+   tests run in the stream on every batch and hold a failing record in
+   quarantine or flag the value for a steward; source-table tests profile
+   the source every night and only warn. A Data Steward makes simple tests
+   in the visual builder — drags a check (not empty, unique, in a
+   reference list, matches a pattern, length, range, required when …)
+   onto a column, sets its threshold and what a failure does, tries it on
+   sample records — and saves it as active or draft. Complex tests are
+   written in Python in the same editor: tried on sample records in an
+   isolated worker (no network, allowed packages only) and activated only
+   after a second person's review. Both are stored as Great Expectations
+   expectations.
+   **Alerts** holds the operational alert rules (when · where · who ·
+   how) and the alerts they fired; an alert links to its cause and is
+   acknowledged, then resolved with a note.
 5. A Folders panel groups jobs as domain → repository → kind (sync,
    stream, dq) and platform → kind, the same tree as the Airflow
    Folders panel (ADR-0005); choosing a folder filters the runs.
