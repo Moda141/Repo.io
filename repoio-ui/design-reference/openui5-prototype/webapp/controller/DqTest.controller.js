@@ -65,7 +65,7 @@ sap.ui.define([
 				thText: row.thText, failedNum: l ? this.fmt.num(l.failed) : "—", checkedText: l && l.checked ? T("dq.ofChecked", [this.fmt.num(l.checked)]) : T("dq.k.lastRun", [l ? l.d : "—"]),
 				held: held.length, heldText: held.length ? T("dq.k.heldN", [held.length]) : T("dq.k.heldNone"), heldSub: T("dq.k.heldSub"),
 				passedRuns: runs.length ? String(passed) : "—", runsUnit: runs.length ? T("dq.k.ofRuns", [runs.length]) : "",
-				versionText: T("dq.k.version", [t.version, t.changed]),
+				versionText: T("dq.k.version", [t.version, "\u2066" + t.changed + "\u2069"]), // isolate the date so RTL keeps it 2026-11-07
 				fields: fields, pkgText: T("dq.pkgs", [(m.getProperty("/allowedPackages") || []).join(" · ")]),
 				hasRuns: runs.length > 0,
 				runs: runs.slice().reverse().map(function (r) {

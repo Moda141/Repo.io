@@ -68,14 +68,22 @@ sap.ui.define([
 		init: function () {
 			this.setAggregation("_avatar", new Avatar({ displaySize: "Custom", customDisplaySize: "1.5rem", customFontSize: "0.625rem", showBorder: false, press: this._open.bind(this, true) }));
 			this.setAggregation("_link", new Link({ press: this._open.bind(this, true) }));
+			this._sync();
 		},
 
-		onBeforeRendering: function () {
-			var n = this.getName(), p = people.get(n);
-			var label = n && p && !isAr() ? p.en : n;
-			this.getAggregation("_avatar").setInitials(p ? p.initials : "").setVisible(!!p).setTooltip(label);
-			this.getAggregation("_link").setText(label).setEnabled(!!p).setVisible(!p || this.getShowName());
-			this.toggleStyleClass("repoioPersonNamed", !!p && this.getShowName());
+		/* Inner controls are updated when the name changes, never during rendering (that would re-render in a loop) */
+		setName: function (v) { this.setProperty("name", v); this._sync(); return this; },
+		setShowName: function (v) { this.setProperty("showName", v); this._sync(); return this; },
+		_sync: function () {
+			var n = this.getName(), p = people.get(n), named = !!n && (this.getShowName() || !p);
+			var label = n && p && !isAr() ? p.en : n, a = this.getAggregation("_avatar"), l = this.getAggregation("_link");
+			if (!a || this._synced === [n, named].join("|")) { return; }
+			this._synced = [n, named].join("|");
+			/* Someone not in the directory (yet): a neutral avatar and the name as plain text, no card */
+			a.setInitials(p ? p.initials : "").setFallbackIcon("sap-icon://person-placeholder").setVisible(!!n).setTooltip(label);
+			l.setText(label).setEnabled(!!p).setVisible(named);
+			this.toggleStyleClass("repoioPersonNamed", named);
+			this.toggleStyleClass("repoioPersonUnknown", !!n && !p);
 		},
 
 		renderer: {

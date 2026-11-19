@@ -29,8 +29,8 @@ sap.ui.define([
 				names: { type: "string[]", defaultValue: [] },
 				/* Popover title without the count, e.g. "Owners"; the count is added */
 				title: { type: "string", defaultValue: "" },
-				/* Avatar size: XS in tables and headers, S in roomier places */
-				size: { type: "string", defaultValue: "XS" }
+				/* Avatar size: the same 1.5rem as a single person's avatar (PersonLink) everywhere */
+				size: { type: "sap.ui.core.AbsoluteCSSSize", defaultValue: "1.5rem" }
 			},
 			aggregations: {
 				_group: { type: "sap.f.AvatarGroup", multiple: false, visibility: "hidden" },
@@ -41,14 +41,21 @@ sap.ui.define([
 		init: function () {
 			this.setAggregation("_group", new AvatarGroup({ groupType: "Group", press: this._open.bind(this) }));
 			this.setAggregation("_single", new PersonLink({ showName: true }));
+			this._sync(true);
 		},
 
 		_names: function () { return (this.getNames() || []).filter(Boolean); },
 		_label: function (n) { var p = people.get(n); return p && !isAr() ? p.en : n; },
 
-		onBeforeRendering: function () {
-			var that = this, a = this._names(), g = this.getAggregation("_group");
-			g.setAvatarDisplaySize(this.getSize()).destroyItems();
+		/* Inner controls are rebuilt when the names change, never during rendering (that would re-render in a loop) */
+		setNames: function (v) { this.setProperty("names", v); this._sync(); return this; },
+		setSize: function (v) { this.setProperty("size", v); this._sync(true); return this; },
+		setTitle: function (v) { this.setProperty("title", v); this._sync(true); return this; },
+		_sync: function (bForce) {
+			var that = this, a = this._names(), g = this.getAggregation("_group"), key = a.join("|");
+			if (!g || (!bForce && this._synced === key)) { return; }
+			this._synced = key;
+			g.setAvatarDisplaySize("Custom").setAvatarCustomDisplaySize(this.getSize()).setAvatarCustomFontSize(this.getSize() === "1.5rem" ? "0.625rem" : "0.875rem").destroyItems();
 			a.forEach(function (n) {
 				var p = people.get(n);
 				g.addItem(new AvatarGroupItem(p ? { initials: p.initials } : { fallbackIcon: "sap-icon://person-placeholder" }));

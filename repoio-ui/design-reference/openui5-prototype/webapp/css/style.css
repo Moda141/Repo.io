@@ -103,15 +103,13 @@ html:root, html:root .sapUiBody {
 .repoioPersonNamed { gap: 0.375rem; min-width: 0; max-width: 100%; }
 .repoioPersonNamed .sapMLnk { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .repoioPersonNamed .sapFAvatar { flex: none; }
+.repoioPersonUnknown .sapMLnk.sapMLnkDsbl { color: var(--sapTextColor, #1d2d3e); opacity: 1; cursor: default; text-decoration: none; }
+.repoioPersonUnknown .sapFAvatar { cursor: default; }
 /* A group of people (sap.f.AvatarGroup) and its member list popover */
 .repoioPersonGroup { display: block; min-width: 0; max-width: 100%; }
-/* Group avatars at the same small size as a single person's avatar (PersonLink: 1.5rem) */
-.repoioPersonGroup .sapFAvatarGroup.sapFAvatarGroupXS { min-width: 1.5rem; max-height: 1.5rem; }
-.repoioPersonGroup .sapFAvatarGroup .sapFAvatarGroupItemXS, .repoioPersonGroup .sapFAvatarGroup .sapFAvatarXS { width: 1.5rem; height: 1.5rem; font-size: 0.625rem; }
-.repoioPersonGroup .sapFAvatarGroup .sapFAvatarXS .sapFAvatarInitialsHolder { font-size: 0.625rem; }
-.repoioPersonGroup .sapFAvatarGroupGroup .sapFAvatarGroupItem.sapFAvatarGroupItemXS:not(:last-child) { margin-left: 0; margin-right: 0; margin-inline-end: -0.375rem; }
+/* Group avatars use AvatarGroup's Custom size (1.5rem, set in PersonGroup) so its own fit logic measures them right */
 /* The "+N" chip at the same size, borderless, overlapping like an avatar */
-.repoioPersonGroup .sapFAvatarGroupMoreButton.sapMBtn { height: 1.5rem; width: 1.5rem; min-width: 1.5rem; padding: 0; margin-inline-start: -0.375rem; align-self: center; }
+.repoioPersonGroup .sapFAvatarGroupMoreButton.sapMBtn { height: 1.5rem; width: 1.5rem; min-width: 1.5rem; padding: 0; align-self: center; }
 .repoioPersonGroup .sapFAvatarGroupMoreButton .sapMBtnInner { height: 1.5rem; width: 1.5rem; min-width: 1.5rem; padding: 0; border: none; font-size: 0.625rem; line-height: 1.5rem; background: var(--sapNeutralBackgroundColor, #e5eaf0); color: var(--sapNeutralTextColor, #475e75); }
 .repoioPersonGroup .sapFAvatarGroupMoreButton .sapMBtnContent { line-height: 1.5rem; }
 .repoioPersonGroup .sapFAvatarGroup { align-items: center; }

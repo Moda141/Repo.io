@@ -61,7 +61,7 @@
 				</VBox>
 				<VBox renderType="Bare" class="repoioDqKpi">
 					<Label text="{i18n>dq.k.owner}"/>
-					<rc:PersonLink name="{view>/dqt/owner}"/>
+					<rc:PersonLink name="{view>/dqt/owner}" showName="true"/>
 					<Text text="{view>/dqt/versionText}" class="repoioUmMuted"/>
 				</VBox>
 			</FlexBox>
@@ -170,7 +170,8 @@
 									</HBox>
 									<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioPersonLine">
 										<rc:PersonLink name="{view>by}" showName="true" visible="{= !!${view>by} }"/>
-										<Text text="{= ${view>by} ? '· ' + ${view>at} : ${view>at} }" class="repoioUmMuted" textDirection="Inherit"/>
+										<Text text="·" class="repoioUmMuted" visible="{= !!${view>by} }"/>
+										<Text text="{view>at}" class="repoioUmMuted" textDirection="LTR"/>
 									</HBox>
 								</VBox>
 							</HBox>

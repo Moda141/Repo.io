@@ -285,7 +285,8 @@
 									<VBox renderType="Bare">
 										<Text text="{view>text}"/>
 										<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioPersonLine">
-											<Text text="{view>at} ·" class="repoioUmMuted" textDirection="Inherit"/>
+											<Text text="{view>at}" class="repoioUmMuted" textDirection="LTR"/>
+											<Text text="·" class="repoioUmMuted"/>
 											<rc:PersonLink name="{view>by}" showName="true" visible="{= !!${view>by} }"/>
 											<Text text="{view>byText}" class="repoioUmMuted" visible="{= !${view>by} }"/>
 										</HBox>

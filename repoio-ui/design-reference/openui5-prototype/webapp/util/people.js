@@ -19,6 +19,8 @@ sap.ui.define([], function () {
 		"حسام الدين": { initials: "HD", en: "Hossam El-Din", role_ar: "محلل بيانات العملاء", role_en: "Customer data analyst", team_ar: "عمليات المبيعات", team_en: "Sales operations", email: "hossam.eldin@example.com", phone: "+20 2 0000 0115" },
 		"إيمان سعيد": { initials: "ES", en: "Eman Said", role_ar: "مسؤولة مشتريات", role_en: "Procurement officer", team_ar: "المشتريات", team_en: "Procurement", email: "eman.said@example.com", phone: "+20 2 0000 0116" },
 		"نادين عاطف": { initials: "NA", en: "Nadine Atef", role_ar: "محللة تسويق", role_en: "Marketing analyst", team_ar: "التسويق", team_en: "Marketing", email: "nadine.atef@example.com", phone: "+20 2 0000 0118" },
+		"منى فاروق": { initials: "MF", en: "Mona Farouk", role_ar: "أمينة بيانات المدارس", role_en: "School accounts data steward", team_ar: "المبيعات والتسويق", team_en: "Sales / Marketing", email: "mona.farouk@example.com", phone: "+20 2 0000 0119" },
+		"كريم فؤاد": { initials: "KF", en: "Karim Fouad", role_ar: "أمين بيانات العملاء", role_en: "Customer data steward", team_ar: "عمليات المبيعات", team_en: "Sales operations", email: "karim.fouad@example.com", phone: "+20 2 0000 0120" },
 		"شريف لطفي": { initials: "SL", en: "Sherif Lotfy", role_ar: "استشاري خارجي", role_en: "External consultant", team_ar: "إدارة البيانات", team_en: "Data Management", email: "sherif.lotfy@example.com", phone: "+20 2 0000 0117" }
 	};
 	return {
