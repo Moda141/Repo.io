@@ -235,7 +235,8 @@
 							<List items="{home>/stewardNotes}" showSeparators="Inner">
 								<FeedListItem sender="{= ${view>/lang} === 'ar' ? ${home>name_ar} : ${home>name_en} }"
 									info="{= ${view>/lang} === 'ar' ? ${home>role_ar} : ${home>role_en} }" timestamp="{home>at}"
-									text="{= ${view>/lang} === 'ar' ? ${home>text_ar} : ${home>text_en} }" iconInitials="{home>initials}" showIcon="true" senderActive="false" iconActive="false"/>
+									text="{= ${view>/lang} === 'ar' ? ${home>text_ar} : ${home>text_en} }" iconInitials="{home>initials}" showIcon="true" senderActive="true" iconActive="true"
+										senderPress=".onPerson" iconPress=".onPerson"/>
 							</List>
 						</f:content>
 					</f:Card>
@@ -244,7 +245,7 @@
 					<f:Card id="card_owner" class="repoioCard">
 						<f:layoutData><f:GridContainerItemLayoutData columns="4" minRows="5"/></f:layoutData>
 						<f:header><card:Header title="{= ${view>/lang} === 'ar' ? ${home>/owner/name_ar} : ${home>/owner/name_en} }"
-							subtitle="{= ${view>/lang} === 'ar' ? ${home>/owner/title_ar} : ${home>/owner/title_en} }" iconInitials="{home>/owner/initials}"/></f:header>
+							subtitle="{= ${view>/lang} === 'ar' ? ${home>/owner/title_ar} : ${home>/owner/title_en} }" iconInitials="{home>/owner/initials}" press=".onOwnerCard"/></f:header>
 						<f:content>
 							<VBox class="sapUiSmallMarginBeginEnd sapUiSmallMarginBottom">
 								<Title text="{i18n>home.owner.title}" level="H5" class="sapUiTinyMarginBottom"/>

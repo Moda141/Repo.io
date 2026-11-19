@@ -115,7 +115,7 @@ sap.ui.define([
 			var tags = r.tags.map(function (t) { return { text: t, icon: t === "PII" ? "sap-icon://private" : /^Tier/.test(t) ? "sap-icon://tag" : "" }; });
 			this.viewModel().setProperty("/rp", {
 				name: r.name, sub: T("rp.sub", [r.code]), icon: d ? d.icon : "sap-icon://badge", domainText: this.domainName(d), model: r.model,
-				owners: r.owners, tags: tags, deployed: deployed,
+				owners: r.owners, ownerNames: r.owners.map(function (o) { return o.name; }), tags: tags, deployed: deployed,
 				healthText: T("health." + r.healthKey), healthState: r.healthState, healthIcon: HEALTH_ICON[r.healthKey] || "",
 				hasModel: !!M, hasGoldenList: deployed && !!C.getModel("golden").getProperty("/repos/" + r.id),
 				code: T("rp.sub", [r.code]), deployedText: deployed ? r.deployed : T("repo.notDeployed"),
@@ -140,7 +140,7 @@ sap.ui.define([
 					{ label: T("rp.matchModel"), value: M ? (ar ? M.ar : M.en) : "—", dir: "Inherit" },
 					{ label: T("repo.version"), value: M ? "v" + M.version : "—", dir: "LTR" },
 					{ label: T("repo.modelStatus"), value: M ? T("rp.mstatus." + M.status) : "—", dir: "Inherit" },
-					{ label: T("domain.owner"), value: M ? M.owner : (r.owners[0] || {}).name || "—", dir: "Inherit" },
+					{ label: T("domain.owner"), value: "—", person: M ? M.owner : (r.owners[0] || {}).name || "", dir: "Inherit" },
 					{ label: T("rp.changed"), value: M ? M.changed : "—", dir: "LTR" }
 				],
 				matchFacts: matchFacts,

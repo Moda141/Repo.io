@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/UIComponent",
-	"repoio/proto/util/formatter"
-], function (Controller, UIComponent, formatter) {
+	"repoio/proto/util/formatter",
+	"repoio/proto/control/PersonLink"
+], function (Controller, UIComponent, formatter, PersonLink) {
 	"use strict";
 
 	return Controller.extend("repoio.proto.controller.BaseController", {
@@ -24,6 +25,10 @@ sap.ui.define([
 			auditLog: "audit", modelsRules: "models", goldenRecords: "goldenRecords", matchDetection: "matches", quarantine: "quarantine",
 			testCases: "dqTests", alerts: "dqAlerts"
 		},
+		/* Open a person's business card from a control that is not a PersonLink (a feed sender, a card header). */
+		openPerson: function (sName, oOpener) { PersonLink.openFor(sName, oOpener); },
+		/* A person's display name in the current language (people are keyed by their Arabic name in the sample directory). */
+		personLabel: function (sName) { return PersonLink.label(sName); },
 		navKey: function (sKey, oArgs) {
 			var r = this.NAV_ROUTES[sKey];
 			if (r) { this.router().navTo(r, oArgs || {}); } else { this.router().navTo("page", { key: sKey }); }

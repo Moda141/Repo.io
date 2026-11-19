@@ -55,7 +55,8 @@ sap.ui.define([
 			m.setProperty("/do/name", this.domainName(d));
 			m.setProperty("/do/icon", d.icon);
 			m.setProperty("/do/hasRepos", all.length > 0);
-			m.setProperty("/do/summary", T("do.summary", [all.length, srcIds.length, this.fmt.num(d.golden), d.owner]));
+			m.setProperty("/do/summary", T("do.summary", [all.length, srcIds.length, this.fmt.num(d.golden)]));
+			m.setProperty("/do/owner", d.owner);
 			m.setProperty("/do/repoOpts", all.map(function (r) { return { key: r.id, text: r.name }; }));
 			m.setProperty("/do/srcOpts", srcIds.map(function (s) { return { key: s, text: that._srcName(s) }; }));
 			var nF = f.repos.length + f.sources.length;

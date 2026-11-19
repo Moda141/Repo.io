@@ -181,6 +181,8 @@ sap.ui.define([
 			MessageToast.show(this.text("home.wc.hidden"));
 		},
 
+		onPerson: function (oEvent) { var o = oEvent.getSource(); this.openPerson(o.getBindingContext("home").getProperty("name_ar"), o); },
+		onOwnerCard: function (oEvent) { this.openPerson(this.getView().getModel("home").getProperty("/owner/name_ar"), oEvent.getSource()); },
 		onOwnerDomain: function () { this.router().navTo("domain", { domain: this.data().getProperty("/domains/0/id") }); },
 		/* Every card row opens the thing it shows, not the list it comes from */
 		onAttn: function (oEvent) {

@@ -87,7 +87,7 @@
 								</HBox>
 								<Text text="{view>schedText}" wrapping="false"/>
 								<ObjectStatus text="{view>statusText}" state="{view>statusState}" icon="{view>statusIcon}"/>
-								<Link text="{view>rcpText}" press=".onRecipients"/>
+								<rc:PersonGroup names="{view>recipients}" title="{i18n>bc.d.recipients}"/>
 								<ObjectStatus text="{view>lastText}" state="{view>lastState}" icon="{view>lastIcon}" active="{= ${view>last} === 'partial' || ${view>last} === 'failed' }" press=".onLast"/>
 								<Text text="{view>lastRunText}" wrapping="false"/>
 								<Text text="{view>nextRunText}" wrapping="false"/>

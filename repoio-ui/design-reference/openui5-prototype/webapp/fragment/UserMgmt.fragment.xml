@@ -186,7 +186,7 @@
 		<content>
 			<VBox renderType="Bare" class="repoioUmUserHead">
 				<HBox alignItems="Center" renderType="Bare">
-					<Avatar initials="{view>/um/ud/initials}" displaySize="M"/>
+					<Avatar initials="{view>/um/ud/initials}" displaySize="M" press=".onUdPerson" tooltip="{view>/um/ud/nameText}"/>
 					<VBox renderType="Bare" class="repoioUmUserWho">
 						<Title text="{view>/um/ud/nameText}" level="H2"/>
 						<Text text="{view>/um/ud/sub}" class="repoioUmMuted"/>
@@ -208,7 +208,7 @@
 							<Label text="{i18n>um.col.title}"/><Text text="{view>/um/ud/title}"/>
 							<Label text="{i18n>um.col.unit}"/><Text text="{view>/um/ud/path}"/>
 							<Label text="{i18n>um.f.manager}"/>
-							<HBox alignItems="Center"><rc:PersonLink name="{view>/um/ud/manager}" visible="{= !!${view>/um/ud/manager} }"/><Text text="—" visible="{= !${view>/um/ud/manager} }"/></HBox>
+							<HBox alignItems="Center"><rc:PersonLink name="{view>/um/ud/manager}" showName="true" visible="{= !!${view>/um/ud/manager} }"/><Text text="—" visible="{= !${view>/um/ud/manager} }"/></HBox>
 							<Label text="{i18n>um.col.source}"/><ObjectStatus text="{view>/um/ud/sourceText}" state="{view>/um/ud/sourceState}" icon="{view>/um/ud/sourceIcon}"/>
 							<core:Title text="{i18n>um.ud.user}"/>
 							<Label text="{i18n>um.col.upn}"/><Text text="{view>/um/ud/upn}" textDirection="LTR"/>
@@ -279,7 +279,19 @@
 					<IconTabFilter key="history" text="{i18n>um.ud.history}">
 						<OverflowToolbar><ToolbarSpacer/><Link text="{i18n>au.openLog}" press=".onUserAudit"/></OverflowToolbar>
 						<List items="{view>/um/ud/history}" noDataText="{i18n>um.ud.noHistory}" showSeparators="Inner" class="repoioUmHist">
-							<StandardListItem title="{view>text}" description="{view>meta}" icon="{view>icon}" wrapping="true"/>
+							<CustomListItem>
+								<HBox alignItems="Start" renderType="Bare" class="repoioDqHistItem">
+									<core:Icon src="{view>icon}" class="repoioDqHistIcon" decorative="true"/>
+									<VBox renderType="Bare">
+										<Text text="{view>text}"/>
+										<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioPersonLine">
+											<Text text="{view>at} ·" class="repoioUmMuted" textDirection="Inherit"/>
+											<rc:PersonLink name="{view>by}" showName="true" visible="{= !!${view>by} }"/>
+											<Text text="{view>byText}" class="repoioUmMuted" visible="{= !${view>by} }"/>
+										</HBox>
+									</VBox>
+								</HBox>
+							</CustomListItem>
 						</List>
 					</IconTabFilter>
 				</items>

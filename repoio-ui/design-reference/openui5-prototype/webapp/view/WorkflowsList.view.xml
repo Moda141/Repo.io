@@ -24,7 +24,7 @@
 		<!-- Signed-in user with their roles, and the collections as tabs -->
 		<VBox renderType="Bare" class="repoioHubCard repoioHubUser">
 			<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioHubUserRow">
-				<Avatar initials="{view>/wl/me/initials}" displaySize="M" backgroundColor="Accent1" class="sapUiSmallMarginEnd"/>
+				<Avatar initials="{view>/wl/me/initials}" displaySize="M" backgroundColor="Accent1" class="sapUiSmallMarginEnd" press=".onMe" tooltip="{view>/wl/me/name}"/>
 				<VBox renderType="Bare" class="sapUiSmallMarginEnd">
 					<Title text="{view>/wl/me/name}" level="H2" titleStyle="H5"/>
 					<Text text="{view>/wl/me/title}" class="repoioUmMuted"/>

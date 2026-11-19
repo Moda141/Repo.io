@@ -51,9 +51,10 @@
 					</HBox>
 				</VBox>
 				<VBox class="repoioGoFacet" items="{path: 'view>/go/facet2', templateShareable: false}">
-					<HBox class="repoioGoPair" renderType="Bare">
+					<HBox class="repoioGoPair repoioPersonLine" alignItems="Center" renderType="Bare">
 						<Label text="{view>label}" showColon="true" class="sapUiTinyMarginEnd"/>
 						<Text text="{view>value}" textDirection="{view>dir}"/>
+						<rc:PersonLink name="{view>person}" showName="true" visible="{= !!${view>person} }"/>
 					</HBox>
 				</VBox>
 				<VBox class="repoioGoFacet">
@@ -304,7 +305,7 @@
 									<Text text="{view>id}" class="repoioMono" textDirection="LTR"/>
 									<Text text="{view>whatText}"/>
 									<VBox renderType="Bare">
-										<Text text="{view>by}"/>
+										<rc:PersonLink name="{view>by}" showName="true"/>
 										<Text text="{view>at}" class="repoioUmMuted" textDirection="LTR"/>
 									</VBox>
 									<ObjectStatus text="{view>stepText}" state="Information" icon="sap-icon://pending"/>

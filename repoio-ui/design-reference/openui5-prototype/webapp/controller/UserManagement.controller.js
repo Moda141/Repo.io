@@ -57,6 +57,7 @@ sap.ui.define([
 		/* ---------- helpers ---------- */
 		_ar: function () { return this.lang() === "ar"; },
 		_t: function (o) { return o ? (this._ar() ? o.ar : o.en) : ""; },
+		onUdPerson: function (oEvent) { this.openPerson(this.viewModel().getProperty("/um/ud/person"), oEvent.getSource()); },
 		_pname: function (n) { var p = People.get(n); return p && !this._ar() ? p.en : n; },
 		_emp: function (id) { return this._d.employees.filter(function (e) { return e.id === id; })[0]; },
 		_today: function () { return isoDate(this._now); },
@@ -610,11 +611,11 @@ sap.ui.define([
 					viaText: a.roles.map(function (r) { return that._roleText(r); }).join(", ") };
 			});
 			var hist = d.history.filter(function (h) { return h.user === that._ud; }).map(function (h) {
-				return { text: that._ar() ? h.ar : h.en, meta: h.at.replace("T", " ").slice(0, 16) + " · " + (h.by === "sync" ? that.text("um.bySync") : that._pname(h.by)), icon: h.by === "sync" ? "sap-icon://synchronize" : "sap-icon://edit" };
+				return { text: that._ar() ? h.ar : h.en, at: h.at.replace("T", " ").slice(0, 16), by: h.by === "sync" ? "" : h.by, byText: h.by === "sync" ? that.text("um.bySync") : "", icon: h.by === "sync" ? "sap-icon://synchronize" : "sap-icon://edit" };
 			});
 			this.viewModel().setProperty("/um/ud", {
 				tab: sTab || this.viewModel().getProperty("/um/ud/tab") || "general",
-				initials: p.initials || "?", nameText: this._pname(e.name), sub: (this._ar() ? e.title_ar : e.title_en) + " · " + this._unitPath(e.team),
+				initials: p.initials || "?", person: e.name, nameText: this._pname(e.name), sub: (this._ar() ? e.title_ar : e.title_en) + " · " + this._unitPath(e.team),
 				id: e.id, email: e.email, title: this._ar() ? e.title_ar : e.title_en, path: this._unitPath(e.team, true), manager: e.manager,
 				sourceText: e.source === "manual" ? this.text("um.src.manual") : s[0], sourceState: s[1], sourceIcon: s[2],
 				upn: u.upn, statusText: this.text("um.st." + st), statusState: sv[0], statusIcon: sv[1], statusNote: this.text("um.stNote." + st, [e.left || u.validTo || u.validFrom || "", u.lockReason || "—"]),

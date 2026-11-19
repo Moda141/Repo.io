@@ -442,6 +442,7 @@ sap.ui.define([
 					sel.mode = p.mode || "single";
 					sel.approverType = p.approverType || "users"; sel.approvers = p.approvers || []; sel.hasApprovers = sel.approvers.length > 0;
 					sel.teamMembers = ((this._team(p.approverTeam) || {}).members || []).map(function (x) { return { name: x }; });
+					sel.teamNames = sel.teamMembers.map(function (x) { return x.name; });
 					sel.groups = (p.groups || []).map(function (g, i) { return { i: i, who: g.who || "", rule: g.rule || "any", n: i + 1 }; });
 					sel.allowReturn = !!p.allowReturn; sel.sod = p.sod !== false; sel.delegate = !!p.delegate; sel.maxReturns = p.maxReturns || 2;
 					var away = this._W.outOfOffice || {};

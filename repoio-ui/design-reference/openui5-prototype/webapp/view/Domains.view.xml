@@ -95,8 +95,7 @@
 											</HBox>
 											<Text text="{view>desc}" maxLines="2" class="repoioCatDesc"/>
 											<HBox visible="{= !!${view>owner} }" alignItems="Center" class="repoioCatOwner" renderType="Bare">
-												<rc:PersonLink name="{view>owner}"/>
-												<Label text="{view>moreOwners}" visible="{= !!${view>moreOwners} }" class="sapUiTinyMarginBegin"/>
+												<rc:PersonGroup names="{view>people}" title="{i18n>repo.owners}"/>
 											</HBox>
 											<HBox justifyContent="SpaceBetween" alignItems="Center" class="repoioCatCardFoot" renderType="Bare">
 												<GenericTag text="{view>statusText}" status="{view>state}" design="Full" class="repoioSitTag"/>
@@ -131,7 +130,7 @@
 									</HBox>
 									<Text text="{view>typeText}"/>
 									<Text text="{view>context}"/>
-									<rc:PersonLink name="{view>owner}"/>
+									<rc:PersonGroup names="{view>people}" title="{i18n>repo.owners}"/>
 									<GenericTag text="{view>statusText}" status="{view>state}" design="Full" class="repoioSitTag"/>
 									<Text text="{view>updated}" wrapping="false"/>
 									<HBox justifyContent="End">

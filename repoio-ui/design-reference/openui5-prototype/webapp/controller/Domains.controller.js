@@ -8,11 +8,11 @@ sap.ui.define([
 	"sap/m/ObjectStatus",
 	"sap/m/Label",
 	"sap/m/HBox",
-	"repoio/proto/control/PersonLink",
+	"repoio/proto/control/PersonGroup",
 	"sap/m/Button",
 	"repoio/proto/util/repoConnect",
 	"repoio/proto/util/createFlows"
-], function (BaseController, MessageToast, ResponsivePopover, VBox, Text, ObjectAttribute, ObjectStatus, Label, HBox, PersonLink, Button, RepoConnect, Flows) {
+], function (BaseController, MessageToast, ResponsivePopover, VBox, Text, ObjectAttribute, ObjectStatus, Label, HBox, PersonGroup, Button, RepoConnect, Flows) {
 	"use strict";
 
 	var FAV_KEY = "repoio-proto-catalog-favs",
@@ -45,7 +45,7 @@ sap.ui.define([
 				domains = D.getProperty("/domains"), favs = this.store(FAV_KEY) || {}, ar = this.lang() === "ar", n = this.fmt.num, all = [];
 			var domName = function (id) { return that.domainName(domains.filter(function (d) { return d.id === id; })[0]); };
 			var item = function (o) {
-				o.people = o.people || []; o.owner = o.people[0] || ""; o.moreOwners = o.people.length > 1 ? "+" + (o.people.length - 1) : "";
+				o.people = o.people || []; o.owner = o.people[0] || "";
 				o.fav = !!favs[o.id]; o.typeText = that.text("cat.type." + o.type);
 				o.statusText = that.text(o.statusKey === "empty" ? "domains.noRepo" : "health." + o.statusKey);
 				o.statusIcon = STATUS_ICON[o.statusKey] || "";
@@ -175,7 +175,7 @@ sap.ui.define([
 			o.facts.forEach(function (f) { oBox.addItem(new ObjectAttribute({ title: that.text(f[0]), text: String(f[1]) })); });
 			if (o.people.length) {
 				oBox.addItem(new Label({ text: that.text(o.people.length > 1 ? "repo.owners" : "domain.owner") }).addStyleClass("sapUiSmallMarginTop sapUiTinyMarginBottom"));
-				oBox.addItem(new HBox({ items: o.people.map(function (n) { return new PersonLink({ name: n }).addStyleClass("sapUiTinyMarginEnd"); }) }));
+				oBox.addItem(new PersonGroup({ names: o.people, title: that.text("repo.owners") }));
 			}
 			if (o.type === "repository") {
 				oBox.addItem(new Button({ text: that.text("rc.open"), icon: "sap-icon://connected", type: "Emphasized",

@@ -107,7 +107,8 @@ sap.ui.define([
 			var next = m.status === "active" ? Number(m.version) + 1 : m.version;
 			m.text = this._t(m);
 			m.desc = this._ar() ? m.descAr || m.descEn : m.descEn || m.descAr;
-			m.meta = this.text("mr.meta", [this._domainText(m.domain), this._repoText(m.repo), m.owner, m.changed]);
+			m.meta = this.text("mr.meta", [this._domainText(m.domain), this._repoText(m.repo)]);
+			m.metaChanged = this.text("mr.metaChanged", [m.changed]);
 			m.statusText = m.dirty ? this.text("mr.st.changedLong", [next]) : m.pending ? this.text("mr.st.pendingLong", [next, m.status === "active" ? m.version : "—"])
 				: this.text("mr.st." + m.status + "Long", [m.version]);
 			m.statusState = m.dirty || m.pending ? "Warning" : m.status === "active" ? "Success" : "Information";

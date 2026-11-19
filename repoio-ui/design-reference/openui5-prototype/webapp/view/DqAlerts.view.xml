@@ -1,5 +1,5 @@
 <mvc:View controllerName="repoio.proto.controller.DqAlerts"
-	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" height="100%">
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:rc="repoio.proto.control" xmlns:f="sap.f" xmlns:core="sap.ui.core" height="100%">
 	<!-- J10: Alerts. Operational alert rules (data quality, ingestion, streaming, approvals) and the alerts they fired.
 	     Alerts are operational events addressed to teams and roles; Broadcasts (scheduled report delivery) are separate.
 	     Rules and alerts are permission-filtered by the alerts API; Teams messages go through a webhook connection whose
@@ -62,7 +62,11 @@
 										</HBox>
 									</VBox>
 									<Text text="{view>at}" textDirection="LTR"/>
-									<Text text="{view>byText}"/>
+									<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioPersonLine">
+										<Text text="{view>byLbl}" visible="{= !!${view>by} }"/>
+										<rc:PersonLink name="{view>by}" showName="true" visible="{= !!${view>by} }"/>
+										<Text text="—" visible="{= !${view>by} }"/>
+									</HBox>
 								</ColumnListItem>
 							</items>
 						</Table>

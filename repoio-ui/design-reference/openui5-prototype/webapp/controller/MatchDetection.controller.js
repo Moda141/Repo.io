@@ -137,9 +137,9 @@ sap.ui.define([
 				checked = this._checked || {};
 			var src = tab === "pairs" ? q.pairs.filter(function (i) { return i.state === "open"; }) : q[tab];
 			var rows = src.filter(function (i) { return that._match(i, tab); }).map(function (it) {
-				var age = it.age || 0, over = age > sla, r = { id: it.id, kind: it.kind, navigated: it.id === that._openId, checked: !!checked[it.id], flags: [] };
+				var age = it.age || 0, over = age > sla, r = { id: it.id, kind: it.kind, navigated: it.id === that._openId, checked: !!checked[it.id], flags: [], p1: "", p2: "", c2t: "", p5: "" };
 				if (tab === "decided") {
-					r.title = it.names; r.sub = it.id; r.c2 = T("md.dec." + it.decision); r.c2b = it.by + " · " + it.at; r.probText = it.prob.toFixed(3); r.probState = "None";
+					r.title = it.names; r.sub = it.id; r.c2 = T("md.dec." + it.decision); r.c2b = ""; r.p2 = it.by; r.c2t = "· " + it.at; r.probText = it.prob.toFixed(3); r.probState = "None";
 					r.c4 = it.note || "—"; r.c5 = that._segText(it.segment); r.c5State = "None"; r.highlight = "None";
 					return r;
 				}
@@ -152,13 +152,13 @@ sap.ui.define([
 				(it.risks || []).forEach(function (k) { r.flags.push({ text: T("md.risk." + k), icon: "sap-icon://warning2" }); });
 				if (tab === "pairs") {
 					r.c2 = that._segText(it.segment); r.c2b = it.records.slice(1).map(function (x) { return that._srcName(x.source); }).join(" · ");
-					r.c4 = that._reasons(it); r.c5b = it.assigned ? T("md.assignedTo", [it.assigned]) : T("md.as.none");
+					r.c4 = that._reasons(it); r.c5b = it.assigned ? T("md.assignedToL") : T("md.as.none"); r.p5 = it.assigned || "";
 				} else if (tab === "requests") {
-					r.c2 = T("mr.chk." + it.check); r.c2b = T("md.by", [it.requester]); r.c4 = T("md.against", [it.ref, it.records[1].name]);
+					r.c2 = T("mr.chk." + it.check); r.c2b = T("md.byL"); r.p2 = it.requester; r.c4 = T("md.against", [it.ref, it.records[1].name]);
 					if (it.requester === me) { r.flags.push({ text: T("md.yourRequest"), icon: "sap-icon://employee" }); }
 					r.c5b = "";
 				} else {
-					r.c2 = T("md.first." + it.first.decision, [it.first.by]); r.c2b = it.first.at; r.c4 = it.kind === "request" ? T("mr.chk." + it.check) : that._reasons(it);
+					r.c2 = T("md.firstL." + it.first.decision); r.p1 = it.first.by; r.c2b = it.first.at; r.c4 = it.kind === "request" ? T("mr.chk." + it.check) : that._reasons(it);
 					if (it.first.by === me) { r.flags.push({ text: T("md.yourDecision"), icon: "sap-icon://employee" }); }
 					r.c5b = "";
 				}
@@ -311,7 +311,7 @@ sap.ui.define([
 				weightText: T("md.weight", [(it.weight > 0 ? "+" : "") + Number(it.weight).toFixed(2)]),
 				facts: [{ label: T("gr.f.seg"), value: this._segText(it.segment) },
 					{ label: T("md.c.band"), value: T("md.band." + this._band(it)) },
-					{ label: isReq ? T("md.c.requester") : T("md.c.assigned"), value: isReq ? it.requester : it.assigned || T("md.as.none") },
+					{ label: isReq ? T("md.c.requester") : T("md.c.assigned"), value: isReq || it.assigned ? "" : T("md.as.none"), person: isReq ? it.requester : it.assigned || "" },
 					{ label: T("md.c.from"), value: isReq ? T("md.fromCheck") : T("md.fromRun", [it.run]) }],
 				colA: isReq ? T("md.colRequest") : "A · " + this._srcName(A.source), colB: isReq ? T("md.colGolden", [B.id]) : "B · " + this._srcName(B.source),
 				fields: fields, members: members, canMerge: !isReq, survivors: survivors, survivor: String(it.survivor),
@@ -478,7 +478,7 @@ sap.ui.define([
 		},
 		onDefer: function () {
 			var that = this, f = this._find(this._openId), it = f.it,
-				oWho = new Select({ width: "100%", items: [this._me()].concat(STEWARDS).map(function (s) { return new Item({ key: s, text: s }); }), selectedKey: it.assigned || this._me() });
+				oWho = new Select({ width: "100%", items: [this._me()].concat(STEWARDS).map(function (s) { return new Item({ key: s, text: that.personLabel(s) }); }), selectedKey: it.assigned || this._me() });
 			this._reasonDialog(this.text("md.a.defer"), null, false, function (r, note) {
 				it.assigned = oWho.getSelectedKey();
 				MessageToast.show(that.text("md.t.assigned1", [it.id, it.assigned]));

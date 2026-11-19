@@ -152,7 +152,7 @@
 							</HBox>
 							<VBox renderType="Bare">
 								<Text text="{view>changed}" textDirection="LTR" wrapping="false"/>
-								<Text text="{view>changedBy}" class="repoioUmMuted" wrapping="false"/>
+								<rc:PersonLink name="{view>changedBy}" showName="true"/>
 							</VBox>
 						</ColumnListItem>
 					</items>

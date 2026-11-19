@@ -1,7 +1,10 @@
 /*
- * PersonLink — a person shown as an Avatar only (the name is in the tooltip and the quick view). Hovering (or focusing) opens a
+ * PersonLink — a person shown as an Avatar (the name is in the tooltip and the quick view), or as Avatar + name with
+ * showName="true" for places where the name is the content (forms, headers, "assigned to …"). Hovering (or focusing) opens a
  * compact business card (sap.m.Popover, fixed width, flips instead of shrinking near an edge) with role, team and contact
  * details; clicking pins it open. Usable inside forms (IFormContent).
+ * PersonLink.openFor(name, oOpener) opens the same card from another control (FeedListItem sender, card header).
+ * Every person in the console is shown this way: never as plain text.
  */
 sap.ui.define([
 	"sap/ui/core/Control",
@@ -23,10 +26,39 @@ sap.ui.define([
 		en: { contact: "Contact details", email: "Email", phone: "Phone", team: "Team", org: "Organization" }
 	};
 
+	/* The business card for one person (shared by PersonLink and PersonLink.openFor). */
+	function card(n, fnAfterClose) {
+		var p = people.get(n), ar = isAr(), t = ar ? T.ar : T.en;
+		var row = function (sIcon, sTip, oValue) {
+			return new HBox({ alignItems: "Center", renderType: "Bare", items: [new Icon({ src: sIcon, tooltip: sTip, decorative: false }).addStyleClass("repoioPcIcon"), oValue] }).addStyleClass("repoioPcRow");
+		};
+		return new Popover({
+			showHeader: false, contentWidth: "16rem", placement: "VerticalPreferredBottom", showArrow: true,
+			afterClose: fnAfterClose,
+			content: [new VBox({ renderType: "Bare", items: [
+				new HBox({ alignItems: "Center", renderType: "Bare", items: [
+					new Avatar({ initials: p.initials, displaySize: "S" }),
+					new VBox({ renderType: "Bare", items: [
+						new Title({ text: ar ? n : p.en, level: "H5", wrapping: true }),
+						new Text({ text: ar ? p.role_ar : p.role_en, maxLines: 2 }).addStyleClass("repoioPcRole")
+					] }).addStyleClass("repoioPcWho")
+				] }).addStyleClass("repoioPcHead"),
+				row("sap-icon://email", t.email, new Link({ text: p.email, href: "mailto:" + p.email + "?subject=Repo.io", wrapping: false, textDirection: "LTR" }).addStyleClass("repoioPcVal")),
+				row("sap-icon://call", t.phone, new Link({ text: "\u2066" + p.phone + "\u2069", href: "tel:" + p.phone.replace(/\s/g, ""), wrapping: false, textDirection: "LTR" }).addStyleClass("repoioPcVal")),
+				row("sap-icon://group", t.team, new Text({ text: ar ? p.team_ar : p.team_en, wrapping: false }).addStyleClass("repoioPcVal")),
+				row("sap-icon://building", t.org, new Text({ text: ar ? "مجموعة نهضة مصر للنشر" : "Nahdet Misr Publishing Group", wrapping: false }).addStyleClass("repoioPcVal"))
+			] }).addStyleClass("repoioPcBody")]
+		}).addStyleClass("repoioPersonCard");
+	}
+
 	var PersonLink = Control.extend("repoio.proto.control.PersonLink", {
 		metadata: {
 			interfaces: ["sap.ui.core.IFormContent"],
-			properties: { name: { type: "string", defaultValue: "" } },
+			properties: {
+				name: { type: "string", defaultValue: "" },
+				/* Show the name next to the avatar */
+				showName: { type: "boolean", defaultValue: false }
+			},
 			aggregations: {
 				_avatar: { type: "sap.m.Avatar", multiple: false, visibility: "hidden" },
 				_link: { type: "sap.m.Link", multiple: false, visibility: "hidden" }
@@ -42,7 +74,8 @@ sap.ui.define([
 			var n = this.getName(), p = people.get(n);
 			var label = n && p && !isAr() ? p.en : n;
 			this.getAggregation("_avatar").setInitials(p ? p.initials : "").setVisible(!!p).setTooltip(label);
-			this.getAggregation("_link").setText(label).setEnabled(false).setVisible(!p);
+			this.getAggregation("_link").setText(label).setEnabled(!!p).setVisible(!p || this.getShowName());
+			this.toggleStyleClass("repoioPersonNamed", !!p && this.getShowName());
 		},
 
 		renderer: {
@@ -67,30 +100,10 @@ sap.ui.define([
 		},
 
 		_open: function (bPinned) {
-			var n = this.getName(), p = people.get(n); if (!p) { return; }
-			var t = isAr() ? T.ar : T.en, ar = isAr();
+			var n = this.getName(); if (!people.get(n)) { return; }
 			this._pinned = bPinned;
 			if (this._qv) { this._qv.destroy(); }
-			var row = function (sIcon, sTip, oValue) {
-				return new HBox({ alignItems: "Center", renderType: "Bare", items: [new Icon({ src: sIcon, tooltip: sTip, decorative: false }).addStyleClass("repoioPcIcon"), oValue] }).addStyleClass("repoioPcRow");
-			};
-			this._qv = new Popover({
-				showHeader: false, contentWidth: "16rem", placement: "VerticalPreferredBottom", showArrow: true,
-				afterClose: function () { this._pinned = false; }.bind(this),
-				content: [new VBox({ renderType: "Bare", items: [
-					new HBox({ alignItems: "Center", renderType: "Bare", items: [
-						new Avatar({ initials: p.initials, displaySize: "S" }),
-						new VBox({ renderType: "Bare", items: [
-							new Title({ text: ar ? n : p.en, level: "H5", wrapping: true }),
-							new Text({ text: ar ? p.role_ar : p.role_en, maxLines: 2 }).addStyleClass("repoioPcRole")
-						] }).addStyleClass("repoioPcWho")
-					] }).addStyleClass("repoioPcHead"),
-					row("sap-icon://email", t.email, new Link({ text: p.email, href: "mailto:" + p.email + "?subject=Repo.io", wrapping: false, textDirection: "LTR" }).addStyleClass("repoioPcVal")),
-					row("sap-icon://call", t.phone, new Link({ text: "\u2066" + p.phone + "\u2069", href: "tel:" + p.phone.replace(/\s/g, ""), wrapping: false, textDirection: "LTR" }).addStyleClass("repoioPcVal")),
-					row("sap-icon://group", t.team, new Text({ text: ar ? p.team_ar : p.team_en, wrapping: false }).addStyleClass("repoioPcVal")),
-					row("sap-icon://building", t.org, new Text({ text: ar ? "مجموعة نهضة مصر للنشر" : "Nahdet Misr Publishing Group", wrapping: false }).addStyleClass("repoioPcVal"))
-				] }).addStyleClass("repoioPcBody")]
-			}).addStyleClass("repoioPersonCard");
+			this._qv = card(n, function () { this._pinned = false; }.bind(this));
 			this.addDependent(this._qv);
 			this._qv.openBy(this.getAggregation("_avatar").getVisible() ? this.getAggregation("_avatar") : this);
 			var that = this;
@@ -102,5 +115,14 @@ sap.ui.define([
 
 		exit: function () { clearTimeout(this._t); }
 	});
+	/* Open the card for a person from any control (e.g. a FeedListItem sender or a card header). */
+	PersonLink.openFor = function (sName, oOpener) {
+		if (!people.get(sName) || !oOpener) { return; }
+		var q = card(sName, function () { q.destroy(); });
+		oOpener.addDependent(q);
+		q.openBy(oOpener);
+	};
+	/* The display name of a person in the current language (plain text, for tooltips and sorting only). */
+	PersonLink.label = function (sName) { var p = people.get(sName); return p && !isAr() ? p.en : sName; };
 	return PersonLink;
 });

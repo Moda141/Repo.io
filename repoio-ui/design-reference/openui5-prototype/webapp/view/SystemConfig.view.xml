@@ -1,5 +1,5 @@
 <mvc:View controllerName="repoio.proto.controller.SystemConfig"
-	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:rc="repoio.proto.control" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form">
 	<!-- System configuration: platform-wide settings (Admin only, `system configuration` permission).
 	     Hosts and secrets are deployment values shown as placeholders; credentials live in the secret store and appear here only
 	     as references. Every saved change is audited with before / after. -->
@@ -215,7 +215,10 @@
 									<Text text="{view>repo}"/>
 									<Text text="{view>threshold}" textDirection="LTR"/>
 									<Text text="{view>reason}"/>
-									<Text text="{view>owner} · {view>changed}"/>
+									<HBox alignItems="Center" renderType="Bare" class="repoioPersonLine">
+										<rc:PersonLink name="{view>owner}" showName="true"/>
+										<Text text="· {view>changed}" class="repoioUmMuted" wrapping="false"/>
+									</HBox>
 								</ColumnListItem>
 							</items>
 						</Table>

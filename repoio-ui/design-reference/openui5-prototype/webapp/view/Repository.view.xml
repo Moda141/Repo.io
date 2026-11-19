@@ -44,7 +44,7 @@
 					<HBox class="repoioRpPair" renderType="Bare"><Label text="{i18n>repo.deployed}" showColon="true"/><Text text="{view>/rp/deployedText}" textDirection="LTR"/></HBox>
 					<HBox class="repoioRpPair" alignItems="Center" renderType="Bare">
 						<Label text="{i18n>repo.owners}" showColon="true"/>
-						<HBox items="{path: 'view>/rp/owners', templateShareable: false}" renderType="Bare" class="repoioRpOwners"><rc:PersonLink name="{view>name}"/></HBox>
+						<rc:PersonGroup names="{view>/rp/ownerNames}" title="{i18n>repo.owners}" class="repoioRpOwners"/>
 					</HBox>
 					<HBox wrap="Wrap" renderType="Bare" items="{path: 'view>/rp/tags', templateShareable: false}" class="repoioTbChips">
 						<ObjectStatus text="{view>text}" icon="{view>icon}" class="repoioClassTag repoioClassChip"/>
@@ -85,7 +85,8 @@
 								<VBox items="{path: 'view>/rp/modelFacts', templateShareable: false}" renderType="Bare" class="repoioRpKv">
 									<HBox class="repoioRpKvRow" renderType="Bare">
 										<Label text="{view>label}" class="repoioRpKvLbl"/>
-										<Text text="{view>value}" textDirection="{view>dir}"/>
+										<Text text="{view>value}" textDirection="{view>dir}" visible="{= !${view>person} }"/>
+										<rc:PersonLink name="{view>person}" showName="true" visible="{= !!${view>person} }"/>
 									</HBox>
 								</VBox>
 							</VBox>

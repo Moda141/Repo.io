@@ -38,7 +38,9 @@ sap.ui.define([
 				var emp = h.user ? u.employees.filter(function (e) { return e.id === h.user; })[0] : null;
 				return { ref: h.user && emp ? { route: "users", args: { user: emp.id } } : h.role ? { route: "roles", args: { role: h.role } } : null,
 					at: h.at, actor: h.by, area: "users", action: h.by === "sync" ? "sync" : (h.role ? "assign" : "update"), type: h.role ? "role" : h.user ? "user" : "directory",
-					object: [emp ? (People.get(emp.name) ? People.get(emp.name).en : emp.name) + " (" + emp.id + ")" : "", h.role || ""].filter(Boolean).join(" · ") || (h.by === "sync" ? "Directory" : "—"), en: h.en, ar: h.ar };
+					object: [emp ? (People.get(emp.name) ? People.get(emp.name).en : emp.name) + " (" + emp.id + ")" : "", h.role || ""].filter(Boolean).join(" · ") || (h.by === "sync" ? "Directory" : "—"), en: h.en, ar: h.ar,
+					/* the person the event is about: shown as avatar + name, then the rest of the object reference */
+					objPerson: emp ? emp.name : "", objRest: [emp ? "(" + emp.id + ")" : "", h.role || ""].filter(Boolean).join(" · ") };
 			});
 			return this._a.audit.concat(fromUsers).sort(function (x, y) { return x.at < y.at ? 1 : -1; }).map(function (e, i) { e._i = i; return e; });
 		},
@@ -49,7 +51,7 @@ sap.ui.define([
 				area: e.area, areaText: this.text("au.area." + e.area), areaIcon: AREA[e.area],
 				action: act, actionText: this.text("au.act." + act), actionState: BAD.indexOf(act) > -1 ? "Error" : "None",
 				highlight: act === "denied" ? "Error" : "None",
-				text: this._ar() ? e.ar : e.en, objectText: e.object || "", type: e.type, typeText: this.text("au.type." + (e.type || "other")),
+				text: this._ar() ? e.ar : e.en, objectText: e.object || "", objPerson: e.objPerson || "", objRest: e.objRest || "", type: e.type, typeText: this.text("au.type." + (e.type || "other")),
 				versionText: e.version ? "v" + e.version : "—", ip: e.ip || "",
 				ref: e.ref || (e.type === "announcement" ? { route: "announcements", args: { id: e.object } } : null) };
 		},

@@ -122,8 +122,15 @@
 										<Text text="{view>short}" class="repoioUmMuted" visible="{= ${view>/md/layout} !== 'OneColumn' }"/>
 									</VBox>
 									<VBox renderType="Bare">
-										<Text text="{view>c2}"/>
-										<Text text="{view>c2b}" class="repoioUmMuted"/>
+										<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioPersonLine">
+											<Text text="{view>c2}"/>
+											<rc:PersonLink name="{view>p1}" showName="true" visible="{= !!${view>p1} }"/>
+										</HBox>
+										<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioPersonLine">
+											<Text text="{view>c2b}" class="repoioUmMuted" visible="{= !!${view>c2b} }"/>
+											<rc:PersonLink name="{view>p2}" showName="true" visible="{= !!${view>p2} }"/>
+											<Text text="{view>c2t}" class="repoioUmMuted" visible="{= !!${view>c2t} }"/>
+										</HBox>
 									</VBox>
 									<ObjectNumber number="{view>probText}" state="{view>probState}" textDirection="LTR"/>
 									<VBox renderType="Bare">
@@ -134,7 +141,10 @@
 									</VBox>
 									<VBox renderType="Bare">
 										<ObjectStatus text="{view>c5}" state="{view>c5State}" icon="{view>c5Icon}"/>
-										<Text text="{view>c5b}" class="repoioUmMuted"/>
+										<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioPersonLine">
+											<Text text="{view>c5b}" class="repoioUmMuted"/>
+											<rc:PersonLink name="{view>p5}" showName="true" visible="{= !!${view>p5} }"/>
+										</HBox>
 									</VBox>
 								</ColumnListItem>
 							</items>
@@ -172,7 +182,8 @@
 								<VBox class="repoioGoFacet" items="{path: 'view>/md/it/facts', templateShareable: false}">
 									<HBox class="repoioGoPair" renderType="Bare">
 										<Label text="{view>label}" showColon="true" class="sapUiTinyMarginEnd"/>
-										<Text text="{view>value}"/>
+										<Text text="{view>value}" visible="{= !!${view>value} }"/>
+										<rc:PersonLink name="{view>person}" showName="true" visible="{= !!${view>person} }"/>
 									</HBox>
 								</VBox>
 							</FlexBox>

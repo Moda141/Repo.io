@@ -74,7 +74,7 @@ sap.ui.define([
 					title: T("al.ev." + r.event), msg: T("al.msg." + r.event, [x.repo ? that._scope({ kind: "repo", id: x.repo }) : "", x.value, x.count, x.job, x.run, x.minutes, x.test]),
 					linkText: link ? link.text : "", link: link,
 					sevText: T("al.sev." + r.sev), sevState: sv[0], sevIcon: sv[1], to: that._to(r), channels: that._channels(r.channels),
-					at: a.at, byText: a.by ? T("al.by." + a.status, [a.by]) : "—" };
+					at: a.at, by: a.by || "", byLbl: a.by ? T("al.byL." + a.status) : "" };
 			}));
 			vm.setProperty("/al/rules", rules.map(function (r) {
 				var sv = SEV[r.sev];

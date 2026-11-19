@@ -46,7 +46,7 @@ sap.ui.define([
 		_show: function (t) {
 			var that = this, T = this.text.bind(this), m = this._m, row = DQ.row(this, m, t), ck = DQ.check(m, t.check), w = DQ.where(this, t),
 				l = DQ.last(t), runs = t.runs || [], passed = runs.filter(function (r) { return r.pass >= t.threshold; }).length,
-				f = function (label, value, opt) { return Object.assign({ label: T(label), value: value, dir: "Inherit" }, opt || {}); };
+				f = function (label, value, opt) { return Object.assign({ label: T(label), value: value, dir: "Inherit", person: "", personLbl: "" }, opt || {}); };
 			var fields = [
 				f("dq.d.where", w.text + " · " + w.sub, { icon: w.icon }),
 				f("dq.d.check", row.checkText, { icon: ck.icon }),
@@ -56,7 +56,7 @@ sap.ui.define([
 				f("dq.d.sev", row.sevText + " — " + T("dq.sevHint." + t.severity), { icon: row.sevIcon }),
 				f("dq.d.dim", row.dimText),
 				f("dq.d.schedule", T("dq.sched." + t.schedule)),
-				f("dq.d.author", row.authorText + (t.reviewer ? " · " + T("dq.d.reviewer", [t.reviewer]) : ""))
+				f("dq.d.author", row.authorText + (t.reviewer ? " ·" : ""), { personLbl: t.reviewer ? T("dq.d.reviewerL") : "", person: t.reviewer || "" })
 			];
 			var held = t.level === "repository" ? this._held(t) : [];
 			this.viewModel().setProperty("/dqt", Object.assign({}, row, {
@@ -104,14 +104,15 @@ sap.ui.define([
 			});
 		},
 		_history: function (t) {
-			var T = this.text.bind(this), h = [];
-			if (t.status === "inReview") { h.push({ icon: "sap-icon://pending", text: T("dq.h.waiting", [t.reviewer]), meta: t.changed }); }
-			if (t.status === "disabled") { h.push({ icon: "sap-icon://media-pause", text: T("dq.h.paused"), meta: t.owner + " · " + t.changed }); }
+			/* Each entry: what happened (text, or a label + the person it names) and who did it when (by · at) */
+			var T = this.text.bind(this), h = [], e = function (icon, text, person, by, at) { return { icon: icon, text: text, person: person || "", by: by || "", at: at }; };
+			if (t.status === "inReview") { h.push(e("sap-icon://pending", T("dq.h.waitingL"), t.reviewer, "", t.changed)); }
+			if (t.status === "disabled") { h.push(e("sap-icon://media-pause", T("dq.h.paused"), "", t.owner, t.changed)); }
 			if (t.version > 1) {
-				h.push({ icon: "sap-icon://edit", text: T("dq.h.edited", [t.version]), meta: t.owner + " · " + t.changed });
-				if (t.author === "python") { h.push({ icon: "sap-icon://employee-approvals", text: T("dq.h.approved", [t.reviewer]), meta: t.changed }); }
+				h.push(e("sap-icon://edit", T("dq.h.edited", [t.version]), "", t.owner, t.changed));
+				if (t.author === "python") { h.push(e("sap-icon://employee-approvals", T("dq.h.approvedL"), t.reviewer, "", t.changed)); }
 			}
-			h.push({ icon: "sap-icon://add", text: T("dq.h.created", [T("dq.author." + t.author)]), meta: t.owner + " · " + (t.level === "source" ? "2026-09-01" : "2026-06-15") });
+			h.push(e("sap-icon://add", T("dq.h.created", [T("dq.author." + t.author)]), "", t.owner, t.level === "source" ? "2026-09-01" : "2026-06-15"));
 			return h;
 		},
 		_chart: function (t) {

@@ -21,7 +21,12 @@
 					</HBox>
 				</f:heading>
 				<f:expandedContent>
-					<Text text="{view>/do/summary}" class="repoioUmMuted"/>
+					<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioPersonLine">
+						<Text text="{view>/do/summary}" class="repoioUmMuted"/>
+						<Text text="·" class="repoioUmMuted repoioPersonSep"/>
+						<Text text="{i18n>do.owner}" class="repoioUmMuted"/>
+						<rc:PersonLink name="{view>/do/owner}" showName="true"/>
+					</HBox>
 				</f:expandedContent>
 				<f:snappedContent>
 					<Text text="{view>/do/filterText}" class="repoioUmMuted"/>

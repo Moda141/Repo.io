@@ -90,7 +90,7 @@ sap.ui.define([
 				facet1: [{ label: this.text("go.f.segment"), value: seg ? this._t(seg) : "—" }, { label: this.text("go.f.account"), value: rec.accountType, dir: "LTR" },
 					{ label: this.text("go.f.gov"), value: this.text("gov." + rec.state) + " · " + rec.territory }],
 				facet2: [{ label: this.text("go.f.mobile"), value: rec.mobile, dir: "LTR" }, { label: this.text("go.f.sources"), value: rec.sources.map(this._srcName, this).join(" · ") },
-					{ label: this.text("go.f.since"), value: rec.since, dir: "LTR" }, { label: this.text("go.f.changed"), value: rec.changed + " · " + rec.changedBy }],
+					{ label: this.text("go.f.since"), value: rec.since, dir: "LTR" }, { label: this.text("go.f.changed"), value: rec.changed + " ·", dir: "Inherit", person: rec.changedBy }],
 				qualityText: rec.quality.toFixed(1), qualityState: Sem.quality(rec.quality),
 				probPct: Math.round(rec.prob * 100), probText: rec.prob.toFixed(3), matchNote: this.text("go.matchNote", [d.sourceRows.length]),
 				banner: st ? this.text(st[1], d.review ? [d.review.pair, d.review.prob.toFixed(2)] : [d.requests[0] ? d.requests[0].id : ""]) : "",

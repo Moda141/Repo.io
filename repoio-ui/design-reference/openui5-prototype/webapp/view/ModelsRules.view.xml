@@ -1,5 +1,5 @@
 <mvc:View controllerName="repoio.proto.controller.ModelsRules"
-	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core">
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.f" xmlns:core="sap.ui.core" xmlns:rc="repoio.proto.control">
 	<!-- J5: Models & rules. One match model per repository. Comparisons, blocking and Splink training are shared; customer types
 	     are segments of a code column with their own thresholds. The same model consolidates the repository into golden
 	     records, checks change requests and holds the survivorship rules. The console edits a draft and shows previews; the
@@ -40,7 +40,14 @@
 							</HBox>
 						</HBox>
 						<Text text="{view>/mr/m/desc}"/>
-						<Text text="{view>/mr/m/meta}" class="repoioUmMuted"/>
+						<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioPersonLine">
+							<Text text="{view>/mr/m/meta}" class="repoioUmMuted"/>
+							<Text text="·" class="repoioUmMuted"/>
+							<Text text="{i18n>mr.metaOwner}" class="repoioUmMuted"/>
+							<rc:PersonLink name="{view>/mr/m/owner}" showName="true"/>
+							<Text text="·" class="repoioUmMuted"/>
+							<Text text="{view>/mr/m/metaChanged}" class="repoioUmMuted"/>
+						</HBox>
 						<HBox wrap="Wrap" renderType="Bare" class="repoioMrUses">
 							<ObjectStatus text="{view>/mr/m/useConsolidate}" icon="sap-icon://combine" state="Information" inverted="true" class="repoioMrTpl"/>
 							<ObjectStatus text="{view>/mr/m/useRequest}" icon="sap-icon://request" state="Information" inverted="true" class="repoioMrTpl"/>
@@ -506,7 +513,7 @@
 											<ColumnListItem highlight="{view>highlight}">
 												<VBox renderType="Bare">
 													<Text text="{view>id}" class="repoioMono" wrapping="false" textDirection="LTR"/>
-													<Text text="{view>by}" class="repoioUmMuted" wrapping="false"/>
+													<rc:PersonLink name="{view>by}" showName="true"/>
 												</VBox>
 												<VBox renderType="Bare">
 													<Text text="{view>name}" wrapping="false"/>

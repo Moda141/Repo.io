@@ -62,7 +62,10 @@
 							<ObjectStatus text="{view>areaText}" icon="{view>areaIcon}"/>
 							<ObjectStatus text="{view>actionText}" state="{view>actionState}"/>
 							<Text text="{view>text}" wrapping="false" tooltip="{view>text}"/>
-							<Text text="{view>objectText}" wrapping="false" tooltip="{view>objectText}" class="repoioMono"/>
+							<HBox alignItems="Center" renderType="Bare" class="repoioPersonLine">
+								<rc:PersonLink name="{view>objPerson}" showName="true" visible="{= !!${view>objPerson} }"/>
+								<Text text="{= ${view>objPerson} ? ${view>objRest} : ${view>objectText} }" wrapping="false" tooltip="{view>objectText}" class="repoioMono"/>
+							</HBox>
 							<Text text="{view>versionText}"/>
 						</ColumnListItem>
 					</items>
@@ -83,7 +86,11 @@
 							<Label text="{i18n>au.col.area}"/><Text text="{view>/au/d/areaText}"/>
 							<Label text="{i18n>au.col.action}"/><Text text="{view>/au/d/actionText}"/>
 							<Label text="{i18n>au.col.type}"/><Text text="{view>/au/d/typeText}"/>
-							<Label text="{i18n>au.col.object}"/><Text text="{view>/au/d/objectText}" class="repoioMono"/>
+							<Label text="{i18n>au.col.object}"/>
+							<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioPersonLine">
+								<rc:PersonLink name="{view>/au/d/objPerson}" showName="true" visible="{= !!${view>/au/d/objPerson} }"/>
+								<Text text="{= ${view>/au/d/objPerson} ? ${view>/au/d/objRest} : ${view>/au/d/objectText} }" class="repoioMono"/>
+							</HBox>
 							<Label text="{i18n>au.col.version}"/><Text text="{view>/au/d/versionText}"/>
 							<Label text="{i18n>au.col.ip}" visible="{= !!${view>/au/d/ip} }"/><Text text="{view>/au/d/ip}" class="repoioMono" textDirection="LTR" visible="{= !!${view>/au/d/ip} }"/>
 							<Label text="{i18n>au.col.what}"/><Text text="{view>/au/d/text}"/>

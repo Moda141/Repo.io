@@ -215,9 +215,7 @@
 										valueState="{= ${view>/wf/sel/approverTeam} ? 'None' : 'Warning' }">
 										<core:ListItem key="{view>key}" text="{view>text}" additionalText="{view>count}"/>
 									</Select>
-									<HBox items="{view>/wf/sel/teamMembers}" renderType="Bare" wrap="Wrap" class="repoioWfMembers">
-										<rc:PersonLink name="{view>name}"/>
-									</HBox>
+									<rc:PersonGroup names="{view>/wf/sel/teamNames}" title="{i18n>wf.teamMembers}" class="repoioWfMembers"/>
 								</VBox>
 								<Label text="{i18n>wf.rule}" class="sapUiSmallMarginTop"/>
 								<SegmentedButton selectedKey="{path: 'view>/wf/sel/rule', mode: 'OneWay'}" selectionChange=".onRule" width="100%" enabled="{= !${view>/wf/readOnly} }">

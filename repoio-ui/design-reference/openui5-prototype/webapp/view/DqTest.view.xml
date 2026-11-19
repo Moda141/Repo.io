@@ -74,9 +74,11 @@
 						<VBox renderType="Bare" class="repoioTbForm" items="{path: 'view>/dqt/fields', templateShareable: false}">
 							<VBox class="repoioTbFormField" renderType="Bare">
 								<Label text="{view>label}"/>
-								<HBox alignItems="Center" renderType="Bare" class="repoioDqVal">
+								<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioDqVal repoioPersonLine">
 									<core:Icon src="{view>icon}" visible="{= !!${view>icon} }" class="repoioExRowIcon" decorative="true"/>
 									<Text text="{view>value}" textDirection="{view>dir}"  wrapping="true"><customData><core:CustomData key="rc" value="{= ${view>mono} ? 'mono' : 'none' }" writeToDom="true"/></customData></Text>
+									<Text text="{view>personLbl}" visible="{= !!${view>person} }"/>
+									<rc:PersonLink name="{view>person}" showName="true" visible="{= !!${view>person} }"/>
 								</HBox>
 							</VBox>
 						</VBox>
@@ -162,8 +164,14 @@
 							<HBox alignItems="Start" renderType="Bare" class="repoioDqHistItem">
 								<core:Icon src="{view>icon}" class="repoioDqHistIcon" decorative="true"/>
 								<VBox renderType="Bare">
-									<Text text="{view>text}"/>
-									<Text text="{view>meta}" class="repoioUmMuted"/>
+									<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioPersonLine">
+										<Text text="{view>text}"/>
+										<rc:PersonLink name="{view>person}" showName="true" visible="{= !!${view>person} }"/>
+									</HBox>
+									<HBox alignItems="Center" wrap="Wrap" renderType="Bare" class="repoioPersonLine">
+										<rc:PersonLink name="{view>by}" showName="true" visible="{= !!${view>by} }"/>
+										<Text text="{= ${view>by} ? '· ' + ${view>at} : ${view>at} }" class="repoioUmMuted" textDirection="Inherit"/>
+									</HBox>
 								</VBox>
 							</HBox>
 						</CustomListItem>

@@ -94,7 +94,6 @@ sap.ui.define([
 					title: ar ? b.ar : b.en, objText: r ? (ar ? r.ar : r.en) : b.object,
 					objIcon: b.objType === "story" ? "sap-icon://business-objects-experience" : "sap-icon://table-chart",
 					fmtText: b.format.toUpperCase(), schedText: that._schedText(b),
-					rcpText: that.text("bc.rcpCount", [b.recipients.length]),
 					lastText: la ? (b.last === "partial" ? that.text("bc.last.partial", [sk]) : that.text("bc.last." + b.last)) : "—",
 					lastState: la ? la[0] : "None", lastIcon: la ? la[1] : "", lastRunText: that._date(b.lastRun), nextRunText: b.status === "active" ? that._date(b.nextRun) : "—",
 					statusText: that.text("bc.st." + b.status), statusState: st[0], statusIcon: st[1]
@@ -216,11 +215,6 @@ sap.ui.define([
 			if (b.last === "failed") { MessageBox.error(this.text("bc.last.failedMsg", [this._date(b.lastRun)])); return; }
 			var r = this._report(b.object), d = this._doms.filter(function (x) { return x.id === r.domain; })[0];
 			MessageBox.warning(this.text("bc.last.partialMsg", [this._skipped(b).map(function (n) { return that._pname(n); }).join("، "), this.domainName(d)]));
-		},
-		onRecipients: function (oEvent) {
-			var that = this, b = oEvent.getSource().getBindingContext("view").getObject(), sk = this._skipped(b);
-			MessageBox.information(b.recipients.map(function (n) { return "• " + that._pname(n) + (sk.indexOf(n) > -1 ? "  (" + that.text("bc.noAccess") + ")" : ""); }).join("\n"),
-				{ title: this.text("bc.d.recipients") });
 		},
 		onObject: function (oEvent) {
 			var b = oEvent.getSource().getBindingContext("view").getObject();

@@ -58,10 +58,11 @@ sap.ui.define([
 		},
 
 		/* The signed-in user (E-1001 in the prototype) and their roles, as on the shell user card. */
+		onMe: function (oEvent) { this.openPerson(this.viewModel().getProperty("/wl/me/person"), oEvent.getSource()); },
 		_me: function (d) {
 			var ar = this.lang() === "ar", e = d.employees.filter(function (x) { return x.id === "E-1001"; })[0] || {},
 				u = d.users.filter(function (x) { return x.employee === e.id; })[0] || { direct: [] };
-			this.viewModel().setProperty("/wl/me", { name: e.name, initials: "MM", title: ar ? e.title_ar : e.title_en,
+			this.viewModel().setProperty("/wl/me", { person: e.name, name: this.personLabel(e.name), initials: "MM", title: ar ? e.title_ar : e.title_en,
 				roles: u.direct.map(function (k) { var r = d.roles.filter(function (x) { return x.id === k; })[0]; return { text: r ? (ar ? r.ar || r.en : r.en || r.ar) : k }; }) });
 		},
 		_myRoles: function (w) {
