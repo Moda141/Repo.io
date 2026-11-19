@@ -85,8 +85,8 @@ sap.ui.define([
 
 		/* Start a tour. ctx = the controller whose byId finds the elements (the shell for "platform", the page for a
 		   page tour), T = text function, id = tour id, groups = role groups for the platform tour, intro = extra text
-		   for the first card (for example which roles the tour was adapted to). */
-		start: function (ctx, T, id, groups, intro) {
+		   for the first card (for example which roles the tour was adapted to), onEnd = called when the tour closes. */
+		start: function (ctx, T, id, groups, intro, onEnd) {
 			var that = this, app = ctx;
 			if (this._on || !TOURS[id]) { return; }
 			this._on = true;
@@ -200,6 +200,7 @@ sap.ui.define([
 				oPop.close();
 				oDlg.close();
 				setTimeout(function () { oPop.destroy(); oDlg.destroy(); }, 300);
+				if (onEnd) { onEnd(); }
 			}
 			go(0);
 		}

@@ -24,11 +24,6 @@ sap.ui.define([
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
 			var sLang = this._lang();
 			this.byId("langMenu").getItems().forEach(function (it) { it.setIcon(it.getKey() === sLang ? "sap-icon://accept" : ""); });
-			// Collapse the side navigation on narrow screens (phones and small windows).
-			var oToolPage = this.byId("toolPage"), bDone = false;
-			oToolPage.addEventDelegate({ onAfterRendering: function () {
-				if (!bDone && window.innerWidth < 1024) { bDone = true; setTimeout(function () { oToolPage.setSideExpanded(false); }, 0); }
-			} });
 			var oNav = this.getOwnerComponent().getModel("nav");
 			Promise.all([oNav.dataLoaded(), this.getOwnerComponent().bundleReady]).then(function () {
 				this._buildNavigation("");
@@ -227,7 +222,12 @@ sap.ui.define([
 			this.getOwnerComponent().getModel("users").dataLoaded().then(function () {
 				var rg = that._roleGroups(), groups = Array.isArray(aGroups) ? aGroups : rg.groups;
 				var intro = sAs ? T("tour.previewAs", [T("help.as." + sAs)]) : rg.names.length ? T("tour.forRoles", [rg.names.join("، ")]) : "";
-				Tour.start(that, T, "platform", groups, intro);
+				// The tour points at navigation items, so it opens the collapsed side navigation and closes it again at the end
+				var oToolPage = that.byId("toolPage"), bWas = oToolPage.getSideExpanded();
+				oToolPage.setSideExpanded(true);
+				setTimeout(function () {
+					Tour.start(that, T, "platform", groups, intro, function () { if (!bWas) { oToolPage.setSideExpanded(false); } });
+				}, bWas ? 0 : 450);
 			});
 		},
 

@@ -5,7 +5,8 @@
 	xmlns:tnt="sap.tnt"
 	displayBlock="true"
 	height="100%">
-	<tnt:ToolPage id="toolPage">
+	<!-- The side navigation starts collapsed (icons only); the menu button opens it -->
+	<tnt:ToolPage id="toolPage" sideExpanded="false">
 		<tnt:header>
 			<tnt:ToolHeader id="toolHeader">
 				<Button id="menuButton" icon="sap-icon://menu2" type="Transparent" press=".onToggleSide"
