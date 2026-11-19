@@ -71,12 +71,13 @@ sap.ui.define([
 		{ selector: ".nolabel", style: { "label": "" } }
 	];
 
+	var DOCK = 64; // height kept free for the floating control bar at the bottom of the canvas
 	var LAYOUTS = {
 		hierarchy: window.cytoscapeDagre ? { name: "dagre", rankDir: "TB", nodeSep: 26, rankSep: 64, edgeSep: 12, padding: 30, animate: false, nodeDimensionsIncludeLabels: true }
 			: { name: "breadthfirst", directed: true, spacingFactor: 1.05, padding: 30, animate: false },
 		force: { name: "cose", animate: false, randomize: false, nodeRepulsion: function () { return 160000; }, idealEdgeLength: function () { return 90; },
 			edgeElasticity: function () { return 100; }, nodeOverlap: 30, gravity: 20, nestingFactor: 1.2, numIter: 2500, padding: 30, componentSpacing: 50 },
-		circle: { name: "concentric", padding: 30, animate: false, minNodeSpacing: 34,
+		circle: { name: "concentric", padding: 30, animate: false, minNodeSpacing: 70, spacingFactor: 1.25, nodeDimensionsIncludeLabels: true,
 			concentric: function (n) { return n.degree(); }, levelWidth: function () { return 3; } }
 	};
 
@@ -118,9 +119,12 @@ sap.ui.define([
 			if (this._cy) { this._load(false); }
 			return this;
 		},
+		/* A new layout lays the nodes that are drawn out again and fits them. (Clearing the saved positions and
+		   reloading is not enough: the reload keeps the positions on screen, so the picture would not change.) */
 		setLayout: function (sLayout) {
+			var bChanged = sLayout !== this.getLayout();
 			this.setProperty("layout", sLayout, true);
-			if (this._cy) { this._positions = {}; this._load(true); }
+			if (this._cy && bChanged) { this.relayout(true, this._fitMin); }
 			return this;
 		},
 		setEdgeLabels: function (bOn) {
@@ -154,10 +158,10 @@ sap.ui.define([
 		},
 		/* Fit the whole graph, but never below a zoom where labels stay legible; centre instead. */
 		/* Lay the current elements out again (used when the record filter changes the node set). */
-		relayout: function (bRun) {
+		relayout: function (bRun, fMin) {
 			var cy = this._cy; if (!cy || !bRun) { return; }
 			cy.layout(LAYOUTS[this.getLayout()] || LAYOUTS.force).run();
-			this.fit(0.5); // record views show every group at once
+			this.fit(typeof fMin === "number" ? fMin : 0.5); // record views show every group at once
 			var that = this;
 			cy.nodes().forEach(function (n) { that._positions[n.id()] = Object.assign({}, n.position()); });
 		},
@@ -169,9 +173,12 @@ sap.ui.define([
 			this._fitTimer = setTimeout(function () {
 				var cy = that._cy; if (!cy) { return; }
 				cy.resize();
-				cy.fit(undefined, 30);
-				if (cy.zoom() < that._fitMin) { cy.zoom(that._fitMin); cy.center(); }
-				if (cy.zoom() > MAX_FIT) { cy.zoom(MAX_FIT); cy.center(); }
+				// Fit into the part of the canvas above the floating control bar (it covers the bottom DOCK px)
+				var bb = cy.elements().boundingBox(), pad = 30, w = cy.width(), h = Math.max(120, cy.height() - DOCK);
+				if (!bb.w || !bb.h) { cy.fit(undefined, pad); return; }
+				var z = Math.min((w - 2 * pad) / bb.w, (h - 2 * pad) / bb.h);
+				z = Math.max(that._fitMin, Math.min(MAX_FIT, z, cy.maxZoom()));
+				cy.viewport({ zoom: z, pan: { x: w / 2 - z * (bb.x1 + bb.w / 2), y: h / 2 - z * (bb.y1 + bb.h / 2) } });
 			}, 30);
 		},
 
