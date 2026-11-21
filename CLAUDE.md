@@ -286,7 +286,9 @@ an honest "not verified" is acceptable; an unverified "done" is not.
   capture through ODP / CDS delta over OData; ADR-0008: SQL Server
   change capture through Change Tracking; ADR-0009: user directory synced
   from Entra ID or SuccessFactors, roles on Department, Team or User;
-  ADR-0010: console theme Morning Horizon, `sap_horizon`).
+  ADR-0010: console theme Morning Horizon, `sap_horizon`;
+  ADR-0011 (proposed): Splink matching is incremental, blocked on
+  precomputed equality keys and measured against latency targets).
 - **Docs:** every module gets a README following
   `docs/module-readme-template.md` — update it when adding entry points,
   config or commands.

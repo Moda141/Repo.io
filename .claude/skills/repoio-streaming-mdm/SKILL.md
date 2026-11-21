@@ -46,6 +46,18 @@ matched.<entity> → [survivorship] → golden.<entity> + changes.<entity>
    and any dedup state need explicit sizing and eviction, or the job will
    OOM in production no matter how well it behaves locally.
 
+7. **Matching must be fast and incremental (ADR-0011).** Train offline
+   (batch, versioned model); score only the micro-batch's new or changed
+   records against existing ones via `foreachBatch` — never
+   all-against-all in the stream. Blocking rules are AND-ed equality
+   joins on keys precomputed by standardise (no OR, no similarity
+   functions in blocking), checked with
+   `count_comparisons_from_blocking_rules` against a per-batch budget;
+   common keys are salted, empty keys never form a block. Comparisons
+   stay in Splink's SQL — no row-by-row Python UDFs. Interactive
+   duplicate checks use Splink's DuckDB backend with the same model JSON;
+   no Spark job per user action.
+
 ## Implementation notes
 
 - Exactly-once effect: idempotent writes keyed on
@@ -72,3 +84,6 @@ matched.<entity> → [survivorship] → golden.<entity> + changes.<entity>
 - Evaluating match quality only on the happy-path pairs.
 - One giant job "for simplicity" — undo this immediately.
 - Unbounded groupBy state "working" in dev volumes.
+- Blocking on a name token alone: "محمد" becomes one giant block (skew).
+- `OR` inside one blocking rule, or Levenshtein in a blocking rule: the
+  engine compares everything first.

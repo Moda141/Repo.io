@@ -155,6 +155,17 @@ Expectations), Splink match, survivorship.
       measured and recorded** — with the pair set and thresholds
       documented. Acceptance thresholds agreed with the business owner,
       not invented.
+- [ ] **Matching performance (ADR-0011):** scoring is incremental
+      (`foreachBatch`, new records against existing ones, never
+      all-against-all); training runs offline as a batch job.
+- [ ] Blocking rules are equality joins on keys computed by standardise;
+      comparison counts measured on real volume and within the per-batch
+      budget; a skewed key (e.g. a very common first name, empty phone)
+      tested and handled (salting / no block on empty keys).
+- [ ] Benchmark recorded against the ADR-0011 targets (pair visible
+      ≤ 2 min, micro-batch ≤ 30 s p95, form duplicate check ≤ 1 s p95,
+      full re-match of 1 M ≤ 1 h) — targets confirmed with the business
+      owner; a missed target comes with a measured cause and a fix plan.
 - [ ] Known-duplicate test pair merges; known-distinct pair does not.
 - [ ] Job restart from checkpoint produces no duplicate golden rows.
 - [ ] End-to-end dev run: event → raw → staged → matched → golden with
